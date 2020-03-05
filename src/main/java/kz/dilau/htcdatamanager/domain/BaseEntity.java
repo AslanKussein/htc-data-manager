@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.model;
+package kz.dilau.htcdatamanager.domain;
 
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
