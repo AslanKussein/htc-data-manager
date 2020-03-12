@@ -4,6 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "htc_dm_property")
-public class Property extends BaseEntity<Long> {
+@Table(name = "htc_dm_application")
+public class Application extends BaseEntity<Long> {
 }
