@@ -6,4 +6,5 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "htc_dm_application")
 public class Application extends BaseEntity<Long> {
+    private Double objectPrice;
 }

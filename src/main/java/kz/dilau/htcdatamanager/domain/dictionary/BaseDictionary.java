@@ -1,4 +1,7 @@
-package kz.dilau.htcdatamanager.domain;
+package kz.dilau.htcdatamanager.domain.dictionary;
+
+import kz.dilau.htcdatamanager.domain.BaseEntity;
+import kz.dilau.htcdatamanager.domain.MultiLang;
 
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
