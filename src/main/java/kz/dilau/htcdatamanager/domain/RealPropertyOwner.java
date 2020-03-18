@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "htc_dm_real_property_owner")
-public class RealPropertyOwner extends BaseEntity<Long> {
+public class RealPropertyOwner extends AuditableBaseEntity<RealPropertyOwner> {
     private String firstName;
     private String surname;
     private String patronymic;
