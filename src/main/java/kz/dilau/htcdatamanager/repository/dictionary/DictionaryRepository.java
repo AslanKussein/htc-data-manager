@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.repository.dictionary;
 
-import kz.dilau.htcdatamanager.domain.dictionary.BaseDictionary;
+import kz.dilau.htcdatamanager.domain.BaseDictionary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 

@@ -3,17 +3,17 @@ package kz.dilau.htcdatamanager.domain;
 import javax.persistence.*;
 
 @MappedSuperclass
-public class AuditableBaseEntity<T> extends Auditable<T> {
+public abstract class AuditableBaseEntity<U, ID> extends Auditable<U> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "id", updatable = false, nullable = false)
+    protected ID id;
 
-    public Long getId() {
+    public ID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(ID id) {
         this.id = id;
     }
 }

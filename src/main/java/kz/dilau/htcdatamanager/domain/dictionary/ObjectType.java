@@ -1,9 +1,13 @@
 package kz.dilau.htcdatamanager.domain.dictionary;
 
+import kz.dilau.htcdatamanager.domain.BaseDictionary;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
+
 @Entity
-@Table(name = "htc_dm_object_type")
-public class ObjectType extends BaseDictionary<Long>{
+@Table(name = TABLE_NAME_PREFIX + "object_type")
+public class ObjectType extends BaseDictionary<Long> {
 }

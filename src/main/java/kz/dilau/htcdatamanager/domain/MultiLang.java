@@ -6,8 +6,11 @@ import java.io.Serializable;
 
 @Embeddable
 public class MultiLang implements Serializable {
+    @Column(name = "name_kz", nullable = false)
     private String nameKz;
+    @Column(name = "name_ru", nullable = false)
     private String nameRu;
+    @Column(name = "name_en", nullable = false)
     private String nameEn;
 
     public MultiLang() {
@@ -19,7 +22,6 @@ public class MultiLang implements Serializable {
         this.nameEn = nameEn;
     }
 
-    @Column(name = "name_kz", nullable = false)
     public String getNameKz() {
         return nameKz;
     }
@@ -28,7 +30,6 @@ public class MultiLang implements Serializable {
         this.nameKz = nameKz;
     }
 
-    @Column(name = "name_ru", nullable = false)
     public String getNameRu() {
         return nameRu;
     }
@@ -37,7 +38,6 @@ public class MultiLang implements Serializable {
         this.nameRu = nameRu;
     }
 
-    @Column(name = "name_en", nullable = false)
     public String getNameEn() {
         return nameEn;
     }

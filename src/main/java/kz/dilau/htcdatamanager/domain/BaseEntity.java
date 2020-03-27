@@ -7,8 +7,8 @@ import java.io.Serializable;
 public abstract class BaseEntity<T> implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private T id;
+    @Column(name = "id", updatable = false, nullable = false)
+    protected T id;
 
     public T getId() {
         return id;
@@ -18,3 +18,4 @@ public abstract class BaseEntity<T> implements Serializable {
         this.id = id;
     }
 }
+

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: htc-data-manager
+  cloud:
+    consul:
+      binder:
+        enabled: true
+      host: ${consul_host:127.0.0.1}
+      port: ${consul_port:8500}
+      config:
+        format: yaml
+      discovery:
+        preferIpAddress: true
+    inetutils:
+      preferredNetworks:
+        - 192.168
+  jpa:
+    hibernate:
+      ddl-auto: update

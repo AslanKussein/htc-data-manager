@@ -13,8 +13,8 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Getter
 @Setter
 @Entity
-@Table(name = TABLE_NAME_PREFIX + "street")
-public class Street extends BaseDictionary<Long> {
+@Table(name = TABLE_NAME_PREFIX + "district")
+public class District extends BaseDictionary<Long> {
     @Column(name = "code", nullable = false)
     private String code;
 }

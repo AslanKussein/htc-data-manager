@@ -2,132 +2,70 @@ package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
+import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
+
+@Getter
+@Setter
 @Entity
-@Table(name = "htc_dm_application")
-public class Application extends AuditableBaseEntity<Application> {
-    @ManyToOne
-    @JoinColumn(name = "operation_type_id", referencedColumnName = "id")
+@Table(name = TABLE_NAME_PREFIX + "application")
+public class Application extends AuditableBaseEntity<String, Long> {
+    @NotNull(message = "Operation type must not be null")
+    @Min(1)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "operation_type_id", referencedColumnName = "id", nullable = false)
     private OperationType operationType;
-    @ManyToOne
+    @NotNull(message = "Object type must not be null")
+    @Min(1)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "object_type_id", referencedColumnName = "id")
     private ObjectType objectType;
+    @Column(name = "object_price")
     private Double objectPrice;
-    private Boolean ipoteka;
-    private Boolean obremenenie;
-    private Boolean obmen;
-    private Boolean obshayaDolevayaSobstvennost;
-    private Boolean hasTorg;
-    private Integer razmerTorga;
-    private String torgReason;
-    private Date srokDogovora;
-    private Integer sum;
-    private boolean isWithCommission;
-
-    public OperationType getOperationType() {
-        return operationType;
-    }
-
-    public void setOperationType(OperationType operationType) {
-        this.operationType = operationType;
-    }
-
-    public ObjectType getObjectType() {
-        return objectType;
-    }
-
-    public void setObjectType(ObjectType objectType) {
-        this.objectType = objectType;
-    }
-
-    public Double getObjectPrice() {
-        return objectPrice;
-    }
-
-    public void setObjectPrice(Double objectPrice) {
-        this.objectPrice = objectPrice;
-    }
-
-    public Boolean getIpoteka() {
-        return ipoteka;
-    }
-
-    public void setIpoteka(Boolean ipoteka) {
-        this.ipoteka = ipoteka;
-    }
-
-    public Boolean getObremenenie() {
-        return obremenenie;
-    }
-
-    public void setObremenenie(Boolean obremenenie) {
-        this.obremenenie = obremenenie;
-    }
-
-    public Boolean getObmen() {
-        return obmen;
-    }
-
-    public void setObmen(Boolean obmen) {
-        this.obmen = obmen;
-    }
-
-    public Boolean getObshayaDolevayaSobstvennost() {
-        return obshayaDolevayaSobstvennost;
-    }
-
-    public void setObshayaDolevayaSobstvennost(Boolean obshayaDolevayaSobstvennost) {
-        this.obshayaDolevayaSobstvennost = obshayaDolevayaSobstvennost;
-    }
-
-    public Boolean getHasTorg() {
-        return hasTorg;
-    }
-
-    public void setHasTorg(Boolean hasTorg) {
-        this.hasTorg = hasTorg;
-    }
-
-    public Integer getRazmerTorga() {
-        return razmerTorga;
-    }
-
-    public void setRazmerTorga(Integer razmerTorga) {
-        this.razmerTorga = razmerTorga;
-    }
-
-    public String getTorgReason() {
-        return torgReason;
-    }
-
-    public void setTorgReason(String torgReason) {
-        this.torgReason = torgReason;
-    }
-
-    public Date getSrokDogovora() {
-        return srokDogovora;
-    }
-
-    public void setSrokDogovora(Date srokDogovora) {
-        this.srokDogovora = srokDogovora;
-    }
-
-    public Integer getSum() {
-        return sum;
-    }
-
-    public void setSum(Integer sum) {
-        this.sum = sum;
-    }
-
-    public boolean isWithCommission() {
-        return isWithCommission;
-    }
-
-    public void setWithCommission(boolean withCommission) {
-        isWithCommission = withCommission;
-    }
+    @Column(name = "object_price_from")
+    private Double objectPriceFrom;
+    @Column(name = "object_price_to")
+    private Double objectPriceTo;
+    @Column(name = "mortgage")
+    private Boolean mortgage;//ипотека
+    @Column(name = "encumbrance")
+    private Boolean encumbrance;//обременение
+    @Column(name = "is_shared_ownership_property")
+    private Boolean sharedOwnershipProperty;//общая долевая собственность
+    @Column(name = "is_exchange")
+    private Boolean exchange;//обмен
+    @Column(name = "has_probability_of_bidding")
+    private Boolean probabilityOfBidding;//вероятность торга
+    @Column(name = "the_size_of_trades")
+    private String theSizeOfTrades;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "possible_reason_for_bidding_id", referencedColumnName = "id")
+    private PossibleReasonForBidding possibleReasonForBidding;
+    @NotNull(message = "Contract period must not be null")
+    @Column(name = "contract_period", nullable = false)
+    @Temporal(TemporalType.DATE)
+    private Date contractPeriod;
+    @NotNull(message = "The amount of the contract must not be null")
+    @Min(0)
+    @Column(name = "the_amount_of_the_contract", nullable = false)
+    private Integer amount;
+    @NotNull(message = "Commission is included in the price must not be null")
+    @Column(name = "is_commission_included_in_the_price", nullable = false)
+    private boolean isCommissionIncludedInThePrice = false;
+    @Column(name = "note")
+    private String note;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
+    private RealPropertyOwner realPropertyOwner;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "real_property_id", referencedColumnName = "id")
+    private RealProperty realProperty;
 }

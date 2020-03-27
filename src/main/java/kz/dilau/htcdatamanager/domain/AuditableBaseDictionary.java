@@ -1,13 +1,10 @@
-package kz.dilau.htcdatamanager.domain.dictionary;
-
-import kz.dilau.htcdatamanager.domain.BaseEntity;
-import kz.dilau.htcdatamanager.domain.MultiLang;
+package kz.dilau.htcdatamanager.domain;
 
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class BaseDictionary<T> extends BaseEntity<T> {
+public abstract class AuditableBaseDictionary<U, ID> extends AuditableBaseEntity<U, ID> {
     @Embedded
     private MultiLang multiLang;
 
