@@ -11,7 +11,7 @@
     <groupId>kz.dilau</groupId>
     <artifactId>htc-data-manager</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>${project.artifactId}</name>
     <description>htc</description>
 
