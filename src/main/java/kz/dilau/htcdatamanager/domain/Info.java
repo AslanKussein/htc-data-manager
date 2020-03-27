@@ -19,7 +19,6 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "info")
 public class Info extends BaseEntity<Long> {
-    @Min(1)
     @Column(name = "apartments_on_the_site")
     private String apartmentsOnTheSite;
     @Min(1)
