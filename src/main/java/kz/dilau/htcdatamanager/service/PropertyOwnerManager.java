@@ -38,4 +38,12 @@ public class PropertyOwnerManager {
     public void save(RealPropertyOwner realProperty) {
         realPropertyOwnerRepository.save(realProperty);
     }
+
+    public RealPropertyOwner searchClientByPhoneNumber(String phoneNumber) {
+        if (realPropertyOwnerRepository.findByPhoneNumber(phoneNumber).isPresent()) {
+            return realPropertyOwnerRepository.findByPhoneNumber(phoneNumber).get();
+        } else {
+            return null;
+        }
+    }
 }

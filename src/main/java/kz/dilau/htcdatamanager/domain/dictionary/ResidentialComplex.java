@@ -1,8 +1,10 @@
 package kz.dilau.htcdatamanager.domain.dictionary;
 
 import kz.dilau.htcdatamanager.domain.AuditableBaseEntity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -10,15 +12,17 @@ import javax.validation.constraints.NotNull;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "residential_complex")
 public class ResidentialComplex extends AuditableBaseEntity<String, Long> {
-    @NotNull(message = "Country must not be null")
-    @Min(1)
+//    @NotNull(message = "Country must not be null")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
+//    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "country_id", referencedColumnName = "id")
     private Country country;
 
 

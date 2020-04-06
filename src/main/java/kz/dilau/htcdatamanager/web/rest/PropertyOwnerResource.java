@@ -2,19 +2,23 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.domain.RealPropertyOwner;
 import kz.dilau.htcdatamanager.service.PropertyOwnerManager;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/property-owners")
 public class PropertyOwnerResource {
     private final PropertyOwnerManager propertyOwnerManager;
 
-    @Autowired
-    public PropertyOwnerResource(PropertyOwnerManager propertyOwnerManager) {
-        this.propertyOwnerManager = propertyOwnerManager;
+    //todo instead use Rest Repositories
+    @GetMapping("/search/find-by-phone-number")
+    public ResponseEntity<RealPropertyOwner> searchClientByPhoneNumber(@RequestParam String phoneNumber) {
+        RealPropertyOwner owner = propertyOwnerManager.searchClientByPhoneNumber(phoneNumber);
+        return ResponseEntity.ok(owner);
     }
 
     @GetMapping

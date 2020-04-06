@@ -2,8 +2,6 @@ package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.web.rest.vm.CheckOperationGroupDto;
 import kz.dilau.htcdatamanager.web.rest.vm.ListResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -16,20 +14,25 @@ import java.util.Optional;
 
 @Service
 public class DataAccessManager {
-    private final DiscoveryClient discoveryClient;
+    //    private final DiscoveryClient discoveryClient;
     private final RestTemplate restTemplate;
 
-    @Autowired
-    public DataAccessManager(DiscoveryClient discoveryClient, RestTemplate restTemplate) {
-        this.discoveryClient = discoveryClient;
+    public DataAccessManager(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
+//    @Autowired
+//    public DataAccessManager(DiscoveryClient discoveryClient, RestTemplate restTemplate) {
+//        this.discoveryClient = discoveryClient;
+//        this.restTemplate = restTemplate;
+//    }
+
     public Optional<URI> getRoleManagerUrl() {
-        return discoveryClient.getInstances("htc-role-manager")
-                .stream()
-                .map(si -> si.getUri())
-                .findFirst();
+//        return discoveryClient.getInstances("htc-role-manager")
+//                .stream()
+//                .map(si -> si.getUri())
+//                .findFirst();
+        return null;
     }
 
     public ListResponse<CheckOperationGroupDto> getCheckOperationList(final String token, List<String> groupCodes) {

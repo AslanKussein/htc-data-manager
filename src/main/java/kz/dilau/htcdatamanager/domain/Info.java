@@ -24,14 +24,13 @@ public class Info extends BaseEntity<Long> {
     @Min(1)
     @Column(name = "ceiling_height")
     private Integer ceilingHeight;
-    @NotNull(message = "City must not be null")
-    @Min(1)
+    //    @NotNull(message = "City must not be null")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "city_id", referencedColumnName = "id", nullable = false)
+//    @JoinColumn(name = "city_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "city_id", referencedColumnName = "id")
     private City city;
     @Column(name = "concierge")
     private Boolean concierge;
-    @Min(1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "district_id", referencedColumnName = "id")
     private District district;
@@ -51,10 +50,10 @@ public class Info extends BaseEntity<Long> {
     private ParkingType parkingType;
     @Column(name = "playground")
     private Boolean playground;
-    @NotNull(message = "Street must not be null")
-    @Min(1)
+    //    @NotNull(message = "Street must not be null")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "street_id", referencedColumnName = "id", nullable = false)
+//    @JoinColumn(name = "street_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "street_id", referencedColumnName = "id")
     private Street street;
     @Column(name = "type_of_elevator")
     private String typeOfElevator;

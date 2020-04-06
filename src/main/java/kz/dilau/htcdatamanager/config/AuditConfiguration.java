@@ -14,13 +14,6 @@ import static kz.dilau.htcdatamanager.config.Constants.SYSTEM_ACCOUNT;
 public class AuditConfiguration {
     @Bean
     public AuditorAware<String> auditorProvider() {
-        return new SpringSecurityAuditorAware();
-    }
-
-    public class SpringSecurityAuditorAware implements AuditorAware<String> {
-        @Override
-        public Optional<String> getCurrentAuditor() {
-            return Optional.of(SYSTEM_ACCOUNT);//todo to do
-        }
+        return () -> Optional.of(SYSTEM_ACCOUNT);//todo to do
     }
 }

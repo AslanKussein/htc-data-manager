@@ -9,7 +9,7 @@ import lombok.Setter;
 
 import java.util.Date;
 
-@ApiModel(description = "Модель для создания заявки")
+@ApiModel(description = "Модель заявки")
 @Getter
 @Setter
 public class ApplicationDto {

@@ -13,7 +13,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Setter
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "data")//todo rename table later
-public class Data extends BaseEntity<Long> {
+public class Data2 extends BaseEntity<Long> {
     @Min(0)
     private Integer floorFrom;
     @Min(0)

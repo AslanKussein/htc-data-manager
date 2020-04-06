@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.domain;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -11,8 +11,10 @@ import java.util.Objects;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "real_property_owner")
 public class RealPropertyOwner extends AuditableBaseEntity<String, Long> {
@@ -33,6 +35,7 @@ public class RealPropertyOwner extends AuditableBaseEntity<String, Long> {
     @Email(message = "Email should be valid")
     @Column(name = "email")
     private String email;
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
     private Gender gender = Gender.UNKNOWN;

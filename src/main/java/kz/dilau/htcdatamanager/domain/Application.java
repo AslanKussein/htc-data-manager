@@ -3,8 +3,10 @@ package kz.dilau.htcdatamanager.domain;
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -13,18 +15,18 @@ import java.util.Date;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "application")
 public class Application extends AuditableBaseEntity<String, Long> {
     @NotNull(message = "Operation type must not be null")
-    @Min(1)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "operation_type_id", referencedColumnName = "id", nullable = false)
     private OperationType operationType;
-    @NotNull(message = "Object type must not be null")
-    @Min(1)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "object_type_id", referencedColumnName = "id")
     private ObjectType objectType;
@@ -49,23 +51,22 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "possible_reason_for_bidding_id", referencedColumnName = "id")
     private PossibleReasonForBidding possibleReasonForBidding;
-    @NotNull(message = "Contract period must not be null")
-    @Column(name = "contract_period", nullable = false)
+    @Column(name = "contract_period")
     @Temporal(TemporalType.DATE)
     private Date contractPeriod;
-    @NotNull(message = "The amount of the contract must not be null")
     @Min(0)
-    @Column(name = "the_amount_of_the_contract", nullable = false)
+    @Column(name = "the_amount_of_the_contract")
     private Integer amount;
     @NotNull(message = "Commission is included in the price must not be null")
     @Column(name = "is_commission_included_in_the_price", nullable = false)
     private boolean isCommissionIncludedInThePrice = false;
     @Column(name = "note")
     private String note;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
-    private RealPropertyOwner realPropertyOwner;
-    @OneToOne(fetch = FetchType.LAZY)
+    private RealPropertyOwner owner;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "real_property_id", referencedColumnName = "id")
     private RealProperty realProperty;
 }

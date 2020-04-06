@@ -1,15 +1,19 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "real_property")
 public class RealProperty extends AuditableBaseEntity<String, Long> {
@@ -56,5 +60,5 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
             @JoinColumn(name = "property_id", referencedColumnName = "id"),
             inverseJoinColumns =
             @JoinColumn(name = "data_id", referencedColumnName = "id"))//todo rename table later
-    private Data data;
+    private Data2 data;
 }
