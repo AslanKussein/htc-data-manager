@@ -1,6 +1,5 @@
 package kz.dilau.htcdatamanager.web.rest;
 
-import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.repository.dictionary.OperationTypeRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dictionaries/operationTypes")
 public class OperationTypeResource {
@@ -25,20 +25,17 @@ public class OperationTypeResource {
         return ResponseEntity.ok(operationTypeRepository.getOne(id));
     }
 
-    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveOperationType(@RequestBody OperationType operationType) {
         return ResponseEntity.ok(operationTypeRepository.save(operationType).getId());
     }
 
-    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteOperationTypeById(@PathVariable Long id) {
         operationTypeRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateOperationType(@RequestBody OperationType operationType) {
         operationTypeRepository.save(operationType);

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dictionaries/cities")
 public class CityResource {
@@ -24,20 +25,17 @@ public class CityResource {
         return ResponseEntity.ok(cityRepository.getOne(id));
     }
 
-    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveCity(@RequestBody City city) {
         return ResponseEntity.ok(cityRepository.save(city).getId());
     }
 
-    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteCityById(@PathVariable Long id) {
         cityRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateCity(@RequestBody City city) {
         cityRepository.save(city);

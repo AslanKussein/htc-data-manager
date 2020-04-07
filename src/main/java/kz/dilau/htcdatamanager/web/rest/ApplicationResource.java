@@ -16,12 +16,12 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Api(value = "/applications", description = "Application resource")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/applications")
 public class ApplicationResource {
     private final ApplicationManager applicationManager;
 
-    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveApplication(@RequestHeader(AUTHORIZATION) final String token,
                                                 @RequestParam(name = "type", defaultValue = "shortForm") ApplicationType applicationType,
@@ -43,7 +43,6 @@ public class ApplicationResource {
         return ResponseEntity.ok(applicationDto);
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable Long id,
                                  @RequestBody ApplicationDto application) {

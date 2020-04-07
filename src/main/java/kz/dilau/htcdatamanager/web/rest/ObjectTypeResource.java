@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dictionaries/objectTypes")
 public class ObjectTypeResource {
@@ -25,20 +26,17 @@ public class ObjectTypeResource {
         return ResponseEntity.ok(objectTypeRepository.getOne(id));
     }
 
-    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveObjectType(@RequestBody ObjectType objectType) {
         return ResponseEntity.ok(objectTypeRepository.save(objectType).getId());
     }
 
-    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteObjectTypeById(@PathVariable Long id) {
         objectTypeRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateObjectType(@RequestBody ObjectType objectType) {
         objectTypeRepository.save(objectType);

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dictionaries/possibleReasonForBidding")
 public class PossibleReasonForBiddingResource {
@@ -24,20 +25,17 @@ public class PossibleReasonForBiddingResource {
         return ResponseEntity.ok(repository.getOne(id));
     }
 
-    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> savePossibleReasonForBidding(@RequestBody PossibleReasonForBidding parkingType) {
         return ResponseEntity.ok(repository.save(parkingType).getId());
     }
 
-    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deletePossibleReasonForBiddingById(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updatePossibleReasonForBidding(@RequestBody PossibleReasonForBidding parkingType) {
         repository.save(parkingType);

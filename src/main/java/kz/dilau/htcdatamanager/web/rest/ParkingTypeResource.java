@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dictionaries/parking-types")
 public class ParkingTypeResource {
@@ -24,20 +25,17 @@ public class ParkingTypeResource {
         return ResponseEntity.ok(parkingTypeRepository.getOne(id));
     }
 
-    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveOperationType(@RequestBody ParkingType parkingType) {
         return ResponseEntity.ok(parkingTypeRepository.save(parkingType).getId());
     }
 
-    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteOperationTypeById(@PathVariable Long id) {
         parkingTypeRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateOperationType(@RequestBody ParkingType parkingType) {
         parkingTypeRepository.save(parkingType);

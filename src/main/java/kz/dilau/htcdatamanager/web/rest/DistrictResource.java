@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/dictionaries/districts")
 public class DistrictResource {
@@ -25,20 +26,17 @@ public class DistrictResource {
         return ResponseEntity.ok(districtRepository.getOne(id));
     }
 
-    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveDistrict(@RequestBody District district) {
         return ResponseEntity.ok(districtRepository.save(district).getId());
     }
 
-    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteDistrictById(@PathVariable Long id) {
         districtRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateDistrict(@RequestBody District district) {
         districtRepository.save(district);
