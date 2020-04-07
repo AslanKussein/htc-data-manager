@@ -25,21 +25,23 @@ public class CountryResource {
         return ResponseEntity.ok(countryRepository.getOne(id));
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveCountry(@RequestBody Country country) {
         return ResponseEntity.ok(countryRepository.save(country).getId());
     }
 
+    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteCountryById(@PathVariable Long id) {
         countryRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateCountry(@RequestBody Country country) {
         countryRepository.save(country);
         return ResponseEntity.noContent().build();
     }
-    
 }

@@ -24,17 +24,20 @@ public class ResidentialComplexResource {
         return ResponseEntity.ok(repository.getOne(id));
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveResidentialComplex(@RequestBody ResidentialComplex parkingType) {
         return ResponseEntity.ok(repository.save(parkingType).getId());
     }
 
+    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteResidentialComplexById(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateResidentialComplex(@RequestBody ResidentialComplex parkingType) {
         repository.save(parkingType);

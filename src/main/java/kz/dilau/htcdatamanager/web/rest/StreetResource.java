@@ -24,17 +24,20 @@ public class StreetResource {
         return ResponseEntity.ok(repository.getOne(id));
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveStreet(@RequestBody Street parkingType) {
         return ResponseEntity.ok(repository.save(parkingType).getId());
     }
 
+    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteStreetById(@PathVariable Long id) {
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateStreet(@RequestBody Street parkingType) {
         repository.save(parkingType);

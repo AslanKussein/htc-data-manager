@@ -25,17 +25,20 @@ public class OperationTypeResource {
         return ResponseEntity.ok(operationTypeRepository.getOne(id));
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("")
     public ResponseEntity<Long> saveOperationType(@RequestBody OperationType operationType) {
         return ResponseEntity.ok(operationTypeRepository.save(operationType).getId());
     }
 
+    @CrossOrigin(origins = "*")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteOperationTypeById(@PathVariable Long id) {
         operationTypeRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
+    @CrossOrigin(origins = "*")
     @PutMapping("")
     public ResponseEntity updateOperationType(@RequestBody OperationType operationType) {
         operationTypeRepository.save(operationType);

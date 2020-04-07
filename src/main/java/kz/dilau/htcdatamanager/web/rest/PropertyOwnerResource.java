@@ -31,17 +31,20 @@ public class PropertyOwnerResource {
         return propertyOwnerManager.getById(id);
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/{id}/delete")
     public void deleteById(@PathVariable Long id) {
         propertyOwnerManager.deleteById(id);
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping("/{id}/edit")
     public void update(@PathVariable Long id,
                        @RequestBody RealPropertyOwner propertyOwner) {
         propertyOwnerManager.update(id, propertyOwner);
     }
 
+    @CrossOrigin(origins = "*")
     @PostMapping
     public void save(@RequestBody RealPropertyOwner realProperty) {
         propertyOwnerManager.save(realProperty);
