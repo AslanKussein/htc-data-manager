@@ -16,7 +16,6 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Api(value = "/applications", description = "Application resource")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/applications")
 public class ApplicationResource {
