@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
@@ -69,4 +70,7 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "real_property_id", referencedColumnName = "id")
     private RealProperty realProperty;
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "application_status_id", referencedColumnName = "id", nullable = false)
+    private ApplicationStatus applicationStatus;
 }
