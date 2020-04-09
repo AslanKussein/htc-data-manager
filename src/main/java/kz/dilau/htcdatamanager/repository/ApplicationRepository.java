@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
-    @Query(value = "SELECT * FROM htc_dm_application LIMIT 10", nativeQuery = true)
-    List<Application> getRecentlyCreatedApps();
+    @Query(value = "SELECT * FROM htc_dm_application ORDER BY created_date DESC LIMIT 10", nativeQuery = true)
+    List<Application> getRecentlyCreatedApplications();
 }
