@@ -31,7 +31,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
+                .cors().configurationSource(request -> corsConfiguration())
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
@@ -72,4 +72,13 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
         auth.authenticationProvider(authenticationProvider);
     }
 
+    @Bean
+    public CorsConfiguration corsConfiguration() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addAllowedHeader("*");
+        return corsConfiguration;
+    }
 }
