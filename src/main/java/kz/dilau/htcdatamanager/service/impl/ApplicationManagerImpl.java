@@ -23,37 +23,8 @@ public class ApplicationManagerImpl implements ApplicationManager {
     private final ApplicationRepository applicationRepository;
     private final DataAccessManager dataAccessManager;
 
-    @Transactional
-    public Long saveApplication(final String token,
-                                final ApplicationType applicationType,
-                                final ApplicationDto dto) {
-        //todo validate inputs
-        final ApplicationConverter converter = appContext.getBean(applicationType.getConverterName(), ApplicationConverter.class);
-        final Application application = converter.convertFromDto(dto);
-        Long id = applicationRepository.save(application).getId();
-        return id;
-    }
-
     @Override
-    public List<RecentlyCreatedApplication> getRecentlyCreatedApps(final String token) {
-        List<Application> recentlyCreatedApps = applicationRepository.getRecentlyCreatedApps();
-        return recentlyCreatedApps.stream().map(e -> RecentlyCreatedApplication
-                .builder()
-                .id(e.getId())
-                .date(e.getCreatedDate())
-                .operationTypeId(e.getOperationType().getId())
-                .clientFullName(new StringBuilder(e.getOwner().getFirstName())
-                        .append(" ")
-                        .append(e.getOwner().getSurname())//todo append null string
-                        .append(" ")
-                        .append(e.getOwner().getPatronymic())
-                        .toString())
-                .phoneNumber(e.getOwner().getPhoneNumber())
-                .build()).collect(Collectors.toList());
-    }
-
-    @Override
-    public ApplicationDto getById(final String token, Long id) {
+    public ApplicationDto getApplicationById(final String token, Long id) {
         ApplicationDto dto = new ApplicationDto();
         ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessManager.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
         Application application = applicationRepository.getOne(id);
@@ -104,7 +75,43 @@ public class ApplicationManagerImpl implements ApplicationManager {
     }
 
     @Override
-    public void update(Long id, ApplicationDto application) {
+    public List<RecentlyCreatedApplication> getRecentlyCreatedApplications(final String token) {
+        List<Application> recentlyCreatedApps = applicationRepository.getRecentlyCreatedApplications();
+        return recentlyCreatedApps.stream().map(e -> RecentlyCreatedApplication
+                .builder()
+                .id(e.getId())
+                .date(e.getCreatedDate())
+                .operationTypeId(e.getOperationType().getId())
+                .clientFullName(new StringBuilder(e.getOwner().getFirstName())
+                        .append(" ")
+                        .append(e.getOwner().getSurname())//todo append null string
+                        .append(" ")
+                        .append(e.getOwner().getPatronymic())
+                        .toString())
+                .phoneNumber(e.getOwner().getPhoneNumber())
+                .build()).collect(Collectors.toList());
+    }
 
+    @Transactional
+    @Override
+    public Long saveApplication(final String token,
+                                final ApplicationType applicationType,
+                                final ApplicationDto dto) {
+        //todo validate inputs
+        final ApplicationConverter converter = appContext.getBean(applicationType.getConverterName(), ApplicationConverter.class);
+        final Application application = converter.convertFromDto(dto);
+        Long id = applicationRepository.save(application).getId();
+        return id;
+    }
+
+    @Override
+    public void updateApplication(final String token, ApplicationDto application) {
+
+    }
+
+    @Override
+    public void deleteApplication(final String token, Long id) {
+        //todo use token for check access
+        applicationRepository.deleteById(id);
     }
 }
