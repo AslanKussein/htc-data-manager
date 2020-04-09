@@ -7,11 +7,13 @@ import kz.dilau.htcdatamanager.web.rest.vm.RecentlyCreatedApplication;
 import java.util.List;
 
 public interface ApplicationManager {
-    Long saveApplication(String token, ApplicationType type, ApplicationDto dto);
+    ApplicationDto getApplicationById(final String token, Long id);
 
-    List<RecentlyCreatedApplication> getRecentlyCreatedApps(String token);
+    List<RecentlyCreatedApplication> getRecentlyCreatedApplications(final String token);
 
-    ApplicationDto getById(String token, Long id);
+    Long saveApplication(final String token, ApplicationType type, ApplicationDto dto);
 
-    void update(Long id, ApplicationDto application);
+    void updateApplication(final String token, ApplicationDto application);
+
+    void deleteApplication(final String token, Long id);
 }
