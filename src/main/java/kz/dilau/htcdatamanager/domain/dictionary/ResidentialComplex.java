@@ -33,10 +33,10 @@ public class ResidentialComplex extends AuditableBaseEntity<String, Long> {
     @JoinColumn(name = "property_developer_id", referencedColumnName = "id")
     private PropertyDeveloper propertyDeveloper;
 
-    @Min(1)
+//    @Min(1)
     @Column(name = "number_of_entrances")
     private Integer numberOfEntrances;
-    @Min(1)
+//    @Min(1)
     @Column(name = "number_of_apartments")
     private Integer numberOfApartments;
 
