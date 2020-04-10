@@ -106,9 +106,13 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
     @Override
     public void updateApplication(String token, Long id, ApplicationDto application) {
+
+
     }
 
     @Override
     public void deleteApplicationById(String token, Long id) {
+
+
     }
 }
