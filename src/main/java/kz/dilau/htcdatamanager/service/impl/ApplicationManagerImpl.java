@@ -105,13 +105,10 @@ public class ApplicationManagerImpl implements ApplicationManager {
     }
 
     @Override
-    public void updateApplication(final String token, ApplicationDto application) {
-
+    public void updateApplication(String token, Long id, ApplicationDto application) {
     }
 
     @Override
-    public void deleteApplication(final String token, Long id) {
-        //todo use token for check access
-        applicationRepository.deleteById(id);
+    public void deleteApplicationById(String token, Long id) {
     }
 }

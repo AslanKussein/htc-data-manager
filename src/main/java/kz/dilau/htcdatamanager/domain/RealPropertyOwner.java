@@ -1,5 +1,8 @@
 package kz.dilau.htcdatamanager.domain;
 
+import io.swagger.annotations.ApiModel;
+import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
+import kz.dilau.htcdatamanager.domain.enums.Gender;
 import lombok.*;
 import lombok.Data;
 
@@ -11,6 +14,7 @@ import java.util.Objects;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
+@ApiModel(description = "All details about the Employee. ")
 @Builder
 @AllArgsConstructor
 @Data

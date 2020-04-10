@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.domain;
+package kz.dilau.htcdatamanager.domain.base;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

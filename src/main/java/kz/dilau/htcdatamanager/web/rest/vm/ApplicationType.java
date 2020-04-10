@@ -5,28 +5,22 @@ import lombok.Getter;
 
 @Getter
 public enum ApplicationType implements ApplicationConverterManager {
-    SHORT_FORM("shortForm") {
+    SHORT_FORM {
         @Override
         public String getConverterName() {
             return "shortFormConverter";
         }
     },
-    FULL_FORM_FOR_PURCHASE("fullFormForPurchase") {
+    FULL_FORM_FOR_PURCHASE {
         @Override
         public String getConverterName() {
             return "fullFormForPurchaseConverter";
         }
     },
-    FULL_FORM_FOR_SELL("fullFormForSell") {
+    FULL_FORM_FOR_SELL {
         @Override
         public String getConverterName() {
             return "fullFormForSellConverter";
         }
-    };
-
-    private final String name;
-
-    ApplicationType(String name) {
-        this.name = name;
     }
 }

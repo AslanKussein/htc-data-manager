@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
+import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;

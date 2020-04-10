@@ -9,7 +9,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
+import java.util.Optional;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
@@ -21,11 +21,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private class StringToApplicationTypeEnumConverter implements Converter<String, ApplicationType> {
         @Override
         public ApplicationType convert(String s) {
-            return Arrays
-                    .stream(ApplicationType.values())
-                    .filter(e -> e.getName().equals(s))
-                    .findFirst()
-                    .orElseThrow(IllegalArgumentException::new);
+            return Optional.ofNullable(ApplicationType.valueOf(s)).orElseThrow(IllegalArgumentException::new);
         }
     }
 

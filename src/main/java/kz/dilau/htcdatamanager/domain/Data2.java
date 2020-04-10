@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
+import kz.dilau.htcdatamanager.domain.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 

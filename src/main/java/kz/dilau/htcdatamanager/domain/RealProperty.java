@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
+import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
@@ -31,7 +33,6 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
             inverseJoinColumns =
             @JoinColumn(name = "info_id", referencedColumnName = "id"))//todo rename table later)
     private Info info;
-
 
     @Column(name = "floor")
     private Integer floor;
@@ -61,4 +62,8 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
             inverseJoinColumns =
             @JoinColumn(name = "data_id", referencedColumnName = "id"))//todo rename table later
     private Data2 data;
+    @ElementCollection
+    @CollectionTable(name = "real_property_files", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "file_id")
+    private Set<String> filesIds;
 }

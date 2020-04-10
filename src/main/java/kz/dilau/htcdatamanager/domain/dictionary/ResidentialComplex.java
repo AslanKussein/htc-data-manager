@@ -1,14 +1,12 @@
 package kz.dilau.htcdatamanager.domain.dictionary;
 
-import kz.dilau.htcdatamanager.domain.AuditableBaseEntity;
+import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 

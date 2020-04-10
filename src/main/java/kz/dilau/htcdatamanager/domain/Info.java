@@ -1,10 +1,12 @@
 package kz.dilau.htcdatamanager.domain;
 
 
+import kz.dilau.htcdatamanager.domain.base.BaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
 import kz.dilau.htcdatamanager.domain.dictionary.Street;
+import kz.dilau.htcdatamanager.domain.enums.YardType;
 import lombok.Getter;
 import lombok.Setter;
 

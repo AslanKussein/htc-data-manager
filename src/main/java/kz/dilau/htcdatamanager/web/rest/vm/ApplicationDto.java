@@ -2,14 +2,14 @@ package kz.dilau.htcdatamanager.web.rest.vm;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.Gender;
-import kz.dilau.htcdatamanager.domain.YardType;
+import kz.dilau.htcdatamanager.domain.enums.Gender;
+import kz.dilau.htcdatamanager.domain.enums.YardType;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
-@ApiModel(description = "Модель заявки")
+@ApiModel(value = "Модель заявки", description = "Модель заявки")
 @Getter
 @Setter
 public class ApplicationDto {

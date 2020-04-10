@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.repository;
+package kz.dilau.htcdatamanager.repository.dictionary;
 
 import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
 import org.springframework.data.jpa.repository.JpaRepository;

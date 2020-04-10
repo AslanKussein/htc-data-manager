@@ -62,12 +62,14 @@ public class ApplicationResource {
     }
 
     @ApiOperation("Update application")
-    @PutMapping("")
+    @PutMapping("/{id}")
     public ResponseEntity<Void> updateApplication(@ApiParam(value = "Bearer token", required = true)
                                                   @RequestHeader(AUTHORIZATION) final String token,
+                                                  @ApiParam(value = "Application ID", required = true)
+                                                  @PathVariable Long id,
                                                   @ApiParam(value = "Application data", required = true)
                                                   @RequestBody ApplicationDto application) {
-        applicationManager.updateApplication(token, application);
+        applicationManager.updateApplication(token, id, application);
         return ResponseEntity.noContent().build();
     }
 }

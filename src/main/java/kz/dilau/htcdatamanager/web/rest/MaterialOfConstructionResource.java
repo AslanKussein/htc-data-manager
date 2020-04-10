@@ -1,8 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
-import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
-import kz.dilau.htcdatamanager.repository.MaterialOfConstructionRepository;
+import kz.dilau.htcdatamanager.repository.dictionary.MaterialOfConstructionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,13 +1,10 @@
-package kz.dilau.htcdatamanager.domain;
-
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+package kz.dilau.htcdatamanager.domain.base;
 
 import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class BaseDictionary<T> extends BaseEntity<T> {
-    @JsonUnwrapped
+public abstract class BaseDictionary extends BaseEntity<Long> {
     @Embedded
     private MultiLang multiLang;
 

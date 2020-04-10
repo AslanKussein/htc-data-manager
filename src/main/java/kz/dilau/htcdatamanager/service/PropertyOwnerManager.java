@@ -1,49 +1,15 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.domain.RealPropertyOwner;
-import kz.dilau.htcdatamanager.repository.RealPropertyOwnerRepository;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
+public interface PropertyOwnerManager {
+    RealPropertyOwner getOwnerById(Long id);
 
-@Service
-public class PropertyOwnerManager {
-    private final RealPropertyOwnerRepository realPropertyOwnerRepository;
+    RealPropertyOwner findOwnerByPhoneNumber(String phoneNumber);
 
-    @Autowired
-    public PropertyOwnerManager(RealPropertyOwnerRepository realPropertyOwnerRepository) {
-        this.realPropertyOwnerRepository = realPropertyOwnerRepository;
-    }
+    Long saveOwner(RealPropertyOwner owner);
 
-    public List<RealPropertyOwner> getAll() {
-        return realPropertyOwnerRepository.findAll();
-    }
+    void updateOwner(Long id, RealPropertyOwner owner);
 
-    public RealPropertyOwner getById(Long id) {
-        return realPropertyOwnerRepository.getOne(id);
-    }
-
-    public void deleteById(Long id) {
-        realPropertyOwnerRepository.deleteById(id);
-    }
-
-    public void update(Long id, RealPropertyOwner var0) {
-        RealPropertyOwner var1 = realPropertyOwnerRepository.getOne(id);
-        BeanUtils.copyProperties(var0, var1);
-        realPropertyOwnerRepository.save(var1);
-    }
-
-    public void save(RealPropertyOwner realProperty) {
-        realPropertyOwnerRepository.save(realProperty);
-    }
-
-    public RealPropertyOwner searchClientByPhoneNumber(String phoneNumber) {
-        if (realPropertyOwnerRepository.findByPhoneNumber(phoneNumber).isPresent()) {
-            return realPropertyOwnerRepository.findByPhoneNumber(phoneNumber).get();
-        } else {
-            return null;
-        }
-    }
+    void deleteOwnerById(Long id);
 }

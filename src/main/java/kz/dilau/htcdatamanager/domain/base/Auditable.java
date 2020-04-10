@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.domain;
+package kz.dilau.htcdatamanager.domain.base;
 
 
 import org.springframework.data.annotation.CreatedBy;
