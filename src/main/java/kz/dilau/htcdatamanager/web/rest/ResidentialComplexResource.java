@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest;
 
-import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
-import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
+import kz.dilau.htcdatamanager.service.dictionary.ResidentialComplexManager;
+import kz.dilau.htcdatamanager.web.rest.vm.ResidentialComplexDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,32 +12,33 @@ import java.util.List;
 @RestController
 @RequestMapping("/dictionaries/residentialComplexes")
 public class ResidentialComplexResource {
-    private final ResidentialComplexRepository repository;
+    private final ResidentialComplexManager residentialComplexManager;
 
     @GetMapping("")
-    public ResponseEntity<List<ResidentialComplex>> getAllResidentialComplexes() {
-        return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<List<ResidentialComplexDto>> getAllResidentialComplexes() {
+        return ResponseEntity.ok(residentialComplexManager.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResidentialComplex> getResidentialComplexById(@PathVariable Long id) {
-        return ResponseEntity.ok(repository.getOne(id));
+    public ResponseEntity<ResidentialComplexDto> getResidentialComplexById(@PathVariable Long id) {
+        return ResponseEntity.ok(residentialComplexManager.getOne(id));
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> saveResidentialComplex(@RequestBody ResidentialComplex parkingType) {
-        return ResponseEntity.ok(repository.save(parkingType).getId());
+    public ResponseEntity<Long> saveResidentialComplex(@RequestBody ResidentialComplexDto dto) {
+        return ResponseEntity.ok(residentialComplexManager.save(dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteResidentialComplexById(@PathVariable Long id) {
-        repository.deleteById(id);
+        residentialComplexManager.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("")
-    public ResponseEntity updateResidentialComplex(@RequestBody ResidentialComplex parkingType) {
-        repository.save(parkingType);
+    @PutMapping("/{id}")
+    public ResponseEntity updateResidentialComplex(@PathVariable Long id,
+                                                   @RequestBody ResidentialComplexDto dto) {
+        residentialComplexManager.update(id, dto);
         return ResponseEntity.noContent().build();
     }
 }

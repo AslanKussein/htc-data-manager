@@ -17,8 +17,9 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "residential_complex")
 public class ResidentialComplex extends AuditableBaseEntity<String, Long> {
-//    @NotNull(message = "Country must not be null")
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //    @NotNull(message = "Country must not be null")
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(optional = false)
 //    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
     @JoinColumn(name = "country_id", referencedColumnName = "id")
     private Country country;
@@ -31,10 +32,10 @@ public class ResidentialComplex extends AuditableBaseEntity<String, Long> {
     @JoinColumn(name = "property_developer_id", referencedColumnName = "id")
     private PropertyDeveloper propertyDeveloper;
 
-//    @Min(1)
+    //    @Min(1)
     @Column(name = "number_of_entrances")
     private Integer numberOfEntrances;
-//    @Min(1)
+    //    @Min(1)
     @Column(name = "number_of_apartments")
     private Integer numberOfApartments;
 

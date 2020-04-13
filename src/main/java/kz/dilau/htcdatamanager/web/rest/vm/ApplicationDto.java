@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @ApiModel(value = "Модель заявки", description = "Модель заявки")
 @Getter
@@ -155,4 +156,6 @@ public class ApplicationDto {
     private Integer numberOfBedroomsFrom;
     @ApiModelProperty(name = "numberOfBedroomsTo", value = "Количество спален до")
     private Integer numberOfBedroomsTo;
+    @ApiModelProperty(name = "filesIds", value = "ID фотографии")
+    private List<String> filesIds;
 }
