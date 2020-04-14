@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.BaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
@@ -25,15 +24,13 @@ public class Event extends BaseEntity<Long> {
     private Date eventDate;
     @ManyToOne
     @JoinColumn(name = "event_type", referencedColumnName = "id")
-    private ApplicationStatus applicationStatus;
-    @ElementCollection
-    @CollectionTable(name = "event_applications", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "application_id")
-    private List<Long> applicationsIds;
-    @ElementCollection
-    @CollectionTable(name = "event_properties", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "real_property_id")
-    private List<Long> realPropertiesIds;
+    private EventType eventType;
+    @ManyToOne
+    @JoinColumn(name = "app_id", referencedColumnName = "id")
+    private Application application;
+    @ManyToOne
+    @JoinColumn(name = "app_id2", referencedColumnName = "id")
+    private Application application2;
     @Column(name = "description")
     private String description;
     @Column(name = "comment")

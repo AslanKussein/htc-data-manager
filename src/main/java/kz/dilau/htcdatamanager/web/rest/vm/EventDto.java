@@ -3,38 +3,39 @@ package kz.dilau.htcdatamanager.web.rest.vm;
 import kz.dilau.htcdatamanager.domain.Event;
 
 import java.util.Date;
-import java.util.List;
 
 public class EventDto {
     private Long id;
     private Date eventDate;
-    private Long applicationStatusId;
-    private List<Long> applicationsIds;
-    private List<Long> realPropertiesIds;
+    private Long eventTypeId;
     private String description;
     private String comment;
     private Long clientId;
+    private Long applicationId;
+    private Long applicationId2;
 
     public EventDto() {
     }
 
-    public EventDto(Long id, Date eventDate, Long applicationStatusId, List<Long> applicationsIds, List<Long> realPropertiesIds, String description, String comment, Long clientId) {
+    public EventDto(Long id, Date eventDate, Long eventTypeId, String description, String comment, Long clientId, Long applicationId, Long applicationId2) {
         this.id = id;
         this.eventDate = eventDate;
-        this.applicationStatusId = applicationStatusId;
-        this.applicationsIds = applicationsIds;
-        this.realPropertiesIds = realPropertiesIds;
+        this.eventTypeId = eventTypeId;
         this.description = description;
         this.comment = comment;
         this.clientId = clientId;
+        this.applicationId = applicationId;
+        this.applicationId2 = applicationId2;
     }
 
     public EventDto(Event event) {
         this.id = event.getId();
         this.eventDate = event.getEventDate();
-        this.applicationStatusId = event.getApplicationStatus().getId();
-        this.applicationsIds = applicationsIds;
-        this.realPropertiesIds = realPropertiesIds;
+        this.eventTypeId = event.getEventType().getId();
+        this.applicationId = event.getApplication().getId();
+        if (event.getApplication2() != null) {
+            this.applicationId2 = event.getApplication2().getId();
+        }
         this.description = description;
         this.comment = comment;
         this.clientId = clientId;
@@ -56,28 +57,12 @@ public class EventDto {
         this.eventDate = eventDate;
     }
 
-    public Long getApplicationStatusId() {
-        return applicationStatusId;
+    public Long getEventTypeId() {
+        return eventTypeId;
     }
 
-    public void setApplicationStatusId(Long applicationStatusId) {
-        this.applicationStatusId = applicationStatusId;
-    }
-
-    public List<Long> getApplicationsIds() {
-        return applicationsIds;
-    }
-
-    public void setApplicationsIds(List<Long> applicationsIds) {
-        this.applicationsIds = applicationsIds;
-    }
-
-    public List<Long> getRealPropertiesIds() {
-        return realPropertiesIds;
-    }
-
-    public void setRealPropertiesIds(List<Long> realPropertiesIds) {
-        this.realPropertiesIds = realPropertiesIds;
+    public void setEventTypeId(Long eventTypeId) {
+        this.eventTypeId = eventTypeId;
     }
 
     public String getDescription() {
@@ -102,5 +87,21 @@ public class EventDto {
 
     public void setClientId(Long clientId) {
         this.clientId = clientId;
+    }
+
+    public Long getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(Long applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    public Long getApplicationId2() {
+        return applicationId2;
+    }
+
+    public void setApplicationId2(Long applicationId2) {
+        this.applicationId2 = applicationId2;
     }
 }

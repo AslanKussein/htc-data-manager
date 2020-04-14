@@ -37,6 +37,31 @@ public class ResidentialComplexManager {
         if (e.getPropertyDeveloper() != null) {
             dto.setPropertyDeveloperId(e.getPropertyDeveloper().getId());
         }
+
+        dto.setApartmentsOnTheSite(e.getApartmentsOnTheSite());
+        dto.setCeilingHeight(e.getCeilingHeight());
+        dto.setConcierge(e.getConcierge());
+        if (e.getDistrict() != null) {
+            dto.setDistrictId(e.getDistrict().getId());
+        }
+
+        dto.setHouseNumber(e.getHouseNumber());
+        dto.setHouseNumberFraction(e.getHouseNumberFraction());
+        if (e.getMaterialOfConstruction() != null) {
+            dto.setMaterialOfConstructionId(e.getMaterialOfConstruction().getId());
+        }
+        dto.setNumberOfFloors(e.getNumberOfFloors());
+        if (e.getParkingType() != null) {
+            dto.setParkingTypeId(e.getParkingType().getId());
+        }
+        dto.setPlayground(e.getPlayground());
+        if (e.getStreet() != null) {
+            dto.setStreetId(e.getStreet().getId());
+        }
+        dto.setTypeOfElevator(e.getTypeOfElevator());
+        dto.setWheelchair(e.getWheelchair());
+        dto.setYardType(e.getYardType());
+        dto.setYearOfConstruction(e.getYearOfConstruction());
         return dto;
     }
 
