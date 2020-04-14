@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
+import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PREFIX;
 
 @Builder
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = TABLE_NAME_PREFIX + "residential_complex")
+@Table(name = DICTIONARY_TABLE_NAME_PREFIX + "residential_complex")
 public class ResidentialComplex extends AuditableBaseEntity<String, Long> {
     //    @NotNull(message = "Country must not be null")
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)

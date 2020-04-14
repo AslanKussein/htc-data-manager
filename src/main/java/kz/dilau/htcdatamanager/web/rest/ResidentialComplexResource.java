@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RestController
+@RestController("test2")
 @RequestMapping("/dictionaries/residentialComplexes")
 public class ResidentialComplexResource {
     private final ResidentialComplexManager residentialComplexManager;

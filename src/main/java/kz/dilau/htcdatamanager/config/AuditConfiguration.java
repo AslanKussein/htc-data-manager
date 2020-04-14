@@ -17,7 +17,7 @@ public class AuditConfiguration {
     @Bean
     public AuditorAware<String> auditorProvider() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null || authentication.isAuthenticated()) {
+        if (authentication != null && authentication.isAuthenticated()) {
             return () -> Optional.of(authentication.getName());
         }
         return () -> Optional.of(SYSTEM_ACCOUNT);//todo to do

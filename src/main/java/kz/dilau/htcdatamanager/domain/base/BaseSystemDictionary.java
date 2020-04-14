@@ -7,9 +7,9 @@ import javax.persistence.MappedSuperclass;
 public class BaseSystemDictionary extends BaseDictionary {
     @Column(name = "code", unique = true, nullable = false)
     private String code;
-    @Column(name = "is_enabled", nullable = false)
+    @Column(name = "is_enabled", nullable = false, columnDefinition = "boolean default true")
     private boolean isEnabled = true;
-    @Column(name = "is_removed", nullable = false)
+    @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
     private boolean isRemoved = false;
 
     public String getCode() {
