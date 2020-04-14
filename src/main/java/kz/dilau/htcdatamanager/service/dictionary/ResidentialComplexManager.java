@@ -34,7 +34,9 @@ public class ResidentialComplexManager {
         dto.setHousingCondition(e.getHousingCondition());
         dto.setNumberOfApartments(e.getNumberOfApartments());
         dto.setNumberOfEntrances(e.getNumberOfEntrances());
-        dto.setPropertyDeveloperId(e.getPropertyDeveloper().getId());
+        if (e.getPropertyDeveloper() != null) {
+            dto.setPropertyDeveloperId(e.getPropertyDeveloper().getId());
+        }
         return dto;
     }
 

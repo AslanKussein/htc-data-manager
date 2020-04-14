@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @RequiredArgsConstructor
 @RestController("test2")
 @RequestMapping("/dictionaries/residentialComplexes")
@@ -15,28 +17,32 @@ public class ResidentialComplexResource {
     private final ResidentialComplexManager residentialComplexManager;
 
     @GetMapping("")
-    public ResponseEntity<List<ResidentialComplexDto>> getAllResidentialComplexes() {
+    public ResponseEntity<List<ResidentialComplexDto>> getAllResidentialComplexes(@RequestHeader(AUTHORIZATION) String token) {
         return ResponseEntity.ok(residentialComplexManager.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResidentialComplexDto> getResidentialComplexById(@PathVariable Long id) {
+    public ResponseEntity<ResidentialComplexDto> getResidentialComplexById(@RequestHeader(AUTHORIZATION) String token,
+                                                                           @PathVariable Long id) {
         return ResponseEntity.ok(residentialComplexManager.getOne(id));
     }
 
     @PostMapping("")
-    public ResponseEntity<Long> saveResidentialComplex(@RequestBody ResidentialComplexDto dto) {
+    public ResponseEntity<Long> saveResidentialComplex(@RequestHeader(AUTHORIZATION) String token,
+                                                       @RequestBody ResidentialComplexDto dto) {
         return ResponseEntity.ok(residentialComplexManager.save(dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteResidentialComplexById(@PathVariable Long id) {
+    public ResponseEntity deleteResidentialComplexById(@RequestHeader(AUTHORIZATION) String token,
+                                                       @PathVariable Long id) {
         residentialComplexManager.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateResidentialComplex(@PathVariable Long id,
+    public ResponseEntity updateResidentialComplex(@RequestHeader(AUTHORIZATION) String token,
+                                                   @PathVariable Long id,
                                                    @RequestBody ResidentialComplexDto dto) {
         residentialComplexManager.update(id, dto);
         return ResponseEntity.noContent().build();
