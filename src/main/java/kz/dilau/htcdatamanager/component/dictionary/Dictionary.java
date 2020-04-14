@@ -36,6 +36,17 @@ public enum Dictionary implements AbstractDictionary {
             return DictionaryType.SYSTEM;
         }
     },
+    YES_NO {
+        @Override
+        public String getTableName() {
+            return DICTIONARY_TABLE_NAME_PREFIX + "yes_no";
+        }
+
+        @Override
+        public DictionaryType getType() {
+            return DictionaryType.SYSTEM;
+        }
+    },
 
     CITIES {
         @Override
