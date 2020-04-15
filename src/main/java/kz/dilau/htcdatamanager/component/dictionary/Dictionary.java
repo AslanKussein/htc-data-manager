@@ -146,5 +146,16 @@ public enum Dictionary implements AbstractDictionary {
         public DictionaryType getType() {
             return DictionaryType.CUSTOM;
         }
+    },
+    TYPE_OF_ELEVATOR {
+        @Override
+        public String getTableName() {
+            return DICTIONARY_TABLE_NAME_PREFIX + "type_of_elevator";
+        }
+
+        @Override
+        public DictionaryType getType() {
+            return DictionaryType.CUSTOM;
+        }
     }
 }
