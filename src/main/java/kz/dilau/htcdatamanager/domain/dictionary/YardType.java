@@ -5,7 +5,9 @@ import kz.dilau.htcdatamanager.domain.base.BaseDictionary;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PREFIX;
+
 @Entity
-@Table(name = "yard_type")
+@Table(name = DICTIONARY_TABLE_NAME_PREFIX + "yard_type")
 public class YardType extends BaseDictionary {
 }
