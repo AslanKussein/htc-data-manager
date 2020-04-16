@@ -3,10 +3,10 @@ package kz.dilau.htcdatamanager.web.rest.vm;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
-import kz.dilau.htcdatamanager.domain.enums.YardType;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -35,11 +35,11 @@ public class ApplicationDto {
     @ApiModelProperty(name = "objectTypeId", value = "ID типа объекта")
     private Long objectTypeId;
     @ApiModelProperty(name = "objectPrice", value = "Цена объекта(млн тг)")
-    private Double objectPrice;
+    private BigDecimal objectPrice;
     @ApiModelProperty(name = "objectPriceFrom", value = "Цена объекта от(млн тг)")
-    private Double objectPriceFrom;
+    private BigDecimal objectPriceFrom;
     @ApiModelProperty(name = "objectPriceTo", value = "Цена объекта до(млн тг)")
-    private Double objectPriceTo;
+    private BigDecimal objectPriceTo;
     @ApiModelProperty(name = "mortgage", value = "Ипотека")
     private Boolean mortgage;//ипотека
     @ApiModelProperty(name = "encumbrance", value = "Обременение")
@@ -52,12 +52,12 @@ public class ApplicationDto {
     private Boolean probabilityOfBidding;//вероятность торга
     @ApiModelProperty(name = "theSizeOfTrades", value = "Размер торга")
     private String theSizeOfTrades;//размер торга
-    @ApiModelProperty(name = "possibleReasonForBiddingId", value = "ID возможной причины торга")
-    private Long possibleReasonForBiddingId;
+    @ApiModelProperty(name = "possibleReasonForBiddingIdList", value = "ID возможных причин торга")
+    private List<Long> possibleReasonForBiddingIdList;
     @ApiModelProperty(name = "contractPeriod", value = "Срок действия договора")
     private Date contractPeriod;
     @ApiModelProperty(name = "amount", value = "Сумма по договору")
-    private Integer amount;
+    private BigDecimal amount;
     @ApiModelProperty(name = "isCommissionIncludedInThePrice", value = "Комиссия включена в стоимость")
     private boolean isCommissionIncludedInThePrice = false;
     @ApiModelProperty(name = "note", value = "Примечание")
@@ -84,15 +84,15 @@ public class ApplicationDto {
     @ApiModelProperty(name = "numberOfRooms", value = "Количество комнат")
     private Integer numberOfRooms;
     @ApiModelProperty(name = "totalArea", value = "Общая площадь")
-    private Integer totalArea;
+    private Double totalArea;
     @ApiModelProperty(name = "livingArea", value = "Жилая площадь")
-    private Integer livingArea;
+    private Double livingArea;
     @ApiModelProperty(name = "kitchenArea", value = "Площадь кухни")
-    private Integer kitchenArea;
+    private Double kitchenArea;
     @ApiModelProperty(name = "balconyArea", value = "Площадь балкона")
-    private Integer balconyArea;
+    private Double balconyArea;
     @ApiModelProperty(name = "ceilingHeight", value = "Высота потолков")
-    private Integer ceilingHeight;
+    private Double ceilingHeight;
     @ApiModelProperty(name = "numberOfBedrooms", value = "Количество спален")
     private Integer numberOfBedrooms;
     @ApiModelProperty(name = "atelier", value = "Студия")
@@ -105,20 +105,20 @@ public class ApplicationDto {
     private String district;
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
     private Integer numberOfFloors;//residentialComplex
-    @ApiModelProperty(name = "apartmentsOnTheSite", value = "Квартир на площадке")
+    @ApiModelProperty(name = "apartmentsOnTheSite", value = "Количество квартир на площадке")
     private String apartmentsOnTheSite;//residentialComplex
     @ApiModelProperty(name = "materialOfConstruction", value = "Материал постройки")
-    private String materialOfConstruction;
+    private Long materialOfConstructionId;
     @ApiModelProperty(name = "yearOfConstruction", value = "Год постройки")
     private Integer yearOfConstruction;//residentialComplex
-    @ApiModelProperty(name = "typeOfElevator", value = "Тип лифта")
-    private String typeOfElevator;
+    @ApiModelProperty(name = "typeOfElevatorList", value = "Тип лифта(мультивыбор)")
+    private List<Long> typeOfElevatorList;
     @ApiModelProperty(name = "concierge", value = "Консьерж")
     private Boolean concierge;
     @ApiModelProperty(name = "wheelchair", value = "Колясочная")
     private Boolean wheelchair;
     @ApiModelProperty(name = "yardType", value = "Двор(закрытый/открытый)", dataType = "string", allowableValues = "PRIVATE, OPEN")
-    private YardType yardType;
+    private Long yardTypeId;
     @ApiModelProperty(name = "playground", value = "Детская площадка")
     private Boolean playground;
     @ApiModelProperty(name = "parkingTypeId", value = "ID вида паркинга")
@@ -133,29 +133,45 @@ public class ApplicationDto {
     @ApiModelProperty(name = "numberOfRoomsTo", value = "Количество комнат до")
     private Integer numberOfRoomsTo;
     @ApiModelProperty(name = "totalAreaFrom", value = "Общая площадь от")
-    private Integer totalAreaFrom;
+    private Double totalAreaFrom;
     @ApiModelProperty(name = "totalAreaTo", value = "Общая площадь до")
-    private Integer totalAreaTo;
+    private Double totalAreaTo;
     @ApiModelProperty(name = "livingAreaFrom", value = "Жилая площадь от")
-    private Integer livingAreaFrom;
+    private Double livingAreaFrom;
     @ApiModelProperty(name = "livingAreaTo", value = "Жилая площадь до")
-    private Integer livingAreaTo;
+    private Double livingAreaTo;
     @ApiModelProperty(name = "kitchenAreaFrom", value = "Площадь кухни от")
-    private Integer kitchenAreaFrom;
+    private Double kitchenAreaFrom;
     @ApiModelProperty(name = "kitchenAreaTo", value = "Площадь кухни до")
-    private Integer kitchenAreaTo;
+    private Double kitchenAreaTo;
     @ApiModelProperty(name = "balconyAreaFrom", value = "Площадь балкона от")
-    private Integer balconyAreaFrom;
+    private Double balconyAreaFrom;
     @ApiModelProperty(name = "balconyAreaTo", value = "Площадь балкона до")
-    private Integer balconyAreaTo;
+    private Double balconyAreaTo;
     @ApiModelProperty(name = "ceilingHeightFrom", value = "Высота потолков от")
-    private Integer ceilingHeightFrom;
+    private Double ceilingHeightFrom;
     @ApiModelProperty(name = "ceilingHeightTo", value = "Высота потолков до")
-    private Integer ceilingHeightTo;
+    private Double ceilingHeightTo;
     @ApiModelProperty(name = "numberOfBedroomsFrom", value = "Количество спален от")
     private Integer numberOfBedroomsFrom;
     @ApiModelProperty(name = "numberOfBedroomsTo", value = "Количество спален до")
     private Integer numberOfBedroomsTo;
-    @ApiModelProperty(name = "filesIds", value = "ID фотографии")
-    private List<String> filesIds;
+    @ApiModelProperty(name = "propertyDeveloperId", value = "Застройщик")
+    private Long propertyDeveloperId;
+    @ApiModelProperty(name = "housingClass", value = "Класс жилья")
+    private String housingClass;
+    @ApiModelProperty(name = "housingCondition", value = "Состояние жилья")
+    private String housingCondition;
+    @ApiModelProperty(name = "photoIdList", value = "Список ID фотографии")
+    private List<String> photoIdList;
+    @ApiModelProperty(name = "housingPlanImageIdList", value = "Список ID фотографии")
+    private List<String> housingPlanImageIdList;
+    @ApiModelProperty(name = "virtualTourImageIdList", value = "Список ID фотографии")
+    private List<String> virtualTourImageIdList;
+    @ApiModelProperty(name = "sewerageId", value = "Канализация")
+    private Long sewerageId;
+    @ApiModelProperty(name = "heatingSystemId", value = "Отопительная система")
+    private Long heatingSystemId;
+    @ApiModelProperty(name = "numberOfApartments", value = "Общее количество квартир")
+    private Integer numberOfApartments;
 }

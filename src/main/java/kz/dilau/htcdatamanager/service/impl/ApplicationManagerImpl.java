@@ -2,7 +2,6 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.service.ApplicationConverter;
 import kz.dilau.htcdatamanager.service.ApplicationManager;
 import kz.dilau.htcdatamanager.service.DataAccessManager;
 import kz.dilau.htcdatamanager.web.rest.vm.*;
@@ -41,13 +40,13 @@ public class ApplicationManagerImpl implements ApplicationManager {
                                 dto.setId(application.getId());
                                 dto.setOperationTypeId(application.getOperationType().getId());
                                 dto.setObjectTypeId(application.getObjectType().getId());
-                                dto.setObjectPrice(application.getObjectPrice());
+//                                dto.setObjectPrice(application.getObjectPrice());
                                 dto.setMortgage(application.getMortgage());
                                 dto.setEncumbrance(application.getEncumbrance());
                                 dto.setSharedOwnershipProperty(application.getSharedOwnershipProperty());
                                 dto.setExchange(application.getExchange());
                                 dto.setProbabilityOfBidding(application.getProbabilityOfBidding());
-                                dto.setPossibleReasonForBiddingId(application.getPossibleReasonForBidding().getId());
+//                                dto.setPossibleReasonForBiddingId(application.getPossibleReasonForBidding().getId());//todo
                                 dto.setTheSizeOfTrades(application.getTheSizeOfTrades());
                                 break;
                             case "NOT_ACCESS_ VIEW_SALE_DEAL_INFO":
@@ -55,17 +54,17 @@ public class ApplicationManagerImpl implements ApplicationManager {
                             case "VIEW_PURCHASE_DEAL_INFO":
                                 dto.setOperationTypeId(application.getOperationType().getId());
                                 dto.setObjectTypeId(application.getObjectType().getId());
-                                dto.setObjectPriceFrom(application.getObjectPriceFrom());
-                                dto.setObjectPriceTo(application.getObjectPriceTo());
+//                                dto.setObjectPriceFrom(application.getObjectPriceFrom());
+//                                dto.setObjectPriceTo(application.getObjectPriceTo());
                                 dto.setMortgage(application.getMortgage());
                                 dto.setProbabilityOfBidding(application.getProbabilityOfBidding());
-                                dto.setPossibleReasonForBiddingId(application.getPossibleReasonForBidding().getId());
+//                                dto.setPossibleReasonForBiddingId(application.getPossibleReasonForBidding().getId());//todo
                                 break;
                             case "NOT_ACCESS_ VIEW_PURCHASE_DEAL_INFO":
                                 break;
                             case "VIEW_DEAL_DATA":
                                 dto.setContractPeriod(application.getContractPeriod());
-                                dto.setAmount(application.getAmount());
+//                                dto.setAmount(application.getAmount());//todo
                                 dto.setCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice());
                                 break;
                         }
@@ -98,10 +97,22 @@ public class ApplicationManagerImpl implements ApplicationManager {
                                 final ApplicationType applicationType,
                                 final ApplicationDto dto) {
         //todo validate inputs
-        final ApplicationConverter converter = appContext.getBean(applicationType.getConverterName(), ApplicationConverter.class);
-        final Application application = converter.convertFromDto(dto);
+//        final ApplicationConverter converter = appContext.getBean(applicationType.getConverterName(), ApplicationConverter.class);
+//        final Application application = converter.convertFromDto(dto);
+        Application application = new Application();
+//        application.set
+//        application.set
+//        application.set
+//        application.set
+//        application.set
+//        application.set
+//        application.set
+//        application.set
+//        application.set
+
+
         Long id = applicationRepository.save(application).getId();
-        return id;
+        return 1L;
     }
 
     @Override
