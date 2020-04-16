@@ -99,7 +99,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         //todo validate inputs
 //        final ApplicationConverter converter = appContext.getBean(applicationType.getConverterName(), ApplicationConverter.class);
 //        final Application application = converter.convertFromDto(dto);
-        Application application = new Application();
+//        Application application = new Application();
 //        application.set
 //        application.set
 //        application.set
@@ -111,7 +111,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 //        application.set
 
 
-        Long id = applicationRepository.save(application).getId();
+//        Long id = applicationRepository.save(application).getId();
         return 1L;
     }
 
