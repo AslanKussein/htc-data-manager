@@ -2,7 +2,6 @@ package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
 import lombok.AllArgsConstructor;
@@ -11,9 +10,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
@@ -24,20 +24,11 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "application")
 public class Application extends AuditableBaseEntity<String, Long> {
-    @NotNull(message = "Operation type must not be null")
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "operation_type_id", referencedColumnName = "id", nullable = false)
     private OperationType operationType;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "object_type_id", referencedColumnName = "id")
-    private ObjectType objectType;
     @Column(name = "object_price")
-    private Double objectPrice;
-    @Column(name = "object_price_from")
-    private Double objectPriceFrom;
-    @Column(name = "object_price_to")
-    private Double objectPriceTo;
+    private BigDecimal objectPrice;
     @Column(name = "mortgage")
     private Boolean mortgage;//ипотека
     @Column(name = "encumbrance")
@@ -50,22 +41,25 @@ public class Application extends AuditableBaseEntity<String, Long> {
     private Boolean probabilityOfBidding;//вероятность торга
     @Column(name = "the_size_of_trades")
     private String theSizeOfTrades;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "possible_reason_for_bidding_id", referencedColumnName = "id")
-    private PossibleReasonForBidding possibleReasonForBidding;
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = TABLE_NAME_PREFIX + "application_possible_reason_for_bidding",
+            joinColumns = @JoinColumn(name = "application_id"),
+            inverseJoinColumns = @JoinColumn(name = "possible_reason_for_bidding_id")
+    )
+    private Set<PossibleReasonForBidding> possibleReasonsForBidding = new HashSet<>();
     @Column(name = "contract_period")
     @Temporal(TemporalType.DATE)
     private Date contractPeriod;
-    @Min(0)
     @Column(name = "the_amount_of_the_contract")
-    private Integer amount;
-    @NotNull(message = "Commission is included in the price must not be null")
+    private BigDecimal amount;
     @Column(name = "is_commission_included_in_the_price", nullable = false)
     private boolean isCommissionIncludedInThePrice = false;
     @Column(name = "note")
     private String note;
-    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
     private RealPropertyOwner owner;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
