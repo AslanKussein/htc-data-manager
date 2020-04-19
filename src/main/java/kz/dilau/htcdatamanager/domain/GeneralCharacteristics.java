@@ -24,7 +24,7 @@ public class GeneralCharacteristics {
     @Id
     @Column(name = "id")
     private Long id;
-    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
 //    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
 //    private Country country;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

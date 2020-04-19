@@ -1,14 +1,20 @@
 package kz.dilau.htcdatamanager.domain;
 
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
+import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
@@ -17,6 +23,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
+@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "real_property")
 public class RealProperty extends AuditableBaseEntity<String, Long> {
@@ -54,9 +61,7 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     private PurchaseInfo purchaseInfo;
-
-    @ElementCollection
-    @CollectionTable(name = "real_property_files", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "file_id")
-    private Set<String> filesIds;
+    @Type(type = "jsonb")
+    @Column(name = "files_map", columnDefinition = "jsonb")
+    private Map<RealPropertyFileType, Set<String>> filesMap = new HashMap<>();
 }
