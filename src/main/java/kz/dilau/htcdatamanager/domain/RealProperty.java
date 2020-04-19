@@ -33,8 +33,6 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private Street street;
 
 
-
-
     @Column(name = "cadastral_number", unique = true)
     private String cadastralNumber;
 
@@ -43,13 +41,8 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @JoinColumn(name = "residential_complex_id", referencedColumnName = "id")
     private ResidentialComplex residentialComplex;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = TABLE_NAME_PREFIX + "real_property_info",
-            joinColumns =
-            @JoinColumn(name = "property_id", referencedColumnName = "id"),
-            inverseJoinColumns =
-            @JoinColumn(name = "info_id", referencedColumnName = "id"))//todo rename table later)
+    @OneToOne
+    @MapsId
     private GeneralCharacteristics generalCharacteristics;
 
     @Column(name = "floor")
