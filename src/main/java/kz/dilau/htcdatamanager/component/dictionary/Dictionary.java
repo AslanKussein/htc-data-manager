@@ -157,5 +157,27 @@ public enum Dictionary implements AbstractDictionary {
         public DictionaryType getType() {
             return DictionaryType.CUSTOM;
         }
+    },
+    SEWERAGE_SYSTEMS {
+        @Override
+        public String getTableName() {
+            return DICTIONARY_TABLE_NAME_PREFIX + "sewerage";
+        }
+
+        @Override
+        public DictionaryType getType() {
+            return DictionaryType.CUSTOM;
+        }
+    },
+    HEATING_SYSTEMS {
+        @Override
+        public String getTableName() {
+            return DICTIONARY_TABLE_NAME_PREFIX + "heating_system";
+        }
+
+        @Override
+        public DictionaryType getType() {
+            return DictionaryType.CUSTOM;
+        }
     }
 }
