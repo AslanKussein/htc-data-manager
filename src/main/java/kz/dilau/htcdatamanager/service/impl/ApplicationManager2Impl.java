@@ -1,8 +1,10 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.RealPropertyOwner;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.service.ApplicationManager;
+import kz.dilau.htcdatamanager.repository.RealPropertyOwnerRepository;
+import kz.dilau.htcdatamanager.service.ApplicationManager2;
 import kz.dilau.htcdatamanager.service.DataAccessManager;
 import kz.dilau.htcdatamanager.web.rest.vm.*;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +19,14 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class ApplicationManagerImpl implements ApplicationManager {
+public class ApplicationManager2Impl implements ApplicationManager2 {
     private final ApplicationContext appContext;
     private final ApplicationRepository applicationRepository;
     private final DataAccessManager dataAccessManager;
+    private final RealPropertyOwnerRepository rpoRepository;
 
     @Override
+
     public ApplicationDto getApplicationById(final String token, Long id) {
         ApplicationDto dto = new ApplicationDto();
         ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessManager.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
@@ -39,7 +43,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
                             case "VIEW_SALE_DEAL_INFO":
                                 dto.setId(application.getId());
                                 dto.setOperationTypeId(application.getOperationType().getId());
-                                dto.setObjectTypeId(application.getObjectType().getId());
+//                                dto.setObjectTypeId(application.getObjectType().getId());
 //                                dto.setObjectPrice(application.getObjectPrice());
                                 dto.setMortgage(application.getMortgage());
                                 dto.setEncumbrance(application.getEncumbrance());
@@ -53,7 +57,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
                                 break;
                             case "VIEW_PURCHASE_DEAL_INFO":
                                 dto.setOperationTypeId(application.getOperationType().getId());
-                                dto.setObjectTypeId(application.getObjectType().getId());
+//                                dto.setObjectTypeId(application.getObjectType().getId());
 //                                dto.setObjectPriceFrom(application.getObjectPriceFrom());
 //                                dto.setObjectPriceTo(application.getObjectPriceTo());
                                 dto.setMortgage(application.getMortgage());
@@ -96,6 +100,28 @@ public class ApplicationManagerImpl implements ApplicationManager {
     public Long saveApplication(final String token,
                                 final ApplicationType applicationType,
                                 final ApplicationDto dto) {
+        Application.ApplicationBuilder builder = Application.builder();
+        RealPropertyOwner owner;
+        if (dto.getClientId() == null) {
+            owner = RealPropertyOwner.builder()
+                    .firstName(dto.getFirstName())
+                    .surname(dto.getSurname())
+                    .patronymic(dto.getPatronymic())
+                    .phoneNumber(dto.getPhoneNumber())
+                    .email(dto.getEmail())
+                    .gender(dto.getGender())
+                    .build();
+            rpoRepository.save(owner);
+        } else {
+            owner = rpoRepository.getOne(dto.getClientId());
+        }
+        builder.owner(owner);
+
+
+
+
+
+
         //todo validate inputs
 //        final ApplicationConverter converter = appContext.getBean(applicationType.getConverterName(), ApplicationConverter.class);
 //        final Application application = converter.convertFromDto(dto);

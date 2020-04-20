@@ -8,8 +8,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
+
 @Entity
-@Table(name = "application_status_history")
+@Table(name = TABLE_NAME_PREFIX + "application_status_history")
 public class ApplicationStatusHistory extends AuditableBaseEntity<String, Long> {
     @ManyToOne
     @JoinColumn(name = "application_status_id", referencedColumnName = "id")

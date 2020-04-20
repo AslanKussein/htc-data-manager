@@ -6,7 +6,7 @@ import kz.dilau.htcdatamanager.web.rest.vm.RecentlyCreatedApplication;
 
 import java.util.List;
 
-public interface ApplicationManager {
+public interface ApplicationManager2 {
     ApplicationDto getApplicationById(String token, Long id);
 
     Long saveApplication(String token, ApplicationType type, ApplicationDto dto);

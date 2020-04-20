@@ -11,7 +11,6 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PREFIX;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Data
@@ -28,13 +27,13 @@ public class GeneralCharacteristics {
 //    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
 //    private Country country;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "city_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "city_id", nullable = false)
     private City city;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "district_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "district_id", nullable = false)
     private District district;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "street_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "street_id", nullable = false)
     private Street street;
     @Column(name = "house_number", nullable = false)
     private Integer houseNumber;
@@ -43,7 +42,7 @@ public class GeneralCharacteristics {
     @Column(name = "ceiling_height", nullable = false)
     private Double ceilingHeight;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "property_developer_id", referencedColumnName = "id")
+    @JoinColumn(name = "property_developer_id")
     private PropertyDeveloper propertyDeveloper;
     @Column(name = "housing_class")
     private String housingClass;
@@ -58,11 +57,11 @@ public class GeneralCharacteristics {
     @Column(name = "apartments_on_the_site")
     private String apartmentsOnTheSite;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "material_of_construction_id", referencedColumnName = "id")
+    @JoinColumn(name = "material_of_construction_id")
     private MaterialOfConstruction materialOfConstruction;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = DICTIONARY_TABLE_NAME_PREFIX + "general_characteristics_type_of_elevator",
+            name = TABLE_NAME_PREFIX + "general_characteristics_type_of_elevator",
             joinColumns = @JoinColumn(name = "general_characteristics_id"),
             inverseJoinColumns = @JoinColumn(name = "type_of_elevator_id")
     )
@@ -72,10 +71,10 @@ public class GeneralCharacteristics {
     @Column(name = "wheelchair")
     private Boolean wheelchair;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parking_type_id", referencedColumnName = "id")
+    @JoinColumn(name = "parking_type_id")
     private ParkingType parkingType;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "yard_type_id", referencedColumnName = "id")
+    @JoinColumn(name = "yard_type_id")
     private YardType yardType;
     @Column(name = "playground")
     private Boolean playground;

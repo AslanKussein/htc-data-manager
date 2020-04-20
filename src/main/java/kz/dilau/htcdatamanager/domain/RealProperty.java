@@ -2,8 +2,10 @@ package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
+import kz.dilau.htcdatamanager.domain.dictionary.HeatingSystem;
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
+import kz.dilau.htcdatamanager.domain.dictionary.Sewerage;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +30,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Table(name = TABLE_NAME_PREFIX + "real_property")
 public class RealProperty extends AuditableBaseEntity<String, Long> {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "object_type_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "object_type_id", nullable = false)
     private ObjectType objectType;
     @Column(name = "cadastral_number", unique = true)
     private String cadastralNumber;
@@ -56,12 +58,21 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @MapsId
     private GeneralCharacteristics generalCharacteristics;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "residential_complex_id", referencedColumnName = "id")
+    @JoinColumn(name = "residential_complex_id")
     private ResidentialComplex residentialComplex;
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     private PurchaseInfo purchaseInfo;
+    //    @Convert(converter = FilesMapConverter.class)
     @Type(type = "jsonb")
     @Column(name = "files_map", columnDefinition = "jsonb")
     private Map<RealPropertyFileType, Set<String>> filesMap = new HashMap<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sewerage_id")
+    private Sewerage sewerage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "heating_system_id")
+    private HeatingSystem heatingSystem;
+    @Column(name = "land_area", nullable = false)
+    private Double landArea;
 }

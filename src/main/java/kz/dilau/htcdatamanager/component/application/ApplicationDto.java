@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.web.rest.vm;
+package kz.dilau.htcdatamanager.component.application;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

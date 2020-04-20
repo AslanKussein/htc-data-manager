@@ -25,7 +25,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Table(name = TABLE_NAME_PREFIX + "application")
 public class Application extends AuditableBaseEntity<String, Long> {
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "operation_type_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "operation_type_id", nullable = false)
     private OperationType operationType;
     @Column(name = "object_price")
     private BigDecimal objectPrice;
@@ -41,11 +41,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
     private Boolean probabilityOfBidding;//вероятность торга
     @Column(name = "the_size_of_trades")
     private String theSizeOfTrades;
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = TABLE_NAME_PREFIX + "application_possible_reason_for_bidding",
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = TABLE_NAME_PREFIX + "application_possible_reason_for_bidding",
             joinColumns = @JoinColumn(name = "application_id"),
             inverseJoinColumns = @JoinColumn(name = "possible_reason_for_bidding_id")
     )
@@ -60,12 +58,12 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @Column(name = "note")
     private String note;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private RealPropertyOwner owner;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "real_property_id", referencedColumnName = "id")
+    @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    @JoinColumn(name = "application_status_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "application_status_id", nullable = false)
     private ApplicationStatus applicationStatus;
 }

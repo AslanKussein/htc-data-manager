@@ -1,6 +1,5 @@
 package kz.dilau.htcdatamanager.domain.base;
 
-import kz.dilau.htcdatamanager.domain.base.Auditable;
 
 import javax.persistence.*;
 

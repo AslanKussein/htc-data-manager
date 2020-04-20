@@ -20,6 +20,6 @@ public class AuditConfiguration {
         if (authentication != null && authentication.isAuthenticated()) {
             return () -> Optional.of(authentication.getName());
         }
-        return () -> Optional.of(SYSTEM_ACCOUNT);//todo to do
+        return () -> Optional.of(SYSTEM_ACCOUNT);
     }
 }
