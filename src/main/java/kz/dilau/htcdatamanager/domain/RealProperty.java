@@ -15,6 +15,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -29,8 +30,8 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "real_property")
 public class RealProperty extends AuditableBaseEntity<String, Long> {
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "object_type_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "object_type_id")
     private ObjectType objectType;
     @Column(name = "cadastral_number", unique = true)
     private String cadastralNumber;
@@ -40,29 +41,23 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private String apartmentNumber;
     @Column(name = "number_of_rooms")
     private Integer numberOfRooms;
-    @Column(name = "total_area", nullable = false)
-    private Double totalArea;
-    @Column(name = "living_area", nullable = false)
-    private Double livingArea;
-    @Column(name = "kitchen_area", nullable = false)
-    private Double kitchenArea;
+    @Column(name = "total_area")
+    private BigDecimal totalArea;
+    @Column(name = "living_area")
+    private BigDecimal livingArea;
+    @Column(name = "kitchen_area")
+    private BigDecimal kitchenArea;
     @Column(name = "balcony_area")
-    private Double balconyArea;
-    @Column(name = "number_of_bedrooms", nullable = false)
+    private BigDecimal balconyArea;
+    @Column(name = "number_of_bedrooms")
     private Integer numberOfBedrooms;
     @Column(name = "atelier")
     private Boolean atelier;//студия
     @Column(name = "separate_bathroom")
     private Boolean separateBathroom;
-    @OneToOne
-    @MapsId
-    private GeneralCharacteristics generalCharacteristics;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "residential_complex_id")
     private ResidentialComplex residentialComplex;
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private PurchaseInfo purchaseInfo;
     //    @Convert(converter = FilesMapConverter.class)
     @Type(type = "jsonb")
     @Column(name = "files_map", columnDefinition = "jsonb")
@@ -73,6 +68,15 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "heating_system_id")
     private HeatingSystem heatingSystem;
-    @Column(name = "land_area", nullable = false)
-    private Double landArea;
+    @Column(name = "land_area")
+    private BigDecimal landArea;
+
+    public Map<RealPropertyFileType, Set<String>> getFilesMap() {
+        if (filesMap == null) {
+            filesMap = new HashMap<>();
+        }
+        return filesMap;
+    }
+
+
 }

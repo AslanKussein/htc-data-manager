@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
@@ -36,35 +33,39 @@ public class PurchaseInfo {
     @Column(name = "number_of_rooms_to")
     private Integer numberOfRoomsTo;
     @Column(name = "total_area_from")
-    private Double totalAreaFrom;
+    private BigDecimal totalAreaFrom;
     @Column(name = "total_area_to")
-    private Double totalAreaTo;
+    private BigDecimal totalAreaTo;
     @Column(name = "living_area_from")
-    private Double livingAreaFrom;
+    private BigDecimal livingAreaFrom;
     @Column(name = "living_area_to")
-    private Double livingAreaTo;
+    private BigDecimal livingAreaTo;
     @Column(name = "kitchen_area_from")
-    private Double kitchenAreaFrom;
+    private BigDecimal kitchenAreaFrom;
     @Column(name = "kitchen_area_to")
-    private Double kitchenAreaTo;
+    private BigDecimal kitchenAreaTo;
     @Column(name = "balcony_area_from")
-    private Double balconyAreaFrom;
+    private BigDecimal balconyAreaFrom;
     @Column(name = "balcony_area_to")
-    private Double balconyAreaTo;
+    private BigDecimal balconyAreaTo;
     @Column(name = "ceiling_height_from")
-    private Double ceilingHeightFrom;
+    private BigDecimal ceilingHeightFrom;
     @Column(name = "ceiling_height_to")
-    private Double ceilingHeightTo;
+    private BigDecimal ceilingHeightTo;
     @Column(name = "number_of_bedrooms_from")
     private Integer numberOfBedroomsFrom;
     @Column(name = "number_of_bedrooms_to")
     private Integer numberOfBedroomsTo;
     @Column(name = "land_area_from")
-    private Double landAreaFrom;
+    private BigDecimal landAreaFrom;
     @Column(name = "land_area_to")
-    private Double landAreaTo;
+    private BigDecimal landAreaTo;
     @Column(name = "number_of_floors_from")
     private Integer numberOfFloorsFrom;
     @Column(name = "number_of_floors_to")
     private Integer numberOfFloorsTo;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    private RealProperty realProperty;
 }

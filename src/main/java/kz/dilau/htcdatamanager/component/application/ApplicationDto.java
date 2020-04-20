@@ -86,15 +86,15 @@ public class ApplicationDto {
     @ApiModelProperty(name = "numberOfRooms", value = "Количество комнат")
     private Integer numberOfRooms;
     @ApiModelProperty(name = "totalArea", value = "Общая площадь")
-    private Double totalArea;
+    private BigDecimal totalArea;
     @ApiModelProperty(name = "livingArea", value = "Жилая площадь")
-    private Double livingArea;
+    private BigDecimal livingArea;
     @ApiModelProperty(name = "kitchenArea", value = "Площадь кухни")
-    private Double kitchenArea;
+    private BigDecimal kitchenArea;
     @ApiModelProperty(name = "balconyArea", value = "Площадь балкона")
-    private Double balconyArea;
+    private BigDecimal balconyArea;
     @ApiModelProperty(name = "ceilingHeight", value = "Высота потолков")
-    private Double ceilingHeight;
+    private BigDecimal ceilingHeight;
     @ApiModelProperty(name = "numberOfBedrooms", value = "Количество спален")
     private Integer numberOfBedrooms;
     @ApiModelProperty(name = "atelier", value = "Студия")
@@ -138,25 +138,25 @@ public class ApplicationDto {
     @ApiModelProperty(name = "numberOfRoomsTo", value = "Количество комнат до")
     private Integer numberOfRoomsTo;
     @ApiModelProperty(name = "totalAreaFrom", value = "Общая площадь от")
-    private Double totalAreaFrom;
+    private BigDecimal totalAreaFrom;
     @ApiModelProperty(name = "totalAreaTo", value = "Общая площадь до")
-    private Double totalAreaTo;
+    private BigDecimal totalAreaTo;
     @ApiModelProperty(name = "livingAreaFrom", value = "Жилая площадь от")
-    private Double livingAreaFrom;
+    private BigDecimal livingAreaFrom;
     @ApiModelProperty(name = "livingAreaTo", value = "Жилая площадь до")
-    private Double livingAreaTo;
+    private BigDecimal livingAreaTo;
     @ApiModelProperty(name = "kitchenAreaFrom", value = "Площадь кухни от")
-    private Double kitchenAreaFrom;
+    private BigDecimal kitchenAreaFrom;
     @ApiModelProperty(name = "kitchenAreaTo", value = "Площадь кухни до")
-    private Double kitchenAreaTo;
+    private BigDecimal kitchenAreaTo;
     @ApiModelProperty(name = "balconyAreaFrom", value = "Площадь балкона от")
-    private Double balconyAreaFrom;
+    private BigDecimal balconyAreaFrom;
     @ApiModelProperty(name = "balconyAreaTo", value = "Площадь балкона до")
-    private Double balconyAreaTo;
+    private BigDecimal balconyAreaTo;
     @ApiModelProperty(name = "ceilingHeightFrom", value = "Высота потолков от")
-    private Double ceilingHeightFrom;
+    private BigDecimal ceilingHeightFrom;
     @ApiModelProperty(name = "ceilingHeightTo", value = "Высота потолков до")
-    private Double ceilingHeightTo;
+    private BigDecimal ceilingHeightTo;
     @ApiModelProperty(name = "numberOfBedroomsFrom", value = "Количество спален от")
     private Integer numberOfBedroomsFrom;
     @ApiModelProperty(name = "numberOfBedroomsTo", value = "Количество спален до")
@@ -180,9 +180,9 @@ public class ApplicationDto {
     @ApiModelProperty(name = "numberOfApartments", value = "Общее количество квартир")
     private Integer numberOfApartments;
     @ApiModelProperty(name = "landArea", value = "Площадь участка")
-    private Double landArea;
+    private BigDecimal landArea;
     @ApiModelProperty(name = "landAreaFrom", value = "Площадь участка от")
-    private Double landAreaFrom;
+    private BigDecimal landAreaFrom;
     @ApiModelProperty(name = "landAreaTo", value = "Площадь участка до")
-    private Double landAreaTo;
+    private BigDecimal landAreaTo;
 }

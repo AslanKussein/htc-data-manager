@@ -116,10 +116,11 @@ public class ApplicationManagerImpl implements ApplicationManager {
                     YardType yardType = entityManager.getReference(YardType.class, dto.getYardTypeId());
                     gcBuilder.yardType(yardType);
                 }
-                gcBuilder.id(id);
+//                gcBuilder.id(id);
+                gcBuilder.realProperty(realProperty);
                 GeneralCharacteristics generalCharacteristics = gcBuilder.build();
                 gcRepository.save(generalCharacteristics);
-                realProperty.setGeneralCharacteristics(generalCharacteristics);
+//                realProperty.setGeneralCharacteristics(generalCharacteristics);
                 rpRepository.save(realProperty);
             }
             //typesOfElevator
@@ -148,10 +149,11 @@ public class ApplicationManagerImpl implements ApplicationManager {
                         .landAreaTo(dto.getLandAreaTo())
                         .numberOfFloorsFrom(dto.getNumberOfFloorsFrom())
                         .numberOfFloorsTo(dto.getNumberOfFloorsTo())
-                        .id(id)
+                        .realProperty(realProperty)
+//                        .id(id)
                         .build();
                 piRepository.save(purchaseInfo);
-                realProperty.setPurchaseInfo(purchaseInfo);
+//                realProperty.setPurchaseInfo(purchaseInfo);
                 rpRepository.save(realProperty);
                 if (!CollectionUtils.isEmpty(dto.getHousingPlanImageIdList())) {
                     realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(dto.getHousingPlanImageIdList()));

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,24 +24,24 @@ public class GeneralCharacteristics {
     @Id
     @Column(name = "id")
     private Long id;
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
 //    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
 //    private Country country;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "city_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "city_id")
     private City city;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "district_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "district_id")
     private District district;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "street_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "street_id")
     private Street street;
-    @Column(name = "house_number", nullable = false)
+    @Column(name = "house_number")
     private Integer houseNumber;
     @Column(name = "house_number_fraction")
     private String houseNumberFraction;
-    @Column(name = "ceiling_height", nullable = false)
-    private Double ceilingHeight;
+    @Column(name = "ceiling_height")
+    private BigDecimal ceilingHeight;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_developer_id")
     private PropertyDeveloper propertyDeveloper;
@@ -78,4 +79,7 @@ public class GeneralCharacteristics {
     private YardType yardType;
     @Column(name = "playground")
     private Boolean playground;
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId
+    private RealProperty realProperty;
 }

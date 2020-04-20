@@ -53,7 +53,7 @@ public class Application extends AuditableBaseEntity<String, Long> {
     private Date contractPeriod;
     @Column(name = "the_amount_of_the_contract")
     private BigDecimal amount;
-    @Column(name = "is_commission_included_in_the_price", nullable = false)
+    @Column(name = "is_commission_included_in_the_price")
     private boolean isCommissionIncludedInThePrice = false;
     @Column(name = "note")
     private String note;
@@ -64,6 +64,6 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "application_status_id", nullable = false)
+    @JoinColumn(name = "application_status_id")
     private ApplicationStatus applicationStatus;
 }
