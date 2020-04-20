@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.service.dictionary;
 
-import kz.dilau.htcdatamanager.domain.base.BaseDictionary;
+import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.base.MultiLang;
 import kz.dilau.htcdatamanager.repository.dictionary.DictionaryRepository;
 import kz.dilau.htcdatamanager.web.rest.vm.dictionary.DictionaryDto;
@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public abstract class AbstractDictionaryManager<E extends BaseDictionary, R extends DictionaryRepository<E>> implements DictionaryManager {
+public abstract class AbstractDictionaryManager<E extends BaseCustomDictionary, R extends DictionaryRepository<E>> implements DictionaryManager {
     protected final R repository;
 
     @Override
     public DictionaryDto getDictionaryById(Long id) {
-        BaseDictionary dictionary = repository.getOne(id);
+        BaseCustomDictionary dictionary = repository.getOne(id);
         return new DictionaryDto(dictionary);
     }
 
@@ -31,13 +31,13 @@ public abstract class AbstractDictionaryManager<E extends BaseDictionary, R exte
     // TODO: 10.04.20 сохранение не работает!
     @Override
     public Long saveDictionary(DictionaryDto dictionary) {
-        BaseDictionary baseDictionary = (BaseDictionary) new Object();
+        BaseCustomDictionary baseCustomDictionary = (BaseCustomDictionary) new Object();
         MultiLang multiLang = new MultiLang();
         multiLang.setNameKz(dictionary.getNameKz());
         multiLang.setNameEn(dictionary.getNameEn());
         multiLang.setNameEn(dictionary.getNameEn());
-        baseDictionary.setMultiLang(multiLang);
-        E e = repository.save((E) baseDictionary);
+        baseCustomDictionary.setMultiLang(multiLang);
+        E e = repository.save((E) baseCustomDictionary);
         return e.getId();
     }
 

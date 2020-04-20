@@ -9,7 +9,7 @@ import javax.persistence.MappedSuperclass;
 @Getter
 @Setter
 @MappedSuperclass
-public class BaseSystemDictionary extends BaseDictionary {
+public class BaseSystemDictionary extends BaseCustomDictionary {
     @Column(name = "code", unique = true, nullable = false)
     private String code;
     @Column(name = "is_enabled", nullable = false, columnDefinition = "boolean default true")

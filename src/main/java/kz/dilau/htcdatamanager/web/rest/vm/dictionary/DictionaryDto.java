@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest.vm.dictionary;
 
 import io.swagger.annotations.ApiModel;
-import kz.dilau.htcdatamanager.domain.base.BaseDictionary;
+import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +18,7 @@ public class DictionaryDto {
     private String nameEn;
     private String nameRu;
 
-    public DictionaryDto(BaseDictionary dictionary) {
+    public DictionaryDto(BaseCustomDictionary dictionary) {
         this.id = dictionary.getId();
         this.nameKz = dictionary.getMultiLang().getNameKz();
         this.nameEn = dictionary.getMultiLang().getNameEn();

@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.domain.dictionary;
 
-import kz.dilau.htcdatamanager.domain.base.BaseDictionary;
+import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +10,7 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
 
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "possible_reason_for_bidding")
-public class PossibleReasonForBidding extends BaseDictionary {
+public class PossibleReasonForBidding extends BaseCustomDictionary {
     @Column(name = "operation_code")
     private String operationCode;
 

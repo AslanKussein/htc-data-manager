@@ -4,7 +4,7 @@ import javax.persistence.Embedded;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public abstract class BaseDictionary extends BaseEntity<Long> {
+public abstract class BaseCustomDictionary extends BaseEntity<Long> {
     @Embedded
     private MultiLang multiLang;
 
