@@ -31,10 +31,6 @@ public class ApplicationDto {
     private Long operationTypeId;
     @ApiModelProperty(name = "objectPrice", value = "Цена объекта(млн тг)")
     private BigDecimal objectPrice;
-    @ApiModelProperty(name = "objectPriceFrom", value = "Цена объекта от(млн тг)")
-    private BigDecimal objectPriceFrom;
-    @ApiModelProperty(name = "objectPriceTo", value = "Цена объекта до(млн тг)")
-    private BigDecimal objectPriceTo;
     @ApiModelProperty(name = "mortgage", value = "Ипотека")
     private Boolean mortgage;//ипотека
     @ApiModelProperty(name = "encumbrance", value = "Обременение")

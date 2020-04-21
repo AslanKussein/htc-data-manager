@@ -4,9 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -14,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel(description = "Модель сущности Клиент")
+@ApiModel(description = "Модель сущности недвижимости")
 public class RealPropertyRequestDto {
     @ApiModelProperty(name = "objectTypeId", value = "ID типа объекта")
     private Long objectTypeId;
@@ -56,10 +54,6 @@ public class RealPropertyRequestDto {
     private Long districtId;
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
     private Integer numberOfFloors;//residentialComplex
-    @ApiModelProperty(name = "numberOfFloorsFrom", value = "Этажность дома от")
-    private Integer numberOfFloorsFrom;
-    @ApiModelProperty(name = "numberOfFloorsTo", value = "Этажность дома до")
-    private Integer numberOfFloorsTo;
     @ApiModelProperty(name = "apartmentsOnTheSite", value = "Количество квартир на площадке")
     private String apartmentsOnTheSite;//residentialComplex
     @ApiModelProperty(name = "materialOfConstruction", value = "Материал постройки")
@@ -78,38 +72,6 @@ public class RealPropertyRequestDto {
     private Boolean playground;
     @ApiModelProperty(name = "parkingTypeId", value = "ID вида паркинга")
     private Long parkingTypeId;
-    @ApiModelProperty(name = "floorFrom", value = "Этаж от")
-    private Integer floorFrom;
-    @ApiModelProperty(name = "floorTo", value = "Этаж до")
-    private Integer floorTo;
-    @ApiModelProperty(name = "numberOfRoomsFrom", value = "Количество комнат от")
-    private Integer numberOfRoomsFrom;
-    @ApiModelProperty(name = "numberOfRoomsTo", value = "Количество комнат до")
-    private Integer numberOfRoomsTo;
-    @ApiModelProperty(name = "totalAreaFrom", value = "Общая площадь от")
-    private BigDecimal totalAreaFrom;
-    @ApiModelProperty(name = "totalAreaTo", value = "Общая площадь до")
-    private BigDecimal totalAreaTo;
-    @ApiModelProperty(name = "livingAreaFrom", value = "Жилая площадь от")
-    private BigDecimal livingAreaFrom;
-    @ApiModelProperty(name = "livingAreaTo", value = "Жилая площадь до")
-    private BigDecimal livingAreaTo;
-    @ApiModelProperty(name = "kitchenAreaFrom", value = "Площадь кухни от")
-    private BigDecimal kitchenAreaFrom;
-    @ApiModelProperty(name = "kitchenAreaTo", value = "Площадь кухни до")
-    private BigDecimal kitchenAreaTo;
-    @ApiModelProperty(name = "balconyAreaFrom", value = "Площадь балкона от")
-    private BigDecimal balconyAreaFrom;
-    @ApiModelProperty(name = "balconyAreaTo", value = "Площадь балкона до")
-    private BigDecimal balconyAreaTo;
-    @ApiModelProperty(name = "ceilingHeightFrom", value = "Высота потолков от")
-    private BigDecimal ceilingHeightFrom;
-    @ApiModelProperty(name = "ceilingHeightTo", value = "Высота потолков до")
-    private BigDecimal ceilingHeightTo;
-    @ApiModelProperty(name = "numberOfBedroomsFrom", value = "Количество спален от")
-    private Integer numberOfBedroomsFrom;
-    @ApiModelProperty(name = "numberOfBedroomsTo", value = "Количество спален до")
-    private Integer numberOfBedroomsTo;
     @ApiModelProperty(name = "propertyDeveloperId", value = "Застройщик")
     private Long propertyDeveloperId;
     @ApiModelProperty(name = "housingClass", value = "Класс жилья")
@@ -130,10 +92,8 @@ public class RealPropertyRequestDto {
     private Integer numberOfApartments;
     @ApiModelProperty(name = "landArea", value = "Площадь участка")
     private BigDecimal landArea;
-    @ApiModelProperty(name = "landAreaFrom", value = "Площадь участка от")
-    private BigDecimal landAreaFrom;
-    @ApiModelProperty(name = "landAreaTo", value = "Площадь участка до")
-    private BigDecimal landAreaTo;
+    @ApiModelProperty(value = "Параметры при Покупке")
+    private PurchaseInfoDto purchaseInfoDto;
 }
 
 

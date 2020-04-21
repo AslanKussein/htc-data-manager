@@ -4,9 +4,11 @@ import kz.dilau.htcdatamanager.component.dataaccess.CheckOperationGroupDto;
 import kz.dilau.htcdatamanager.component.dataaccess.DataAccessManager;
 import kz.dilau.htcdatamanager.component.dataaccess.ListResponse;
 import kz.dilau.htcdatamanager.component.owner.RealPropertyOwnerDto;
+import kz.dilau.htcdatamanager.component.property.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.component.property.RealPropertyRequestDto;
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static kz.dilau.htcdatamanager.component.utils.PeriodUtils.mapToBigDecimalPeriod;
+import static kz.dilau.htcdatamanager.component.utils.PeriodUtils.mapToIntegerPeriod;
 
 @RequiredArgsConstructor
 @Service
@@ -81,11 +85,27 @@ public class ApplicationManagerImpl implements ApplicationManager {
                         }
                     }
                 });
-        return dto;
+        return mapToApplicationDto(application);
     }
 
     private ApplicationDto mapToApplicationDto(Application application) {
-        return ApplicationDto.builder().build();
+        return ApplicationDto.builder()
+                .id(application.getId())
+                .ownerDto(mapToOwnerDto(application.getOwner()))
+                .realPropertyRequestDto(mapToRealPropertyDto(application.getRealProperty()))
+                .operationTypeId(application.getOperationType().getId())
+                .objectPrice(application.getObjectPrice())
+                .mortgage(application.getMortgage())
+                .encumbrance(application.getEncumbrance())
+                .sharedOwnershipProperty(application.getSharedOwnershipProperty())
+                .exchange(application.getExchange())
+                .probabilityOfBidding(application.getProbabilityOfBidding())
+                .theSizeOfTrades(application.getTheSizeOfTrades())
+                .contractPeriod(application.getContractPeriod())
+                .amount(application.getAmount())
+                .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
+                .note(application.getNote())
+                .build();
     }
 
     private RealPropertyOwnerDto mapToOwnerDto(RealPropertyOwner owner) {
@@ -93,9 +113,64 @@ public class ApplicationManagerImpl implements ApplicationManager {
     }
 
     private RealPropertyRequestDto mapToRealPropertyDto(RealProperty realProperty) {
+        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
         return RealPropertyRequestDto.builder()
-
+                .objectTypeId(realProperty.getObjectTypeId())
+                .cityId(generalCharacteristics.getCityId())
+                .districtId(generalCharacteristics.getDistrictId())
+                .streetId(generalCharacteristics.getStreetId())
+                .houseNumber(generalCharacteristics.getHouseNumber())
+                .houseNumberFraction(generalCharacteristics.getHouseNumberFraction())
+                .floor(realProperty.getFloor())
+                .residentialComplexId(realProperty.getResidentialComplexId())
+                .cadastralNumber(realProperty.getCadastralNumber())
+                .apartmentNumber(realProperty.getApartmentNumber())
+                .numberOfRooms(realProperty.getNumberOfRooms())
+                .totalArea(realProperty.getTotalArea())
+                .livingArea(realProperty.getLivingArea())
+                .kitchenArea(realProperty.getKitchenArea())
+                .balconyArea(realProperty.getBalconyArea())
+                .ceilingHeight(generalCharacteristics.getCeilingHeight())
+                .numberOfBedrooms(realProperty.getNumberOfBedrooms())
+                .atelier(realProperty.getAtelier())
+                .separateBathroom(realProperty.getSeparateBathroom())
+                .numberOfFloors(generalCharacteristics.getNumberOfFloors())
+                .apartmentsOnTheSite(realProperty.getApartmentNumber())
+                .materialOfConstructionId(generalCharacteristics.getMaterialOfConstructionId())
+                .yearOfConstruction(generalCharacteristics.getYearOfConstruction())
+                .concierge(generalCharacteristics.getConcierge())
+                .wheelchair(generalCharacteristics.getWheelchair())
+                .yardTypeId(generalCharacteristics.getYardTypeId())
+                .playground(generalCharacteristics.getPlayground())
+                .parkingTypeId(generalCharacteristics.getParkingTypeId())
+                .propertyDeveloperId(generalCharacteristics.getPropertyDeveloperId())
+                .housingClass(generalCharacteristics.getHousingClass())
+                .housingCondition(generalCharacteristics.getHousingCondition())
+                .sewerageId(realProperty.getSewerageId())
+                .heatingSystemId(realProperty.getHeatingSystemId())
+                .numberOfApartments(generalCharacteristics.getNumberOfApartments())
+                .landArea(realProperty.getLandArea())
+                .purchaseInfoDto(mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))
                 .build();
+    }
+
+    private PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info) {
+        if (nonNull(info)) {
+            return PurchaseInfoDto.builder()
+                    .objectPricePeriod(mapToBigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()))
+                    .floorPeriod(mapToIntegerPeriod(info.getFloorFrom(), info.getFloorTo()))
+                    .numberOfRoomsPeriod(mapToIntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo()))
+                    .numberOfBedroomsPeriod(mapToIntegerPeriod(info.getNumberOfBedroomsFrom(), info.getNumberOfBedroomsTo()))
+                    .numberOfFloorsPeriod(mapToIntegerPeriod(info.getNumberOfFloorsFrom(), info.getNumberOfFloorsTo()))
+                    .totalAreaPeriod(mapToBigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo()))
+                    .livingAreaPeriod(mapToBigDecimalPeriod(info.getLivingAreaFrom(), info.getLivingAreaTo()))
+                    .kitchenAreaPeriod(mapToBigDecimalPeriod(info.getKitchenAreaFrom(), info.getKitchenAreaTo()))
+                    .balconyAreaPeriod(mapToBigDecimalPeriod(info.getBalconyAreaFrom(), info.getBalconyAreaTo()))
+                    .landAreaPeriod(mapToBigDecimalPeriod(info.getLandAreaFrom(), info.getLandAreaTo()))
+                    .ceilingHeightPeriod(mapToBigDecimalPeriod(info.getCeilingHeightFrom(), info.getCeilingHeightTo()))
+                    .build();
+        }
+        return null;
     }
 
     @Override
@@ -110,7 +185,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         OperationType operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
-                .objectType(mapDict(ObjectType.class, realPropertyRequestDto.getObjectTypeId()))
+                .objectTypeId(realPropertyRequestDto.getObjectTypeId())
                 .cadastralNumber(realPropertyRequestDto.getCadastralNumber())
                 .floor(realPropertyRequestDto.getFloor())
                 .apartmentNumber(realPropertyRequestDto.getApartmentNumber())
@@ -123,9 +198,9 @@ public class ApplicationManagerImpl implements ApplicationManager {
                 .atelier(realPropertyRequestDto.getAtelier())
                 .separateBathroom(realPropertyRequestDto.getSeparateBathroom())
                 .landArea(realPropertyRequestDto.getLandArea())
-                .sewerage(mapDict(Sewerage.class, realPropertyRequestDto.getSewerageId()))
-                .heatingSystem(mapDict(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
-                .residentialComplex(mapDict(ResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
+                .sewerageId(realPropertyRequestDto.getSewerageId())
+                .heatingSystemId(realPropertyRequestDto.getHeatingSystemId())
+                .residentialComplexId(realPropertyRequestDto.getResidentialComplexId())
                 .build();
 
         if (isNull(realProperty.getResidentialComplex())) {
@@ -142,52 +217,41 @@ public class ApplicationManagerImpl implements ApplicationManager {
                     .concierge(realPropertyRequestDto.getConcierge())
                     .wheelchair(realPropertyRequestDto.getWheelchair())
                     .playground(realPropertyRequestDto.getPlayground())
-                    .city(mapDict(City.class, realPropertyRequestDto.getCityId()))
-                    .district(mapDict(District.class, realPropertyRequestDto.getDistrictId()))
-                    .street(mapDict(Street.class, realPropertyRequestDto.getStreetId()))
-                    .propertyDeveloper(mapDict(PropertyDeveloper.class, realPropertyRequestDto.getPropertyDeveloperId()))
-                    .materialOfConstruction(mapDict(MaterialOfConstruction.class, realPropertyRequestDto.getMaterialOfConstructionId()))
-                    .parkingType(mapDict(ParkingType.class, realPropertyRequestDto.getParkingTypeId()))
-                    .yardType(mapDict(YardType.class, realPropertyRequestDto.getYardTypeId()))
+                    .cityId(realPropertyRequestDto.getCityId())
+                    .districtId(realPropertyRequestDto.getDistrictId())
+                    .streetId(realPropertyRequestDto.getStreetId())
+                    .propertyDeveloperId(realPropertyRequestDto.getPropertyDeveloperId())
+                    .materialOfConstructionId(realPropertyRequestDto.getMaterialOfConstructionId())
+                    .parkingTypeId(realPropertyRequestDto.getParkingTypeId())
+                    .yardTypeId(realPropertyRequestDto.getYardTypeId())
                     .build();
             realProperty.setGeneralCharacteristics(generalCharacteristics);
         }
-        if (operationType.getCode().equals(OperationType.BUY)) {
-            PurchaseInfo purchaseInfo = PurchaseInfo.builder()
-                    .objectPriceFrom(dto.getObjectPriceFrom())
-                    .objectPriceTo(dto.getObjectPriceTo())
-                    .floorFrom(realPropertyRequestDto.getFloorFrom())
-                    .floorTo(realPropertyRequestDto.getFloorTo())
-                    .numberOfRoomsFrom(realPropertyRequestDto.getNumberOfRoomsFrom())
-                    .numberOfRoomsFrom(realPropertyRequestDto.getNumberOfRoomsFrom())
-                    .totalAreaFrom(realPropertyRequestDto.getTotalAreaFrom())
-                    .totalAreaTo(realPropertyRequestDto.getTotalAreaTo())
-                    .livingAreaFrom(realPropertyRequestDto.getLivingAreaFrom())
-                    .livingAreaTo(realPropertyRequestDto.getLivingAreaTo())
-                    .kitchenAreaFrom(realPropertyRequestDto.getKitchenAreaFrom())
-                    .kitchenAreaTo(realPropertyRequestDto.getKitchenAreaTo())
-                    .balconyAreaFrom(realPropertyRequestDto.getBalconyAreaFrom())
-                    .balconyAreaTo(realPropertyRequestDto.getBalconyAreaTo())
-                    .ceilingHeightFrom(realPropertyRequestDto.getCeilingHeightFrom())
-                    .ceilingHeightTo(realPropertyRequestDto.getCeilingHeightTo())
-                    .numberOfBedroomsFrom(realPropertyRequestDto.getNumberOfBedroomsFrom())
-                    .numberOfBedroomsTo(realPropertyRequestDto.getNumberOfBedroomsTo())
-                    .landAreaFrom(realPropertyRequestDto.getLandAreaFrom())
-                    .landAreaTo(realPropertyRequestDto.getLandAreaTo())
-                    .numberOfFloorsFrom(realPropertyRequestDto.getNumberOfFloorsFrom())
-                    .numberOfFloorsTo(realPropertyRequestDto.getNumberOfFloorsTo())
-                    .realProperty(realProperty)
-                    .build();
+        if (operationType.getCode().equals(OperationType.BUY) && nonNull(realPropertyRequestDto.getPurchaseInfoDto())) {
+            PurchaseInfoDto infoDto = realPropertyRequestDto.getPurchaseInfoDto();
+            PurchaseInfo purchaseInfo = new PurchaseInfo();
+            purchaseInfo.setObjectPrice(infoDto.getObjectPricePeriod());
+            purchaseInfo.setFloor(infoDto.getFloorPeriod());
+            purchaseInfo.setNumberOfRooms(infoDto.getNumberOfRoomsPeriod());
+            purchaseInfo.setNumberOfBedrooms(infoDto.getNumberOfBedroomsPeriod());
+            purchaseInfo.setNumberOfFloors(infoDto.getNumberOfFloorsPeriod());
+            purchaseInfo.setTotalArea(infoDto.getTotalAreaPeriod());
+            purchaseInfo.setLivingArea(infoDto.getLivingAreaPeriod());
+            purchaseInfo.setKitchenArea(infoDto.getKitchenAreaPeriod());
+            purchaseInfo.setLandArea(infoDto.getLandAreaPeriod());
+            purchaseInfo.setBalconyArea(infoDto.getBalconyAreaPeriod());
+            purchaseInfo.setCeilingHeight(infoDto.getCeilingHeightPeriod());
+
             realProperty.setPurchaseInfo(purchaseInfo);
-            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getHousingPlanImageIdList())) {
-                realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(realPropertyRequestDto.getHousingPlanImageIdList()));
-            }
-            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getPhotoIdList())) {
-                realProperty.getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(realPropertyRequestDto.getPhotoIdList()));
-            }
-            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
-                realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
-            }
+        }
+        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getHousingPlanImageIdList())) {
+            realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(realPropertyRequestDto.getHousingPlanImageIdList()));
+        }
+        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getPhotoIdList())) {
+            realProperty.getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(realPropertyRequestDto.getPhotoIdList()));
+        }
+        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
+            realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
         }
         Application application = new Application();
         if (nonNull(dto.getId())) {
