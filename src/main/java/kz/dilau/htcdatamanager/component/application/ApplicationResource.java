@@ -16,7 +16,8 @@ public class ApplicationResource implements CommonResource<Long, ApplicationDto,
 
     @Override
     public ResponseEntity<ApplicationDto> getById(String token, Long aLong) {
-        return null;
+        ApplicationDto dto = applicationManager.getById(token, aLong);
+        return ResponseEntity.ok(dto);
     }
 
     @Override
