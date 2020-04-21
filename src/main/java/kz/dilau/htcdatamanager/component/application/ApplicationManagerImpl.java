@@ -89,15 +89,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
     }
 
     private RealPropertyOwnerDto mapToOwnerDto(RealPropertyOwner owner) {
-        return RealPropertyOwnerDto.builder()
-                .id(owner.getId())
-                .surname(owner.getSurname())
-                .firstName(owner.getFirstName())
-                .patronymic(owner.getPatronymic())
-                .email(owner.getEmail())
-                .phoneNumber(owner.getPhoneNumber())
-                .gender(owner.getGender())
-                .build();
+        return new RealPropertyOwnerDto(owner);
     }
 
     private RealPropertyRequestDto mapToRealPropertyDto(RealProperty realProperty) {
@@ -202,6 +194,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
             Optional<Application> optionalApplication = applicationRepository.findById(dto.getId());
             if (optionalApplication.isPresent()) {
                 application = optionalApplication.get();
+                realProperty.setId(application.getRealProperty().getId());
             }
         }
         application.setRealProperty(realProperty);

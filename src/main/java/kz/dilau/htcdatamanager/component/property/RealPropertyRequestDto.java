@@ -24,8 +24,6 @@ public class RealPropertyRequestDto {
     private String cadastralNumber;
     @ApiModelProperty(name = "residentialComplexId", value = "ID жилого комплекса")
     private Long residentialComplexId;
-    @ApiModelProperty(name = "street", value = "Улица")
-    private String street;
     @ApiModelProperty(name = "streetId", value = "ID улицы")
     private Long streetId;
     @ApiModelProperty(name = "houseNumber", value = "Номер дома")
@@ -56,8 +54,6 @@ public class RealPropertyRequestDto {
     private Boolean separateBathroom;
     @ApiModelProperty(name = "districtId", value = "ID района")
     private Long districtId;
-    @ApiModelProperty(name = "district", value = "Район")
-    private String district;
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
     private Integer numberOfFloors;//residentialComplex
     @ApiModelProperty(name = "numberOfFloorsFrom", value = "Этажность дома от")
