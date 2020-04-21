@@ -1,11 +1,10 @@
 package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import kz.dilau.htcdatamanager.component.common.dto.MultiLangText;
+import kz.dilau.htcdatamanager.component.utils.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.HeatingSystem;
-import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
-import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
-import kz.dilau.htcdatamanager.domain.dictionary.Sewerage;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Builder
@@ -89,5 +89,26 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
             filesMap = new HashMap<>();
         }
         return filesMap;
+    }
+
+    @Transient
+    public MultiLangText getAddress() {
+        return DictionaryMappingTool.mapAddressToMultiLang(getGeneralCharacteristics(), apartmentNumber);
+    }
+
+    @Transient
+    public GeneralCharacteristics getGeneralCharacteristics() {
+        if (nonNull(residentialComplex)) {
+            generalCharacteristics = residentialComplex.getGeneralCharacteristics();
+        }
+        return generalCharacteristics;
+    }
+
+    @Transient
+    public District getDistrict() {
+        if (nonNull(getGeneralCharacteristics())) {
+            return getGeneralCharacteristics().getDistrict();
+        }
+        return null;
     }
 }
