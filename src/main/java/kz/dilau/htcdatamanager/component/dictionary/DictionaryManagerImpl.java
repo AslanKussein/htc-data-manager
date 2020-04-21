@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.component.dictionary;
 
+import kz.dilau.htcdatamanager.component.common.errors.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,12 @@ public class DictionaryManagerImpl implements DictionaryManager {
 
     @Override
     public DictionaryDto<Long> getById(String token, Dictionary dictionary, Long id) {
-        DictionaryDto<Long> dto = dictionaryDao.getByIdFromTable(id, dictionary.getTableName());
-        return dto;
+        try {
+            DictionaryDto<Long> dto = dictionaryDao.getByIdFromTable(id, dictionary.getTableName());
+            return dto;
+        } catch (Exception e) {
+            throw new NotFoundException("Not found with id " + id);
+        }
     }
 
     @Override
@@ -40,10 +45,16 @@ public class DictionaryManagerImpl implements DictionaryManager {
     @Override
     public void update(String token, Dictionary dictionary, Long id, DictionaryDto<Long> input) {
         Integer updated = dictionaryDao.update(dictionary, id, input);
+        if (updated == 0) {
+            throw new NotFoundException("Not updated with id " + id);
+        }
     }
 
     @Override
     public void deleteById(String token, Dictionary dictionary, Long id) {
         Integer deleted = dictionaryDao.deleteByIdFromTable(id, dictionary.getTableName());
+        if (deleted == 0) {
+            throw new NotFoundException("Not deleted with id " + id);
+        }
     }
 }
