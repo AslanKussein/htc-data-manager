@@ -28,6 +28,8 @@ public class DataAccessManager {
 
     public ListResponse<CheckOperationGroupDto> getCheckOperationList(final String token, List<String> groupCodes) {
         final String url = getRoleManagerUrl().get().toString() + "operations/check";
+        System.out.println("token: " + token);
+        System.out.println("URL: " + url);
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         for (String groupCode : groupCodes) {
             uriBuilder.queryParam("groupCodes", groupCode);
