@@ -193,8 +193,8 @@ public class ApplicationManagerImpl implements ApplicationManager {
         if (nonNull(dto.getId())) {
             Optional<Application> optionalApplication = applicationRepository.findById(dto.getId());
             if (optionalApplication.isPresent()) {
-                application = optionalApplication.get();
-                realProperty.setId(application.getRealProperty().getId());
+                application.setId(optionalApplication.get().getId());
+                realProperty.setId(optionalApplication.get().getRealProperty().getId());
             }
         }
         application.setRealProperty(realProperty);
