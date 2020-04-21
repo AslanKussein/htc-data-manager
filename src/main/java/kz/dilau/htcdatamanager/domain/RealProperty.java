@@ -81,6 +81,8 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "general_characteristics_id")
     private GeneralCharacteristics generalCharacteristics;
+    @Column(name = "general_characteristics_id", insertable = false, updatable = false)
+    private Long generalCharacteristicsId;
     @OneToOne(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private PurchaseInfo purchaseInfo;
 
