@@ -1,8 +1,6 @@
 package kz.dilau.htcdatamanager.component.application;
 
-import kz.dilau.htcdatamanager.component.dataaccess.CheckOperationGroupDto;
 import kz.dilau.htcdatamanager.component.dataaccess.DataAccessManager;
-import kz.dilau.htcdatamanager.component.dataaccess.ListResponse;
 import kz.dilau.htcdatamanager.component.owner.RealPropertyOwnerDto;
 import kz.dilau.htcdatamanager.component.property.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.component.property.RealPropertyRequestDto;
@@ -17,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -316,6 +317,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
     @Override
     public void deleteById(String token, Long aLong) {
-
+        applicationRepository.deleteById(aLong);
     }
 }
