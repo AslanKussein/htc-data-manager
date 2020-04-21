@@ -1,12 +1,17 @@
 package kz.dilau.htcdatamanager.component.property;
 
 import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class RealPropertyManager {
@@ -36,6 +41,33 @@ public class RealPropertyManager {
     }
 
     public void save(RealProperty realProperty) {
+        realPropertyRepository.save(realProperty);
+    }
+
+    public void addFilesToProperty(Long propertyId, List<String> photoIds, List<String> housingPlans, List<String> virtualTours) {
+        RealProperty realProperty = realPropertyRepository.getOne(propertyId);
+        Map<RealPropertyFileType, Set<String>> filesMap = realProperty.getFilesMap();
+        if (!CollectionUtils.isEmpty(photoIds)) {
+            if (filesMap.containsKey(RealPropertyFileType.PHOTO)) {
+                filesMap.get(RealPropertyFileType.PHOTO).addAll(photoIds);
+            } else {
+                filesMap.put(RealPropertyFileType.PHOTO, new HashSet<>(photoIds));
+            }
+        }
+        if (!CollectionUtils.isEmpty(photoIds)) {
+            if (filesMap.containsKey(RealPropertyFileType.HOUSING_PLAN)) {
+                filesMap.get(RealPropertyFileType.HOUSING_PLAN).addAll(housingPlans);
+            } else {
+                filesMap.put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(housingPlans));
+            }
+        }
+        if (!CollectionUtils.isEmpty(photoIds)) {
+            if (filesMap.containsKey(RealPropertyFileType.VIRTUAL_TOUR)) {
+                filesMap.get(RealPropertyFileType.VIRTUAL_TOUR).addAll(virtualTours);
+            } else {
+                filesMap.put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(virtualTours));
+            }
+        }
         realPropertyRepository.save(realProperty);
     }
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class ApplicationResource implements CommonResource<Long, ApplicationDto,
         return ResponseEntity.ok(dto);
     }
 
+    @ApiIgnore
     @Override
     public ResponseEntity<List<ApplicationDto>> getAll(String token) {
         return null;
@@ -31,6 +33,7 @@ public class ApplicationResource implements CommonResource<Long, ApplicationDto,
         return ResponseEntity.ok(id);
     }
 
+    @ApiIgnore
     @Override
     public ResponseEntity<?> update(String token, Long aLong, ApplicationDto input) {
         return null;
@@ -38,6 +41,7 @@ public class ApplicationResource implements CommonResource<Long, ApplicationDto,
 
     @Override
     public ResponseEntity<?> deleteById(String token, Long aLong) {
-        return null;
+        applicationManager.deleteById(token, aLong);
+        return ResponseEntity.noContent().build();
     }
 }

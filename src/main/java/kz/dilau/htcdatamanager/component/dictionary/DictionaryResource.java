@@ -1,8 +1,11 @@
 package kz.dilau.htcdatamanager.component.dictionary;
 
+import kz.dilau.htcdatamanager.component.common.errors.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,8 +21,15 @@ public class DictionaryResource {
     public ResponseEntity<DictionaryDto<Long>> getById(@RequestHeader(AUTHORIZATION) String token,
                                                        @PathVariable("name") Dictionary dictionaryName,
                                                        @PathVariable("id") Long id) {
-        DictionaryDto<Long> dictionary = dictionaryManager.getById(token, dictionaryName, id);
-        return ResponseEntity.ok(dictionary);
+        try {
+            DictionaryDto<Long> dictionary = dictionaryManager.getById(token, dictionaryName, id);
+            return ResponseEntity.ok(dictionary);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("Dictionary with id %s not found", id, e)
+            );
+        }
     }
 
     @GetMapping
@@ -42,15 +52,29 @@ public class DictionaryResource {
                                     @PathVariable("name") Dictionary dictionary,
                                     @PathVariable("id") Long id,
                                     @RequestBody DictionaryDto<Long> input) {
-        dictionaryManager.update(token, dictionary, id, input);
-        return ResponseEntity.noContent().build();
+        try {
+            dictionaryManager.update(token, dictionary, id, input);
+            return ResponseEntity.noContent().build();
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    String.format("Provide correct owner id: %s", id)
+            );
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteById(@RequestHeader(AUTHORIZATION) String token,
                                         @PathVariable("name") Dictionary dictionary,
                                         @PathVariable("id") Long id) {
-        dictionaryManager.deleteById(token, dictionary, id);
-        return ResponseEntity.noContent().build();
+        try {
+            dictionaryManager.deleteById(token, dictionary, id);
+            return ResponseEntity.noContent().build();
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    String.format("Dictionary with id %s not found", id, e)
+            );
+        }
     }
 }

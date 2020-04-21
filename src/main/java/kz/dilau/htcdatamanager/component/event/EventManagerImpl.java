@@ -1,8 +1,8 @@
 package kz.dilau.htcdatamanager.component.event;
 
+import kz.dilau.htcdatamanager.component.common.errors.NotFoundException;
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.Event;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.EventType;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
@@ -41,13 +41,17 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public EventDto getEventById(String token, Long id) {
-        Event event = eventRepository.getOne(id);
-        return new EventDto(event);
+        return eventRepository
+                .findById(id)
+                .map(EventDto::new)
+                .orElseThrow(() -> new NotFoundException("Event with id %s not found" + id));
     }
 
     @Override
     public void updateEvent(String token, Long id, EventDto event) {
-        Event entity = eventRepository.getOne(id);
+        Event entity = eventRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Event with id %s not found" + id));
         entity.setEventDate(event.getEventDate());
 
         Application one = applicationRepository.getOne(event.getSourceApplicationId());
@@ -69,6 +73,8 @@ public class EventManagerImpl implements EventManager {
 
     @Override
     public void deleteEventById(String token, Long id) {
+        boolean exists = eventRepository.existsById(id);
+        if (!exists) throw new NotFoundException("Event with id %s not found" + id);
         eventRepository.deleteById(id);
     }
 }
