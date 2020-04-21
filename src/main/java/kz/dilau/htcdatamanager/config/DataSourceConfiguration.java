@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
+//import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 
 @Getter
 @Setter
-@RefreshScope
+//@RefreshScope
 @Configuration
 @ConfigurationProperties(prefix = "spring.datasource")
 public class DataSourceConfiguration {
