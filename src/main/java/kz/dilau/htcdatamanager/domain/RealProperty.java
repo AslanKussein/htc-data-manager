@@ -70,9 +70,11 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private HeatingSystem heatingSystem;
     @Column(name = "land_area")
     private BigDecimal landArea;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "general_characteristics_id")
     private GeneralCharacteristics generalCharacteristics;
+    @OneToOne(mappedBy = "realProperty", cascade = CascadeType.ALL)
+    private PurchaseInfo purchaseInfo;
 
     public Map<RealPropertyFileType, Set<String>> getFilesMap() {
         if (filesMap == null) {

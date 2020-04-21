@@ -4,16 +4,16 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.RealPropertyOwner;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.*;
 
-@ApiModel(description = "Модель сущности Клиент")
-@NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(description = "Модель сущности Клиент")
 public class RealPropertyOwnerDto {
     @ApiModelProperty(value = "ID клиента")
     @Min(1)

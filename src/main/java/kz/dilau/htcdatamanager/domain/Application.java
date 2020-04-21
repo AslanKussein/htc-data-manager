@@ -57,7 +57,7 @@ public class Application extends AuditableBaseEntity<String, Long> {
     private boolean isCommissionIncludedInThePrice = false;
     @Column(name = "note")
     private String note;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", nullable = false)
     private RealPropertyOwner owner;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

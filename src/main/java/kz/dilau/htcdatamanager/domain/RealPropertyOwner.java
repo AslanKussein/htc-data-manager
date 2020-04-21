@@ -8,8 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
+import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Builder
@@ -33,9 +37,23 @@ public class RealPropertyOwner extends AuditableBaseEntity<String, Long> {
     @Column(name = "gender", nullable = false)
     @Builder.Default
     private Gender gender = Gender.UNKNOWN;
+    @OneToMany(mappedBy = "owner")
+    private List<Application> applicationList;
+
+    public List<Application> getApplicationList() {
+        if (isNull(applicationList)) {
+            applicationList = new ArrayList<>();
+        }
+        return applicationList;
+    }
 
     @Override
     public int hashCode() {
         return Objects.hash(phoneNumber);
+    }
+
+    @Transient
+    public Application getLastApplication() {
+        return getApplicationList().stream().max(Comparator.comparing(Application::getCreatedDate)).orElseGet(null);
     }
 }

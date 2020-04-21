@@ -11,4 +11,6 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "operation_type")
 public class OperationType extends BaseSystemDictionary {
+    public static final String BUY = "001001";
+    public static final String SELL = "001002";
 }

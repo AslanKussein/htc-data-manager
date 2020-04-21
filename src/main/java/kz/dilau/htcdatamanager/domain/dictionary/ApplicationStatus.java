@@ -11,4 +11,5 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "application_status")
 public class ApplicationStatus extends BaseSystemDictionary {
+    public static final String NEW = "002001";
 }
