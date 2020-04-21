@@ -24,15 +24,14 @@ public class EventManagerImpl implements EventManager {
         Event event1 = new Event();
         event1.setEventDate(event.getEventDate());
 
-        Application one = applicationRepository.getOne(event.getApplicationId());
+        Application one = applicationRepository.getOne(event.getSourceApplicationId());
         event1.setSourceApplication(one);
-        if (event.getApplicationId2() != null) {
-            Application one1 = applicationRepository.getOne(event.getApplicationId2());
+        if (event.getTargetApplicationId() != null) {
+            Application one1 = applicationRepository.getOne(event.getTargetApplicationId());
             event1.setTargetApplication(one1);
         }
         EventType one1 = eventTypeRepository.getOne(event.getEventTypeId());
         event1.setEventType(one1);
-
         event1.setClientId(event.getClientId());
         event1.setDescription(event.getDescription());
         event1.setComment(event.getComment());
@@ -50,12 +49,11 @@ public class EventManagerImpl implements EventManager {
     public void updateEvent(String token, Long id, EventDto event) {
         Event entity = eventRepository.getOne(id);
         entity.setEventDate(event.getEventDate());
-        ApplicationStatus applicationStatus = applicationStatusRepository.getOne(event.getEventTypeId());
 
-        Application one = applicationRepository.getOne(event.getApplicationId());
+        Application one = applicationRepository.getOne(event.getSourceApplicationId());
         entity.setSourceApplication(one);
-        if (event.getApplicationId2() != null) {
-            Application one1 = applicationRepository.getOne(event.getApplicationId2());
+        if (event.getTargetApplicationId() != null) {
+            Application one1 = applicationRepository.getOne(event.getTargetApplicationId());
             entity.setTargetApplication(one1);
         }
         EventType one1 = eventTypeRepository.getOne(event.getEventTypeId());
