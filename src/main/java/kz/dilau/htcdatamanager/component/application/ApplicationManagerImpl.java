@@ -117,7 +117,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
                     gcBuilder.yardType(yardType);
                 }
 //                gcBuilder.id(id);
-                gcBuilder.realProperty(realProperty);
+//                gcBuilder.realProperty(realProperty);
                 GeneralCharacteristics generalCharacteristics = gcBuilder.build();
                 gcRepository.save(generalCharacteristics);
 //                realProperty.setGeneralCharacteristics(generalCharacteristics);

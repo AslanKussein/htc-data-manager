@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.domain;
 
 
+import kz.dilau.htcdatamanager.domain.base.BaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,11 +21,8 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @AllArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "general_characteristics")
-public class GeneralCharacteristics {
-    @Id
-    @Column(name = "id")
-    private Long id;
-    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+public class GeneralCharacteristics extends BaseEntity<Long> {
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
 //    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
 //    private Country country;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -79,7 +77,4 @@ public class GeneralCharacteristics {
     private YardType yardType;
     @Column(name = "playground")
     private Boolean playground;
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private RealProperty realProperty;
 }

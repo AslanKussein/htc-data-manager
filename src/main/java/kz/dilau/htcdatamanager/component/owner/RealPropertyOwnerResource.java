@@ -1,20 +1,17 @@
 package kz.dilau.htcdatamanager.component.owner;
 
-import io.swagger.annotations.Api;
-import kz.dilau.htcdatamanager.module.CommonResource;
-import kz.dilau.htcdatamanager.web.rest.errors.RealPropertyOwnerNotFoundException;
+import kz.dilau.htcdatamanager.component.common.CommonResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
-@Api
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/property-owners")
@@ -34,6 +31,7 @@ public class RealPropertyOwnerResource implements CommonResource<Long, RealPrope
         }
     }
 
+    @ApiIgnore
     @Override
     public ResponseEntity<List<RealPropertyOwnerDto>> getAll(String token) {
         throw new ResponseStatusException(
@@ -75,7 +73,8 @@ public class RealPropertyOwnerResource implements CommonResource<Long, RealPrope
     }
 
     @GetMapping("/search/by-phone-number")
-    public ResponseEntity<RealPropertyOwnerDto> findOwnerByPhoneNumber(@RequestParam String phoneNumber) {
+    public ResponseEntity<RealPropertyOwnerDto> findOwnerByPhoneNumber(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                                       @RequestParam String phoneNumber) {
         RealPropertyOwnerDto owner = rpoManager.findOwnerByPhoneNumber(phoneNumber);
         return ResponseEntity.ok(owner);
     }

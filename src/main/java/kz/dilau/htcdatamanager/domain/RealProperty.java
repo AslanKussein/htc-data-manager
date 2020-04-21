@@ -70,6 +70,9 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private HeatingSystem heatingSystem;
     @Column(name = "land_area")
     private BigDecimal landArea;
+    @OneToOne
+    @JoinColumn(name = "general_characteristics_id")
+    private GeneralCharacteristics generalCharacteristics;
 
     public Map<RealPropertyFileType, Set<String>> getFilesMap() {
         if (filesMap == null) {
@@ -77,6 +80,4 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
         }
         return filesMap;
     }
-
-
 }

@@ -23,14 +23,14 @@ public class Event extends BaseEntity<Long> {
     @Temporal(TemporalType.TIMESTAMP)
     private Date eventDate;
     @ManyToOne
-    @JoinColumn(name = "event_type")
+    @JoinColumn(name = "event_type_id")
     private EventType eventType;
     @ManyToOne
-    @JoinColumn(name = "app_id")
-    private Application application;
+    @JoinColumn(name = "source_application")
+    private Application sourceApplication;
     @ManyToOne
-    @JoinColumn(name = "app_id2")
-    private Application application2;
+    @JoinColumn(name = "targer_application")
+    private Application targetApplication;
     @Column(name = "description")
     private String description;
     @Column(name = "comment")

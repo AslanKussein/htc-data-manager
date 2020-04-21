@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.component.application;
 
-import kz.dilau.htcdatamanager.module.CommonResource;
+import kz.dilau.htcdatamanager.component.common.CommonResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

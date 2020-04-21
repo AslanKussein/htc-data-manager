@@ -2,8 +2,8 @@ package kz.dilau.htcdatamanager.component.owner;
 
 import kz.dilau.htcdatamanager.domain.RealPropertyOwner;
 import kz.dilau.htcdatamanager.repository.RealPropertyOwnerRepository;
-import kz.dilau.htcdatamanager.web.rest.errors.RealPropertyOwnerNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;

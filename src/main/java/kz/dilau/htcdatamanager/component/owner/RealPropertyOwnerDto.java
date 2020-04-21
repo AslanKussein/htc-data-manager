@@ -10,7 +10,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.*;
 
-@ApiModel(description = "Модель для сущности Клиент")
+@ApiModel(description = "Модель сущности Клиент")
 @NoArgsConstructor
 @Getter
 @Setter

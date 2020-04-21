@@ -20,14 +20,17 @@ import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
-@ComponentScan(basePackageClasses = KeycloakSecurityComponents.class,
-        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"))
+@ComponentScan(
+        basePackageClasses = KeycloakSecurityComponents.class,
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.REGEX,
+                pattern = "org.keycloak.adapters.springsecurity.management.HttpSessionManager"
+        )
+)
 public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter {
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -35,8 +38,11 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/applications/**", "/property-owners/**", "/real-properties/**", "/dictionaries/**").authenticated()
-                .antMatchers("/actuator/**").permitAll()
+                .antMatchers("/applications/**",
+                        "/property-owners/**",
+                        "/real-properties/**",
+                        "/dictionaries/**").authenticated()
+//                .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/v2/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
@@ -50,21 +56,11 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
         return new NullAuthenticatedSessionStrategy();
     }
 
-    /**
-     * keycloakConfigResolver
-     *
-     * @return keycloakConfigResolver
-     */
     @Bean
     public KeycloakSpringBootConfigResolver keycloakConfigResolver() {
         return new KeycloakSpringBootConfigResolver();
     }
 
-    /**
-     * configure Security.
-     *
-     * @param auth AuthenticationManagerBuilder
-     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) {
         KeycloakAuthenticationProvider authenticationProvider = keycloakAuthenticationProvider();

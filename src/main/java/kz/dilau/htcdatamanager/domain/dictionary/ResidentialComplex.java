@@ -23,6 +23,6 @@ public class ResidentialComplex extends BaseEntity<Long> {
     @Column(name = "number_of_entrances")
     private Integer numberOfEntrances;
     @OneToOne
-    @MapsId
+    @JoinColumn(name = "general_characteristics_id")
     private GeneralCharacteristics generalCharacteristics;
 }
