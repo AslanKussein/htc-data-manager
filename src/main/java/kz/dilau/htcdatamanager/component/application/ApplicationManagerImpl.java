@@ -312,7 +312,8 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
     @Override
     public void update(String token, Long aLong, ApplicationDto input) {
-
+        input.setId(aLong);
+        save(token, input);
     }
 
     @Override

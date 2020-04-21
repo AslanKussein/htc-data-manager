@@ -33,10 +33,10 @@ public class ApplicationResource implements CommonResource<Long, ApplicationDto,
         return ResponseEntity.ok(id);
     }
 
-    @ApiIgnore
     @Override
     public ResponseEntity<?> update(String token, Long aLong, ApplicationDto input) {
-        return null;
+        applicationManager.update(token, aLong, input);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
