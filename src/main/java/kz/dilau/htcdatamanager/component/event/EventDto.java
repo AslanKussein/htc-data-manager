@@ -32,9 +32,9 @@ public class EventDto {
         this.id = event.getId();
         this.eventDate = event.getEventDate();
         this.eventTypeId = event.getEventType().getId();
-        this.applicationId = event.getApplication().getId();
-        if (event.getApplication2() != null) {
-            this.applicationId2 = event.getApplication2().getId();
+        this.applicationId = event.getSourceApplication().getId();
+        if (event.getTargetApplication() != null) {
+            this.applicationId2 = event.getTargetApplication().getId();
         }
         this.description = description;
         this.comment = comment;
