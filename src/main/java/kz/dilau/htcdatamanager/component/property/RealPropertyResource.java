@@ -1,12 +1,13 @@
 package kz.dilau.htcdatamanager.component.property;
 
 import kz.dilau.htcdatamanager.domain.RealProperty;
-import kz.dilau.htcdatamanager.component.property.RealPropertyManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 
+@ApiIgnore
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/real-properties")

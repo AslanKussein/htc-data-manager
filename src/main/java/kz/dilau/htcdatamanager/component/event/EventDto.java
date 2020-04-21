@@ -1,9 +1,13 @@
 package kz.dilau.htcdatamanager.component.event;
 
 import kz.dilau.htcdatamanager.domain.Event;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Date;
 
+@Getter
+@Setter
 public class EventDto {
     private Long id;
     private Date eventDate;
@@ -11,97 +15,33 @@ public class EventDto {
     private String description;
     private String comment;
     private Long clientId;
-    private Long applicationId;
-    private Long applicationId2;
+    private Long sourceApplicationId;
+    private Long targetApplicationId;
 
     public EventDto() {
     }
 
-    public EventDto(Long id, Date eventDate, Long eventTypeId, String description, String comment, Long clientId, Long applicationId, Long applicationId2) {
+    public EventDto(Long id, Date eventDate, Long eventTypeId, String description, String comment, Long clientId, Long sourceApplicationId, Long targetApplicationId) {
         this.id = id;
         this.eventDate = eventDate;
         this.eventTypeId = eventTypeId;
         this.description = description;
         this.comment = comment;
         this.clientId = clientId;
-        this.applicationId = applicationId;
-        this.applicationId2 = applicationId2;
+        this.sourceApplicationId = sourceApplicationId;
+        this.targetApplicationId = targetApplicationId;
     }
 
     public EventDto(Event event) {
         this.id = event.getId();
         this.eventDate = event.getEventDate();
         this.eventTypeId = event.getEventType().getId();
-        this.applicationId = event.getSourceApplication().getId();
+        this.sourceApplicationId = event.getSourceApplication().getId();
         if (event.getTargetApplication() != null) {
-            this.applicationId2 = event.getTargetApplication().getId();
+            this.targetApplicationId = event.getTargetApplication().getId();
         }
         this.description = description;
         this.comment = comment;
         this.clientId = clientId;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getEventDate() {
-        return eventDate;
-    }
-
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
-    }
-
-    public Long getEventTypeId() {
-        return eventTypeId;
-    }
-
-    public void setEventTypeId(Long eventTypeId) {
-        this.eventTypeId = eventTypeId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
-
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
-    public Long getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(Long applicationId) {
-        this.applicationId = applicationId;
-    }
-
-    public Long getApplicationId2() {
-        return applicationId2;
-    }
-
-    public void setApplicationId2(Long applicationId2) {
-        this.applicationId2 = applicationId2;
     }
 }
