@@ -9,6 +9,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.repository.*;
+import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
     private final RealPropertyOwnerRepository ownerRepository;
     private final EntityManager entityManager;
     private final ApplicationStatusRepository applicationStatusRepository;
+    private final ParkingTypeRepository parkingTypeRepository;
     private final PurchaseInfoRepository purchaseInfoRepository;
     private final GeneralCharacteristicsRepository generalCharacteristicsRepository;
     private final RealPropertyRepository realPropertyRepository;
@@ -143,7 +145,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
                 .wheelchair(generalCharacteristics.getWheelchair())
                 .yardTypeId(generalCharacteristics.getYardTypeId())
                 .playground(generalCharacteristics.getPlayground())
-                .parkingTypeId(generalCharacteristics.getParkingTypeId())
+//                .parkingTypeIds(generalCharacteristics.getParkingTypes())
                 .propertyDeveloperId(generalCharacteristics.getPropertyDeveloperId())
                 .housingClass(generalCharacteristics.getHousingClass())
                 .housingCondition(generalCharacteristics.getHousingCondition())
@@ -223,9 +225,14 @@ public class ApplicationManagerImpl implements ApplicationManager {
                     .streetId(realPropertyRequestDto.getStreetId())
                     .propertyDeveloperId(realPropertyRequestDto.getPropertyDeveloperId())
                     .materialOfConstructionId(realPropertyRequestDto.getMaterialOfConstructionId())
-                    .parkingTypeId(realPropertyRequestDto.getParkingTypeId())
+//                    .parkingTypes(realPropertyRequestDto.getParkingTypeIds().isEmpty())
                     .yardTypeId(realPropertyRequestDto.getYardTypeId())
                     .build();
+
+            if (nonNull(realPropertyRequestDto.getParkingTypeIds()) && !realPropertyRequestDto.getParkingTypeIds().isEmpty()) {
+                generalCharacteristics.getParkingTypes().clear();
+                generalCharacteristics.getParkingTypes().addAll(parkingTypeRepository.findByIdIn(realPropertyRequestDto.getParkingTypeIds()));
+            }
             realProperty.setGeneralCharacteristics(generalCharacteristics);
         }
         if (operationType.getCode().equals(OperationType.BUY) && nonNull(realPropertyRequestDto.getPurchaseInfoDto())) {

@@ -3,6 +3,7 @@ package kz.dilau.htcdatamanager.component.residentialcomplex;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import lombok.Getter;
@@ -63,7 +64,7 @@ public class ResidentialComplexDto {
     @ApiModelProperty(value = "Колясочная")
     private Boolean wheelchair;
     @ApiModelProperty(value = "ID типа парковки")
-    private Long parkingTypeId;
+    private List<Long> parkingTypeIds;
     @ApiModelProperty(value = "ID типа двора")
     private Long yardTypeId;
     @ApiModelProperty(value = "Детская площадка")
@@ -99,9 +100,6 @@ public class ResidentialComplexDto {
             if (Objects.nonNull(gc.getMaterialOfConstruction())) {
                 this.materialOfConstructionId = gc.getMaterialOfConstruction().getId();
             }
-            if (Objects.nonNull(gc.getParkingType())) {
-                this.parkingTypeId = gc.getParkingType().getId();
-            }
             if (Objects.nonNull(gc.getPropertyDeveloper())) {
                 this.propertyDeveloperId = gc.getPropertyDeveloper().getId();
             }
@@ -110,6 +108,13 @@ public class ResidentialComplexDto {
                         .getTypesOfElevator()
                         .stream()
                         .map(TypeOfElevator::getId)
+                        .collect(Collectors.toList());
+            }
+            if (!CollectionUtils.isEmpty(gc.getParkingTypes())) {
+                this.parkingTypeIds = gc
+                        .getParkingTypes()
+                        .stream()
+                        .map(ParkingType::getId)
                         .collect(Collectors.toList());
             }
             if (Objects.nonNull(gc.getStreet())) {

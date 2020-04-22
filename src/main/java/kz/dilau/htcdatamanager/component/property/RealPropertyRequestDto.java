@@ -70,8 +70,8 @@ public class RealPropertyRequestDto {
     private Long yardTypeId;
     @ApiModelProperty(name = "playground", value = "Детская площадка")
     private Boolean playground;
-    @ApiModelProperty(name = "parkingTypeId", value = "ID вида паркинга")
-    private Long parkingTypeId;
+    @ApiModelProperty(name = "parkingTypeIds", value = "ID вида паркинга (мультивыбор)")
+    private List<Long> parkingTypeIds;
     @ApiModelProperty(name = "propertyDeveloperId", value = "Застройщик")
     private Long propertyDeveloperId;
     @ApiModelProperty(name = "housingClass", value = "Класс жилья")

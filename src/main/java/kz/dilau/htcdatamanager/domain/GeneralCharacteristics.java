@@ -22,7 +22,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "general_characteristics")
 public class GeneralCharacteristics extends BaseEntity<Long> {
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
 //    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
 //    private Country country;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -79,11 +79,15 @@ public class GeneralCharacteristics extends BaseEntity<Long> {
     private Boolean concierge;
     @Column(name = "wheelchair")
     private Boolean wheelchair;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parking_type_id", insertable = false, updatable = false)
-    private ParkingType parkingType;
-    @Column(name = "parking_type_id")
-    private Long parkingTypeId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "parking_type_id", insertable = false, updatable = false)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = TABLE_NAME_PREFIX + "general_characteristics_parking_type",
+            joinColumns = @JoinColumn(name = "general_characteristics_id"),
+            inverseJoinColumns = @JoinColumn(name = "parking_type_id")
+    )
+    private Set<ParkingType> parkingTypes = new HashSet<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "yard_type_id", insertable = false, updatable = false)
     private YardType yardType;

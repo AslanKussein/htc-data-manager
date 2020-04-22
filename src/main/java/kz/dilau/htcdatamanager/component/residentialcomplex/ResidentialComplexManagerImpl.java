@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.component.common.errors.NotFoundException;
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.repository.GeneralCharacteristicsRepository;
+import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class ResidentialComplexManagerImpl implements ResidentialComplexManager 
     private final ResidentialComplexRepository rcRepository;
     private final GeneralCharacteristicsRepository gcRepository;
     private final TypeOfElevatorRepository toeRepository;
+    private final ParkingTypeRepository parkingTypeRepository;
     private final EntityManager entityManager;
 
     @Override
@@ -62,10 +64,6 @@ public class ResidentialComplexManagerImpl implements ResidentialComplexManager 
             MaterialOfConstruction materialOfConstruction = entityManager.getReference(MaterialOfConstruction.class, dto.getMaterialOfConstructionId());
             gcBuilder.materialOfConstruction(materialOfConstruction);
         }
-        if (Objects.nonNull(dto.getParkingTypeId())) {
-            ParkingType parkingType = entityManager.getReference(ParkingType.class, dto.getParkingTypeId());
-            gcBuilder.parkingType(parkingType);
-        }
         if (Objects.nonNull(dto.getCityId())) {
             City city = entityManager.getReference(City.class, dto.getCityId());
             gcBuilder.city(city);
@@ -89,6 +87,10 @@ public class ResidentialComplexManagerImpl implements ResidentialComplexManager 
         if (!CollectionUtils.isEmpty(dto.getTypeOfElevatorIdList())) {
             Set<TypeOfElevator> elevators = toeRepository.findByIdIn(dto.getTypeOfElevatorIdList());
             gcBuilder.typesOfElevator(elevators);
+        }
+        if (!CollectionUtils.isEmpty(dto.getParkingTypeIds())) {
+            Set<ParkingType> parkingTypes = parkingTypeRepository.findByIdIn(dto.getTypeOfElevatorIdList());
+            gcBuilder.parkingTypes(parkingTypes);
         }
         GeneralCharacteristics generalCharacteristics = gcRepository.save(gcBuilder.build());
         ResidentialComplex rc = ResidentialComplex.builder()
