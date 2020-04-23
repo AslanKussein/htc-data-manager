@@ -1,8 +1,8 @@
 package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import kz.dilau.htcdatamanager.component.common.dto.MultiLangText;
-import kz.dilau.htcdatamanager.component.utils.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
+import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;

@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.domain;
 
-import kz.dilau.htcdatamanager.component.common.dto.BigDecimalPeriod;
-import kz.dilau.htcdatamanager.component.common.dto.IntegerPeriod;
+import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
+import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
