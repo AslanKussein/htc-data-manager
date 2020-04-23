@@ -1,7 +1,8 @@
 package kz.dilau.htcdatamanager.web.rest;
 
+import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.CommonResource;
-import kz.dilau.htcdatamanager.service.ApplicationManager;
+import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +14,9 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/applications")
+@RequestMapping(Constants.APPLICATIONS_REST_ENDPOINT)
 public class ApplicationResource implements CommonResource<Long, ApplicationDto, ApplicationDto> {
-    private final ApplicationManager applicationManager;
+    private final ApplicationService applicationManager;
 
     @Override
     public ResponseEntity<ApplicationDto> getById(String token, Long aLong) {

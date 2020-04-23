@@ -8,7 +8,7 @@ import kz.dilau.htcdatamanager.repository.GeneralCharacteristicsRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
-import kz.dilau.htcdatamanager.service.ResidentialComplexManager;
+import kz.dilau.htcdatamanager.service.ResidentialComplexService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class ResidentialComplexManagerImpl implements ResidentialComplexManager {
+public class ResidentialComplexServiceImpl implements ResidentialComplexService {
     private final ResidentialComplexRepository rcRepository;
     private final GeneralCharacteristicsRepository gcRepository;
     private final TypeOfElevatorRepository toeRepository;

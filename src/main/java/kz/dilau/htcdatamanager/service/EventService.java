@@ -2,7 +2,7 @@ package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 
-public interface EventManager {
+public interface EventService {
     Long addEvent(String token, EventDto event);
 
     EventDto getEventById(String token, Long id);

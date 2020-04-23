@@ -1,7 +1,8 @@
 package kz.dilau.htcdatamanager.web.rest;
 
+import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.web.dto.errors.NotFoundException;
-import kz.dilau.htcdatamanager.service.EventManager;
+import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,14 +14,14 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/events")
+@RequestMapping(Constants.EVENTS_REST_ENDPOINT)
 public class EventResource {
-    private final EventManager eventManager;
+    private final EventService eventService;
 
     @PostMapping
     ResponseEntity<Long> addEvent(@RequestHeader(AUTHORIZATION) final String token,
                                   @RequestBody EventDto event) {
-        Long id = eventManager.addEvent(token, event);
+        Long id = eventService.addEvent(token, event);
         return ResponseEntity.ok(id);
     }
 
@@ -28,7 +29,7 @@ public class EventResource {
     public ResponseEntity<EventDto> getEventById(@RequestHeader(AUTHORIZATION) final String token,
                                                  @PathVariable Long id) {
         try {
-            EventDto event = eventManager.getEventById(token, id);
+            EventDto event = eventService.getEventById(token, id);
             return ResponseEntity.ok(event);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
@@ -43,7 +44,7 @@ public class EventResource {
                                             @PathVariable Long id,
                                             @RequestBody EventDto event) {
         try {
-            eventManager.updateEvent(token, id, event);
+            eventService.updateEvent(token, id, event);
             return ResponseEntity.noContent().build();
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
@@ -57,7 +58,7 @@ public class EventResource {
     public ResponseEntity<Void> deleteEventById(@RequestHeader(AUTHORIZATION) final String token,
                                                 @PathVariable Long id) {
         try {
-            eventManager.deleteEventById(token, id);
+            eventService.deleteEventById(token, id);
             return ResponseEntity.noContent().build();
         } catch (NotFoundException e) {
             throw new ResponseStatusException(

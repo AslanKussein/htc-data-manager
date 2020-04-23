@@ -1,35 +1,29 @@
-package kz.dilau.htcdatamanager.service;
+package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.DataProperties;
+import kz.dilau.htcdatamanager.service.DataAccessService;
 import kz.dilau.htcdatamanager.web.dto.CheckOperationGroupDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
-public class DataAccessManager {
-    private final DiscoveryClient discoveryClient;
+@RequiredArgsConstructor
+@Slf4j
+public class DataAccessServiceImpl implements DataAccessService {
     private final RestTemplate restTemplate;
+    private final DataProperties dataProperties;
 
-    public Optional<URI> getRoleManagerUrl() {
-        return discoveryClient
-                .getInstances("htc-role-manager")
-                .stream()
-                .map(si -> si.getUri())
-                .findFirst();
-    }
-
+    @Override
     public ListResponse<CheckOperationGroupDto> getCheckOperationList(final String token, List<String> groupCodes) {
-        final String url = getRoleManagerUrl().get().toString() + "operations/check";
+        final String url = dataProperties.getKeycloakRoleManagerUrl() + "operations/check";
         System.out.println("token: " + token);
         System.out.println("URL: " + url);
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);

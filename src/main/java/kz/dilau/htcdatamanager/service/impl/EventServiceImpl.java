@@ -9,13 +9,13 @@ import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
 import kz.dilau.htcdatamanager.repository.EventRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.EventTypeRepository;
-import kz.dilau.htcdatamanager.service.EventManager;
+import kz.dilau.htcdatamanager.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class EventManagerImpl implements EventManager {
+public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final ApplicationRepository applicationRepository;

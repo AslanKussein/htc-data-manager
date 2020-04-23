@@ -1,7 +1,8 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.service.DataAccessService;
+import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.service.DataAccessManager;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyOwnerDto;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
@@ -11,7 +12,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.repository.*;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
-import kz.dilau.htcdatamanager.service.ApplicationManager;
+import kz.dilau.htcdatamanager.service.ApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,22 +31,22 @@ import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
 
 @RequiredArgsConstructor
 @Service
-public class ApplicationManagerImpl implements ApplicationManager {
+public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final RealPropertyOwnerRepository ownerRepository;
     private final EntityManager entityManager;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final ParkingTypeRepository parkingTypeRepository;
-    private final PurchaseInfoRepository purchaseInfoRepository;
+    private final RealPropertyService realPropertyService;
     private final GeneralCharacteristicsRepository generalCharacteristicsRepository;
     private final RealPropertyRepository realPropertyRepository;
-    private final DataAccessManager dataAccessManager;
+    private final DataAccessService dataAccessService;
 
 
     @Override
     public ApplicationDto getById(final String token, Long id) {
 //        ApplicationDto dto = new ApplicationDto();
-//        ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessManager.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
+//        ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
         Application application = applicationRepository.getOne(id);
 //        checkOperationList
 //                .getData()
@@ -97,7 +98,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
         return ApplicationDto.builder()
                 .id(application.getId())
                 .ownerDto(mapToOwnerDto(application.getOwner()))
-                .realPropertyRequestDto(mapToRealPropertyDto(application.getRealProperty()))
+                .realPropertyRequestDto(realPropertyService.mapToRealPropertyDto(application.getRealProperty()))
                 .operationTypeId(application.getOperationType().getId())
                 .objectPrice(application.getObjectPrice())
                 .mortgage(application.getMortgage())
@@ -115,67 +116,6 @@ public class ApplicationManagerImpl implements ApplicationManager {
 
     private RealPropertyOwnerDto mapToOwnerDto(RealPropertyOwner owner) {
         return new RealPropertyOwnerDto(owner);
-    }
-
-    private RealPropertyRequestDto mapToRealPropertyDto(RealProperty realProperty) {
-        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
-        return RealPropertyRequestDto.builder()
-                .objectTypeId(realProperty.getObjectTypeId())
-                .cityId(generalCharacteristics.getCityId())
-                .districtId(generalCharacteristics.getDistrictId())
-                .streetId(generalCharacteristics.getStreetId())
-                .houseNumber(generalCharacteristics.getHouseNumber())
-                .houseNumberFraction(generalCharacteristics.getHouseNumberFraction())
-                .floor(realProperty.getFloor())
-                .residentialComplexId(realProperty.getResidentialComplexId())
-                .cadastralNumber(realProperty.getCadastralNumber())
-                .apartmentNumber(realProperty.getApartmentNumber())
-                .numberOfRooms(realProperty.getNumberOfRooms())
-                .totalArea(realProperty.getTotalArea())
-                .livingArea(realProperty.getLivingArea())
-                .kitchenArea(realProperty.getKitchenArea())
-                .balconyArea(realProperty.getBalconyArea())
-                .ceilingHeight(generalCharacteristics.getCeilingHeight())
-                .numberOfBedrooms(realProperty.getNumberOfBedrooms())
-                .atelier(realProperty.getAtelier())
-                .separateBathroom(realProperty.getSeparateBathroom())
-                .numberOfFloors(generalCharacteristics.getNumberOfFloors())
-                .apartmentsOnTheSite(realProperty.getApartmentNumber())
-                .materialOfConstructionId(generalCharacteristics.getMaterialOfConstructionId())
-                .yearOfConstruction(generalCharacteristics.getYearOfConstruction())
-                .concierge(generalCharacteristics.getConcierge())
-                .wheelchair(generalCharacteristics.getWheelchair())
-                .yardTypeId(generalCharacteristics.getYardTypeId())
-                .playground(generalCharacteristics.getPlayground())
-//                .parkingTypeIds(generalCharacteristics.getParkingTypes())
-                .propertyDeveloperId(generalCharacteristics.getPropertyDeveloperId())
-                .housingClass(generalCharacteristics.getHousingClass())
-                .housingCondition(generalCharacteristics.getHousingCondition())
-                .sewerageId(realProperty.getSewerageId())
-                .heatingSystemId(realProperty.getHeatingSystemId())
-                .numberOfApartments(generalCharacteristics.getNumberOfApartments())
-                .landArea(realProperty.getLandArea())
-                .purchaseInfoDto(mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))
-                .build();
-    }
-
-    private PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info) {
-        if (nonNull(info)) {
-            return PurchaseInfoDto.builder()
-                    .objectPricePeriod(mapToBigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()))
-                    .floorPeriod(mapToIntegerPeriod(info.getFloorFrom(), info.getFloorTo()))
-                    .numberOfRoomsPeriod(mapToIntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo()))
-                    .numberOfBedroomsPeriod(mapToIntegerPeriod(info.getNumberOfBedroomsFrom(), info.getNumberOfBedroomsTo()))
-                    .numberOfFloorsPeriod(mapToIntegerPeriod(info.getNumberOfFloorsFrom(), info.getNumberOfFloorsTo()))
-                    .totalAreaPeriod(mapToBigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo()))
-                    .livingAreaPeriod(mapToBigDecimalPeriod(info.getLivingAreaFrom(), info.getLivingAreaTo()))
-                    .kitchenAreaPeriod(mapToBigDecimalPeriod(info.getKitchenAreaFrom(), info.getKitchenAreaTo()))
-                    .balconyAreaPeriod(mapToBigDecimalPeriod(info.getBalconyAreaFrom(), info.getBalconyAreaTo()))
-                    .landAreaPeriod(mapToBigDecimalPeriod(info.getLandAreaFrom(), info.getLandAreaTo()))
-                    .ceilingHeightPeriod(mapToBigDecimalPeriod(info.getCeilingHeightFrom(), info.getCeilingHeightTo()))
-                    .build();
-        }
-        return null;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.web.dto.CheckOperationGroupDto;
-import kz.dilau.htcdatamanager.service.DataAccessManager;
+import kz.dilau.htcdatamanager.service.impl.DataAccessServiceImpl;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +19,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/data-accesses")
 public class DataAccessController {
-    private final DataAccessManager dataAccessManager;
+    private final DataAccessServiceImpl dataAccessManager;
 
     @GetMapping
     public ListResponse<CheckOperationGroupDto> func0(@RequestHeader(AUTHORIZATION) final String token) {

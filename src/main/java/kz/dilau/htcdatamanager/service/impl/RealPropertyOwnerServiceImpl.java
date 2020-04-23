@@ -4,7 +4,7 @@ import kz.dilau.htcdatamanager.web.dto.RealPropertyOwnerDto;
 import kz.dilau.htcdatamanager.exception.RealPropertyOwnerNotFoundException;
 import kz.dilau.htcdatamanager.domain.RealPropertyOwner;
 import kz.dilau.htcdatamanager.repository.RealPropertyOwnerRepository;
-import kz.dilau.htcdatamanager.service.RealPropertyOwnerManager;
+import kz.dilau.htcdatamanager.service.RealPropertyOwnerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class RealPropertyOwnerManagerImpl implements RealPropertyOwnerManager {
+public class RealPropertyOwnerServiceImpl implements RealPropertyOwnerService {
     private final RealPropertyOwnerRepository rpoRepository;
 
     @Override

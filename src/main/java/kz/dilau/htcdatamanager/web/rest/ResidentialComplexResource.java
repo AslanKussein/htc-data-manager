@@ -1,8 +1,9 @@
 package kz.dilau.htcdatamanager.web.rest;
 
+import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.CommonResource;
 import kz.dilau.htcdatamanager.web.dto.errors.NotFoundException;
-import kz.dilau.htcdatamanager.service.ResidentialComplexManager;
+import kz.dilau.htcdatamanager.service.ResidentialComplexService;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,14 +16,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/residential-complexes")
+@RequestMapping(Constants.RESIDENTIAL_COMPLEXES_REST_ENDPOINT)
 public class ResidentialComplexResource implements CommonResource<Long, ResidentialComplexDto, ResidentialComplexDto> {
-    private final ResidentialComplexManager residentialComplexManager;
+    private final ResidentialComplexService residentialComplexService;
 
     @Override
     public ResponseEntity<ResidentialComplexDto> getById(String token, Long id) {
         try {
-            ResidentialComplexDto dto = residentialComplexManager.getById(token, id);
+            ResidentialComplexDto dto = residentialComplexService.getById(token, id);
             return ResponseEntity.ok(dto);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
@@ -34,14 +35,14 @@ public class ResidentialComplexResource implements CommonResource<Long, Resident
 
     @Override
     public ResponseEntity<List<ResidentialComplexDto>> getAll(String token) {
-        List<ResidentialComplexDto> list = residentialComplexManager.getAll(token);
+        List<ResidentialComplexDto> list = residentialComplexService.getAll(token);
         return ResponseEntity.ok(list);
     }
 
     @Override
     public ResponseEntity<?> deleteById(String token, Long id) {
         try {
-            residentialComplexManager.deleteById(token, id);
+            residentialComplexService.deleteById(token, id);
             return ResponseEntity.noContent().build();
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
@@ -54,7 +55,7 @@ public class ResidentialComplexResource implements CommonResource<Long, Resident
     @Override
     public ResponseEntity<?> update(String token, Long id, ResidentialComplexDto dto) {
         try {
-            residentialComplexManager.update(token, id, dto);
+            residentialComplexService.update(token, id, dto);
             return ResponseEntity.noContent().build();
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
@@ -66,7 +67,7 @@ public class ResidentialComplexResource implements CommonResource<Long, Resident
 
     @Override
     public ResponseEntity<Long> save(String token, ResidentialComplexDto input) {
-        Long id = residentialComplexManager.save(token, input);
+        Long id = residentialComplexService.save(token, input);
         return ResponseEntity.ok(id);
     }
 }
