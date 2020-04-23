@@ -48,6 +48,7 @@ public class RealPropertyResource {
         realPropertyService.save(realProperty);
     }
 
+    @ApiIgnore
     @PostMapping("/files")
     public ResponseEntity<Void> addFilesToProperty(@RequestParam("propertyId") Long propertyId,
                                                    @RequestParam(value = "photo", required = false) List<String> photoIds,

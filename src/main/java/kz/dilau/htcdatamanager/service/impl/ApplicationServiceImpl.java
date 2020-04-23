@@ -1,18 +1,24 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.service.DataAccessService;
-import kz.dilau.htcdatamanager.service.RealPropertyService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyOwnerDto;
-import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
-import kz.dilau.htcdatamanager.repository.*;
+import kz.dilau.htcdatamanager.exception.EntityRemovedException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
+import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
+import kz.dilau.htcdatamanager.repository.RealPropertyOwnerRepository;
+import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
+import kz.dilau.htcdatamanager.service.DataAccessService;
+import kz.dilau.htcdatamanager.service.RealPropertyOwnerService;
+import kz.dilau.htcdatamanager.service.RealPropertyService;
+import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
+import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyOwnerDto;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +32,6 @@ import java.util.Optional;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToBigDecimalPeriod;
-import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
 
 @RequiredArgsConstructor
 @Service
@@ -38,16 +42,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationStatusRepository applicationStatusRepository;
     private final ParkingTypeRepository parkingTypeRepository;
     private final RealPropertyService realPropertyService;
-    private final GeneralCharacteristicsRepository generalCharacteristicsRepository;
+    private final RealPropertyOwnerService realPropertyOwnerService;
     private final RealPropertyRepository realPropertyRepository;
     private final DataAccessService dataAccessService;
 
 
     @Override
     public ApplicationDto getById(final String token, Long id) {
+        Application application = getApplicationById(id);
+        return mapToApplicationDto(application);
 //        ApplicationDto dto = new ApplicationDto();
 //        ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
-        Application application = applicationRepository.getOne(id);
 //        checkOperationList
 //                .getData()
 //                .stream()
@@ -91,7 +96,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 //                        }
 //                    }
 //                });
-        return mapToApplicationDto(application);
+//        return mapToApplicationDto(application);
     }
 
     private ApplicationDto mapToApplicationDto(Application application) {
@@ -126,6 +131,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Transactional
     @Override
     public Long save(String token, ApplicationDto dto) {
+        return saveApplication(new Application(), dto);
+    }
+
+    private Long saveApplication(Application application, ApplicationDto dto) {
         RealPropertyOwner owner = getOwner(dto.getOwnerDto());
         OperationType operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
@@ -203,13 +212,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
             realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
         }
-        Application application = new Application();
-        if (nonNull(dto.getId())) {
-            Optional<Application> optionalApplication = applicationRepository.findById(dto.getId());
-            if (optionalApplication.isPresent()) {
-                application.setId(optionalApplication.get().getId());
-                realProperty.setId(optionalApplication.get().getRealProperty().getId());
-            }
+        if (nonNull(application.getId())) {
+            realProperty.setId(application.getRealProperty().getId());
         }
         application.setRealProperty(realProperty);
         application.setOwner(owner);
@@ -231,14 +235,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private <T> T mapDict(Class<T> clazz, Long id) {
         if (nonNull(id) && id != 0L) {
-            return entityManager.getReference(clazz, id);
+            T dict = entityManager.getReference(clazz, id);
+            if (isNull(dict)) {
+                throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
+            }
         }
         return null;
-    }
-
-    private void setInitStatus(Application.ApplicationBuilder builder) {
-        ApplicationStatus status = applicationStatusRepository.findByCode("002001");
-        builder.applicationStatus(status);
     }
 
     private RealPropertyOwner getOwner(RealPropertyOwnerDto dto) {
@@ -254,19 +256,33 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
             ownerRepository.save(owner);
         } else {
-            owner = ownerRepository.getOne(dto.getId());
+            owner = realPropertyOwnerService.getOwnerById(dto.getId());
         }
         return owner;
     }
 
     @Override
     public void update(String token, Long aLong, ApplicationDto input) {
-        input.setId(aLong);
-        save(token, input);
+        Application application = getApplicationById(aLong);
+        saveApplication(application, input);
     }
 
     @Override
     public void deleteById(String token, Long aLong) {
-        applicationRepository.deleteById(aLong);
+        Application application = getApplicationById(aLong);
+        application.setRemoved(true);
+        applicationRepository.save(application);
+    }
+
+    private Application getApplicationById(Long id) {
+        Optional<Application> optionalApplication = applicationRepository.findById(id);
+        if (optionalApplication.isPresent()) {
+            if (optionalApplication.get().isRemoved()) {
+                throw EntityRemovedException.createApplicationRemovedById(id);
+            }
+            return optionalApplication.get();
+        } else {
+            throw NotFoundException.createApplicationNotFoundById(id);
+        }
     }
 }

@@ -4,8 +4,6 @@ import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.CommonResource;
 import kz.dilau.htcdatamanager.service.RealPropertyOwnerService;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyOwnerDto;
-import kz.dilau.htcdatamanager.exception.RealPropertyOwnerNotFoundException;
-import kz.dilau.htcdatamanager.web.rest.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +24,8 @@ public class RealPropertyOwnerResource implements CommonResource<Long, RealPrope
 
     @Override
     public ResponseEntity<RealPropertyOwnerDto> getById(String token, Long id) {
-        try {
-            RealPropertyOwnerDto owner = realPropertyOwnerService.getById(token, id);
-            return ResponseEntity.ok(owner);
-        } catch (RealPropertyOwnerNotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("Owner with id %s not found", id, e)
-            );
-        }
+        RealPropertyOwnerDto owner = realPropertyOwnerService.getById(token, id);
+        return ResponseEntity.ok(owner);
     }
 
     @ApiIgnore
@@ -54,34 +45,20 @@ public class RealPropertyOwnerResource implements CommonResource<Long, RealPrope
 
     @Override
     public ResponseEntity<?> update(String token, Long id, RealPropertyOwnerDto dto) {
-        try {
-            realPropertyOwnerService.update(token, id, dto);
-            return ResponseEntity.noContent().build();
-        } catch (RealPropertyOwnerNotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    String.format("Provide correct owner id: %s", id)
-            );
-        }
+        realPropertyOwnerService.update(token, id, dto);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<?> deleteById(String token, Long id) {
-        try {
-            realPropertyOwnerService.deleteById(token, id);
-            return ResponseEntity.noContent().build();
-        } catch (RealPropertyOwnerNotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("Owner with id %s not found", id)
-            );
-        }
+        realPropertyOwnerService.deleteById(token, id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/search/by-phone-number")
     public ResponseEntity<RealPropertyOwnerDto> findOwnerByPhoneNumber(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
                                                                        @RequestParam String phoneNumber) {
         RealPropertyOwnerDto owner = realPropertyOwnerService.findOwnerByPhoneNumber(phoneNumber);
-        return nonNull(owner) ? ApiResponse.OK(owner) : ApiResponse.BAD_REQUEST();
+        return nonNull(owner) ? ResponseEntity.ok(owner) : ResponseEntity.noContent().build();
     }
 }

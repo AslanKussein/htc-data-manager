@@ -10,10 +10,12 @@ import kz.dilau.htcdatamanager.web.dto.ApplicationStatusHistoryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@ApiIgnore
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/app-status-histories")
