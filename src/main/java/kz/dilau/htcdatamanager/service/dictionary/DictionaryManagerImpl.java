@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.service.dictionary;
 
-import kz.dilau.htcdatamanager.web.dto.errors.NotFoundException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

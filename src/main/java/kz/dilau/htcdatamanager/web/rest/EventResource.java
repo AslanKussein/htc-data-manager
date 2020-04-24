@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
-import kz.dilau.htcdatamanager.web.dto.errors.NotFoundException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import lombok.RequiredArgsConstructor;

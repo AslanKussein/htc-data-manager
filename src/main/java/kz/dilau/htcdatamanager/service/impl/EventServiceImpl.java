@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.web.dto.errors.NotFoundException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.Event;
