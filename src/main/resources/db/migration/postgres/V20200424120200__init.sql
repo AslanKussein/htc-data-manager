@@ -343,7 +343,8 @@ create table htc_dm_dic_residential_complex
     constraint htc_dm_dic_residential_complex_pkey
       primary key,
   house_name          varchar(255),
-  number_of_entrances integer
+  number_of_entrances integer,
+  is_removed          boolean default false not null
 );
 
 alter table htc_dm_dic_residential_complex
