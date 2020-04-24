@@ -36,13 +36,13 @@ public class RealPropertyServiceImpl implements RealPropertyService {
     }
 
     public void deleteById(Long id) {
-        realPropertyRepository.deleteById(id);
+//        realPropertyRepository.deleteById(id);
     }
 
     public void update(Long id, RealProperty var0) {
-        RealProperty var1 = realPropertyRepository.getOne(id);
-        BeanUtils.copyProperties(var0, var1);
-        realPropertyRepository.save(var1);
+//        RealProperty var1 = realPropertyRepository.getOne(id);
+//        BeanUtils.copyProperties(var0, var1);
+//        realPropertyRepository.save(var1);
     }
 
     public void save(RealProperty realProperty) {

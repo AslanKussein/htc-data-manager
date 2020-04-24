@@ -65,6 +65,7 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @ManyToOne(optional = false)
     @JoinColumn(name = "application_status_id")
     private ApplicationStatus applicationStatus;
+    @OrderBy("id")
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ApplicationStatusHistory> statusHistoryList;
 

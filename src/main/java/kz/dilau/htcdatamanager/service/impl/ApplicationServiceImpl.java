@@ -16,17 +16,17 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ClientService;
 import kz.dilau.htcdatamanager.service.DataAccessService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.ClientDto;
-import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
+import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
@@ -115,7 +115,19 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .amount(application.getAmount())
                 .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
                 .note(application.getNote())
+                .statusHistoryDtoList(mapStatusHistoryList(application))
                 .build();
+    }
+
+    private List<ApplicationStatusHistoryDto> mapStatusHistoryList(Application application) {
+        List<ApplicationStatusHistoryDto> statusHistoryList = new ArrayList<>();
+        application.getStatusHistoryList().forEach(history ->
+                statusHistoryList.add(ApplicationStatusHistoryDto.builder()
+                        .applicationStatus(DictionaryMappingTool.mapDictionaryToText(history.getApplicationStatus()))
+                        .comment(history.getComment())
+                        .creationDate(history.getCreatedDate())
+                        .build()));
+        return statusHistoryList;
     }
 
     private ClientDto mapToClientDto(Client client) {
