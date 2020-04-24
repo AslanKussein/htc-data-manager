@@ -9,8 +9,6 @@ import kz.dilau.htcdatamanager.web.dto.ClientDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,38 +31,36 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<ClientDto> getAll(String token) {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public Long save(String token, ClientDto dto) {
+    public ClientDto save(ClientDto dto) {
         return saveClient(new Client(), dto);
     }
 
-    public Long saveClient(Client client, ClientDto dto) {
+    private ClientDto saveClient(Client client, ClientDto dto) {
         client.setFirstName(dto.getFirstName());
         client.setSurname(dto.getSurname());
         client.setPatronymic(dto.getPatronymic());
         client.setPhoneNumber(dto.getPhoneNumber());
         client.setEmail(dto.getEmail());
         client.setGender(dto.getGender());
-        return clientRepository.save(client).getId();
+        client = clientRepository.save(client);
+        return new ClientDto(client);
     }
 
     @Override
-    public void update(String token, Long id, ClientDto dto) {
+    public ClientDto update(String token, Long id, ClientDto dto) {
         Client client = getClientById(id);
-        saveClient(client, dto);
+        return saveClient(client, dto);
     }
 
     @Override
-    public void deleteById(String token, Long id) {
+    public ClientDto deleteById(String token, Long id) {
         Client client = getClientById(id);
         client.setRemoved(true);
-        clientRepository.save(client);
+        client = clientRepository.save(client);
+        return new ClientDto(client);
     }
 
+    @Override
     public Client getClientById(Long id) {
         Optional<Client> optionalClient = clientRepository.findById(id);
         if (optionalClient.isPresent()) {

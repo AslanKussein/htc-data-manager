@@ -12,12 +12,12 @@ import kz.dilau.htcdatamanager.repository.ClientRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.DataAccessService;
 import kz.dilau.htcdatamanager.service.ClientService;
+import kz.dilau.htcdatamanager.service.DataAccessService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
+import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,9 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
@@ -124,13 +122,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<ApplicationDto> getAll(String token) {
-        return Collections.emptyList();
-    }
-
     @Transactional
-    @Override
-    public Long save(String token, ApplicationDto dto) {
+    public Long save(ApplicationDto dto) {
         return saveApplication(new Application(), dto);
     }
 
@@ -233,16 +226,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
-    private <T> T mapDict(Class<T> clazz, Long id) {
-        if (nonNull(id) && id != 0L) {
-            T dict = entityManager.getReference(clazz, id);
-            if (isNull(dict)) {
-                throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
-            }
-        }
-        return null;
-    }
-
     private Client getClient(ClientDto dto) {
         Client client;
         if (dto.getId() == null || dto.getId() == 0L) {
@@ -262,16 +245,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public void update(String token, Long aLong, ApplicationDto input) {
-        Application application = getApplicationById(aLong);
-        saveApplication(application, input);
+    public Long update(String token, Long id, ApplicationDto input) {
+        Application application = getApplicationById(id);
+        return saveApplication(application, input);
     }
 
     @Override
-    public void deleteById(String token, Long aLong) {
-        Application application = getApplicationById(aLong);
+    public Long deleteById(String token, Long id) {
+        Application application = getApplicationById(id);
         application.setRemoved(true);
-        applicationRepository.save(application);
+        return applicationRepository.save(application).getId();
     }
 
     private Application getApplicationById(Long id) {
