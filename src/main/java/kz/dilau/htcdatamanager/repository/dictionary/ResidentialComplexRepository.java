@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ResidentialComplexRepository extends JpaRepository<ResidentialComplex, Long> {
-    @Query(value = "select r from ResidentialComplex r where r.removed = false")
+    @Query(value = "select r from ResidentialComplex r where r.isRemoved = false")
     List<ResidentialComplex> findAllByRemovedFalse();
 }

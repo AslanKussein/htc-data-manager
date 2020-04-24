@@ -104,7 +104,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
     @Override
     public ResidentialComplexDto deleteById(String token, Long id) {
         ResidentialComplex residentialComplex = getResidentialComplexById(id);
-        residentialComplex.setRemoved(true);
+        residentialComplex.setIsRemoved(true);
         residentialComplex = residentialComplexRepository.save(residentialComplex);
         return new ResidentialComplexDto(residentialComplex);
     }
@@ -122,7 +122,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
     private ResidentialComplex getResidentialComplexById(Long id) {
         Optional<ResidentialComplex> optionalResidentialComplex = residentialComplexRepository.findById(id);
         if (optionalResidentialComplex.isPresent()) {
-            if (optionalResidentialComplex.get().isRemoved()) {
+            if (optionalResidentialComplex.get().getIsRemoved()) {
                 throw EntityRemovedException.createEntityRemovedById("ResidentialComplex", id);
             }
             return optionalResidentialComplex.get();

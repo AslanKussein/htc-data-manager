@@ -253,14 +253,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Long deleteById(String token, Long id) {
         Application application = getApplicationById(id);
-        application.setRemoved(true);
+        application.setIsRemoved(true);
         return applicationRepository.save(application).getId();
     }
 
     private Application getApplicationById(Long id) {
         Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
-            if (optionalApplication.get().isRemoved()) {
+            if (optionalApplication.get().getIsRemoved()) {
                 throw EntityRemovedException.createApplicationRemovedById(id);
             }
             return optionalApplication.get();

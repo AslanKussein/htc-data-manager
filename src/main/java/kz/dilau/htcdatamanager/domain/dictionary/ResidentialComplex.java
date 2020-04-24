@@ -26,5 +26,5 @@ public class ResidentialComplex extends BaseEntity<Long> {
     @JoinColumn(name = "general_characteristics_id")
     private GeneralCharacteristics generalCharacteristics;
     @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
-    private boolean isRemoved = false;
+    private Boolean isRemoved = false;
 }
