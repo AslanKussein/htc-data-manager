@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Builder
@@ -66,4 +65,13 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @ManyToOne(optional = false)
     @JoinColumn(name = "application_status_id")
     private ApplicationStatus applicationStatus;
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ApplicationStatusHistory> statusHistoryList;
+
+    public List<ApplicationStatusHistory> getStatusHistoryList() {
+        if (isNull(statusHistoryList)) {
+            statusHistoryList = new ArrayList<>();
+        }
+        return statusHistoryList;
+    }
 }

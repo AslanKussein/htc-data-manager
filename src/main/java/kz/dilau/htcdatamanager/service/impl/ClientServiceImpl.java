@@ -55,7 +55,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public ClientDto deleteById(String token, Long id) {
         Client client = getClientById(id);
-        client.setRemoved(true);
+        client.setIsRemoved(true);
         client = clientRepository.save(client);
         return new ClientDto(client);
     }
@@ -64,7 +64,7 @@ public class ClientServiceImpl implements ClientService {
     public Client getClientById(Long id) {
         Optional<Client> optionalClient = clientRepository.findById(id);
         if (optionalClient.isPresent()) {
-            if (optionalClient.get().isRemoved()) {
+            if (optionalClient.get().getIsRemoved()) {
                 throw EntityRemovedException.createClientRemovedById(id);
             }
             return optionalClient.get();

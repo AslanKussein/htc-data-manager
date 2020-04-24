@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
@@ -205,9 +206,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
             realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
         }
-        if (nonNull(application.getId())) {
-            realProperty.setId(application.getRealProperty().getId());
-        }
         application.setRealProperty(realProperty);
         application.setClient(client);
         application.setOperationType(operationType);
@@ -222,13 +220,27 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setContractPeriod(dto.getContractPeriod());
         application.setAmount(dto.getAmount());
         application.setCommissionIncludedInThePrice(dto.isCommissionIncludedInThePrice());
-        application.setApplicationStatus(applicationStatusRepository.findByCode(ApplicationStatus.NEW));
+        if (nonNull(application.getId())) {
+            realProperty.setId(application.getRealProperty().getId());
+        } else {
+            ApplicationStatus status = applicationStatusRepository.findByCode(ApplicationStatus.NEW);
+            application.setApplicationStatus(status);
+            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+                    .application(application)
+                    .applicationStatus(status)
+                    .build();
+            application.getStatusHistoryList().add(statusHistory);
+        }
         return applicationRepository.save(application).getId();
     }
 
     private Client getClient(ClientDto dto) {
         Client client;
-        if (dto.getId() == null || dto.getId() == 0L) {
+        if (isNull(dto.getId()) || dto.getId() == 0L) {
+            ClientDto clientFromBd = clientService.findClientByPhoneNumber(dto.getPhoneNumber());
+            if (nonNull(clientFromBd)) {
+                throw BadRequestException.createClientHasFounded(dto.getPhoneNumber());
+            }
             client = Client.builder()
                     .firstName(dto.getFirstName())
                     .surname(dto.getSurname())
@@ -253,14 +265,14 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Long deleteById(String token, Long id) {
         Application application = getApplicationById(id);
-        application.setRemoved(true);
+        application.setIsRemoved(true);
         return applicationRepository.save(application).getId();
     }
 
     private Application getApplicationById(Long id) {
         Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
-            if (optionalApplication.get().isRemoved()) {
+            if (optionalApplication.get().getIsRemoved()) {
                 throw EntityRemovedException.createApplicationRemovedById(id);
             }
             return optionalApplication.get();

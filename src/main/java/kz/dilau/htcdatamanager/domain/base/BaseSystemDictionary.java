@@ -13,7 +13,7 @@ public class BaseSystemDictionary extends BaseCustomDictionary {
     @Column(name = "code", unique = true, nullable = false)
     private String code;
     @Column(name = "is_enabled", nullable = false, columnDefinition = "boolean default true")
-    private boolean isEnabled = true;
+    private Boolean isEnabled = true;
     @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
-    private boolean isRemoved = false;
+    private Boolean isRemoved = false;
 }

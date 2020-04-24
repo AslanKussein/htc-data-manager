@@ -37,5 +37,5 @@ public abstract class Auditable<U> implements Serializable {
     protected Date lastModifiedDate;
 
     @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
-    private boolean isRemoved = false;
+    private Boolean isRemoved = false;
 }
