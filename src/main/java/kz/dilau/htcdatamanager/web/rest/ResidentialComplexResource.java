@@ -1,73 +1,54 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
-import kz.dilau.htcdatamanager.service.CommonResource;
-import kz.dilau.htcdatamanager.web.dto.errors.NotFoundException;
 import kz.dilau.htcdatamanager.service.ResidentialComplexService;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(Constants.RESIDENTIAL_COMPLEXES_REST_ENDPOINT)
-public class ResidentialComplexResource implements CommonResource<Long, ResidentialComplexDto, ResidentialComplexDto> {
+public class ResidentialComplexResource {
     private final ResidentialComplexService residentialComplexService;
 
-    @Override
-    public ResponseEntity<ResidentialComplexDto> getById(String token, Long id) {
-        try {
-            ResidentialComplexDto dto = residentialComplexService.getById(token, id);
-            return ResponseEntity.ok(dto);
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("Residential complex with id %s not found", id, e)
-            );
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<ResidentialComplexDto> getById(@PathVariable("id") Long id) {
+        ResidentialComplexDto dto = residentialComplexService.getById(id);
+        return ResponseEntity.ok(dto);
     }
 
-    @Override
-    public ResponseEntity<List<ResidentialComplexDto>> getAll(String token) {
-        List<ResidentialComplexDto> list = residentialComplexService.getAll(token);
+    @GetMapping
+    public ResponseEntity<List<ResidentialComplexDto>> getAll() {
+        List<ResidentialComplexDto> list = residentialComplexService.getAll();
         return ResponseEntity.ok(list);
     }
 
-    @Override
-    public ResponseEntity<?> deleteById(String token, Long id) {
-        try {
-            residentialComplexService.deleteById(token, id);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("Residential complex with id %s not found", id, e)
-            );
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResidentialComplexDto> deleteById(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                            @PathVariable("id") Long id) {
+        ResidentialComplexDto result = residentialComplexService.deleteById(token, id);
+        return ResponseEntity.ok(result);
     }
 
-    @Override
-    public ResponseEntity<?> update(String token, Long id, ResidentialComplexDto dto) {
-        try {
-            residentialComplexService.update(token, id, dto);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    String.format("Provide correct residential complex id: %s", id)
-            );
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<ResidentialComplexDto> update(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                        @PathVariable("id") Long id,
+                                                        @RequestBody ResidentialComplexDto dto) {
+        ResidentialComplexDto result = residentialComplexService.update(token, id, dto);
+        return ResponseEntity.ok(result);
     }
 
-    @Override
-    public ResponseEntity<Long> save(String token, ResidentialComplexDto input) {
-        Long id = residentialComplexService.save(token, input);
-        return ResponseEntity.ok(id);
+    @PostMapping
+    public ResponseEntity<ResidentialComplexDto> save(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                      @RequestBody ResidentialComplexDto input) {
+        ResidentialComplexDto result = residentialComplexService.save(token, input);
+        return ResponseEntity.ok(result);
     }
 }

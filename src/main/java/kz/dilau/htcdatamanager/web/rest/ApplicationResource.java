@@ -1,50 +1,46 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
-import kz.dilau.htcdatamanager.service.CommonResource;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(Constants.APPLICATIONS_REST_ENDPOINT)
-public class ApplicationResource implements CommonResource<Long, ApplicationDto, ApplicationDto> {
-    private final ApplicationService applicationManager;
+public class ApplicationResource {
+    private final ApplicationService applicationService;
 
-    @Override
-    public ResponseEntity<ApplicationDto> getById(String token, Long aLong) {
-        ApplicationDto dto = applicationManager.getById(token, aLong);
-        return ResponseEntity.ok(dto);
+    @GetMapping("/{id}")
+    public ResponseEntity<ApplicationDto> getById(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                  @PathVariable("id") Long id) {
+        ApplicationDto result = applicationService.getById(token, id);
+        return ResponseEntity.ok(result);
     }
 
-    @ApiIgnore
-    @Override
-    public ResponseEntity<List<ApplicationDto>> getAll(String token) {
-        return null;
+    @PostMapping
+    public ResponseEntity<Long> save(@RequestBody ApplicationDto dto) {
+        Long result = applicationService.save(dto);
+        return ResponseEntity.ok(result);
     }
 
-    @Override
-    public ResponseEntity<Long> save(String token, ApplicationDto input) {
-        Long id = applicationManager.save(token, input);
-        return ResponseEntity.ok(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<Long> update(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                       @PathVariable("id") Long id,
+                                       @RequestBody ApplicationDto input) {
+        Long result = applicationService.update(token, id, input);
+        return ResponseEntity.ok(result);
     }
 
-    @Override
-    public ResponseEntity<?> update(String token, Long aLong, ApplicationDto input) {
-        applicationManager.update(token, aLong, input);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Override
-    public ResponseEntity<?> deleteById(String token, Long aLong) {
-        applicationManager.deleteById(token, aLong);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Long> deleteById(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                           @PathVariable("id") Long id) {
+        Long result = applicationService.deleteById(token, id);
+        return ResponseEntity.ok(result);
     }
 }

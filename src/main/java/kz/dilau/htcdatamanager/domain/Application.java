@@ -58,8 +58,8 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @Column(name = "note")
     private String note;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_id", nullable = false)
-    private RealPropertyOwner owner;
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;

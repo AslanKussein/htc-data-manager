@@ -2,7 +2,7 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.RealPropertyOwner;
+import kz.dilau.htcdatamanager.domain.Client;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
 import lombok.*;
 
@@ -14,7 +14,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(description = "Модель сущности Клиент")
-public class RealPropertyOwnerDto {
+public class ClientDto {
     @ApiModelProperty(value = "ID клиента")
     @Min(1)
     private Long id;
@@ -35,13 +35,13 @@ public class RealPropertyOwnerDto {
     @ApiModelProperty(value = "Пол клиента")
     private Gender gender = Gender.UNKNOWN;
 
-    public RealPropertyOwnerDto(RealPropertyOwner owner) {
-        this.id = owner.getId();
-        this.firstName = owner.getFirstName();
-        this.surname = owner.getSurname();
-        this.patronymic = owner.getPatronymic();
-        this.phoneNumber = owner.getPhoneNumber();
-        this.email = owner.getEmail();
-        this.gender = owner.getGender();
+    public ClientDto(Client client) {
+        this.id = client.getId();
+        this.firstName = client.getFirstName();
+        this.surname = client.getSurname();
+        this.patronymic = client.getPatronymic();
+        this.phoneNumber = client.getPhoneNumber();
+        this.email = client.getEmail();
+        this.gender = client.getGender();
     }
 }

@@ -1,14 +1,15 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.web.dto.errors.NotFoundException;
-import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.exception.EntityRemovedException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.GeneralCharacteristicsRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.ResidentialComplexService;
+import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,31 +17,31 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
 public class ResidentialComplexServiceImpl implements ResidentialComplexService {
-    private final ResidentialComplexRepository rcRepository;
-    private final GeneralCharacteristicsRepository gcRepository;
-    private final TypeOfElevatorRepository toeRepository;
+    private final ResidentialComplexRepository residentialComplexRepository;
+    private final TypeOfElevatorRepository typeOfElevatorRepository;
     private final ParkingTypeRepository parkingTypeRepository;
     private final EntityManager entityManager;
 
     @Override
-    public ResidentialComplexDto getById(String token, Long id) {
-        return rcRepository
-                .findById(id)
-                .map(ResidentialComplexDto::new)
-                .orElseThrow(() -> new NotFoundException("Residential complex with id not found: " + id));
+    public ResidentialComplexDto getById(Long id) {
+        ResidentialComplex residentialComplex = getResidentialComplexById(id);
+        return new ResidentialComplexDto(residentialComplex);
     }
 
     @Override
-    public List<ResidentialComplexDto> getAll(String token) {
-        return rcRepository
-                .findAll()
+    public List<ResidentialComplexDto> getAll() {
+        return residentialComplexRepository
+                .findAllByRemovedFalse()
                 .stream()
                 .map(ResidentialComplexDto::new)
                 .collect(Collectors.toList());
@@ -48,8 +49,12 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
 
     @Transactional
     @Override
-    public Long save(String token, ResidentialComplexDto dto) {
-        GeneralCharacteristics.GeneralCharacteristicsBuilder gcBuilder = GeneralCharacteristics.builder()
+    public ResidentialComplexDto save(String token, ResidentialComplexDto dto) {
+        return saveResidentialComplex(new ResidentialComplex(), dto);
+    }
+
+    private ResidentialComplexDto saveResidentialComplex(ResidentialComplex residentialComplex, ResidentialComplexDto dto) {
+        GeneralCharacteristics generalCharacteristics = GeneralCharacteristics.builder()
                 .apartmentsOnTheSite(dto.getApartmentsOnTheSite())
                 .ceilingHeight(dto.getCeilingHeight())
                 .concierge(dto.getConcierge())
@@ -61,62 +66,68 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
                 .numberOfFloors(dto.getNumberOfFloors())
                 .playground(dto.getPlayground())
                 .wheelchair(dto.getWheelchair())
-                .yearOfConstruction(dto.getYearOfConstruction());
-        if (Objects.nonNull(dto.getMaterialOfConstructionId())) {
-            MaterialOfConstruction materialOfConstruction = entityManager.getReference(MaterialOfConstruction.class, dto.getMaterialOfConstructionId());
-            gcBuilder.materialOfConstruction(materialOfConstruction);
-        }
-        if (Objects.nonNull(dto.getCityId())) {
-            City city = entityManager.getReference(City.class, dto.getCityId());
-            gcBuilder.city(city);
-        }
-        if (Objects.nonNull(dto.getDistrictId())) {
-            District district = entityManager.getReference(District.class, dto.getDistrictId());
-            gcBuilder.district(district);
-        }
-        if (Objects.nonNull(dto.getPropertyDeveloperId())) {
-            PropertyDeveloper propertyDeveloper = entityManager.getReference(PropertyDeveloper.class, dto.getPropertyDeveloperId());
-            gcBuilder.propertyDeveloper(propertyDeveloper);
-        }
-        if (Objects.nonNull(dto.getStreetId())) {
-            Street street = entityManager.getReference(Street.class, dto.getStreetId());
-            gcBuilder.street(street);
-        }
-        if (Objects.nonNull(dto.getYardTypeId())) {
-            YardType yardType = entityManager.getReference(YardType.class, dto.getYardTypeId());
-            gcBuilder.yardType(yardType);
-        }
+                .yearOfConstruction(dto.getYearOfConstruction())
+                .materialOfConstruction(mapDict(MaterialOfConstruction.class, dto.getMaterialOfConstructionId()))
+                .city(mapDict(City.class, dto.getCityId()))
+                .district(mapDict(District.class, dto.getDistrictId()))
+                .propertyDeveloper(mapDict(PropertyDeveloper.class, dto.getPropertyDeveloperId()))
+                .street(mapDict(Street.class, dto.getStreetId()))
+                .yardType(mapDict(YardType.class, dto.getYardTypeId()))
+                .build();
         if (!CollectionUtils.isEmpty(dto.getTypeOfElevatorIdList())) {
-            Set<TypeOfElevator> elevators = toeRepository.findByIdIn(dto.getTypeOfElevatorIdList());
-            gcBuilder.typesOfElevator(elevators);
+            Set<TypeOfElevator> elevators = typeOfElevatorRepository.findByIdIn(dto.getTypeOfElevatorIdList());
+            generalCharacteristics.getTypesOfElevator().clear();
+            generalCharacteristics.getTypesOfElevator().addAll(elevators);
         }
         if (!CollectionUtils.isEmpty(dto.getParkingTypeIds())) {
             Set<ParkingType> parkingTypes = parkingTypeRepository.findByIdIn(dto.getTypeOfElevatorIdList());
-            gcBuilder.parkingTypes(parkingTypes);
+            generalCharacteristics.getParkingTypes().clear();
+            generalCharacteristics.getParkingTypes().addAll(parkingTypes);
         }
-        GeneralCharacteristics generalCharacteristics = gcRepository.save(gcBuilder.build());
-        ResidentialComplex rc = ResidentialComplex.builder()
-                .houseName(dto.getHouseName())
-                .numberOfEntrances(dto.getNumberOfEntrances())
-                .generalCharacteristics(generalCharacteristics)
-                .build();
-        Long id = rcRepository.save(rc).getId();
-        return id;
+        if (nonNull(residentialComplex.getId()) && nonNull(residentialComplex.getGeneralCharacteristics())) {
+            generalCharacteristics.setId(residentialComplex.getGeneralCharacteristics().getId());
+        }
+        residentialComplex.setHouseName(dto.getHouseName());
+        residentialComplex.setNumberOfEntrances(dto.getNumberOfEntrances());
+        residentialComplex.setGeneralCharacteristics(generalCharacteristics);
+
+        residentialComplex = residentialComplexRepository.save(residentialComplex);
+        return new ResidentialComplexDto(residentialComplex);
     }
 
     @Override
-    public void update(String token, Long id, ResidentialComplexDto input) {
-        ResidentialComplex residentialComplex = rcRepository
-                .findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("Residential complex with id %s not found", id)));
-
-
+    public ResidentialComplexDto update(String token, Long id, ResidentialComplexDto input) {
+        ResidentialComplex residentialComplex = getResidentialComplexById(id);
+        return saveResidentialComplex(residentialComplex, input);
     }
 
     @Override
-    public void deleteById(String token, Long id) {
-        boolean exists = rcRepository.existsById(id);
-        if (!exists) throw new NotFoundException("Residential complex with id not found: " + id);
-        rcRepository.deleteById(id);
+    public ResidentialComplexDto deleteById(String token, Long id) {
+        ResidentialComplex residentialComplex = getResidentialComplexById(id);
+        residentialComplex.setRemoved(true);
+        residentialComplex = residentialComplexRepository.save(residentialComplex);
+        return new ResidentialComplexDto(residentialComplex);
+    }
+
+    private <T> T mapDict(Class<T> clazz, Long id) {
+        if (nonNull(id) && id != 0L) {
+            T dict = entityManager.getReference(clazz, id);
+            if (isNull(dict)) {
+                throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
+            }
+        }
+        return null;
+    }
+
+    private ResidentialComplex getResidentialComplexById(Long id) {
+        Optional<ResidentialComplex> optionalResidentialComplex = residentialComplexRepository.findById(id);
+        if (optionalResidentialComplex.isPresent()) {
+            if (optionalResidentialComplex.get().isRemoved()) {
+                throw EntityRemovedException.createEntityRemovedById("ResidentialComplex", id);
+            }
+            return optionalResidentialComplex.get();
+        } else {
+            throw NotFoundException.createEntityNotFoundById("ResidentialComplex", id);
+        }
     }
 }

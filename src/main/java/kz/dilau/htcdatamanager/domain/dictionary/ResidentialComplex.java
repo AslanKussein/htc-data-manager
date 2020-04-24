@@ -22,7 +22,9 @@ public class ResidentialComplex extends BaseEntity<Long> {
     private String houseName;
     @Column(name = "number_of_entrances")
     private Integer numberOfEntrances;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_characteristics_id")
     private GeneralCharacteristics generalCharacteristics;
+    @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
+    private boolean isRemoved = false;
 }

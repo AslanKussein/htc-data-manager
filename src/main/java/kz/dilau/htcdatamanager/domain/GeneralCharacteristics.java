@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Data
@@ -79,7 +80,7 @@ public class GeneralCharacteristics extends BaseEntity<Long> {
     private Boolean concierge;
     @Column(name = "wheelchair")
     private Boolean wheelchair;
-//    @ManyToOne(fetch = FetchType.LAZY)
+    //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "parking_type_id", insertable = false, updatable = false)
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -95,4 +96,18 @@ public class GeneralCharacteristics extends BaseEntity<Long> {
     private Long yardTypeId;
     @Column(name = "playground")
     private Boolean playground;
+
+    public Set<TypeOfElevator> getTypesOfElevator() {
+        if (isNull(typesOfElevator)) {
+            typesOfElevator = new HashSet<>();
+        }
+        return typesOfElevator;
+    }
+
+    public Set<ParkingType> getParkingTypes() {
+        if (isNull(parkingTypes)) {
+            parkingTypes = new HashSet<>();
+        }
+        return parkingTypes;
+    }
 }

@@ -35,4 +35,7 @@ public abstract class Auditable<U> implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_modified_date", nullable = false)
     protected Date lastModifiedDate;
+
+    @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
+    private boolean isRemoved = false;
 }
