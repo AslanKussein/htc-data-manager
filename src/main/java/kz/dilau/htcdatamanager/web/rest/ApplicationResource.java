@@ -1,9 +1,11 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
+import kz.dilau.htcdatamanager.exception.DetailedException;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -25,8 +27,12 @@ public class ApplicationResource {
 
     @PostMapping
     public ResponseEntity<Long> save(@RequestBody ApplicationDto dto) {
-        Long result = applicationService.save(dto);
-        return ResponseEntity.ok(result);
+        try {
+            Long result = applicationService.save(dto);
+            return ResponseEntity.ok(result);
+        } catch (DetailedException d) {
+            return new ResponseEntity<>(HttpStatus.valueOf(d.getStatusCode()));
+        }
     }
 
     @PutMapping("/{id}")

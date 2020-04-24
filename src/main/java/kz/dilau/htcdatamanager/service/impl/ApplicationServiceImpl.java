@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
@@ -228,7 +229,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private Client getClient(ClientDto dto) {
         Client client;
-        if (dto.getId() == null || dto.getId() == 0L) {
+        if (isNull(dto.getId()) || dto.getId() == 0L) {
+            ClientDto clientFromBd = clientService.findClientByPhoneNumber(dto.getPhoneNumber());
+            if (nonNull(clientFromBd)) {
+                throw BadRequestException.createClientHasFounded(dto.getPhoneNumber());
+            }
             client = Client.builder()
                     .firstName(dto.getFirstName())
                     .surname(dto.getSurname())
