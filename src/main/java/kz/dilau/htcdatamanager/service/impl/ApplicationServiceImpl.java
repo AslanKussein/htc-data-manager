@@ -8,16 +8,16 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
-import kz.dilau.htcdatamanager.repository.RealPropertyOwnerRepository;
+import kz.dilau.htcdatamanager.repository.ClientRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.DataAccessService;
-import kz.dilau.htcdatamanager.service.RealPropertyOwnerService;
+import kz.dilau.htcdatamanager.service.ClientService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyOwnerDto;
+import kz.dilau.htcdatamanager.web.dto.ClientDto;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,12 +37,12 @@ import static java.util.Objects.nonNull;
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
-    private final RealPropertyOwnerRepository ownerRepository;
+    private final ClientRepository clientRepository;
     private final EntityManager entityManager;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final ParkingTypeRepository parkingTypeRepository;
     private final RealPropertyService realPropertyService;
-    private final RealPropertyOwnerService realPropertyOwnerService;
+    private final ClientService clientService;
     private final RealPropertyRepository realPropertyRepository;
     private final DataAccessService dataAccessService;
 
@@ -102,7 +102,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ApplicationDto mapToApplicationDto(Application application) {
         return ApplicationDto.builder()
                 .id(application.getId())
-                .ownerDto(mapToOwnerDto(application.getOwner()))
+                .clientDto(mapToClientDto(application.getClient()))
                 .realPropertyRequestDto(realPropertyService.mapToRealPropertyDto(application.getRealProperty()))
                 .operationTypeId(application.getOperationType().getId())
                 .objectPrice(application.getObjectPrice())
@@ -119,8 +119,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .build();
     }
 
-    private RealPropertyOwnerDto mapToOwnerDto(RealPropertyOwner owner) {
-        return new RealPropertyOwnerDto(owner);
+    private ClientDto mapToClientDto(Client client) {
+        return new ClientDto(client);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private Long saveApplication(Application application, ApplicationDto dto) {
-        RealPropertyOwner owner = getOwner(dto.getOwnerDto());
+        Client client = getClient(dto.getClientDto());
         OperationType operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
@@ -216,7 +216,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             realProperty.setId(application.getRealProperty().getId());
         }
         application.setRealProperty(realProperty);
-        application.setOwner(owner);
+        application.setClient(client);
         application.setOperationType(operationType);
         application.setNote(dto.getNote());
         application.setObjectPrice(dto.getObjectPrice());
@@ -243,10 +243,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         return null;
     }
 
-    private RealPropertyOwner getOwner(RealPropertyOwnerDto dto) {
-        RealPropertyOwner owner;
+    private Client getClient(ClientDto dto) {
+        Client client;
         if (dto.getId() == null || dto.getId() == 0L) {
-            owner = RealPropertyOwner.builder()
+            client = Client.builder()
                     .firstName(dto.getFirstName())
                     .surname(dto.getSurname())
                     .patronymic(dto.getPatronymic())
@@ -254,11 +254,11 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .email(dto.getEmail())
                     .gender(dto.getGender())
                     .build();
-            ownerRepository.save(owner);
+            clientRepository.save(client);
         } else {
-            owner = realPropertyOwnerService.getOwnerById(dto.getId());
+            client = clientService.getClientById(dto.getId());
         }
-        return owner;
+        return client;
     }
 
     @Override

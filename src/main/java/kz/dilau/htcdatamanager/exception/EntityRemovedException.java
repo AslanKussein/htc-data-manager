@@ -11,8 +11,8 @@ public class EntityRemovedException extends DetailedException {
         return new EntityRemovedException(String.format("Entity %s with ID = %s removed", name, id));
     }
 
-    public static EntityRemovedException createOwnerRemovedById(Long id) {
-        return new EntityRemovedException(String.format("Owner with ID = %s removed", id));
+    public static EntityRemovedException createClientRemovedById(Long id) {
+        return new EntityRemovedException(String.format("Client with ID = %s removed", id));
     }
 
     public static EntityRemovedException createApplicationRemovedById(Long id) {

@@ -11,8 +11,8 @@ public class NotFoundException extends DetailedException {
         return new NotFoundException(String.format("Entity %s with ID = %s not found", name, id));
     }
 
-    public static NotFoundException createOwnerNotFoundById(Long id) {
-        return new NotFoundException(String.format("Owner with ID = %s not found", id));
+    public static NotFoundException createClientNotFoundById(Long id) {
+        return new NotFoundException(String.format("Client with ID = %s not found", id));
     }
 
     public static NotFoundException createApplicationNotFoundById(Long id) {

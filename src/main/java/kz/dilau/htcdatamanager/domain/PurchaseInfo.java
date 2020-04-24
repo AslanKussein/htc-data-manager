@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
+import kz.dilau.htcdatamanager.domain.base.BaseEntity;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.AllArgsConstructor;
@@ -19,10 +20,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @AllArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "purchase_info")
-public class PurchaseInfo {
-    @Id
-    @Column(name = "id")
-    private Long id;
+public class PurchaseInfo extends BaseEntity<Long> {
     @Column(name = "object_price_from")
     private BigDecimal objectPriceFrom;
     @Column(name = "object_price_to")

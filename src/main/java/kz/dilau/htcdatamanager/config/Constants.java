@@ -7,8 +7,9 @@ public final class Constants {
     public static final String AUTHORIZATION_PREFIX = "Bearer";
     public static final String APPLICATIONS_REST_ENDPOINT = "/applications";
     public static final String EVENTS_REST_ENDPOINT = "/events";
-    public static final String OWNERS_REST_ENDPOINT = "/property-owners";
+    public static final String CLIENTS_REST_ENDPOINT = "/clients";
     public static final String RESIDENTIAL_COMPLEXES_REST_ENDPOINT = "/residential-complexes";
+    public static final String STATUS_HISTORIES_REST_ENDPOINT = "/app-status-histories";
 
     private Constants() {
     }

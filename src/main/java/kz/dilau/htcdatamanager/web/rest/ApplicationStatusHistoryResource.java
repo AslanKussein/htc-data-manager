@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.web.rest;
 
+import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.ApplicationStatusHistory;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @ApiIgnore
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/app-status-histories")
+@RequestMapping(Constants.STATUS_HISTORIES_REST_ENDPOINT)
 public class ApplicationStatusHistoryResource {
     private final ApplicationStatusHistoryRepository applicationStatusHistoryRepository;
     private final ApplicationRepository applicationRepository;

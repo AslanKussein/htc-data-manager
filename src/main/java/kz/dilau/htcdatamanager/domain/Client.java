@@ -21,8 +21,8 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = TABLE_NAME_PREFIX + "real_property_owner")
-public class RealPropertyOwner extends AuditableBaseEntity<String, Long> {
+@Table(name = TABLE_NAME_PREFIX + "client")
+public class Client extends AuditableBaseEntity<String, Long> {
     @Column(name = "first_name", nullable = false)
     private String firstName;
     @Column(name = "surname")
@@ -37,7 +37,7 @@ public class RealPropertyOwner extends AuditableBaseEntity<String, Long> {
     @Column(name = "gender", nullable = false)
     @Builder.Default
     private Gender gender = Gender.UNKNOWN;
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "client")
     private List<Application> applicationList;
 
     public List<Application> getApplicationList() {

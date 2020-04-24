@@ -19,8 +19,8 @@ public class ApplicationDto {
     @ApiModelProperty(value = "ID заявки")
     private Long id;
     @ApiModelProperty(value = "Данные по клиенту", required = true)
-    @NotNull(message = "Owner must not be null")
-    private RealPropertyOwnerDto ownerDto;
+    @NotNull(message = "Client must not be null")
+    private ClientDto clientDto;
     @ApiModelProperty(value = "Данные по невижимости", required = true)
     @NotNull(message = "Real property must not be null")
     private RealPropertyRequestDto realPropertyRequestDto;
