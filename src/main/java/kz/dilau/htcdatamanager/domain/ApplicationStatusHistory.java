@@ -2,8 +2,7 @@ package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -14,6 +13,9 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "application_status_history")
 public class ApplicationStatusHistory extends AuditableBaseEntity<String, Long> {

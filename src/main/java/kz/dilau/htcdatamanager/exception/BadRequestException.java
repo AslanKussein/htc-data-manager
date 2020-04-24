@@ -12,6 +12,6 @@ public class BadRequestException extends DetailedException {
     }
 
     public static BadRequestException createClientHasFounded(String phoneNumber) {
-        return new BadRequestException(String.format("Client with phoneNumber $s founded", phoneNumber));
+        return new BadRequestException(String.format("Client with phoneNumber %s founded in DB", phoneNumber));
     }
 }

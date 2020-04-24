@@ -27,12 +27,8 @@ public class ApplicationResource {
 
     @PostMapping
     public ResponseEntity<Long> save(@RequestBody ApplicationDto dto) {
-        try {
-            Long result = applicationService.save(dto);
-            return ResponseEntity.ok(result);
-        } catch (DetailedException d) {
-            return new ResponseEntity<>(HttpStatus.valueOf(d.getStatusCode()));
-        }
+        Long result = applicationService.save(dto);
+        return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")

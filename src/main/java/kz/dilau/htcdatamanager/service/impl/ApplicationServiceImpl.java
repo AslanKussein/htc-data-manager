@@ -206,9 +206,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
             realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
         }
-        if (nonNull(application.getId())) {
-            realProperty.setId(application.getRealProperty().getId());
-        }
         application.setRealProperty(realProperty);
         application.setClient(client);
         application.setOperationType(operationType);
@@ -223,7 +220,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setContractPeriod(dto.getContractPeriod());
         application.setAmount(dto.getAmount());
         application.setCommissionIncludedInThePrice(dto.isCommissionIncludedInThePrice());
-        application.setApplicationStatus(applicationStatusRepository.findByCode(ApplicationStatus.NEW));
+        if (nonNull(application.getId())) {
+            realProperty.setId(application.getRealProperty().getId());
+        } else {
+            ApplicationStatus status = applicationStatusRepository.findByCode(ApplicationStatus.NEW);
+            application.setApplicationStatus(status);
+            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+                    .application(application)
+                    .applicationStatus(status)
+                    .build();
+            application.getStatusHistoryList().add(statusHistory);
+        }
         return applicationRepository.save(application).getId();
     }
 
