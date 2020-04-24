@@ -67,12 +67,12 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
                 .playground(dto.getPlayground())
                 .wheelchair(dto.getWheelchair())
                 .yearOfConstruction(dto.getYearOfConstruction())
-                .materialOfConstruction(mapDict(MaterialOfConstruction.class, dto.getMaterialOfConstructionId()))
-                .city(mapDict(City.class, dto.getCityId()))
-                .district(mapDict(District.class, dto.getDistrictId()))
-                .propertyDeveloper(mapDict(PropertyDeveloper.class, dto.getPropertyDeveloperId()))
-                .street(mapDict(Street.class, dto.getStreetId()))
-                .yardType(mapDict(YardType.class, dto.getYardTypeId()))
+                .materialOfConstructionId(dto.getMaterialOfConstructionId())
+                .cityId(dto.getCityId())
+                .districtId(dto.getDistrictId())
+                .propertyDeveloperId(dto.getPropertyDeveloperId())
+                .streetId(dto.getStreetId())
+                .yardTypeId(dto.getYardTypeId())
                 .build();
         if (!CollectionUtils.isEmpty(dto.getTypeOfElevatorIdList())) {
             Set<TypeOfElevator> elevators = typeOfElevatorRepository.findByIdIn(dto.getTypeOfElevatorIdList());

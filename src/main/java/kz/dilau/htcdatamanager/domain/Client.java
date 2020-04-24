@@ -15,6 +15,7 @@ import java.util.Objects;
 
 import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
+import static kz.dilau.htcdatamanager.util.StringUtils.mapFullName;
 
 @Builder
 @AllArgsConstructor
@@ -50,6 +51,11 @@ public class Client extends AuditableBaseEntity<String, Long> {
     @Override
     public int hashCode() {
         return Objects.hash(phoneNumber);
+    }
+
+    @Transient
+    public String getFullname() {
+        return mapFullName(this.surname, this.firstName, this.patronymic);
     }
 
     @Transient

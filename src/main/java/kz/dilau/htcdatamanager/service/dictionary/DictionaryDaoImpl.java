@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.dictionary;
 
+import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,6 +10,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,6 +18,7 @@ import java.util.List;
 public class DictionaryDaoImpl implements DictionaryDao {
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate npJdbcTemplate;
+    private final EntityManager entityManager;
     final String SELECT_ONE_QUERY = "select * from %s where id = :id";
     final String SELECT_ALL_QUERY = "select * from %s";
     final String INSERT_CUSTOM_QUERY = "insert into %s (name_kz, name_en, name_ru) values (:nameKz, :nameEn, :nameRu)";
@@ -55,6 +58,7 @@ public class DictionaryDaoImpl implements DictionaryDao {
 
     @Override
     public Long saveCustomDictionary(Dictionary dictionary, DictionaryDto<Long> input) {
+
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("nameKz", input.getNameKz())
                 .addValue("nameEn", input.getNameEn())

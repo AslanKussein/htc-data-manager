@@ -1,6 +1,9 @@
-package kz.dilau.htcdatamanager.service.dictionary;
+package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.exception.NotFoundException;
+import kz.dilau.htcdatamanager.service.dictionary.Dictionary;
+import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
+import kz.dilau.htcdatamanager.service.dictionary.DictionaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +18,13 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RestController
 @RequestMapping("/dictionaries/{name}")
 public class DictionaryResource {
-    private final DictionaryManager dictionaryManager;
+    private final DictionaryService dictionaryService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<DictionaryDto<Long>> getById(@RequestHeader(AUTHORIZATION) String token,
-                                                       @PathVariable("name") Dictionary dictionaryName,
+    public ResponseEntity<DictionaryDto<Long>> getById(@PathVariable("name") Dictionary dictionaryName,
                                                        @PathVariable("id") Long id) {
         try {
-            DictionaryDto<Long> dictionary = dictionaryManager.getById(token, dictionaryName, id);
+            DictionaryDto<Long> dictionary = dictionaryService.getById(dictionaryName, id);
             return ResponseEntity.ok(dictionary);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
@@ -33,9 +35,8 @@ public class DictionaryResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<DictionaryDto<Long>>> getAll(@RequestHeader(AUTHORIZATION) String token,
-                                                            @PathVariable("name") Dictionary dictionary) {
-        List<DictionaryDto<Long>> dictionaries = dictionaryManager.getAll(token, dictionary);
+    public ResponseEntity<List<DictionaryDto<Long>>> getAll(@PathVariable("name") Dictionary dictionary) {
+        List<DictionaryDto<Long>> dictionaries = dictionaryService.getAll(dictionary);
         return ResponseEntity.ok(dictionaries);
     }
 
@@ -43,7 +44,7 @@ public class DictionaryResource {
     public ResponseEntity<Long> save(@RequestHeader(AUTHORIZATION) String token,
                                      @PathVariable("name") Dictionary dictionary,
                                      @RequestBody DictionaryDto<Long> input) {
-        Long id = dictionaryManager.save(token, dictionary, input);
+        Long id = dictionaryService.save(token, dictionary, input);
         return ResponseEntity.ok(id);
     }
 
@@ -53,7 +54,7 @@ public class DictionaryResource {
                                     @PathVariable("id") Long id,
                                     @RequestBody DictionaryDto<Long> input) {
         try {
-            dictionaryManager.update(token, dictionary, id, input);
+            dictionaryService.update(token, dictionary, id, input);
             return ResponseEntity.noContent().build();
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
@@ -68,7 +69,7 @@ public class DictionaryResource {
                                         @PathVariable("name") Dictionary dictionary,
                                         @PathVariable("id") Long id) {
         try {
-            dictionaryManager.deleteById(token, dictionary, id);
+            dictionaryService.deleteById(token, dictionary, id);
             return ResponseEntity.noContent().build();
         } catch (NotFoundException e) {
             throw new ResponseStatusException(
