@@ -3,6 +3,8 @@ package kz.dilau.htcdatamanager.service.impl;
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
+import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToBigDecimalPeriod;
@@ -106,7 +109,8 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                 .wheelchair(generalCharacteristics.getWheelchair())
                 .yardTypeId(generalCharacteristics.getYardTypeId())
                 .playground(generalCharacteristics.getPlayground())
-//                .parkingTypeIds(generalCharacteristics.getParkingTypes())
+                .typeOfElevatorList(generalCharacteristics.getTypesOfElevator().stream().map(TypeOfElevator::getId).collect(Collectors.toList()))
+                .parkingTypeIds(generalCharacteristics.getParkingTypes().stream().map(ParkingType::getId).collect(Collectors.toList()))
                 .propertyDeveloperId(generalCharacteristics.getPropertyDeveloperId())
                 .housingClass(generalCharacteristics.getHousingClass())
                 .housingCondition(generalCharacteristics.getHousingCondition())
@@ -115,7 +119,18 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                 .numberOfApartments(generalCharacteristics.getNumberOfApartments())
                 .landArea(realProperty.getLandArea())
                 .purchaseInfoDto(mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))
+                .photoIdList(mapPhotoList(realProperty, RealPropertyFileType.PHOTO))
+                .housingPlanImageIdList(mapPhotoList(realProperty, RealPropertyFileType.HOUSING_PLAN))
+                .virtualTourImageIdList(mapPhotoList(realProperty, RealPropertyFileType.VIRTUAL_TOUR))
                 .build();
+    }
+
+    private List<String> mapPhotoList(RealProperty realProperty, RealPropertyFileType fileType) {
+        Set<String> photos = realProperty.getFilesMap().get(fileType);
+        if (nonNull(photos)) {
+            return new ArrayList<>(photos);
+        }
+        return null;
     }
 
     private PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info) {
