@@ -231,6 +231,12 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         if (nonNull(application.getId())) {
             realProperty.setId(application.getRealProperty().getId());
+            if (nonNull(application.getRealProperty().getPurchaseInfo()) && nonNull(realProperty.getPurchaseInfo())) {
+                realProperty.getPurchaseInfo().setId(application.getRealProperty().getPurchaseInfo().getId());
+            }
+            if (nonNull(application.getRealProperty().getGeneralCharacteristicsId()) && nonNull(realProperty.getGeneralCharacteristics())) {
+                realProperty.getGeneralCharacteristics().setId(application.getRealProperty().getGeneralCharacteristicsId());
+            }
         } else {
             ApplicationStatus status = applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT);
             application.setApplicationStatus(status);
