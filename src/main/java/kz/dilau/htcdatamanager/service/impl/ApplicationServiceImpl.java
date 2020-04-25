@@ -229,6 +229,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
             realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
         }
+        if (nonNull(application.getId())) {
+            realProperty.setId(application.getRealProperty().getId());
+        } else {
+            ApplicationStatus status = applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT);
+            application.setApplicationStatus(status);
+            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+                    .application(application)
+                    .applicationStatus(status)
+                    .build();
+            application.getStatusHistoryList().add(statusHistory);
+        }
         application.setRealProperty(realProperty);
         application.setClient(client);
         application.setOperationType(operationType);
@@ -246,17 +257,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(dto.getPossibleReasonForBiddingIdList()) && !dto.getPossibleReasonForBiddingIdList().isEmpty()) {
             application.getPossibleReasonsForBidding().clear();
             application.getPossibleReasonsForBidding().addAll(reasonForBiddingRepository.findByIdIn(dto.getPossibleReasonForBiddingIdList()));
-        }
-        if (nonNull(application.getId())) {
-            realProperty.setId(application.getRealProperty().getId());
-        } else {
-            ApplicationStatus status = applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT);
-            application.setApplicationStatus(status);
-            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
-                    .application(application)
-                    .applicationStatus(status)
-                    .build();
-            application.getStatusHistoryList().add(statusHistory);
         }
         return applicationRepository.save(application).getId();
     }
