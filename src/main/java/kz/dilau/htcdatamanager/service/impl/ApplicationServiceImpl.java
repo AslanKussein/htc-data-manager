@@ -206,6 +206,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             purchaseInfo.setLandArea(infoDto.getLandAreaPeriod());
             purchaseInfo.setBalconyArea(infoDto.getBalconyAreaPeriod());
             purchaseInfo.setCeilingHeight(infoDto.getCeilingHeightPeriod());
+            purchaseInfo.setRealProperty(realProperty);
 
             realProperty.setPurchaseInfo(purchaseInfo);
         }
