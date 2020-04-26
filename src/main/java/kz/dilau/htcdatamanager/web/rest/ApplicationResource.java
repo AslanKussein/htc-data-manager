@@ -30,7 +30,7 @@ public class ApplicationResource {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping
+    @PostMapping("/saveLightApplication")
     public ResponseEntity<Long> saveLightApplication(@RequestBody ApplicationLightDto dto) {
         Long result = applicationService.saveLightApplication(dto);
         return ResponseEntity.ok(result);
