@@ -3,6 +3,8 @@ package kz.dilau.htcdatamanager.service.impl;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
+import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
+import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
@@ -10,24 +12,26 @@ import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
 import kz.dilau.htcdatamanager.repository.ClientRepository;
-import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
+import kz.dilau.htcdatamanager.repository.dictionary.PossibleReasonForBiddingRepository;
+import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ClientService;
 import kz.dilau.htcdatamanager.service.DataAccessService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.ClientDto;
-import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
+import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -40,10 +44,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final EntityManager entityManager;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final ParkingTypeRepository parkingTypeRepository;
+    private final PossibleReasonForBiddingRepository reasonForBiddingRepository;
     private final RealPropertyService realPropertyService;
     private final ClientService clientService;
-    private final RealPropertyRepository realPropertyRepository;
-    private final DataAccessService dataAccessService;
+    private final TypeOfElevatorRepository typeOfElevatorRepository;
 
 
     @Override
@@ -111,11 +115,26 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .exchange(application.getExchange())
                 .probabilityOfBidding(application.getProbabilityOfBidding())
                 .theSizeOfTrades(application.getTheSizeOfTrades())
+                .possibleReasonForBiddingIdList(application.getPossibleReasonsForBidding().stream()
+                        .map(PossibleReasonForBidding::getId)
+                        .collect(Collectors.toList()))
                 .contractPeriod(application.getContractPeriod())
                 .amount(application.getAmount())
                 .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
                 .note(application.getNote())
+//                .statusHistoryDtoList(mapStatusHistoryList(application))
                 .build();
+    }
+
+    private List<ApplicationStatusHistoryDto> mapStatusHistoryList(Application application) {
+        List<ApplicationStatusHistoryDto> statusHistoryList = new ArrayList<>();
+        application.getStatusHistoryList().forEach(history ->
+                statusHistoryList.add(ApplicationStatusHistoryDto.builder()
+                        .applicationStatus(DictionaryMappingTool.mapDictionaryToText(history.getApplicationStatus()))
+                        .comment(history.getComment())
+                        .creationDate(history.getCreatedDate())
+                        .build()));
+        return statusHistoryList;
     }
 
     private ClientDto mapToClientDto(Client client) {
@@ -130,7 +149,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private Long saveApplication(Application application, ApplicationDto dto) {
         Client client = getClient(dto.getClientDto());
-        OperationType operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
+        OperationType operationType;
+        if (nonNull(application.getId())) {
+            operationType = application.getOperationType();
+        } else {
+            operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
+        }
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
                 .objectTypeId(realPropertyRequestDto.getObjectTypeId())
@@ -149,9 +173,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .sewerageId(realPropertyRequestDto.getSewerageId())
                 .heatingSystemId(realPropertyRequestDto.getHeatingSystemId())
                 .residentialComplexId(realPropertyRequestDto.getResidentialComplexId())
+                .generalCharacteristics(null)
                 .build();
 
-        if (isNull(realProperty.getResidentialComplex())) {
+        if (isNull(realProperty.getResidentialComplexId())) {
             GeneralCharacteristics generalCharacteristics = GeneralCharacteristics.builder()
                     .houseNumber(realPropertyRequestDto.getHouseNumber())
                     .houseNumberFraction(realPropertyRequestDto.getHouseNumberFraction())
@@ -170,13 +195,16 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .streetId(realPropertyRequestDto.getStreetId())
                     .propertyDeveloperId(realPropertyRequestDto.getPropertyDeveloperId())
                     .materialOfConstructionId(realPropertyRequestDto.getMaterialOfConstructionId())
-//                    .parkingTypes(realPropertyRequestDto.getParkingTypeIds().isEmpty())
                     .yardTypeId(realPropertyRequestDto.getYardTypeId())
                     .build();
 
             if (nonNull(realPropertyRequestDto.getParkingTypeIds()) && !realPropertyRequestDto.getParkingTypeIds().isEmpty()) {
                 generalCharacteristics.getParkingTypes().clear();
                 generalCharacteristics.getParkingTypes().addAll(parkingTypeRepository.findByIdIn(realPropertyRequestDto.getParkingTypeIds()));
+            }
+            if (nonNull(realPropertyRequestDto.getTypeOfElevatorList()) && !realPropertyRequestDto.getTypeOfElevatorList().isEmpty()) {
+                generalCharacteristics.getTypesOfElevator().clear();
+                generalCharacteristics.getTypesOfElevator().addAll(typeOfElevatorRepository.findByIdIn(realPropertyRequestDto.getTypeOfElevatorList()));
             }
             realProperty.setGeneralCharacteristics(generalCharacteristics);
         }
@@ -194,17 +222,37 @@ public class ApplicationServiceImpl implements ApplicationService {
             purchaseInfo.setLandArea(infoDto.getLandAreaPeriod());
             purchaseInfo.setBalconyArea(infoDto.getBalconyAreaPeriod());
             purchaseInfo.setCeilingHeight(infoDto.getCeilingHeightPeriod());
+            purchaseInfo.setRealProperty(realProperty);
 
             realProperty.setPurchaseInfo(purchaseInfo);
         }
-        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getHousingPlanImageIdList())) {
-            realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(realPropertyRequestDto.getHousingPlanImageIdList()));
+        if (operationType.getCode().equals(OperationType.SELL)) {
+            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getHousingPlanImageIdList())) {
+                realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(realPropertyRequestDto.getHousingPlanImageIdList()));
+            }
+            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getPhotoIdList())) {
+                realProperty.getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(realPropertyRequestDto.getPhotoIdList()));
+            }
+            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
+                realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
+            }
         }
-        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getPhotoIdList())) {
-            realProperty.getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(realPropertyRequestDto.getPhotoIdList()));
-        }
-        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
-            realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
+        if (nonNull(application.getId())) {
+            realProperty.setId(application.getRealProperty().getId());
+            if (nonNull(application.getRealProperty().getPurchaseInfo()) && nonNull(realProperty.getPurchaseInfo())) {
+                realProperty.getPurchaseInfo().setId(application.getRealProperty().getPurchaseInfo().getId());
+            }
+            if (nonNull(application.getRealProperty().getGeneralCharacteristicsId()) && nonNull(realProperty.getGeneralCharacteristics())) {
+                realProperty.getGeneralCharacteristics().setId(application.getRealProperty().getGeneralCharacteristicsId());
+            }
+        } else {
+            ApplicationStatus status = applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT);
+            application.setApplicationStatus(status);
+            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+                    .application(application)
+                    .applicationStatus(status)
+                    .build();
+            application.getStatusHistoryList().add(statusHistory);
         }
         application.setRealProperty(realProperty);
         application.setClient(client);
@@ -220,16 +268,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setContractPeriod(dto.getContractPeriod());
         application.setAmount(dto.getAmount());
         application.setCommissionIncludedInThePrice(dto.isCommissionIncludedInThePrice());
-        if (nonNull(application.getId())) {
-            realProperty.setId(application.getRealProperty().getId());
-        } else {
-            ApplicationStatus status = applicationStatusRepository.findByCode(ApplicationStatus.NEW);
-            application.setApplicationStatus(status);
-            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
-                    .application(application)
-                    .applicationStatus(status)
-                    .build();
-            application.getStatusHistoryList().add(statusHistory);
+        if (nonNull(dto.getPossibleReasonForBiddingIdList()) && !dto.getPossibleReasonForBiddingIdList().isEmpty()) {
+            application.getPossibleReasonsForBidding().clear();
+            application.getPossibleReasonsForBidding().addAll(reasonForBiddingRepository.findByIdIn(dto.getPossibleReasonForBiddingIdList()));
         }
         return applicationRepository.save(application).getId();
     }

@@ -59,12 +59,13 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
     @ManyToOne(optional = false)
     @JoinColumn(name = "application_status_id")
     private ApplicationStatus applicationStatus;
+    @OrderBy("id")
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ApplicationStatusHistory> statusHistoryList;
 

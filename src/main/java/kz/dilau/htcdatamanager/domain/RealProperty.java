@@ -85,6 +85,8 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private Long generalCharacteristicsId;
     @OneToOne(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private PurchaseInfo purchaseInfo;
+    @OneToOne(mappedBy = "realProperty")
+    private Application application;
 
     public Map<RealPropertyFileType, Set<String>> getFilesMap() {
         if (filesMap == null) {

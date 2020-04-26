@@ -1,31 +1,25 @@
 package kz.dilau.htcdatamanager.web.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(description = "История статусов заявки")
 public class ApplicationStatusHistoryDto {
-    private Long applicationStatusId;
-    private Long applicationId;
+    @ApiModelProperty(value = "Cтатус")
+    private MultiLangText applicationStatus;
+    @ApiModelProperty(value = "Комментарий")
     private String comment;
-
-    public Long getApplicationStatusId() {
-        return applicationStatusId;
-    }
-
-    public void setApplicationStatusId(Long applicationStatusId) {
-        this.applicationStatusId = applicationStatusId;
-    }
-
-    public Long getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(Long applicationId) {
-        this.applicationId = applicationId;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
-    }
+    @ApiModelProperty(value = "Дата")
+    private Date creationDate;
 }

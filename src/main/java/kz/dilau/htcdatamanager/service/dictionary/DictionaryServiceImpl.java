@@ -8,11 +8,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class DictionaryManagerImpl implements DictionaryManager {
+public class DictionaryServiceImpl implements DictionaryService {
     private final DictionaryDao dictionaryDao;
 
     @Override
-    public DictionaryDto<Long> getById(String token, Dictionary dictionary, Long id) {
+    public DictionaryDto<Long> getById(Dictionary dictionary, Long id) {
         try {
             DictionaryDto<Long> dto = dictionaryDao.getByIdFromTable(id, dictionary.getTableName());
             return dto;
@@ -22,7 +22,7 @@ public class DictionaryManagerImpl implements DictionaryManager {
     }
 
     @Override
-    public List<DictionaryDto<Long>> getAll(String token, Dictionary dictionary) {
+    public List<DictionaryDto<Long>> getAll(Dictionary dictionary) {
         List<DictionaryDto<Long>> dictionaries = dictionaryDao.getByAllFromTable(dictionary.getTableName());
         return dictionaries;
     }
