@@ -150,6 +150,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .client(client)
                 .operationType(mapDict(OperationType.class, dto.getOperationTypeId()))
                 .note(dto.getNote())
+                .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .build();
         return applicationRepository.save(application).getId();
     }
