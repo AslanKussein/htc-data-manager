@@ -226,14 +226,16 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             realProperty.setPurchaseInfo(purchaseInfo);
         }
-        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getHousingPlanImageIdList())) {
-            realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(realPropertyRequestDto.getHousingPlanImageIdList()));
-        }
-        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getPhotoIdList())) {
-            realProperty.getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(realPropertyRequestDto.getPhotoIdList()));
-        }
-        if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
-            realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
+        if (operationType.getCode().equals(OperationType.SELL)) {
+            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getHousingPlanImageIdList())) {
+                realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(realPropertyRequestDto.getHousingPlanImageIdList()));
+            }
+            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getPhotoIdList())) {
+                realProperty.getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(realPropertyRequestDto.getPhotoIdList()));
+            }
+            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
+                realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
+            }
         }
         if (nonNull(application.getId())) {
             realProperty.setId(application.getRealProperty().getId());
