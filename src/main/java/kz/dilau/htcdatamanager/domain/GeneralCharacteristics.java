@@ -27,19 +27,19 @@ public class GeneralCharacteristics extends BaseEntity<Long> {
 //    @JoinColumn(name = "country_id", referencedColumnName = "id", nullable = false)
 //    private Country country;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "city_id", insertable = false, updatable = false)
+    @JoinColumn(name = "city_id")
     private City city;
-    @Column(name = "city_id")
+    @Column(name = "city_id", insertable = false, updatable = false)
     private Long cityId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "district_id", insertable = false, updatable = false)
+    @JoinColumn(name = "district_id")
     private District district;
-    @Column(name = "district_id")
+    @Column(name = "district_id", insertable = false, updatable = false)
     private Long districtId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "street_id", insertable = false, updatable = false)
+    @JoinColumn(name = "street_id")
     private Street street;
-    @Column(name = "street_id")
+    @Column(name = "street_id", insertable = false, updatable = false)
     private Long streetId;
     @Column(name = "house_number")
     private Integer houseNumber;
@@ -48,9 +48,9 @@ public class GeneralCharacteristics extends BaseEntity<Long> {
     @Column(name = "ceiling_height")
     private BigDecimal ceilingHeight;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "property_developer_id", insertable = false, updatable = false)
+    @JoinColumn(name = "property_developer_id")
     private PropertyDeveloper propertyDeveloper;
-    @Column(name = "property_developer_id")
+    @Column(name = "property_developer_id", insertable = false, updatable = false)
     private Long propertyDeveloperId;
     @Column(name = "housing_class")
     private String housingClass;
@@ -65,9 +65,9 @@ public class GeneralCharacteristics extends BaseEntity<Long> {
     @Column(name = "apartments_on_the_site")
     private String apartmentsOnTheSite;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "material_of_construction_id", insertable = false, updatable = false)
+    @JoinColumn(name = "material_of_construction_id")
     private MaterialOfConstruction materialOfConstruction;
-    @Column(name = "material_of_construction_id")
+    @Column(name = "material_of_construction_id", insertable = false, updatable = false)
     private Long materialOfConstructionId;
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -90,9 +90,9 @@ public class GeneralCharacteristics extends BaseEntity<Long> {
     )
     private Set<ParkingType> parkingTypes = new HashSet<>();
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "yard_type_id", insertable = false, updatable = false)
+    @JoinColumn(name = "yard_type_id")
     private YardType yardType;
-    @Column(name = "yard_type_id")
+    @Column(name = "yard_type_id", insertable = false, updatable = false)
     private Long yardTypeId;
     @Column(name = "playground")
     private Boolean playground;

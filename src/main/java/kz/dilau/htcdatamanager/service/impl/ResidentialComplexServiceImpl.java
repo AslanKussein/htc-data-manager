@@ -4,7 +4,6 @@ import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.GeneralCharacteristicsRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
@@ -67,12 +66,12 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
                 .playground(dto.getPlayground())
                 .wheelchair(dto.getWheelchair())
                 .yearOfConstruction(dto.getYearOfConstruction())
-                .materialOfConstructionId(dto.getMaterialOfConstructionId())
-                .cityId(dto.getCityId())
-                .districtId(dto.getDistrictId())
-                .propertyDeveloperId(dto.getPropertyDeveloperId())
-                .streetId(dto.getStreetId())
-                .yardTypeId(dto.getYardTypeId())
+                .materialOfConstruction(mapDict(MaterialOfConstruction.class, dto.getMaterialOfConstructionId()))
+                .city(mapDict(City.class, dto.getCityId()))
+                .district(mapDict(District.class, dto.getDistrictId()))
+                .propertyDeveloper(mapDict(PropertyDeveloper.class, dto.getPropertyDeveloperId()))
+                .street(mapDict(Street.class, dto.getStreetId()))
+                .yardType(mapDict(YardType.class, dto.getYardTypeId()))
                 .build();
         if (!CollectionUtils.isEmpty(dto.getTypeOfElevatorIdList())) {
             Set<TypeOfElevator> elevators = typeOfElevatorRepository.findByIdIn(dto.getTypeOfElevatorIdList());
@@ -115,6 +114,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
             if (isNull(dict)) {
                 throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
             }
+            return dict;
         }
         return null;
     }

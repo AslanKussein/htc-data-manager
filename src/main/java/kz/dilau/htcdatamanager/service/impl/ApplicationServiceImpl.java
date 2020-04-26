@@ -1,10 +1,7 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
-import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
-import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
@@ -17,7 +14,6 @@ import kz.dilau.htcdatamanager.repository.dictionary.PossibleReasonForBiddingRep
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ClientService;
-import kz.dilau.htcdatamanager.service.DataAccessService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
@@ -153,11 +149,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
         } else {
-            operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
+            operationType = mapDict(OperationType.class, dto.getOperationTypeId());
         }
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
-                .objectTypeId(realPropertyRequestDto.getObjectTypeId())
+                .objectType(mapDict(ObjectType.class, realPropertyRequestDto.getObjectTypeId()))
                 .cadastralNumber(realPropertyRequestDto.getCadastralNumber())
                 .floor(realPropertyRequestDto.getFloor())
                 .apartmentNumber(realPropertyRequestDto.getApartmentNumber())
@@ -170,9 +166,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .atelier(realPropertyRequestDto.getAtelier())
                 .separateBathroom(realPropertyRequestDto.getSeparateBathroom())
                 .landArea(realPropertyRequestDto.getLandArea())
-                .sewerageId(realPropertyRequestDto.getSewerageId())
-                .heatingSystemId(realPropertyRequestDto.getHeatingSystemId())
-                .residentialComplexId(realPropertyRequestDto.getResidentialComplexId())
+                .sewerage(mapDict(Sewerage.class, realPropertyRequestDto.getSewerageId()))
+                .heatingSystem(mapDict(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
+                .residentialComplex(mapDict(ResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
                 .generalCharacteristics(null)
                 .build();
 
@@ -190,12 +186,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .concierge(realPropertyRequestDto.getConcierge())
                     .wheelchair(realPropertyRequestDto.getWheelchair())
                     .playground(realPropertyRequestDto.getPlayground())
-                    .cityId(realPropertyRequestDto.getCityId())
-                    .districtId(realPropertyRequestDto.getDistrictId())
-                    .streetId(realPropertyRequestDto.getStreetId())
-                    .propertyDeveloperId(realPropertyRequestDto.getPropertyDeveloperId())
-                    .materialOfConstructionId(realPropertyRequestDto.getMaterialOfConstructionId())
-                    .yardTypeId(realPropertyRequestDto.getYardTypeId())
+                    .materialOfConstruction(mapDict(MaterialOfConstruction.class, realPropertyRequestDto.getMaterialOfConstructionId()))
+                    .city(mapDict(City.class, realPropertyRequestDto.getCityId()))
+                    .district(mapDict(District.class, realPropertyRequestDto.getDistrictId()))
+                    .propertyDeveloper(mapDict(PropertyDeveloper.class, realPropertyRequestDto.getPropertyDeveloperId()))
+                    .street(mapDict(Street.class, realPropertyRequestDto.getStreetId()))
+                    .yardType(mapDict(YardType.class, realPropertyRequestDto.getYardTypeId()))
                     .build();
 
             if (nonNull(realPropertyRequestDto.getParkingTypeIds()) && !realPropertyRequestDto.getParkingTypeIds().isEmpty()) {
@@ -273,6 +269,17 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.getPossibleReasonsForBidding().addAll(reasonForBiddingRepository.findByIdIn(dto.getPossibleReasonForBiddingIdList()));
         }
         return applicationRepository.save(application).getId();
+    }
+
+    private <T> T mapDict(Class<T> clazz, Long id) {
+        if (nonNull(id) && id != 0L) {
+            T dict = entityManager.getReference(clazz, id);
+            if (isNull(dict)) {
+                throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
+            }
+            return dict;
+        }
+        return null;
     }
 
     private Client getClient(ClientDto dto) {
