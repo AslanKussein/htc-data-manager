@@ -31,9 +31,9 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Table(name = TABLE_NAME_PREFIX + "real_property")
 public class RealProperty extends AuditableBaseEntity<String, Long> {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "object_type_id", insertable = false, updatable = false)
+    @JoinColumn(name = "object_type_id")
     private ObjectType objectType;
-    @Column(name = "object_type_id")
+    @Column(name = "object_type_id", insertable = false, updatable = false)
     private Long objectTypeId;
     @Column(name = "cadastral_number", unique = true)
     private String cadastralNumber;
@@ -58,23 +58,23 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @Column(name = "separate_bathroom")
     private Boolean separateBathroom;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "residential_complex_id", insertable = false, updatable = false)
+    @JoinColumn(name = "residential_complex_id")
     private ResidentialComplex residentialComplex;
-    @Column(name = "residential_complex_id")
+    @Column(name = "residential_complex_id", insertable = false, updatable = false)
     private Long residentialComplexId;
     //    @Convert(converter = FilesMapConverter.class)
     @Type(type = "jsonb")
     @Column(name = "files_map", columnDefinition = "jsonb")
     private Map<RealPropertyFileType, Set<String>> filesMap = new HashMap<>();
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sewerage_id", insertable = false, updatable = false)
+    @JoinColumn(name = "sewerage_id")
     private Sewerage sewerage;
-    @Column(name = "sewerage_id")
+    @Column(name = "sewerage_id", insertable = false, updatable = false)
     private Long sewerageId;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "heating_system_id", insertable = false, updatable = false)
+    @JoinColumn(name = "heating_system_id")
     private HeatingSystem heatingSystem;
-    @Column(name = "heating_system_id")
+    @Column(name = "heating_system_id", insertable = false, updatable = false)
     private Long heatingSystemId;
     @Column(name = "land_area")
     private BigDecimal landArea;
