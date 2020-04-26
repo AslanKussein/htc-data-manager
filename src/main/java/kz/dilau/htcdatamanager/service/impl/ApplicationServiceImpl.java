@@ -149,7 +149,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private Long saveApplication(Application application, ApplicationDto dto) {
         Client client = getClient(dto.getClientDto());
-        OperationType operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
+        OperationType operationType;
+        if (nonNull(application.getId())) {
+            operationType = application.getOperationType();
+        } else {
+            operationType = entityManager.getReference(OperationType.class, dto.getOperationTypeId());
+        }
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
                 .objectTypeId(realPropertyRequestDto.getObjectTypeId())
@@ -168,6 +173,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .sewerageId(realPropertyRequestDto.getSewerageId())
                 .heatingSystemId(realPropertyRequestDto.getHeatingSystemId())
                 .residentialComplexId(realPropertyRequestDto.getResidentialComplexId())
+                .generalCharacteristics(null)
                 .build();
 
         if (isNull(realProperty.getResidentialComplexId())) {
