@@ -143,6 +143,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         return saveApplication(new Application(), dto);
     }
 
+    @Override
+    public Long saveLightApplication(ApplicationLightDto dto) {
+        Client client = getClient(dto.getClientDto());
+        Application application = Application.builder()
+                .client(client)
+                .operationType(mapDict(OperationType.class, dto.getOperationTypeId()))
+                .note(dto.getNote())
+                .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
+                .build();
+        return applicationRepository.save(application).getId();
+    }
+
     private Long saveApplication(Application application, ApplicationDto dto) {
         Client client = getClient(dto.getClientDto());
         OperationType operationType;

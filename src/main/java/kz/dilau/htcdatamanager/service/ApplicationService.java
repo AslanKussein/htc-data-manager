@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
 
 public interface ApplicationService {
     ApplicationDto getById(final String token, Long id);
@@ -10,4 +11,6 @@ public interface ApplicationService {
     Long deleteById(String token, Long id);
 
     Long save(ApplicationDto dto);
+
+    Long saveLightApplication(ApplicationLightDto dto);
 }
