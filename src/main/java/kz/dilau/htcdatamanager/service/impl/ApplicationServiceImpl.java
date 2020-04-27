@@ -18,6 +18,9 @@ import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +37,7 @@ import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final ClientRepository clientRepository;
@@ -102,7 +106,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return ApplicationDto.builder()
                 .id(application.getId())
                 .clientDto(mapToClientDto(application.getClient()))
-                .realPropertyRequestDto(realPropertyService.mapToRealPropertyDto(application.getRealProperty()))
+                .realPropertyRequestDto(nonNull(application.getRealProperty()) ? realPropertyService.mapToRealPropertyDto(application.getRealProperty()) : null)
                 .operationTypeId(application.getOperationType().getId())
                 .objectPrice(application.getObjectPrice())
                 .mortgage(application.getMortgage())
@@ -143,8 +147,18 @@ public class ApplicationServiceImpl implements ApplicationService {
         return saveApplication(new Application(), dto);
     }
 
+    private String getAuthorName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (nonNull(authentication) && authentication.isAuthenticated()) {
+            return authentication.getName();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
+        log.info(getAuthorName());
         Client client = getClient(dto.getClientDto());
         Application application = Application.builder()
                 .client(client)

@@ -19,8 +19,8 @@ public class DictionaryMappingTool {
         return DictionaryMultilangItemDto.builder()
                 .id((Long) dictionary.getId())
                 .name(MultiLangText.builder()
-                        .nameKz(dictionary.getMultiLang().getNameRu())
-                        .nameRu(dictionary.getMultiLang().getNameKz())
+                        .nameKz(dictionary.getMultiLang().getNameKz())
+                        .nameRu(dictionary.getMultiLang().getNameRu())
                         .nameEn(dictionary.getMultiLang().getNameEn())
                         .build())
                 .build();
@@ -51,16 +51,18 @@ public class DictionaryMappingTool {
     }
 
     public static MultiLangText concatMultiLangWithMultiLang(MultiLangText first, MultiLangText second, String separator) {
-        first.setNameKz(first.getNameKz() + separator + second.getNameKz());
-        first.setNameRu(first.getNameRu() + separator + second.getNameRu());
-        first.setNameEn(first.getNameEn() + separator + second.getNameEn());
-        return first;
+        return MultiLangText.builder()
+                .nameKz(first.getNameKz() + separator + second.getNameKz())
+                .nameRu(first.getNameRu() + separator + second.getNameRu())
+                .nameEn(first.getNameEn() + separator + second.getNameEn())
+                .build();
     }
 
     public static MultiLangText concatStringWithMultiLang(MultiLangText multiLangText, String text, String separator) {
-        multiLangText.setNameKz(multiLangText.getNameKz() + separator + text);
-        multiLangText.setNameRu(multiLangText.getNameRu() + separator + text);
-        multiLangText.setNameEn(multiLangText.getNameEn() + separator + text);
-        return multiLangText;
+        return MultiLangText.builder()
+                .nameKz(multiLangText.getNameKz() + separator + text)
+                .nameRu(multiLangText.getNameRu() + separator + text)
+                .nameEn(multiLangText.getNameEn() + separator + text)
+                .build();
     }
 }

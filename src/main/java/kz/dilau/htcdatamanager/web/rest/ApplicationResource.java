@@ -5,15 +5,20 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.security.Principal;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(Constants.APPLICATIONS_REST_ENDPOINT)
+@Slf4j
 public class ApplicationResource {
     private final ApplicationService applicationService;
 
@@ -31,7 +36,9 @@ public class ApplicationResource {
     }
 
     @PostMapping("/saveLightApplication")
-    public ResponseEntity<Long> saveLightApplication(@RequestBody ApplicationLightDto dto) {
+    public ResponseEntity<Long> saveLightApplication(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                                     @RequestBody ApplicationLightDto dto) {
+        log.info(principal.getName());
         Long result = applicationService.saveLightApplication(dto);
         return ResponseEntity.ok(result);
     }

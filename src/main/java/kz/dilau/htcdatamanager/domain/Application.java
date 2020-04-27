@@ -75,4 +75,11 @@ public class Application extends AuditableBaseEntity<String, Long> {
         }
         return statusHistoryList;
     }
+
+    public Set<PossibleReasonForBidding> getPossibleReasonsForBidding() {
+        if (isNull(possibleReasonsForBidding)) {
+            possibleReasonsForBidding = new HashSet<>();
+        }
+        return possibleReasonsForBidding;
+    }
 }
