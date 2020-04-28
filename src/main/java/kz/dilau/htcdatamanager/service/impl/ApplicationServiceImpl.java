@@ -176,6 +176,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             operationType = application.getOperationType();
         } else {
             operationType = mapDict(OperationType.class, dto.getOperationTypeId());
+            if (realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
+                throw BadRequestException.createCadastralNumberHasFounded(dto.getRealPropertyRequestDto().getCadastralNumber());
+            }
         }
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
@@ -323,7 +326,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .email(dto.getEmail())
                     .gender(dto.getGender())
                     .build();
-            clientRepository.save(client);
         } else {
             client = clientService.getClientById(dto.getId());
         }
