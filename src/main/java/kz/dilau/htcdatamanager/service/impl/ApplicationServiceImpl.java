@@ -132,6 +132,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .amount(application.getAmount())
                 .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
                 .note(application.getNote())
+                .agent(application.getCurrentAgent())
 //                .statusHistoryDtoList(mapStatusHistoryList(application))
                 .build();
     }
