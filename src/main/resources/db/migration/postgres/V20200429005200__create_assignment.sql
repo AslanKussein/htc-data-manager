@@ -12,6 +12,9 @@ create table htc_dm_assignment
       references htc_dm_application
 );
 
-comment on table htc_dm_assignment is ''Таблица истории назначения заявок агентам'';
-comment on column htc_dm_assignment.agent is ''Логин агента'';
-comment on column htc_dm_assignment.application_id is ''ID заявки (htc_dm_application)'';
+comment on table htc_dm_assignment is 'Таблица истории назначения заявок агентам';
+comment on column htc_dm_assignment.agent is 'Логин агента';
+comment on column htc_dm_assignment.application_id is 'ID заявки (htc_dm_application)';
+
+alter table htc_dm_application
+  add column current_agent varchar(255) null;
