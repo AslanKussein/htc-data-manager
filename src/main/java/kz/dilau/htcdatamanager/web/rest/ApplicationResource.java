@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
+import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,12 @@ public class ApplicationResource {
     @PostMapping("/saveLightApplication")
     public ResponseEntity<Long> saveLightApplication(@RequestBody ApplicationLightDto dto) {
         Long result = applicationService.saveLightApplication(dto);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/reassignApplication")
+    public ResponseEntity<Long> reassignApplication(@RequestBody AssignmentDto dto) {
+        Long result = applicationService.reassignApplication(dto);
         return ResponseEntity.ok(result);
     }
 

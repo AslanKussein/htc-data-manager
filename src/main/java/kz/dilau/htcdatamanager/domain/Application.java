@@ -69,6 +69,12 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ApplicationStatusHistory> statusHistoryList;
 
+    @Column(name = "current_agent")
+    private String currentAgent;
+    @OrderBy("id")
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Assignment> assignmentList;
+
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {
             statusHistoryList = new ArrayList<>();
@@ -81,5 +87,12 @@ public class Application extends AuditableBaseEntity<String, Long> {
             possibleReasonsForBidding = new HashSet<>();
         }
         return possibleReasonsForBidding;
+    }
+
+    public List<Assignment> getAssignmentList() {
+        if (isNull(assignmentList)) {
+            assignmentList = new ArrayList<>();
+        }
+        return assignmentList;
     }
 }

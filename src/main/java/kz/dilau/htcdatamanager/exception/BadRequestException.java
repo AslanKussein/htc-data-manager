@@ -18,4 +18,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createCadastralNumberHasFounded(String cadastralNumber) {
         return new BadRequestException(String.format("CadastralNumber %s founded in DB", cadastralNumber));
     }
+
+    public static BadRequestException createReassignToSameAgent() {
+        return new BadRequestException("You can't reassign a request to the same agent");
+    }
 }
