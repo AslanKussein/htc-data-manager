@@ -175,7 +175,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
         } else {
-            operationType = mapDict(OperationType.class, dto.getOperationTypeId());
+            operationType = mapRequiredDict(OperationType.class, dto.getOperationTypeId());
             if (realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
                 throw BadRequestException.createCadastralNumberHasFounded(dto.getRealPropertyRequestDto().getCadastralNumber());
             }
@@ -216,7 +216,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .wheelchair(realPropertyRequestDto.getWheelchair())
                     .playground(realPropertyRequestDto.getPlayground())
                     .materialOfConstruction(mapDict(MaterialOfConstruction.class, realPropertyRequestDto.getMaterialOfConstructionId()))
-                    .city(mapDict(City.class, realPropertyRequestDto.getCityId()))
+                    .city(mapRequiredDict(City.class, realPropertyRequestDto.getCityId()))
                     .district(mapDict(District.class, realPropertyRequestDto.getDistrictId()))
                     .propertyDeveloper(mapDict(PropertyDeveloper.class, realPropertyRequestDto.getPropertyDeveloperId()))
                     .street(mapDict(Street.class, realPropertyRequestDto.getStreetId()))
@@ -310,7 +310,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private <T> T mapDict(Class<T> clazz, Long id) {
         if (nonNull(id) && id != 0L) {
-            T dict = entityManager.getReference(clazz, id);
+            T dict = entityManager.find(clazz, id);
             if (isNull(dict)) {
                 throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
             }
