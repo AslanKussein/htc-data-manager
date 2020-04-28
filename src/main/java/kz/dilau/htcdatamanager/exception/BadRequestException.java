@@ -7,8 +7,8 @@ public class BadRequestException extends DetailedException {
         super(HttpStatus.BAD_REQUEST, description);
     }
 
-    public static BadRequestException createRequiredIsEmpty() {
-        return new BadRequestException("Required parameter is empty");
+    public static BadRequestException createRequiredIsEmpty(String name) {
+        return new BadRequestException(String.format("Required parameter %s is empty", name));
     }
 
     public static BadRequestException createClientHasFounded(String phoneNumber) {

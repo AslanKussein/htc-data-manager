@@ -162,7 +162,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Client client = getClient(dto.getClientDto());
         Application application = Application.builder()
                 .client(client)
-                .operationType(mapDict(OperationType.class, dto.getOperationTypeId()))
+                .operationType(mapRequiredDict(OperationType.class, dto.getOperationTypeId()))
                 .note(dto.getNote())
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .build();
@@ -298,6 +298,14 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.getPossibleReasonsForBidding().addAll(reasonForBiddingRepository.findByIdIn(dto.getPossibleReasonForBiddingIdList()));
         }
         return applicationRepository.save(application).getId();
+    }
+
+    private <T> T mapRequiredDict(Class<T> clazz, Long id) {
+        T dict = mapDict(clazz, id);
+        if (isNull(dict)) {
+            throw BadRequestException.createRequiredIsEmpty(clazz.getName());
+        }
+        return dict;
     }
 
     private <T> T mapDict(Class<T> clazz, Long id) {
