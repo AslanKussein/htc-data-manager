@@ -147,18 +147,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         return saveApplication(new Application(), dto);
     }
 
-    private String getAuthorName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (nonNull(authentication) && authentication.isAuthenticated()) {
-            return authentication.getName();
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
-        log.info(getAuthorName());
         Client client = getClient(dto.getClientDto());
         Application application = Application.builder()
                 .client(client)
@@ -176,7 +166,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             operationType = application.getOperationType();
         } else {
             operationType = mapRequiredDict(OperationType.class, dto.getOperationTypeId());
-            if (realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
+            if (operationType.getCode().equals(OperationType.SELL) && realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
                 throw BadRequestException.createCadastralNumberHasFounded(dto.getRealPropertyRequestDto().getCadastralNumber());
             }
         }

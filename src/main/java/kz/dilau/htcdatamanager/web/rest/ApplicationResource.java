@@ -36,9 +36,7 @@ public class ApplicationResource {
     }
 
     @PostMapping("/saveLightApplication")
-    public ResponseEntity<Long> saveLightApplication(@ApiIgnore @AuthenticationPrincipal final Principal principal,
-                                                     @RequestBody ApplicationLightDto dto) {
-        log.info(principal.getName());
+    public ResponseEntity<Long> saveLightApplication(@RequestBody ApplicationLightDto dto) {
         Long result = applicationService.saveLightApplication(dto);
         return ResponseEntity.ok(result);
     }
