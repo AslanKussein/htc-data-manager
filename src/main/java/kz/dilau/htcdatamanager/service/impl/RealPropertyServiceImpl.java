@@ -38,6 +38,10 @@ public class RealPropertyServiceImpl implements RealPropertyService {
         return realPropertyRequestDtoList;
     }
 
+    public boolean existsByCadastralNumber(String cadastralNumber) {
+        return realPropertyRepository.existsByCadastralNumber(cadastralNumber);
+    }
+
     public void deleteById(Long id) {
 //        realPropertyRepository.deleteById(id);
     }

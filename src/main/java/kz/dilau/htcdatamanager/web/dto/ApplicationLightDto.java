@@ -24,5 +24,5 @@ public class ApplicationLightDto {
     @ApiModelProperty(value = "Примечание")
     private String note;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
-    private String agentLogin;
+    private String agent;
 }

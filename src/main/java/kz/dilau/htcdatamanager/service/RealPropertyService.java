@@ -20,4 +20,5 @@ public interface RealPropertyService {
 
     RealPropertyRequestDto mapToRealPropertyDto(RealProperty realProperty);
 
+    boolean existsByCadastralNumber(String cadastralNumber);
 }

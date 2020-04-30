@@ -25,7 +25,7 @@ public class ClientDto {
     private String surname;
     @ApiModelProperty(value = "Отчество клиента")
     private String patronymic;
-    @ApiModelProperty(value = "Номер телефона", example = "+7-***-***-**-**")
+    @ApiModelProperty(value = "Номер телефона", example = "7**********")
     @NotNull(message = "Phone number must not be null")
 //    @Pattern(regexp = "^\\(?(\\d{3})\\)?[- ]?(\\d{3})[- ]?(\\d{4})$", message = "Mobile number should be valid")
     private String phoneNumber;

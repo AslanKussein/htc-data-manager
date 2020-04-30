@@ -79,7 +79,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
             generalCharacteristics.getTypesOfElevator().addAll(elevators);
         }
         if (!CollectionUtils.isEmpty(dto.getParkingTypeIds())) {
-            Set<ParkingType> parkingTypes = parkingTypeRepository.findByIdIn(dto.getTypeOfElevatorIdList());
+            Set<ParkingType> parkingTypes = parkingTypeRepository.findByIdIn(dto.getParkingTypeIds());
             generalCharacteristics.getParkingTypes().clear();
             generalCharacteristics.getParkingTypes().addAll(parkingTypes);
         }

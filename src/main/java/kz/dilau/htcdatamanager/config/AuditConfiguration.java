@@ -16,10 +16,12 @@ import static kz.dilau.htcdatamanager.config.Constants.SYSTEM_ACCOUNT;
 public class AuditConfiguration {
     @Bean
     public AuditorAware<String> auditorProvider() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            return () -> Optional.of(authentication.getName());
-        }
-        return () -> Optional.of(SYSTEM_ACCOUNT);
+        return () -> {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                return Optional.of(authentication.getName());
+            }
+            return Optional.of(SYSTEM_ACCOUNT);
+        };
     }
 }

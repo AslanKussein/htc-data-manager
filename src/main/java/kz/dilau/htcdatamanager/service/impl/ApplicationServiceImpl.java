@@ -18,6 +18,8 @@ import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -45,6 +47,18 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ClientService clientService;
     private final TypeOfElevatorRepository typeOfElevatorRepository;
 
+    private String getAuthorName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (nonNull(authentication) && authentication.isAuthenticated()) {
+            return authentication.getName();
+        } else {
+            return null;
+        }
+    }
+
+    private String getAppointmentAgent(String agent) {
+        return isNull(agent) || agent.equals("") ? getAuthorName() : agent;
+    }
 
     @Override
     public ApplicationDto getById(final String token, Long id) {
@@ -102,7 +116,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return ApplicationDto.builder()
                 .id(application.getId())
                 .clientDto(mapToClientDto(application.getClient()))
-                .realPropertyRequestDto(realPropertyService.mapToRealPropertyDto(application.getRealProperty()))
+                .realPropertyRequestDto(nonNull(application.getRealProperty()) ? realPropertyService.mapToRealPropertyDto(application.getRealProperty()) : null)
                 .operationTypeId(application.getOperationType().getId())
                 .objectPrice(application.getObjectPrice())
                 .mortgage(application.getMortgage())
@@ -118,6 +132,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .amount(application.getAmount())
                 .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
                 .note(application.getNote())
+                .agent(application.getCurrentAgent())
 //                .statusHistoryDtoList(mapStatusHistoryList(application))
                 .build();
     }
@@ -146,14 +161,37 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
         Client client = getClient(dto.getClientDto());
+        String agent = getAppointmentAgent(dto.getAgent());
         Application application = Application.builder()
                 .client(client)
-                .operationType(mapDict(OperationType.class, dto.getOperationTypeId()))
+                .operationType(mapRequiredDict(OperationType.class, dto.getOperationTypeId()))
                 .note(dto.getNote())
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
+                .currentAgent(agent)
                 .build();
+        Assignment assignment = Assignment.builder()
+                .application(application)
+                .agent(agent)
+                .build();
+        application.getAssignmentList().add(assignment);
         return applicationRepository.save(application).getId();
     }
+
+    @Override
+    public Long reassignApplication(AssignmentDto dto) {
+        Application application = getApplicationById(dto.getApplicationId());
+        if (application.getCurrentAgent().equals(dto.getAgent())) {
+            throw BadRequestException.createReassignToSameAgent();
+        }
+        application.setCurrentAgent(dto.getAgent());
+        Assignment assignment = Assignment.builder()
+                .application(application)
+                .agent(dto.getAgent())
+                .build();
+        application.getAssignmentList().add(assignment);
+        return applicationRepository.save(application).getId();
+    }
+
 
     private Long saveApplication(Application application, ApplicationDto dto) {
         Client client = getClient(dto.getClientDto());
@@ -161,7 +199,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
         } else {
-            operationType = mapDict(OperationType.class, dto.getOperationTypeId());
+            operationType = mapRequiredDict(OperationType.class, dto.getOperationTypeId());
+            if (operationType.getCode().equals(OperationType.SELL) && realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
+                throw BadRequestException.createCadastralNumberHasFounded(dto.getRealPropertyRequestDto().getCadastralNumber());
+            }
+            String agent = getAppointmentAgent(dto.getAgent());
+            application.setCurrentAgent(agent);
+            Assignment assignment = Assignment.builder()
+                    .application(application)
+                    .agent(agent)
+                    .build();
+            application.getAssignmentList().add(assignment);
         }
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
@@ -199,7 +247,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .wheelchair(realPropertyRequestDto.getWheelchair())
                     .playground(realPropertyRequestDto.getPlayground())
                     .materialOfConstruction(mapDict(MaterialOfConstruction.class, realPropertyRequestDto.getMaterialOfConstructionId()))
-                    .city(mapDict(City.class, realPropertyRequestDto.getCityId()))
+                    .city(mapRequiredDict(City.class, realPropertyRequestDto.getCityId()))
                     .district(mapDict(District.class, realPropertyRequestDto.getDistrictId()))
                     .propertyDeveloper(mapDict(PropertyDeveloper.class, realPropertyRequestDto.getPropertyDeveloperId()))
                     .street(mapDict(Street.class, realPropertyRequestDto.getStreetId()))
@@ -283,9 +331,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
+    private <T> T mapRequiredDict(Class<T> clazz, Long id) {
+        T dict = mapDict(clazz, id);
+        if (isNull(dict)) {
+            throw BadRequestException.createRequiredIsEmpty(clazz.getName());
+        }
+        return dict;
+    }
+
     private <T> T mapDict(Class<T> clazz, Long id) {
         if (nonNull(id) && id != 0L) {
-            T dict = entityManager.getReference(clazz, id);
+            T dict = entityManager.find(clazz, id);
             if (isNull(dict)) {
                 throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
             }
@@ -309,7 +365,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .email(dto.getEmail())
                     .gender(dto.getGender())
                     .build();
-            clientRepository.save(client);
         } else {
             client = clientService.getClientById(dto.getId());
         }

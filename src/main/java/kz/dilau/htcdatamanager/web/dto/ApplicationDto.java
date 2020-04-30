@@ -52,6 +52,8 @@ public class ApplicationDto {
     private boolean isCommissionIncludedInThePrice = false;
     @ApiModelProperty(name = "note", value = "Примечание")
     private String note;
+    @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
+    private String agent;
 //    @ApiModelProperty(value = "История статусов")
 //    private List<ApplicationStatusHistoryDto> statusHistoryDtoList;
 }
