@@ -49,6 +49,6 @@ public class ClientResource {
     @GetMapping("/search/by-phone-number")
     public ResponseEntity<ClientDto> findClientByPhoneNumber(@RequestParam String phoneNumber) {
         ClientDto client = clientService.findClientByPhoneNumber(phoneNumber);
-        return nonNull(client) ? ResponseEntity.ok(client) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return nonNull(client) ? ResponseEntity.ok(client) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
