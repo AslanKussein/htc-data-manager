@@ -200,9 +200,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             operationType = application.getOperationType();
         } else {
             operationType = mapRequiredDict(OperationType.class, dto.getOperationTypeId());
-            if (operationType.getCode().equals(OperationType.SELL) && realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
-                throw BadRequestException.createCadastralNumberHasFounded(dto.getRealPropertyRequestDto().getCadastralNumber());
-            }
+//            if (operationType.getCode().equals(OperationType.SELL) && realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
+//                throw BadRequestException.createCadastralNumberHasFounded(dto.getRealPropertyRequestDto().getCadastralNumber());
+//            }
             String agent = getAppointmentAgent(dto.getAgent());
             application.setCurrentAgent(agent);
             Assignment assignment = Assignment.builder()
