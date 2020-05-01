@@ -8,6 +8,8 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 
+import static java.util.Objects.isNull;
+
 @Getter
 @Setter
 @Builder
@@ -34,6 +36,13 @@ public class ClientDto {
     private String email;
     @ApiModelProperty(value = "Пол клиента")
     private Gender gender = Gender.UNKNOWN;
+
+    public Gender getGender() {
+        if (isNull(gender)) {
+            gender = Gender.UNKNOWN;
+        }
+        return gender;
+    }
 
     public ClientDto(Client client) {
         this.id = client.getId();

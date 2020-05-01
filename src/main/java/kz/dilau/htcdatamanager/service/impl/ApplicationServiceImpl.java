@@ -2,7 +2,6 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
-import kz.dilau.htcdatamanager.domain.enums.Gender;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
@@ -364,7 +363,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .patronymic(dto.getPatronymic())
                     .phoneNumber(dto.getPhoneNumber())
                     .email(dto.getEmail())
-                    .gender(nonNull(dto.getGender()) ? dto.getGender() : Gender.UNKNOWN)
+                    .gender(dto.getGender())
                     .build();
         } else {
             client = clientService.getClientById(dto.getId());
