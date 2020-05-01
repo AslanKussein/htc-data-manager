@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Client;
+import kz.dilau.htcdatamanager.domain.enums.Gender;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ClientRepository;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
@@ -41,7 +44,7 @@ public class ClientServiceImpl implements ClientService {
         client.setPatronymic(dto.getPatronymic());
         client.setPhoneNumber(dto.getPhoneNumber());
         client.setEmail(dto.getEmail());
-        client.setGender(dto.getGender());
+        client.setGender(nonNull(dto.getGender()) ? dto.getGender() : Gender.UNKNOWN);
         client = clientRepository.save(client);
         return new ClientDto(client);
     }
