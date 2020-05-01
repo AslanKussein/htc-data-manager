@@ -35,7 +35,7 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private ObjectType objectType;
     @Column(name = "object_type_id", insertable = false, updatable = false)
     private Long objectTypeId;
-    @Column(name = "cadastral_number", unique = true)
+    @Column(name = "cadastral_number")
     private String cadastralNumber;
     @Column(name = "floor")
     private Integer floor;
