@@ -8,6 +8,8 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 
+import java.time.ZonedDateTime;
+
 import static java.util.Objects.isNull;
 
 @Getter
@@ -36,6 +38,10 @@ public class ClientDto {
     private String email;
     @ApiModelProperty(value = "Пол клиента")
     private Gender gender = Gender.UNKNOWN;
+    @ApiModelProperty(value = "местонахождения")
+    private String location;
+    @ApiModelProperty(value = "день рождения")
+    private ZonedDateTime birthDate;
 
     public Gender getGender() {
         if (isNull(gender)) {
@@ -52,5 +58,7 @@ public class ClientDto {
         this.phoneNumber = client.getPhoneNumber();
         this.email = client.getEmail();
         this.gender = client.getGender();
+        this.birthDate = client.getBirthDate();
+        this.location = client.getLocation();
     }
 }

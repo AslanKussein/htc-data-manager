@@ -15,4 +15,9 @@ public interface ClientService {
     ClientDto deleteById(String token, Long id);
 
     Client getClientById(Long id);
+
+    /**
+     * edit info about Client;
+     */
+    ClientDto update(ClientDto dto);
 }
