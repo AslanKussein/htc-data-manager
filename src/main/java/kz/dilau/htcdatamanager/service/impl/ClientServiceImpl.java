@@ -98,6 +98,7 @@ public class ClientServiceImpl implements ClientService {
             client.setPhoneNumber(dto.getPhoneNumber());
             client.setEmail(dto.getEmail());
             client.setBirthDate(dto.getBirthDate());
+            client = clientRepository.save(client);
 
             return new ClientDto(client);
         } else {
