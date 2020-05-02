@@ -18,4 +18,8 @@ public class NotFoundException extends DetailedException {
     public static NotFoundException createApplicationNotFoundById(Long id) {
         return new NotFoundException(String.format("Application with ID = %s not found", id));
     }
+
+    public static NotFoundException findByNumber(String number) {
+        return new NotFoundException(String.format("Client with number = %s not found", number));
+    }
 }

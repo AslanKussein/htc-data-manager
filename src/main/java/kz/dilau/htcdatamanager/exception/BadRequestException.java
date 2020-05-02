@@ -22,4 +22,12 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createReassignToSameAgent() {
         return new BadRequestException("You can't reassign a request to the same agent");
     }
+
+    public static BadRequestException editPhoneNumber(String number) {
+        return new BadRequestException(String.format("Client with number = %s already exists", number));
+    }
+
+    public static BadRequestException editEmail(String email) {
+        return new BadRequestException(String.format("Client with email = %s already exists", email));
+    }
 }
