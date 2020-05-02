@@ -102,7 +102,7 @@ public class ClientServiceImpl implements ClientService {
 
             return new ClientDto(client);
         } else {
-            throw NotFoundException.findByNumber(dto.getPhoneNumber());
+            throw NotFoundException.createClientNotFoundById(dto.getId());
         }
     }
 }
