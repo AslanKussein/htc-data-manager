@@ -58,5 +58,7 @@ public class ClientDto {
         this.phoneNumber = client.getPhoneNumber();
         this.email = client.getEmail();
         this.gender = client.getGender();
+        this.birthDate = client.getBirthDate();
+        this.location = client.getLocation();
     }
 }

@@ -19,5 +19,5 @@ public interface ClientService {
     /**
      * edit info about Client;
      */
-    Client update(ClientDto dto);
+    ClientDto update(ClientDto dto);
 }

@@ -54,8 +54,8 @@ public class ClientResource {
     }
 
     @PutMapping("updateClientInfo")
-    public ResponseEntity<Client> updateClientInfo(@RequestBody ClientDto dto) {
-        Client result = clientService.update(dto);
+    public ResponseEntity<ClientDto> updateClientInfo(@RequestBody ClientDto dto) {
+        ClientDto result = clientService.update(dto);
         return ResponseEntity.ok(result);
     }
 }

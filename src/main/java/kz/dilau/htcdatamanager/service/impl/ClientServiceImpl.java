@@ -75,7 +75,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public Client update(ClientDto dto) {
+    public ClientDto update(ClientDto dto) {
         Optional<Client> optionalClient = clientRepository.findByPhoneNumber(dto.getPhoneNumber());
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
@@ -98,7 +98,8 @@ public class ClientServiceImpl implements ClientService {
             client.setPhoneNumber(dto.getPhoneNumber());
             client.setEmail(dto.getEmail());
             client.setBirthDate(dto.getBirthDate());
-            return clientRepository.save(client);
+
+            return new ClientDto(client);
         } else {
             throw NotFoundException.findByNumber(dto.getPhoneNumber());
         }
