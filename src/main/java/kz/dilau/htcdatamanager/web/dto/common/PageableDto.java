@@ -10,7 +10,7 @@ import javax.validation.constraints.PositiveOrZero;
 
 @Data
 @ApiModel(description = "Модель пагинации")
-public abstract class PageableDto {
+public class PageableDto {
 
     @PositiveOrZero
     @ApiModelProperty(notes = "Начальная страница", required = true)
