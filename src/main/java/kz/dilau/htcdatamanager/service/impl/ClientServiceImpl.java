@@ -76,7 +76,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto update(ClientDto dto) {
-        Optional<Client> optionalClient = clientRepository.findByPhoneNumber(dto.getPhoneNumber());
+        Optional<Client> optionalClient = clientRepository.findById(dto.getId());
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
 
