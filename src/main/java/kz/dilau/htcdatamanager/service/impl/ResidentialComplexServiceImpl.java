@@ -8,13 +8,18 @@ import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.ResidentialComplexService;
+import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,6 +49,14 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
                 .stream()
                 .map(ResidentialComplexDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageDto<ResidentialComplexDto> getAllPageable(PageableDto dto) {
+        List<ResidentialComplexDto> residentialComplexDtoList = new ArrayList<>();
+        Page<ResidentialComplex> residentialComplexPage = residentialComplexRepository.findPageByRemovedFalse(PageableUtils.createPageRequest(dto));
+        residentialComplexPage.forEach(item -> residentialComplexDtoList.add(new ResidentialComplexDto(item)));
+        return new PageDto(residentialComplexPage, residentialComplexDtoList);
     }
 
     @Transactional

@@ -3,6 +3,8 @@ package kz.dilau.htcdatamanager.web.rest;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ResidentialComplexService;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,12 @@ public class ResidentialComplexResource {
     public ResponseEntity<List<ResidentialComplexDto>> getAll() {
         List<ResidentialComplexDto> list = residentialComplexService.getAll();
         return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("/getAllPageable")
+    public ResponseEntity<PageDto<ResidentialComplexDto>> getAllPageable(PageableDto dto) {
+        PageDto<ResidentialComplexDto> page = residentialComplexService.getAllPageable(dto);
+        return ResponseEntity.ok(page);
     }
 
     @DeleteMapping("/{id}")
