@@ -28,7 +28,9 @@ public class Mortgage extends BaseEntity<Long> {
     @Column(name = "total_income")
     private Long totalIncome;
     @Column(name = "active_credit")
-    private boolean activeCredit;
+    private Boolean activeCredit;
     @Column(name = "active_credit_sum")
     private Long activeCreditSum;
+    @Column(name = "is_removed")
+    private Boolean isRemoved = false;
 }

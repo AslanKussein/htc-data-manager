@@ -15,7 +15,8 @@ create table htc_dm_mortgage
     credit_term       bigint                                                      not null,
     total_income      bigint                                                      not null,
     active_credit     boolean default false                                       not null,
-    active_credit_sum bigint
+    active_credit_sum bigint,
+    is_removed     boolean default false                                       not null
 );
 
 comment on column htc_dm_mortgage.fio is 'ФИО';

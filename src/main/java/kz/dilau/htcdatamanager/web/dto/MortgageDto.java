@@ -33,7 +33,7 @@ public class MortgageDto {
     @ApiModelProperty(value = "Общий доход, тг")
     private Long totalIncome;
     @ApiModelProperty(value = "Действующие кредиты")
-    private boolean activeCredit;
+    private Boolean activeCredit;
     @ApiModelProperty(value = "Платеж по действующим займам, тг/мес")
     private Long activeCreditSum;
 
@@ -45,7 +45,7 @@ public class MortgageDto {
         this.creditSum = rc.getCreditSum();
         this.creditTerm = rc.getCreditTerm();
         this.totalIncome = rc.getTotalIncome();
-        this.activeCredit = rc.isActiveCredit();
+        this.activeCredit = rc.getActiveCredit();
         this.activeCreditSum = rc.getActiveCreditSum();
     }
 }
