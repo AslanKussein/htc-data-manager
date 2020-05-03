@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Getter
@@ -27,14 +28,12 @@ public abstract class Auditable<U> implements Serializable {
     protected U lastModifiedBy;
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", nullable = false, updatable = false)
-    protected Date createdDate;
+    protected ZonedDateTime createdDate;
 
     @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_modified_date", nullable = false)
-    protected Date lastModifiedDate;
+    protected ZonedDateTime lastModifiedDate;
 
     @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
     private Boolean isRemoved = false;
