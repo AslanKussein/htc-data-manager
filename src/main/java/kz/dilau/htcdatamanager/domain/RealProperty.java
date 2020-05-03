@@ -1,15 +1,13 @@
 package kz.dilau.htcdatamanager.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -24,7 +22,8 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Builder
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Entity
@@ -85,6 +84,7 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private Long generalCharacteristicsId;
     @OneToOne(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private PurchaseInfo purchaseInfo;
+    @JsonIgnore
     @OneToOne(mappedBy = "realProperty")
     private Application application;
 

@@ -1,9 +1,12 @@
 package kz.dilau.htcdatamanager.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.Notes;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
@@ -13,6 +16,8 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @ApiModel(description = "Модель сущности Комментарий")
+@NoArgsConstructor
+@AllArgsConstructor
 public class NotesDto {
     @ApiModelProperty(value = "ID Кооментария")
     private Long id;
