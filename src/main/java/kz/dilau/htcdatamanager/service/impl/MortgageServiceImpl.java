@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.dictionary.Mortgage;
+import kz.dilau.htcdatamanager.domain.Mortgage;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.dictionary.MortgageRepository;
@@ -83,7 +83,7 @@ public class MortgageServiceImpl implements MortgageService {
     private MortgageDto saveMortgage(Mortgage mortgage, MortgageDto dto) {
 
 
-        mortgage.setFio(dto.getFio());
+        mortgage.setLogin(dto.getLogin());
         mortgage.setCreditSum(dto.getCreditSum());
         mortgage.setCreditTerm(dto.getCreditTerm());
         mortgage.setTotalIncome(dto.getTotalIncome());

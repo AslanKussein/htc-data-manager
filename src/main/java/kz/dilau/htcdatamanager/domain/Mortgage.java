@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.domain.dictionary;
+package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.base.BaseEntity;
@@ -19,8 +19,8 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "MORTGAGE")
 public class Mortgage extends BaseEntity<Long> {
-    @Column(name = "fio")
-    private String fio;
+    @Column(name = "Логин")
+    private String login;
     @Column(name = "credit_sum")
     private Long creditSum;
     @Column(name = "credit_term")
