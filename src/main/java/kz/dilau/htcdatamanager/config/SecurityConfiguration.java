@@ -44,6 +44,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
                         Constants.CLIENTS_REST_ENDPOINT + "/**",
                         Constants.RESIDENTIAL_COMPLEXES_REST_ENDPOINT + "/**",
                         Constants.MORTGAGE_REST_ENDPOINT + "/**",
+                        Constants.NOTES_REST_ENDPOINT + "/**",
                         "/dictionaries/**").authenticated()
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/v2/**").permitAll()
