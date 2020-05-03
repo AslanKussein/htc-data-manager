@@ -10,7 +10,7 @@ create table htc_dm_mortgage
     id                bigint  default nextval('htc_dm_mortgage_id_seq'::regclass) not null
         constraint htc_dm_mortgage_pk
             primary key,
-    fio               varchar(255)                                                not null,
+    login               varchar(255)                                                not null,
     credit_sum        bigint                                                      not null,
     credit_term       bigint                                                      not null,
     total_income      bigint                                                      not null,
