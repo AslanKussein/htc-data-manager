@@ -29,7 +29,6 @@ public class NotesServiceImpl implements NotesService {
         }
 
         Notes notes = new Notes();
-        notes.setLogin(login);
         notes.setText(notesDto.getText());
         notes.setRealProperty(realProperty.get());
 

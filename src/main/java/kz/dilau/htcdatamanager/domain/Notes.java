@@ -19,8 +19,6 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Table(name = TABLE_NAME_PREFIX + "notes")
 public class Notes extends AuditableBaseEntity<String, Long> {
 
-
-    private String login;
     private String text;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "real_property_id")
