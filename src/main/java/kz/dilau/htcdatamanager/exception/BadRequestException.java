@@ -22,4 +22,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createReassignToSameAgent() {
         return new BadRequestException("You can't reassign a request to the same agent");
     }
+
+    public static BadRequestException findRealPropertyById(Long id) {
+        return new BadRequestException(String.format("RealProperty with id %s not found", id));
+    }
 }
