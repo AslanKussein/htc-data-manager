@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
+import kz.dilau.htcdatamanager.domain.Client;
 import kz.dilau.htcdatamanager.service.ClientService;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +51,11 @@ public class ClientResource {
     public ResponseEntity<ClientDto> findClientByPhoneNumber(@RequestParam String phoneNumber) {
         ClientDto client = clientService.findClientByPhoneNumber(phoneNumber);
         return nonNull(client) ? ResponseEntity.ok(client) : new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("updateClientInfo")
+    public ResponseEntity<ClientDto> updateClientInfo(@RequestBody ClientDto dto) {
+        ClientDto result = clientService.update(dto);
+        return ResponseEntity.ok(result);
     }
 }

@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Client;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ClientRepository;
@@ -70,6 +71,38 @@ public class ClientServiceImpl implements ClientService {
             return optionalClient.get();
         } else {
             throw NotFoundException.createClientNotFoundById(id);
+        }
+    }
+
+    @Override
+    public ClientDto update(ClientDto dto) {
+        Optional<Client> optionalClient = clientRepository.findById(dto.getId());
+        if (optionalClient.isPresent()) {
+            Client client = optionalClient.get();
+
+            if (!client.getPhoneNumber().equals(dto.getPhoneNumber())) {
+                if (clientRepository.existsByPhoneNumberIgnoreCase(dto.getPhoneNumber())) {
+                    throw BadRequestException.editPhoneNumber(dto.getPhoneNumber());
+                }
+            }
+            if (!client.getEmail().equalsIgnoreCase(dto.getEmail())) {
+                if (clientRepository.existsByEmailIgnoreCase(dto.getEmail())) {
+                    throw BadRequestException.editEmail(dto.getEmail());
+                }
+            }
+
+            client.setSurname(dto.getSurname());
+            client.setFirstName(dto.getFirstName());
+            client.setPatronymic(dto.getPatronymic());
+            client.setLocation(dto.getLocation());
+            client.setPhoneNumber(dto.getPhoneNumber());
+            client.setEmail(dto.getEmail());
+            client.setBirthDate(dto.getBirthDate());
+            client = clientRepository.save(client);
+
+            return new ClientDto(client);
+        } else {
+            throw NotFoundException.createClientNotFoundById(dto.getId());
         }
     }
 }
