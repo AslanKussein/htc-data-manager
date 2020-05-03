@@ -4,5 +4,5 @@ create table htc_dm_notes
         constraint htc_dm_notes_pkey primary key,
     text text not null,
     deleted boolean default false,
-    real_property_id numeric references htc_dm_real_property(id)
+    real_property_id bigserial references htc_dm_real_property(id)
 )
