@@ -12,7 +12,7 @@ alter table htc_dm_event
 alter table htc_dm_event
   rename column source_application to source_application_id;
 alter table htc_dm_event
-  rename column targer_application to targer_application_id;
+  rename column targer_application to target_application_id;
 
 alter table htc_dm_event
   drop column client_id;

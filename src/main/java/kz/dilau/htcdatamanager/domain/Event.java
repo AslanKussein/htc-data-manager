@@ -31,9 +31,9 @@ public class Event extends AuditableBaseEntity<String, Long> {
     @Column(name = "source_application_id", insertable = false, updatable = false)
     private Long sourceApplicationId;
     @ManyToOne
-    @JoinColumn(name = "targer_application_id")
+    @JoinColumn(name = "target_application_id")
     private Application targetApplication;
-    @Column(name = "targer_application_id", insertable = false, updatable = false)
+    @Column(name = "target_application_id", insertable = false, updatable = false)
     private Long targetApplicationId;
     @Column(name = "description")
     private String description;
