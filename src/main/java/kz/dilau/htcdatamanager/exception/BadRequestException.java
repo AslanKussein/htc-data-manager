@@ -26,4 +26,16 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createDuplicateEvent(Long appId) {
         return new BadRequestException(String.format("Application with id = %s has event to this datetime", appId));
     }
+
+    public static BadRequestException findRealPropertyById(Long id) {
+        return new BadRequestException(String.format("RealProperty with id %s not found", id));
+    }
+
+    public static BadRequestException editPhoneNumber(String number) {
+        return new BadRequestException(String.format("Client with number = %s already exists", number));
+    }
+
+    public static BadRequestException editEmail(String email) {
+        return new BadRequestException(String.format("Client with email = %s already exists", email));
+    }
 }

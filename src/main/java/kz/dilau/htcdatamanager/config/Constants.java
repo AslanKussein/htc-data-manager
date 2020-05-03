@@ -10,6 +10,7 @@ public final class Constants {
     public static final String CLIENTS_REST_ENDPOINT = "/clients";
     public static final String RESIDENTIAL_COMPLEXES_REST_ENDPOINT = "/residential-complexes";
     public static final String STATUS_HISTORIES_REST_ENDPOINT = "/app-status-histories";
+    public static final String NOTES_REST_ENDPOINT = "/notes";
 
     private Constants() {
     }

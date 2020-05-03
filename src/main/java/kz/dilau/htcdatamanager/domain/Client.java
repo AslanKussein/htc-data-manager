@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,6 +41,8 @@ public class Client extends AuditableBaseEntity<String, Long> {
     private Gender gender = Gender.UNKNOWN;
     @OneToMany(mappedBy = "client")
     private List<Application> applicationList;
+    private String location;
+    private ZonedDateTime birthDate;
 
     public List<Application> getApplicationList() {
         if (isNull(applicationList)) {
