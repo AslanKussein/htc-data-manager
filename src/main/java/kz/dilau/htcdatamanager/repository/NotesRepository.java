@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotesRepository extends JpaRepository<Notes, Long> {
 
-    Page<Notes> findAllByRealProperty_IdAndDeletedFalse(Long id, Pageable pageable);
+    Page<Notes> findAllByRealProperty_Id(Long id, Pageable pageable);
 }
