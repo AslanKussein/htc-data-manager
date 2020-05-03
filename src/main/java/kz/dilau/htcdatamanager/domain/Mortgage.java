@@ -19,7 +19,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "MORTGAGE")
 public class Mortgage extends BaseEntity<Long> {
-    @Column(name = "Логин")
+    @Column(name = "login")
     private String login;
     @Column(name = "credit_sum")
     private Long creditSum;
