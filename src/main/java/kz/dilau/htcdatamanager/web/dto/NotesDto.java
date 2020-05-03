@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -29,7 +30,7 @@ public class NotesDto {
         this.id = notes.getId();
         this.createdBy = notes.getCreatedBy();
         this.text = notes.getText();
-        this.crDate = notes.getCreatedDate();
+        this.crDate = ZonedDateTime.ofInstant(notes.getCreatedDate().toInstant(), ZoneId.systemDefault());
         this.realPropertyId = notes.getRealProperty().getId();
     }
 

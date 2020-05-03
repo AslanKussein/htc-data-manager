@@ -26,6 +26,6 @@ public class Notes extends AuditableBaseEntity<String, Long> {
     /**
      * Флаг удаления
      */
-    @Column(columnDefinition = "boolean default false")
+    @Column(name = "is_removed", columnDefinition = "boolean default false")
     private Boolean deleted;
 }
