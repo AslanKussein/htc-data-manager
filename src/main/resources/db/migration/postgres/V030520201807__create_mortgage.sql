@@ -3,7 +3,6 @@ create sequence htc_dm_mortgage_id_seq;
 
 alter sequence htc_dm_mortgage_id_seq owner to postgres;
 
-
 -- auto-generated definition
 create table htc_dm_mortgage
 (
@@ -16,6 +15,7 @@ create table htc_dm_mortgage
     total_income      bigint                                                      not null,
     active_credit     boolean default false                                       not null,
     active_credit_sum bigint,
+    visit_date       timestamp,
     is_removed     boolean default false                                       not null
 );
 
@@ -30,6 +30,8 @@ comment on column htc_dm_mortgage.total_income is 'Общий доход, тг';
 comment on column htc_dm_mortgage.active_credit is 'Действующие кредиты';
 
 comment on column htc_dm_mortgage.active_credit_sum is 'Платеж по действующим займам, тг/мес';
+
+comment on column htc_dm_mortgage.visit_date is 'Дата и время посещения офиса';
 
 alter table htc_dm_mortgage
     owner to postgres;

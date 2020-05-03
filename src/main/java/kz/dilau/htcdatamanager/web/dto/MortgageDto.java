@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 @ApiModel(description = "Модель для Ипотека за 3 дня")
 @Getter
 @Setter
@@ -26,6 +29,8 @@ public class MortgageDto {
     private Boolean activeCredit;
     @ApiModelProperty(value = "Платеж по действующим займам, тг/мес")
     private Long activeCreditSum;
+    @ApiModelProperty(value = "Дата посещения офиса")
+    private ZonedDateTime visitDate;
 
 
 
@@ -37,5 +42,6 @@ public class MortgageDto {
         this.totalIncome = rc.getTotalIncome();
         this.activeCredit = rc.getActiveCredit();
         this.activeCreditSum = rc.getActiveCreditSum();
+        this.visitDate = ZonedDateTime.ofInstant(rc.getVisitDate().toInstant(), ZoneId.systemDefault());;
     }
 }

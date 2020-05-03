@@ -1,6 +1,5 @@
 package kz.dilau.htcdatamanager.domain;
 
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.base.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PREFIX;
+import java.time.ZonedDateTime;
+
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Builder
@@ -31,6 +31,8 @@ public class Mortgage extends BaseEntity<Long> {
     private Boolean activeCredit;
     @Column(name = "active_credit_sum")
     private Long activeCreditSum;
+    @Column(name = "visit_date")
+    private ZonedDateTime visitDate;
     @Column(name = "is_removed")
     private Boolean isRemoved = false;
 }
