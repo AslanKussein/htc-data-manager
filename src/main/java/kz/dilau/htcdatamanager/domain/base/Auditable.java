@@ -11,7 +11,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Getter
@@ -30,7 +29,7 @@ public abstract class Auditable<U> implements Serializable {
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_date", nullable = false, updatable = false)
-    protected ZonedDateTime createdDate;
+    protected Date createdDate;
 
     @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP)

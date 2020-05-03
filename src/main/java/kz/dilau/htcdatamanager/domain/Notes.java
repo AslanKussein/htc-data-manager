@@ -1,7 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,9 +22,4 @@ public class Notes extends AuditableBaseEntity<String, Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
-    /**
-     * Флаг удаления
-     */
-    @Column(columnDefinition = "boolean default false")
-    private Boolean deleted;
 }

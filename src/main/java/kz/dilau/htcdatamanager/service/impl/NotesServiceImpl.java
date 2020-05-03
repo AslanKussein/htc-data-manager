@@ -39,7 +39,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public Page<NotesDto> getAllByRealPropertyId(Long realPropertyId, Pageable pageable) {
-        return notesRepository.findAllByRealProperty_IdAndDeletedFalse(realPropertyId, pageable)
+        return notesRepository.findAllByRealProperty_Id(realPropertyId, pageable)
                 .map(NotesDto::new);
     }
 }
