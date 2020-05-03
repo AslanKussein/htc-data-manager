@@ -19,7 +19,7 @@ create table htc_dm_mortgage
     is_removed     boolean default false                                       not null
 );
 
-comment on column htc_dm_mortgage.fio is 'ФИО';
+comment on column htc_dm_mortgage.login is 'Логин';
 
 comment on column htc_dm_mortgage.credit_sum is 'Сумма кредита, тг';
 
