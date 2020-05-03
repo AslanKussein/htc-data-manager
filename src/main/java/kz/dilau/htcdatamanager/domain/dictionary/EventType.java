@@ -10,4 +10,7 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "event_type")
 public class EventType extends BaseCustomDictionary {
+    public static final Long DEMO = 1L;
+    public static final Long CALL = 2L;
+    public static final Long MEETING = 3L;
 }

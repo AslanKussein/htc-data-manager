@@ -8,12 +8,12 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
-import kz.dilau.htcdatamanager.repository.ClientRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.PossibleReasonForBiddingRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ClientService;
+import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,8 +37,7 @@ import static java.util.Objects.nonNull;
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
-    private final ClientRepository clientRepository;
-    private final EntityManager entityManager;
+    private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final ParkingTypeRepository parkingTypeRepository;
     private final PossibleReasonForBiddingRepository reasonForBiddingRepository;
@@ -164,7 +162,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         String agent = getAppointmentAgent(dto.getAgent());
         Application application = Application.builder()
                 .client(client)
-                .operationType(mapRequiredDict(OperationType.class, dto.getOperationTypeId()))
+                .operationType(entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId()))
                 .note(dto.getNote())
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .currentAgent(agent)
@@ -199,7 +197,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
         } else {
-            operationType = mapRequiredDict(OperationType.class, dto.getOperationTypeId());
+            operationType = entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId());
 //            if (operationType.getCode().equals(OperationType.SELL) && realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
 //                throw BadRequestException.createCadastralNumberHasFounded(dto.getRealPropertyRequestDto().getCadastralNumber());
 //            }
@@ -213,7 +211,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
         RealProperty realProperty = RealProperty.builder()
-                .objectType(mapDict(ObjectType.class, realPropertyRequestDto.getObjectTypeId()))
+                .objectType(entityService.mapEntity(ObjectType.class, realPropertyRequestDto.getObjectTypeId()))
                 .cadastralNumber(realPropertyRequestDto.getCadastralNumber())
                 .floor(realPropertyRequestDto.getFloor())
                 .apartmentNumber(realPropertyRequestDto.getApartmentNumber())
@@ -226,9 +224,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .atelier(realPropertyRequestDto.getAtelier())
                 .separateBathroom(realPropertyRequestDto.getSeparateBathroom())
                 .landArea(realPropertyRequestDto.getLandArea())
-                .sewerage(mapDict(Sewerage.class, realPropertyRequestDto.getSewerageId()))
-                .heatingSystem(mapDict(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
-                .residentialComplex(mapDict(ResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
+                .sewerage(entityService.mapEntity(Sewerage.class, realPropertyRequestDto.getSewerageId()))
+                .heatingSystem(entityService.mapEntity(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
+                .residentialComplex(entityService.mapEntity(ResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
                 .generalCharacteristics(null)
                 .build();
 
@@ -246,12 +244,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .concierge(realPropertyRequestDto.getConcierge())
                     .wheelchair(realPropertyRequestDto.getWheelchair())
                     .playground(realPropertyRequestDto.getPlayground())
-                    .materialOfConstruction(mapDict(MaterialOfConstruction.class, realPropertyRequestDto.getMaterialOfConstructionId()))
-                    .city(mapRequiredDict(City.class, realPropertyRequestDto.getCityId()))
-                    .district(mapDict(District.class, realPropertyRequestDto.getDistrictId()))
-                    .propertyDeveloper(mapDict(PropertyDeveloper.class, realPropertyRequestDto.getPropertyDeveloperId()))
-                    .street(mapDict(Street.class, realPropertyRequestDto.getStreetId()))
-                    .yardType(mapDict(YardType.class, realPropertyRequestDto.getYardTypeId()))
+                    .materialOfConstruction(entityService.mapEntity(MaterialOfConstruction.class, realPropertyRequestDto.getMaterialOfConstructionId()))
+                    .city(entityService.mapRequiredEntity(City.class, realPropertyRequestDto.getCityId()))
+                    .district(entityService.mapEntity(District.class, realPropertyRequestDto.getDistrictId()))
+                    .propertyDeveloper(entityService.mapEntity(PropertyDeveloper.class, realPropertyRequestDto.getPropertyDeveloperId()))
+                    .street(entityService.mapEntity(Street.class, realPropertyRequestDto.getStreetId()))
+                    .yardType(entityService.mapEntity(YardType.class, realPropertyRequestDto.getYardTypeId()))
                     .build();
 
             if (nonNull(realPropertyRequestDto.getParkingTypeIds()) && !realPropertyRequestDto.getParkingTypeIds().isEmpty()) {
@@ -329,25 +327,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.getPossibleReasonsForBidding().addAll(reasonForBiddingRepository.findByIdIn(dto.getPossibleReasonForBiddingIdList()));
         }
         return applicationRepository.save(application).getId();
-    }
-
-    private <T> T mapRequiredDict(Class<T> clazz, Long id) {
-        T dict = mapDict(clazz, id);
-        if (isNull(dict)) {
-            throw BadRequestException.createRequiredIsEmpty(clazz.getName());
-        }
-        return dict;
-    }
-
-    private <T> T mapDict(Class<T> clazz, Long id) {
-        if (nonNull(id) && id != 0L) {
-            T dict = entityManager.find(clazz, id);
-            if (isNull(dict)) {
-                throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
-            }
-            return dict;
-        }
-        return null;
     }
 
     private Client getClient(ClientDto dto) {

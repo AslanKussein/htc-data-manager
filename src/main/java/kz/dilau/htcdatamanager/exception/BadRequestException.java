@@ -22,4 +22,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createReassignToSameAgent() {
         return new BadRequestException("You can't reassign a request to the same agent");
     }
+
+    public static BadRequestException createDuplicateEvent(Long appId) {
+        return new BadRequestException(String.format("Application with id = %s has event to this datetime", appId));
+    }
 }
