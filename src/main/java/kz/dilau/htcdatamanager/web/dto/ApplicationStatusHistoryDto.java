@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Data
@@ -21,5 +22,5 @@ public class ApplicationStatusHistoryDto {
     @ApiModelProperty(value = "Комментарий")
     private String comment;
     @ApiModelProperty(value = "Дата")
-    private Date creationDate;
+    private ZonedDateTime creationDate;
 }

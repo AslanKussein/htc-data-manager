@@ -23,6 +23,10 @@ public class BadRequestException extends DetailedException {
         return new BadRequestException("You can't reassign a request to the same agent");
     }
 
+    public static BadRequestException findRealPropertyById(Long id) {
+        return new BadRequestException(String.format("RealProperty with id %s not found", id));
+    }
+
     public static BadRequestException editPhoneNumber(String number) {
         return new BadRequestException(String.format("Client with number = %s already exists", number));
     }
