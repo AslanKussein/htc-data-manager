@@ -5,6 +5,7 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
 import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
+import kz.dilau.htcdatamanager.web.dto.ChangeStatusDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,12 @@ public class ApplicationResource {
     public ResponseEntity<Long> deleteById(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
                                            @PathVariable("id") Long id) {
         Long result = applicationService.deleteById(token, id);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/changeStatus")
+    public ResponseEntity<Long> changeStatus(@RequestBody ChangeStatusDto dto) {
+        Long result = applicationService.changeStatus(dto);
         return ResponseEntity.ok(result);
     }
 }

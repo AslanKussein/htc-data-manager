@@ -374,4 +374,19 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw NotFoundException.createApplicationNotFoundById(id);
         }
     }
+
+    @Override
+    public Long changeStatus(ChangeStatusDto dto) {
+        Application application = getApplicationById(dto.getApplicationId());
+        if (dto.getStatusId().equals(ApplicationStatus.DEMO)) {
+            if (application.getApplicationStatus().getId().equals(ApplicationStatus.CONTRACT) || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS)) {
+                application.setApplicationStatus(entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId()));
+                return applicationRepository.save(application).getId();
+            } else {
+                throw BadRequestException.createChangeStatus(application.getApplicationStatus().getMultiLang().getNameRu());
+            }
+        } else {
+            throw BadRequestException.createChangeStatus(application.getApplicationStatus().getMultiLang().getNameRu());
+        }
+    }
 }

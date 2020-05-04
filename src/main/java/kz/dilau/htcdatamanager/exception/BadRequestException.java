@@ -38,4 +38,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException editEmail(String email) {
         return new BadRequestException(String.format("Client with email = %s already exists", email));
     }
+
+    public static BadRequestException createChangeStatus(String status) {
+        return new BadRequestException(String.format("Application with status = %s not change to DEMO", status));
+    }
 }
