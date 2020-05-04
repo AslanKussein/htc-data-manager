@@ -12,11 +12,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+import static kz.dilau.htcdatamanager.config.Constants.DICTIONARIES_REST_ENDPOINT;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/dictionaries/{name}")
+@RequestMapping(DICTIONARIES_REST_ENDPOINT + "/{name}")
 public class DictionaryResource {
     private final DictionaryService dictionaryService;
 
