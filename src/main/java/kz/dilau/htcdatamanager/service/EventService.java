@@ -3,11 +3,13 @@ package kz.dilau.htcdatamanager.service;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 
 public interface EventService {
-    Long addEvent(String token, EventDto event);
+    Long addEvent(EventDto event);
 
-    EventDto getEventById(String token, Long id);
+    EventDto getEventById(Long id);
 
-    void updateEvent(String token, Long id, EventDto event);
+    Long updateEvent(String token, Long id, EventDto event);
 
-    void deleteEventById(String token, Long id);
+    Long commentEvent(String token, Long id, String comment);
+
+    Long deleteEventById(String token, Long id);
 }
