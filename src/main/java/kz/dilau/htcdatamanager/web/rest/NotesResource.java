@@ -35,4 +35,15 @@ public class NotesResource {
         return ResponseEntity.ok(result);
     }
 
+    @PutMapping
+    public ResponseEntity<NotesDto> updateNote(@RequestBody NotesDto notesDto) {
+        NotesDto result = notesService.updateNote(notesDto);
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<NotesDto> deleteNote(@RequestBody NotesDto notesDto) {
+        NotesDto result = notesService.deleteNote(notesDto);
+        return ResponseEntity.ok(result);
+    }
 }

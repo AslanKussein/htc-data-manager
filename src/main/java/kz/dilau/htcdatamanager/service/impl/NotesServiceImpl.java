@@ -39,7 +39,39 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public Page<NotesDto> getAllByRealPropertyId(Long realPropertyId, Pageable pageable) {
-        return notesRepository.findAllByRealProperty_Id(realPropertyId, pageable)
+        return notesRepository.findAllByRealProperty_IdAndIsRemovedFalse(realPropertyId, pageable)
                 .map(NotesDto::new);
+    }
+
+    @Override
+    public NotesDto updateNote(NotesDto notesDto) {
+        if (notesDto.getId() == null) {
+            throw BadRequestException.idMustNotBeNull();
+        }
+        Notes notes = getNotesById(notesDto.getId());
+        notes.setText(notesDto.getText());
+        notes = notesRepository.save(notes);
+
+        return new NotesDto(notes);
+    }
+
+    private Notes getNotesById(Long id) {
+        Optional<Notes> notesOptional = notesRepository.findByIdAndIsRemovedFalse(id);
+        if (!notesOptional.isPresent()) {
+            throw BadRequestException.findNotesById(id);
+        }
+        return notesOptional.get();
+    }
+
+    @Override
+    public NotesDto deleteNote(NotesDto notesDto) {
+        if (notesDto.getId() == null) {
+            throw BadRequestException.idMustNotBeNull();
+        }
+        Notes notes = getNotesById(notesDto.getId());
+        notes.setIsRemoved(Boolean.TRUE);
+        notes = notesRepository.save(notes);
+
+        return new NotesDto(notes);
     }
 }

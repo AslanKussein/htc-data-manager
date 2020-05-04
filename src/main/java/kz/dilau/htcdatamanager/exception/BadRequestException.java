@@ -39,6 +39,14 @@ public class BadRequestException extends DetailedException {
         return new BadRequestException(String.format("Client with email = %s already exists", email));
     }
 
+    public static BadRequestException findNotesById(Long id) {
+        return new BadRequestException(String.format("Notes with id = %s not found", id));
+    }
+
+    public static BadRequestException idMustNotBeNull() {
+        return new BadRequestException("The given id must not be null");
+    }
+
     public static BadRequestException createChangeStatus(String status) {
         return new BadRequestException(String.format("Application with status = %s not change to DEMO", status));
     }

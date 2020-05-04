@@ -11,4 +11,8 @@ public interface NotesService {
     NotesDto createNote(String login, NotesDto dto);
 
     Page<NotesDto> getAllByRealPropertyId(Long id, Pageable pageable);
+
+    NotesDto updateNote(NotesDto notesDto);
+
+    NotesDto deleteNote(NotesDto notesDto);
 }
