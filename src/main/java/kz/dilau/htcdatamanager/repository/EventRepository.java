@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
-    boolean existsBySourceApplicationIdAndEventDate(Long sourceApplicationId, Date date);
+    boolean existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(Long sourceApplicationId, Date date);
 
-    boolean existsByTargetApplicationIdAndEventDate(Long targetApplicationId, Date date);
+    boolean existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(Long targetApplicationId, Date date);
 }
