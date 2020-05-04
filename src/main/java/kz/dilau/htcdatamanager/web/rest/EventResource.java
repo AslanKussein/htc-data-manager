@@ -1,14 +1,12 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
-import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import springfox.documentation.annotations.ApiIgnore;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -19,52 +17,37 @@ public class EventResource {
     private final EventService eventService;
 
     @PostMapping
-    ResponseEntity<Long> addEvent(@RequestHeader(AUTHORIZATION) final String token,
-                                  @RequestBody EventDto event) {
-        Long id = eventService.addEvent(token, event);
-        return ResponseEntity.ok(id);
+    ResponseEntity<Long> addEvent(@RequestBody EventDto event) {
+        Long result = eventService.addEvent(event);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventDto> getEventById(@RequestHeader(AUTHORIZATION) final String token,
-                                                 @PathVariable Long id) {
-        try {
-            EventDto event = eventService.getEventById(token, id);
-            return ResponseEntity.ok(event);
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("Event with id %s not found", id, e)
-            );
-        }
+    public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
+        EventDto event = eventService.getEventById(id);
+        return ResponseEntity.ok(event);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateEvent(@RequestHeader(AUTHORIZATION) final String token,
+    public ResponseEntity<Long> updateEvent(@ApiIgnore @RequestHeader(AUTHORIZATION) final String token,
                                             @PathVariable Long id,
                                             @RequestBody EventDto event) {
-        try {
-            eventService.updateEvent(token, id, event);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    String.format("Provide correct event id: %s", id)
-            );
-        }
+        Long result = eventService.updateEvent(token, id, event);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}/comment")
+    public ResponseEntity<Long> commentEvent(@ApiIgnore @RequestHeader(AUTHORIZATION) final String token,
+                                             @PathVariable Long id,
+                                             @RequestBody String comment) {
+        Long result = eventService.commentEvent(token, id, comment);
+        return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEventById(@RequestHeader(AUTHORIZATION) final String token,
+    public ResponseEntity<Long> deleteEventById(@ApiIgnore @RequestHeader(AUTHORIZATION) final String token,
                                                 @PathVariable Long id) {
-        try {
-            eventService.deleteEventById(token, id);
-            return ResponseEntity.noContent().build();
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    String.format("Event with id %s not found", id)
-            );
-        }
+        Long result = eventService.deleteEventById(token, id);
+        return ResponseEntity.ok(result);
     }
 }

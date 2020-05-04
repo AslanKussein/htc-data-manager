@@ -1,82 +1,115 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.web.dto.EventDto;
 import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.ApplicationStatusHistory;
 import kz.dilau.htcdatamanager.domain.Event;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.EventType;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
+import kz.dilau.htcdatamanager.exception.EntityRemovedException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
 import kz.dilau.htcdatamanager.repository.EventRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.EventTypeRepository;
+import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
+import kz.dilau.htcdatamanager.web.dto.EventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final ApplicationStatusRepository applicationStatusRepository;
+    private final EntityService entityService;
     private final ApplicationRepository applicationRepository;
-    private final EventTypeRepository eventTypeRepository;
 
     @Override
-    public Long addEvent(String token, EventDto event) {
-        Event event1 = new Event();
-        event1.setEventDate(event.getEventDate());
-
-        Application one = applicationRepository.getOne(event.getSourceApplicationId());
-        event1.setSourceApplication(one);
-        if (event.getTargetApplicationId() != null) {
-            Application one1 = applicationRepository.getOne(event.getTargetApplicationId());
-            event1.setTargetApplication(one1);
+    @Transactional
+    public Long addEvent(EventDto dto) {
+        Event event = Event.builder()
+                .eventDate(dto.getEventDate())
+                .eventType(entityService.mapRequiredEntity(EventType.class, dto.getEventTypeId()))
+                .description(dto.getDescription())
+                .build();
+        Application sourceApplication = entityService.mapRequiredEntity(Application.class, dto.getSourceApplicationId());
+        event.setSourceApplication(sourceApplication);
+        if (eventRepository.existsBySourceApplicationIdAndEventDate(sourceApplication.getId(), dto.getEventDate())) {
+            throw BadRequestException.createDuplicateEvent(sourceApplication.getId());
         }
-        EventType one1 = eventTypeRepository.getOne(event.getEventTypeId());
-        event1.setEventType(one1);
-        event1.setClientId(event.getClientId());
-        event1.setDescription(event.getDescription());
-        event1.setComment(event.getComment());
-        Long id = eventRepository.save(event1).getId();
-        return id;
-    }
-
-    @Override
-    public EventDto getEventById(String token, Long id) {
-        return eventRepository
-                .findById(id)
-                .map(EventDto::new)
-                .orElseThrow(() -> new NotFoundException("Event with id %s not found" + id));
-    }
-
-    @Override
-    public void updateEvent(String token, Long id, EventDto event) {
-        Event entity = eventRepository
-                .findById(id)
-                .orElseThrow(() -> new NotFoundException("Event with id %s not found" + id));
-        entity.setEventDate(event.getEventDate());
-
-        Application one = applicationRepository.getOne(event.getSourceApplicationId());
-        entity.setSourceApplication(one);
-        if (event.getTargetApplicationId() != null) {
-            Application one1 = applicationRepository.getOne(event.getTargetApplicationId());
-            entity.setTargetApplication(one1);
+        if (dto.getEventTypeId().equals(EventType.DEMO)) {
+            Application targetApplication = entityService.mapRequiredEntity(Application.class, dto.getTargetApplicationId());
+            event.setTargetApplication(targetApplication);
+            if (eventRepository.existsByTargetApplicationIdAndEventDate(targetApplication.getId(), dto.getEventDate())) {
+                throw BadRequestException.createDuplicateEvent(targetApplication.getId());
+            }
+//            if(sourceApplication.getContractPeriod()) todo 4. Система должна произвести проверку заявки на наличие признака действий по Договору ОУ (1. договор распечатан 2. формирование договора пропущено 3. нет действий)
+            if (!sourceApplication.getApplicationStatus().getId().equals(ApplicationStatus.DEMO)) {
+                setStatusHistory(sourceApplication, ApplicationStatus.DEMO);
+                applicationRepository.save(sourceApplication);
+            }
+            if (!targetApplication.getApplicationStatus().getId().equals(ApplicationStatus.DEMO)) {
+                setStatusHistory(targetApplication, ApplicationStatus.DEMO);
+                applicationRepository.save(targetApplication);
+            }
+        } else if (dto.getEventTypeId().equals(EventType.MEETING)) {
+            if (!sourceApplication.getApplicationStatus().getId().equals(ApplicationStatus.MEETING)) {
+                setStatusHistory(sourceApplication, ApplicationStatus.MEETING);
+                applicationRepository.save(sourceApplication);
+            }
         }
-        EventType one1 = eventTypeRepository.getOne(event.getEventTypeId());
-        entity.setEventType(one1);
+        return eventRepository.save(event).getId();
+    }
 
-
-        entity.setClientId(event.getClientId());
-        entity.setDescription(event.getDescription());
-        entity.setComment(event.getComment());
-        entity.setClientId(event.getClientId());
-        eventRepository.save(entity);
+    private void setStatusHistory(Application application, Long statusId) {
+        ApplicationStatus status = entityService.mapEntity(ApplicationStatus.class, statusId);
+        application.setApplicationStatus(status);
+        ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+                .application(application)
+                .applicationStatus(status)
+                .build();
+        application.getStatusHistoryList().add(statusHistory);
     }
 
     @Override
-    public void deleteEventById(String token, Long id) {
-        boolean exists = eventRepository.existsById(id);
-        if (!exists) throw new NotFoundException("Event with id %s not found" + id);
-        eventRepository.deleteById(id);
+    public EventDto getEventById(Long id) {
+        return new EventDto(getById(id));
+    }
+
+    private Event getById(Long id) {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if (optionalEvent.isPresent()) {
+            if (optionalEvent.get().getIsRemoved()) {
+                throw EntityRemovedException.createEntityRemovedById("Event", id);
+            }
+            return optionalEvent.get();
+        } else {
+            throw NotFoundException.createEntityNotFoundById("Event", id);
+        }
+    }
+
+    @Override
+    public Long updateEvent(String token, Long id, EventDto dto) {
+        Event event = getById(id);
+        event.setEventDate(dto.getEventDate());
+        event.setDescription(dto.getDescription());
+        return eventRepository.save(event).getId();
+    }
+
+    @Override
+    public Long commentEvent(String token, Long id, String comment) {
+        Event event = getById(id);
+        event.setComment(comment);
+        return eventRepository.save(event).getId();
+    }
+
+    @Override
+    public Long deleteEventById(String token, Long id) {
+        Event event = getById(id);
+        event.setIsRemoved(true);
+        return eventRepository.save(event).getId();
     }
 }

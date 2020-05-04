@@ -13,35 +13,36 @@ import static java.util.Objects.nonNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "EventDto", description = "Модель создания события")
-public class EventDto {
+@ApiModel(value = "ViewEventDto", description = "Модель просмотра события")
+public class ViewEventDto {
     @ApiModelProperty(value = "ID события")
     private Long id;
-
-    @NonNull
-    @ApiModelProperty(value = "ID заявки инициатора", required = true)
-    private Long sourceApplicationId;
 
     @ApiModelProperty(value = "Выбранная заявка")
     private Long targetApplicationId;
 
-    @ApiModelProperty(value = "Дата и время события", required = true)
+    @ApiModelProperty(value = "Дата и время события")
     private Date eventDate;
 
     @ApiModelProperty(value = "Описание события")
     private String description;
 
-    @ApiModelProperty(value = "ID Вида события", required = true)
+    @ApiModelProperty(value = "ID Вида события")
     private Long eventTypeId;
 
     @ApiModelProperty(value = "Комментарий (Результат события)")
     private String comment;
 
-    public EventDto(Event event) {
+    @ApiModelProperty(value = "Фото объекта")
+    private String photo;
+
+    @ApiModelProperty(value = "ID объекта")
+    private Long realPropertyId;
+
+    public ViewEventDto(Event event) {
         this.id = event.getId();
         this.eventDate = event.getEventDate();
         this.eventTypeId = event.getEventType().getId();
-        this.sourceApplicationId = event.getSourceApplication().getId();
         if (nonNull(event.getTargetApplication())) {
             this.targetApplicationId = event.getTargetApplication().getId();
         }
