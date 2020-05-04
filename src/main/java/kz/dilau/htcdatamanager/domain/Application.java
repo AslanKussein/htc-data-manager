@@ -74,6 +74,10 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @OrderBy("id")
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Assignment> assignmentList;
+    @Column(name= "latitude")
+    private double latitude; //широта
+    @Column(name = "longitude")
+    private double longitude; //долгота
 
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {
