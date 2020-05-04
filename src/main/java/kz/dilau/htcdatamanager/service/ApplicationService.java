@@ -3,6 +3,7 @@ package kz.dilau.htcdatamanager.service;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
 import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
+import kz.dilau.htcdatamanager.web.dto.ChangeStatusDto;
 
 public interface ApplicationService {
     ApplicationDto getById(final String token, Long id);
@@ -16,4 +17,6 @@ public interface ApplicationService {
     Long saveLightApplication(ApplicationLightDto dto);
 
     Long reassignApplication(AssignmentDto dto);
+
+    Long changeStatus(ChangeStatusDto dto);
 }

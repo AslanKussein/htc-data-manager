@@ -46,4 +46,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException idMustNotBeNull() {
         return new BadRequestException("The given id must not be null");
     }
+
+    public static BadRequestException createChangeStatus(String status) {
+        return new BadRequestException(String.format("Application with status = %s not change to DEMO", status));
+    }
 }
