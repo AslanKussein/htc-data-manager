@@ -39,6 +39,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(Constants.API_REST_ENDPOINT + "/**").authenticated()
+                .antMatchers(Constants.OPEN_API_REST_ENDPOINT + "/**").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/v2/**").permitAll()
                 .antMatchers("/webjars/**").permitAll()
