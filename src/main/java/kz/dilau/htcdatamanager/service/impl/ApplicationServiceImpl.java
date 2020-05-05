@@ -127,6 +127,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .map(PossibleReasonForBidding::getId)
                         .collect(Collectors.toList()))
                 .contractPeriod(application.getContractPeriod())
+                .contractNumber(application.getContractNumber())
                 .amount(application.getAmount())
                 .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
                 .note(application.getNote())
@@ -320,6 +321,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setProbabilityOfBidding(dto.getProbabilityOfBidding());
         application.setTheSizeOfTrades(dto.getTheSizeOfTrades());
         application.setContractPeriod(dto.getContractPeriod());
+        application.setContractNumber(dto.getContractNumber());
         application.setAmount(dto.getAmount());
         application.setCommissionIncludedInThePrice(dto.isCommissionIncludedInThePrice());
         if (nonNull(dto.getPossibleReasonForBiddingIdList()) && !dto.getPossibleReasonForBiddingIdList().isEmpty()) {
