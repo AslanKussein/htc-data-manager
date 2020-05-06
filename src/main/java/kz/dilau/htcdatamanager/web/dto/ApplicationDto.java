@@ -45,6 +45,8 @@ public class ApplicationDto {
     private List<Long> possibleReasonForBiddingIdList;
     @ApiModelProperty(name = "contractPeriod", value = "Срок действия договора")
     private Date contractPeriod;
+    @ApiModelProperty(value = "Номер договора")
+    private String contractNumber;
     @ApiModelProperty(name = "amount", value = "Сумма по договору")
     private BigDecimal amount;
     @ApiModelProperty(name = "isCommissionIncludedInThePrice", value = "Комиссия включена в стоимость")
@@ -54,10 +56,6 @@ public class ApplicationDto {
     private String note;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
-    @ApiModelProperty(value = "Координаты широты")
-    private  double latitude;
-    @ApiModelProperty(value = "Координаты долготы")
-    private double longitude;
 //    @ApiModelProperty(value = "История статусов")
 //    private List<ApplicationStatusHistoryDto> statusHistoryDtoList;
 }
