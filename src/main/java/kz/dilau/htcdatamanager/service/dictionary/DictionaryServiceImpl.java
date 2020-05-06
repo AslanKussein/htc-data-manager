@@ -17,7 +17,7 @@ public class DictionaryServiceImpl implements DictionaryService {
             DictionaryDto<Long> dto = dictionaryDao.getByIdFromTable(id, dictionary.getTableName());
             return dto;
         } catch (Exception e) {
-            throw new NotFoundException("Not found with id " + id);
+            throw NotFoundException.createEntityNotFoundById(dictionary.getTableName(), id);
         }
     }
 
@@ -46,7 +46,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     public void update(String token, Dictionary dictionary, Long id, DictionaryDto<Long> input) {
         Integer updated = dictionaryDao.update(dictionary, id, input);
         if (updated == 0) {
-            throw new NotFoundException("Not updated with id " + id);
+            throw NotFoundException.createEntityNotFoundById(dictionary.getTableName(), id);
         }
     }
 
@@ -54,7 +54,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     public void deleteById(String token, Dictionary dictionary, Long id) {
         Integer deleted = dictionaryDao.deleteByIdFromTable(id, dictionary.getTableName());
         if (deleted == 0) {
-            throw new NotFoundException("Not deleted with id " + id);
+            throw NotFoundException.createEntityNotFoundById(dictionary.getTableName(), id);
         }
     }
 }

@@ -43,6 +43,9 @@ public class EventServiceImpl implements EventService {
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
             Application targetApplication = entityService.mapRequiredEntity(Application.class, dto.getTargetApplicationId());
             event.setTargetApplication(targetApplication);
+            if (sourceApplication.getOperationType().getId().equals(targetApplication.getOperationType().getId())) {
+                throw BadRequestException.createRequiredIsEmpty("");
+            }
             if (eventRepository.existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(targetApplication.getId(), dto.getEventDate())) {
                 throw BadRequestException.createDuplicateEvent(targetApplication.getId());
             }
@@ -83,11 +86,11 @@ public class EventServiceImpl implements EventService {
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if (optionalEvent.isPresent()) {
             if (optionalEvent.get().getIsRemoved()) {
-                throw EntityRemovedException.createEntityRemovedById("Event", id);
+                throw EntityRemovedException.createEventRemoved(id);
             }
             return optionalEvent.get();
         } else {
-            throw NotFoundException.createEntityNotFoundById("Event", id);
+            throw NotFoundException.createEventById(id);
         }
     }
 

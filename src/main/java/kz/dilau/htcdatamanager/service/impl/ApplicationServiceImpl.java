@@ -369,11 +369,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
             if (optionalApplication.get().getIsRemoved()) {
-                throw EntityRemovedException.createApplicationRemovedById(id);
+                throw EntityRemovedException.createApplicationRemoved(id);
             }
             return optionalApplication.get();
         } else {
-            throw NotFoundException.createApplicationNotFoundById(id);
+            throw NotFoundException.createApplicationById(id);
         }
     }
 

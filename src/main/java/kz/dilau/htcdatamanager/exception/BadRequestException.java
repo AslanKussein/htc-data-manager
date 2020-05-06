@@ -1,53 +1,43 @@
 package kz.dilau.htcdatamanager.exception;
 
+import kz.dilau.htcdatamanager.util.BundleMessageUtil;
+import kz.dilau.htcdatamanager.web.dto.LocaledValue;
 import org.springframework.http.HttpStatus;
 
 public class BadRequestException extends DetailedException {
-    public BadRequestException(String description) {
+    public BadRequestException(LocaledValue description) {
         super(HttpStatus.BAD_REQUEST, description);
     }
 
     public static BadRequestException createRequiredIsEmpty(String name) {
-        return new BadRequestException(String.format("Required parameter %s is empty", name));
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.required.parameter.is.empty", name));
     }
 
     public static BadRequestException createClientHasFounded(String phoneNumber) {
-        return new BadRequestException(String.format("Client with phoneNumber %s founded in DB", phoneNumber));
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.client.with.phone.number.exists", phoneNumber));
     }
 
     public static BadRequestException createCadastralNumberHasFounded(String cadastralNumber) {
-        return new BadRequestException(String.format("CadastralNumber %s founded in DB", cadastralNumber));
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.cadastral.number.exists", cadastralNumber));
     }
 
     public static BadRequestException createReassignToSameAgent() {
-        return new BadRequestException("You can't reassign a request to the same agent");
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.reassign.to.same.agent"));
     }
 
     public static BadRequestException createDuplicateEvent(Long appId) {
-        return new BadRequestException(String.format("Application with id = %s has event to this datetime", appId));
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.application.already.has.event.for.this.time", appId));
     }
 
-    public static BadRequestException findRealPropertyById(Long id) {
-        return new BadRequestException(String.format("RealProperty with id %s not found", id));
-    }
-
-    public static BadRequestException editPhoneNumber(String number) {
-        return new BadRequestException(String.format("Client with number = %s already exists", number));
-    }
-
-    public static BadRequestException editEmail(String email) {
-        return new BadRequestException(String.format("Client with email = %s already exists", email));
-    }
-
-    public static BadRequestException findNotesById(Long id) {
-        return new BadRequestException(String.format("Notes with id = %s not found", id));
+    public static BadRequestException createEditEmail(String email) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.client.with.email.exists", email));
     }
 
     public static BadRequestException idMustNotBeNull() {
-        return new BadRequestException("The given id must not be null");
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.id.must.not.be.null"));
     }
 
     public static BadRequestException createChangeStatus(String status) {
-        return new BadRequestException(String.format("Application with status = %s not change to DEMO", status));
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.change.status.error", status));
     }
 }

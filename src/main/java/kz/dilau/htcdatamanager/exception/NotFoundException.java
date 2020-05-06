@@ -1,25 +1,43 @@
 package kz.dilau.htcdatamanager.exception;
 
+import kz.dilau.htcdatamanager.util.BundleMessageUtil;
+import kz.dilau.htcdatamanager.web.dto.LocaledValue;
 import org.springframework.http.HttpStatus;
 
 public class NotFoundException extends DetailedException {
-    public NotFoundException(String description) {
+    public NotFoundException(LocaledValue description) {
         super(HttpStatus.NOT_FOUND, description);
     }
 
     public static NotFoundException createEntityNotFoundById(String name, Long id) {
-        return new NotFoundException(String.format("Entity %s with ID = %s not found", name, id));
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.entity.not.found", name, id));
     }
 
-    public static NotFoundException createClientNotFoundById(Long id) {
-        return new NotFoundException(String.format("Client with ID = %s not found", id));
+    public static NotFoundException createMortgageById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.mortgage.not.found", id));
     }
 
-    public static NotFoundException createApplicationNotFoundById(Long id) {
-        return new NotFoundException(String.format("Application with ID = %s not found", id));
+    public static NotFoundException createResidentialComplexById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.residential.complex.not.found", id));
     }
 
-    public static NotFoundException findByNumber(String number) {
-        return new NotFoundException(String.format("Client with number = %s not found", number));
+    public static NotFoundException createEventById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.event.not.found", id));
+    }
+
+    public static NotFoundException createClientById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.client.not.found", id));
+    }
+
+    public static NotFoundException createApplicationById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.application.not.found", id));
+    }
+
+    public static NotFoundException createRealPropertyNotFoundById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.real.property.not.found", id));
+    }
+
+    public static NotFoundException createNotesById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.notes.not.found", id));
     }
 }
