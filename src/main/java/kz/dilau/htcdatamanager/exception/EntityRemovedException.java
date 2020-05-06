@@ -10,7 +10,7 @@ public class EntityRemovedException extends DetailedException {
     }
 
     public static EntityRemovedException createEntityRemovedById(String name, Long id) {
-        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("Entity %s with ID = %s removed", name, id));
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.entity.removed", name, id));
     }
 
     public static EntityRemovedException createResidentialComplexRemoved(Long id) {
