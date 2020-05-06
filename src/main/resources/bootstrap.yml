@@ -21,3 +21,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+logging:
+  level:
+    kz:
+      dilau:
+        htcdatamanager: ${log_level:INFO}
