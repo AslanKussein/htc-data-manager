@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.web.dto;
+package kz.dilau.htcdatamanager.web.dto.common;
 
 import lombok.Data;
 

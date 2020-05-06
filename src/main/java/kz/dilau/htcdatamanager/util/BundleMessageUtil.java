@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.util;
 
-import kz.dilau.htcdatamanager.web.dto.LocaledValue;
+import kz.dilau.htcdatamanager.web.dto.common.LocaledValue;
 
 import java.text.MessageFormat;
 import java.util.Locale;

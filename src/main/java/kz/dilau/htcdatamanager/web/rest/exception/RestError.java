@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest.exception;
 
 import kz.dilau.htcdatamanager.exception.DetailedException;
-import kz.dilau.htcdatamanager.web.dto.LocaledValue;
+import kz.dilau.htcdatamanager.web.dto.common.LocaledValue;
 import lombok.Data;
 
 import java.time.LocalDateTime;
