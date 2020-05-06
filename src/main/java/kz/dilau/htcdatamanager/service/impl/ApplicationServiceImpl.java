@@ -380,15 +380,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Long changeStatus(ChangeStatusDto dto) {
         Application application = getApplicationById(dto.getApplicationId());
-        if (dto.getStatusId().equals(ApplicationStatus.DEMO)) {
+        ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId());
+        if (dto.getStatusId().equals(ApplicationStatus.DEMO) || dto.getStatusId().equals(ApplicationStatus.PHOTO_SHOOT) || dto.getStatusId().equals(ApplicationStatus.ADS)) {
             if (application.getApplicationStatus().getId().equals(ApplicationStatus.CONTRACT) || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS)) {
                 application.setApplicationStatus(entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId()));
                 return applicationRepository.save(application).getId();
             } else {
-                throw BadRequestException.createChangeStatus(application.getApplicationStatus().getMultiLang().getNameRu());
+                throw BadRequestException.createChangeStatus(application.getApplicationStatus().getCode(), status.getCode());
             }
         } else {
-            throw BadRequestException.createChangeStatus(application.getApplicationStatus().getMultiLang().getNameRu());
+            throw BadRequestException.createChangeStatus(application.getApplicationStatus().getCode(), status.getCode());
         }
     }
 }

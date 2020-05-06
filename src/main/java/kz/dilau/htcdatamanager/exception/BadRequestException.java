@@ -37,7 +37,7 @@ public class BadRequestException extends DetailedException {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.id.must.not.be.null"));
     }
 
-    public static BadRequestException createChangeStatus(String status) {
-        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.change.status.error", status));
+    public static BadRequestException createChangeStatus(String applicationStatus, String status) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.change.status.error", applicationStatus, status));
     }
 }
