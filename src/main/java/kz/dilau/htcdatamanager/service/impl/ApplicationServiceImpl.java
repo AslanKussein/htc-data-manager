@@ -229,6 +229,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .heatingSystem(entityService.mapEntity(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
                 .residentialComplex(entityService.mapEntity(ResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
                 .generalCharacteristics(null)
+                .latitude(realPropertyRequestDto.getLatitude)
+                .longitude(realPropertyRequestDto.getLongitude)
                 .build();
 
         if (isNull(realProperty.getResidentialComplexId())) {
