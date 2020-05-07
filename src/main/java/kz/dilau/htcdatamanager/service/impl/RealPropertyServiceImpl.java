@@ -126,8 +126,8 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                 .photoIdList(mapPhotoList(realProperty, RealPropertyFileType.PHOTO))
                 .housingPlanImageIdList(mapPhotoList(realProperty, RealPropertyFileType.HOUSING_PLAN))
                 .virtualTourImageIdList(mapPhotoList(realProperty, RealPropertyFileType.VIRTUAL_TOUR))
-                .latitude(realProperty.getLatitude)
-                .longitude(realProperty.getLongitude)
+                .latitude(realProperty.getLatitude())
+                .longitude(realProperty.getLongitude())
                 .build();
     }
 
