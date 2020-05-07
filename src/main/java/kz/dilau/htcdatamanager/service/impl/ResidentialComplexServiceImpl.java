@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
+import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.ResidentialComplexService;
 import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
@@ -18,14 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
     private final ResidentialComplexRepository residentialComplexRepository;
     private final TypeOfElevatorRepository typeOfElevatorRepository;
     private final ParkingTypeRepository parkingTypeRepository;
-    private final EntityManager entityManager;
+    private final EntityService entityService;
 
     @Override
     public ResidentialComplexDto getById(Long id) {
@@ -79,12 +78,12 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
                 .playground(dto.getPlayground())
                 .wheelchair(dto.getWheelchair())
                 .yearOfConstruction(dto.getYearOfConstruction())
-                .materialOfConstruction(mapDict(MaterialOfConstruction.class, dto.getMaterialOfConstructionId()))
-                .city(mapDict(City.class, dto.getCityId()))
-                .district(mapDict(District.class, dto.getDistrictId()))
-                .propertyDeveloper(mapDict(PropertyDeveloper.class, dto.getPropertyDeveloperId()))
-                .street(mapDict(Street.class, dto.getStreetId()))
-                .yardType(mapDict(YardType.class, dto.getYardTypeId()))
+                .materialOfConstruction(entityService.mapEntity(MaterialOfConstruction.class, dto.getMaterialOfConstructionId()))
+                .city(entityService.mapEntity(City.class, dto.getCityId()))
+                .district(entityService.mapEntity(District.class, dto.getDistrictId()))
+                .propertyDeveloper(entityService.mapEntity(PropertyDeveloper.class, dto.getPropertyDeveloperId()))
+                .street(entityService.mapEntity(Street.class, dto.getStreetId()))
+                .yardType(entityService.mapEntity(YardType.class, dto.getYardTypeId()))
                 .build();
         if (!CollectionUtils.isEmpty(dto.getTypeOfElevatorIdList())) {
             Set<TypeOfElevator> elevators = typeOfElevatorRepository.findByIdIn(dto.getTypeOfElevatorIdList());
@@ -121,26 +120,15 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
         return new ResidentialComplexDto(residentialComplex);
     }
 
-    private <T> T mapDict(Class<T> clazz, Long id) {
-        if (nonNull(id) && id != 0L) {
-            T dict = entityManager.getReference(clazz, id);
-            if (isNull(dict)) {
-                throw NotFoundException.createEntityNotFoundById(clazz.getName(), id);
-            }
-            return dict;
-        }
-        return null;
-    }
-
     private ResidentialComplex getResidentialComplexById(Long id) {
         Optional<ResidentialComplex> optionalResidentialComplex = residentialComplexRepository.findById(id);
         if (optionalResidentialComplex.isPresent()) {
             if (optionalResidentialComplex.get().getIsRemoved()) {
-                throw EntityRemovedException.createEntityRemovedById("ResidentialComplex", id);
+                throw EntityRemovedException.createResidentialComplexRemoved(id);
             }
             return optionalResidentialComplex.get();
         } else {
-            throw NotFoundException.createEntityNotFoundById("ResidentialComplex", id);
+            throw NotFoundException.createResidentialComplexById(id);
         }
     }
 }

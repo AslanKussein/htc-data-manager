@@ -41,9 +41,11 @@ pipeline {
                                   SERVICES=$(docker service ls --filter name=${SERVICE_NAME} --quiet | wc -l)
                                   if [ "$SERVICES" -eq 0 ]; then
                                     docker service create --with-registry-auth --replicas 1 \
-                                    --network consul-nw --network datamanager-db-nw --network service-nw --network traefik-nw \
+                                    --network consul-nw --network datamanager-db-nw --network service-nw --network traefik-nw --network logstash-nw \
                                     --constraint node.role==worker \
                                     --env consul_host=consul \
+                                    --env logstash_url=logstash-log:5044 \
+                                    --env log_level=INFO \
                                     --name ${SERVICE_NAME} \
                                     --label traefik.frontend.rule="Host:dm-htc.dilau.kz" \
                                     --label traefik.enable=true \

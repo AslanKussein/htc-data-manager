@@ -66,11 +66,11 @@ public class ClientServiceImpl implements ClientService {
         Optional<Client> optionalClient = clientRepository.findById(id);
         if (optionalClient.isPresent()) {
             if (optionalClient.get().getIsRemoved()) {
-                throw EntityRemovedException.createClientRemovedById(id);
+                throw EntityRemovedException.createClientRemoved(id);
             }
             return optionalClient.get();
         } else {
-            throw NotFoundException.createClientNotFoundById(id);
+            throw NotFoundException.createClientById(id);
         }
     }
 
@@ -82,12 +82,12 @@ public class ClientServiceImpl implements ClientService {
 
             if (!client.getPhoneNumber().equals(dto.getPhoneNumber())) {
                 if (clientRepository.existsByPhoneNumberIgnoreCase(dto.getPhoneNumber())) {
-                    throw BadRequestException.editPhoneNumber(dto.getPhoneNumber());
+                    throw BadRequestException.createClientHasFounded(dto.getPhoneNumber());
                 }
             }
             if (!client.getEmail().equalsIgnoreCase(dto.getEmail())) {
                 if (clientRepository.existsByEmailIgnoreCase(dto.getEmail())) {
-                    throw BadRequestException.editEmail(dto.getEmail());
+                    throw BadRequestException.createEditEmail(dto.getEmail());
                 }
             }
 
@@ -102,7 +102,7 @@ public class ClientServiceImpl implements ClientService {
 
             return new ClientDto(client);
         } else {
-            throw NotFoundException.createClientNotFoundById(dto.getId());
+            throw NotFoundException.createClientById(dto.getId());
         }
     }
 }
