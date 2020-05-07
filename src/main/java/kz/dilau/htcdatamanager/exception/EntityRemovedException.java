@@ -2,11 +2,14 @@ package kz.dilau.htcdatamanager.exception;
 
 import kz.dilau.htcdatamanager.util.BundleMessageUtil;
 import kz.dilau.htcdatamanager.web.dto.common.LocaledValue;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+@Slf4j
 public class EntityRemovedException extends DetailedException {
     public EntityRemovedException(LocaledValue description) {
         super(HttpStatus.NOT_FOUND, description);
+        log.error(description.toString());
     }
 
     public static EntityRemovedException createEntityRemovedById(String name, Long id) {

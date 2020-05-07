@@ -2,11 +2,14 @@ package kz.dilau.htcdatamanager.exception;
 
 import kz.dilau.htcdatamanager.util.BundleMessageUtil;
 import kz.dilau.htcdatamanager.web.dto.common.LocaledValue;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+@Slf4j
 public class BadRequestException extends DetailedException {
     public BadRequestException(LocaledValue description) {
         super(HttpStatus.BAD_REQUEST, description);
+        log.error(description.toString());
     }
 
     public static BadRequestException createRequiredIsEmpty(String name) {
