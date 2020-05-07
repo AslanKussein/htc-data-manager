@@ -87,6 +87,11 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @JsonIgnore
     @OneToOne(mappedBy = "realProperty")
     private Application application;
+    @Column(name= "latitude")
+    private Double latitude; //широта
+    @Column(name = "longitude")
+    private Double longitude; //долгота
+
 
     public Map<RealPropertyFileType, Set<String>> getFilesMap() {
         if (filesMap == null) {

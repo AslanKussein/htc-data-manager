@@ -56,10 +56,6 @@ public class ApplicationDto {
     private String note;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
-    @ApiModelProperty(value = "Координаты широты")
-    private Double latitude;
-    @ApiModelProperty(value = "Координаты долготы")
-    private Double longitude;
 //    @ApiModelProperty(value = "История статусов")
 //    private List<ApplicationStatusHistoryDto> statusHistoryDtoList;
 }
