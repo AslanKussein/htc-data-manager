@@ -18,7 +18,6 @@ public class EventDto {
     @ApiModelProperty(value = "ID события")
     private Long id;
 
-    @NonNull
     @ApiModelProperty(value = "ID заявки инициатора", required = true)
     private Long sourceApplicationId;
 

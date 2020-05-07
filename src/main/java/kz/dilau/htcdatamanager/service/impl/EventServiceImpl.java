@@ -37,13 +37,13 @@ public class EventServiceImpl implements EventService {
                 .build();
         Application sourceApplication = entityService.mapRequiredEntity(Application.class, dto.getSourceApplicationId());
         event.setSourceApplication(sourceApplication);
-        if (eventRepository.existsBySourceApplicationIdAndEventDate(sourceApplication.getId(), dto.getEventDate())) {
+        if (eventRepository.existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(sourceApplication.getId(), dto.getEventDate())) {
             throw BadRequestException.createDuplicateEvent(sourceApplication.getId());
         }
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
             Application targetApplication = entityService.mapRequiredEntity(Application.class, dto.getTargetApplicationId());
             event.setTargetApplication(targetApplication);
-            if (eventRepository.existsByTargetApplicationIdAndEventDate(targetApplication.getId(), dto.getEventDate())) {
+            if (eventRepository.existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(targetApplication.getId(), dto.getEventDate())) {
                 throw BadRequestException.createDuplicateEvent(targetApplication.getId());
             }
 //            if(sourceApplication.getContractPeriod()) todo 4. Система должна произвести проверку заявки на наличие признака действий по Договору ОУ (1. договор распечатан 2. формирование договора пропущено 3. нет действий)
