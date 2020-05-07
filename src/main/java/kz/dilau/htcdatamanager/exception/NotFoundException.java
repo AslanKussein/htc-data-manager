@@ -2,11 +2,14 @@ package kz.dilau.htcdatamanager.exception;
 
 import kz.dilau.htcdatamanager.util.BundleMessageUtil;
 import kz.dilau.htcdatamanager.web.dto.common.LocaledValue;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+@Slf4j
 public class NotFoundException extends DetailedException {
     public NotFoundException(LocaledValue description) {
         super(HttpStatus.NOT_FOUND, description);
+        log.error(description.toString());
     }
 
     public static NotFoundException createEntityNotFoundById(String name, Long id) {
