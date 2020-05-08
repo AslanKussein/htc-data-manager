@@ -47,6 +47,8 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @Column(name = "contract_period")
     @Temporal(TemporalType.DATE)
     private Date contractPeriod;
+    @Column(name = "contract_number")
+    private String contractNumber;
     @Column(name = "the_amount_of_the_contract")
     private BigDecimal amount;
     @Column(name = "is_commission_included_in_the_price")

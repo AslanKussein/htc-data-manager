@@ -45,6 +45,8 @@ public class ApplicationDto {
     private List<Long> possibleReasonForBiddingIdList;
     @ApiModelProperty(name = "contractPeriod", value = "Срок действия договора")
     private Date contractPeriod;
+    @ApiModelProperty(value = "Номер договора")
+    private String contractNumber;
     @ApiModelProperty(name = "amount", value = "Сумма по договору")
     private BigDecimal amount;
     @ApiModelProperty(name = "isCommissionIncludedInThePrice", value = "Комиссия включена в стоимость")

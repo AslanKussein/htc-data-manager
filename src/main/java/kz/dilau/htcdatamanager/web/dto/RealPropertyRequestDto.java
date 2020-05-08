@@ -95,6 +95,10 @@ public class RealPropertyRequestDto {
     private BigDecimal landArea;
     @ApiModelProperty(value = "Параметры при Покупке")
     private PurchaseInfoDto purchaseInfoDto;
+    @ApiModelProperty(value = "Координаты широты")
+    private Double latitude;
+    @ApiModelProperty(value = "Координаты долготы")
+    private Double longitude;
 }
 
 

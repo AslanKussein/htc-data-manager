@@ -1,0 +1,1 @@
+insert into htc_dm_dic_application_status (name_en, name_kz, name_ru, code, is_enabled, is_removed) values ('Договор о задатке/авансе', 'Договор о задатке/авансе', 'Договор о задатке/авансе', '002010', true, false);

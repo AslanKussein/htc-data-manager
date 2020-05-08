@@ -3,6 +3,7 @@ package kz.dilau.htcdatamanager.service.impl;
 import kz.dilau.htcdatamanager.domain.Notes;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.NotesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.NotesService;
@@ -25,7 +26,7 @@ public class NotesServiceImpl implements NotesService {
 
         Optional<RealProperty> realProperty = realPropertyRepository.findById(notesDto.getRealPropertyId());
         if (!realProperty.isPresent()) {
-            throw BadRequestException.findRealPropertyById(notesDto.getRealPropertyId());
+            throw NotFoundException.createRealPropertyNotFoundById(notesDto.getRealPropertyId());
         }
 
         Notes notes = new Notes();
@@ -58,7 +59,7 @@ public class NotesServiceImpl implements NotesService {
     private Notes getNotesById(Long id) {
         Optional<Notes> notesOptional = notesRepository.findByIdAndIsRemovedFalse(id);
         if (!notesOptional.isPresent()) {
-            throw BadRequestException.findNotesById(id);
+            throw NotFoundException.createNotesById(id);
         }
         return notesOptional.get();
     }

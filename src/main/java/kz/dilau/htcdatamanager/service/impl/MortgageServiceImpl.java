@@ -35,11 +35,11 @@ public class MortgageServiceImpl implements MortgageService {
         Optional<Mortgage> optionalMortgage = mortgageRepository.findById(id);
         if (optionalMortgage.isPresent()) {
             if (optionalMortgage.get().getIsRemoved()) {
-                throw EntityRemovedException.createEntityRemovedById("Mortgage", id);
+                throw EntityRemovedException.createMortgageRemoved(id);
             }
             return optionalMortgage.get();
         } else {
-            throw NotFoundException.createEntityNotFoundById("Mortgage", id);
+            throw NotFoundException.createMortgageById(id);
         }
     }
 

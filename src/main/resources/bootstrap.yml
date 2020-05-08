@@ -5,6 +5,7 @@ spring:
     consul:
       binder:
         enabled: true
+      scheme: ${consul_scheme:http}
       host: ${consul_host:127.0.0.1}
       port: ${consul_port:8500}
       config:
@@ -21,3 +22,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+  http:
+    encoding:
+      enabled: true
+      force: true
+      charset: UTF-8
+
+logging:
+  level:
+    kz:
+      dilau:
+        htcdatamanager: ${log_level:INFO}

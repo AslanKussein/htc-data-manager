@@ -127,6 +127,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         .map(PossibleReasonForBidding::getId)
                         .collect(Collectors.toList()))
                 .contractPeriod(application.getContractPeriod())
+                .contractNumber(application.getContractNumber())
                 .amount(application.getAmount())
                 .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
                 .note(application.getNote())
@@ -228,6 +229,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .heatingSystem(entityService.mapEntity(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
                 .residentialComplex(entityService.mapEntity(ResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
                 .generalCharacteristics(null)
+                .latitude(realPropertyRequestDto.getLatitude())
+                .longitude(realPropertyRequestDto.getLongitude())
                 .build();
 
         if (isNull(realProperty.getResidentialComplexId())) {
@@ -320,6 +323,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         application.setProbabilityOfBidding(dto.getProbabilityOfBidding());
         application.setTheSizeOfTrades(dto.getTheSizeOfTrades());
         application.setContractPeriod(dto.getContractPeriod());
+        application.setContractNumber(dto.getContractNumber());
         application.setAmount(dto.getAmount());
         application.setCommissionIncludedInThePrice(dto.isCommissionIncludedInThePrice());
         if (nonNull(dto.getPossibleReasonForBiddingIdList()) && !dto.getPossibleReasonForBiddingIdList().isEmpty()) {
@@ -367,26 +371,27 @@ public class ApplicationServiceImpl implements ApplicationService {
         Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
             if (optionalApplication.get().getIsRemoved()) {
-                throw EntityRemovedException.createApplicationRemovedById(id);
+                throw EntityRemovedException.createApplicationRemoved(id);
             }
             return optionalApplication.get();
         } else {
-            throw NotFoundException.createApplicationNotFoundById(id);
+            throw NotFoundException.createApplicationById(id);
         }
     }
 
     @Override
     public Long changeStatus(ChangeStatusDto dto) {
         Application application = getApplicationById(dto.getApplicationId());
-        if (dto.getStatusId().equals(ApplicationStatus.DEMO)) {
+        ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId());
+        if (dto.getStatusId().equals(ApplicationStatus.DEMO) || dto.getStatusId().equals(ApplicationStatus.PHOTO_SHOOT) || dto.getStatusId().equals(ApplicationStatus.ADS)) {
             if (application.getApplicationStatus().getId().equals(ApplicationStatus.CONTRACT) || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS)) {
                 application.setApplicationStatus(entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId()));
                 return applicationRepository.save(application).getId();
             } else {
-                throw BadRequestException.createChangeStatus(application.getApplicationStatus().getMultiLang().getNameRu());
+                throw BadRequestException.createChangeStatus(application.getApplicationStatus().getCode(), status.getCode());
             }
         } else {
-            throw BadRequestException.createChangeStatus(application.getApplicationStatus().getMultiLang().getNameRu());
+            throw BadRequestException.createChangeStatus(application.getApplicationStatus().getCode(), status.getCode());
         }
     }
 }

@@ -1,21 +1,38 @@
 package kz.dilau.htcdatamanager.exception;
 
+import kz.dilau.htcdatamanager.util.BundleMessageUtil;
+import kz.dilau.htcdatamanager.web.dto.common.LocaledValue;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+@Slf4j
 public class EntityRemovedException extends DetailedException {
-    public EntityRemovedException(String description) {
+    public EntityRemovedException(LocaledValue description) {
         super(HttpStatus.NOT_FOUND, description);
+        log.error(description.toString());
     }
 
     public static EntityRemovedException createEntityRemovedById(String name, Long id) {
-        return new EntityRemovedException(String.format("Entity %s with ID = %s removed", name, id));
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.entity.removed", name, id));
     }
 
-    public static EntityRemovedException createClientRemovedById(Long id) {
-        return new EntityRemovedException(String.format("Client with ID = %s removed", id));
+    public static EntityRemovedException createResidentialComplexRemoved(Long id) {
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.residential.complex.removed", id));
     }
 
-    public static EntityRemovedException createApplicationRemovedById(Long id) {
-        return new EntityRemovedException(String.format("Application with ID = %s removed", id));
+    public static EntityRemovedException createMortgageRemoved(Long id) {
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.mortgage.removed", id));
+    }
+
+    public static EntityRemovedException createEventRemoved(Long id) {
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.event.removed", id));
+    }
+
+    public static EntityRemovedException createClientRemoved(Long id) {
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.client.removed", id));
+    }
+
+    public static EntityRemovedException createApplicationRemoved(Long id) {
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.application.removed", id));
     }
 }
