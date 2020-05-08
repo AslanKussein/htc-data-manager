@@ -1,0 +1,34 @@
+delete from htc_dm_dic_application_status where code = '002010';
+
+select setval('htc_dm_add_phone_number_id_seq', max(id)) from htc_dm_add_phone_number;
+select setval('htc_dm_application_id_seq', max(id)) from htc_dm_application;
+select setval('htc_dm_application_status_history_id_seq', max(id)) from htc_dm_application_status_history;
+select setval('htc_dm_assignment_id_seq', max(id)) from htc_dm_assignment;
+select setval('htc_dm_client_file_id_seq', max(id)) from htc_dm_client_file;
+select setval('htc_dm_client_id_seq', max(id)) from htc_dm_client;
+select setval('htc_dm_dic_application_status_id_seq', max(id)) from htc_dm_dic_application_status;
+select setval('htc_dm_dic_city_id_seq', max(id)) from htc_dm_dic_city;
+select setval('htc_dm_dic_country_id_seq', max(id)) from htc_dm_dic_country;
+select setval('htc_dm_dic_district_id_seq', max(id)) from htc_dm_dic_district;
+select setval('htc_dm_dic_event_type_id_seq', max(id)) from htc_dm_dic_event_type;
+select setval('htc_dm_dic_heating_system_id_seq', max(id)) from htc_dm_dic_heating_system;
+select setval('htc_dm_dic_material_of_construction_id_seq', max(id)) from htc_dm_dic_material_of_construction;
+select setval('htc_dm_dic_object_type_id_seq', max(id)) from htc_dm_dic_object_type;
+select setval('htc_dm_dic_operation_type_id_seq', max(id)) from htc_dm_dic_operation_type;
+select setval('htc_dm_dic_parking_type_id_seq', max(id)) from htc_dm_dic_parking_type;
+select setval('htc_dm_dic_possible_reason_for_bidding_id_seq', max(id)) from htc_dm_dic_possible_reason_for_bidding;
+select setval('htc_dm_dic_property_developer_id_seq', max(id)) from htc_dm_dic_property_developer;
+select setval('htc_dm_dic_residential_complex_id_seq', max(id)) from htc_dm_dic_residential_complex;
+select setval('htc_dm_dic_sewerage_id_seq', max(id)) from htc_dm_dic_sewerage;
+select setval('htc_dm_dic_street_id_seq', max(id)) from htc_dm_dic_street;
+select setval('htc_dm_dic_type_of_elevator_id_seq', max(id)) from htc_dm_dic_type_of_elevator;
+select setval('htc_dm_dic_yard_type_id_seq', max(id)) from htc_dm_dic_yard_type;
+select setval('htc_dm_dic_yes_no_id_seq', max(id)) from htc_dm_dic_yes_no;
+select setval('htc_dm_event_id_seq', max(id)) from htc_dm_event;
+select setval('htc_dm_general_characteristics_id_seq', max(id)) from htc_dm_general_characteristics;
+select setval('htc_dm_mortgage_id_seq', max(id)) from htc_dm_mortgage;
+select setval('htc_dm_notes_id_seq', max(id)) from htc_dm_notes;
+select setval('htc_dm_purchase_info_id_seq', max(id)) from htc_dm_purchase_info;
+select setval('htc_dm_real_property_id_seq', max(id)) from htc_dm_real_property;
+
+insert into htc_dm_dic_application_status (name_en, name_kz, name_ru, code, is_enabled, is_removed) values ('Договор о задатке/авансе', 'Договор о задатке/авансе', 'Договор о задатке/авансе', '002010', true, false);
