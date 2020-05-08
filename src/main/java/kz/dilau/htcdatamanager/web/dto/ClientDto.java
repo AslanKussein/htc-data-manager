@@ -2,13 +2,19 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.domain.AddPhoneNumber;
 import kz.dilau.htcdatamanager.domain.Client;
+import kz.dilau.htcdatamanager.domain.ClientFile;
+import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
 import lombok.*;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.*;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -42,6 +48,11 @@ public class ClientDto {
     private String location;
     @ApiModelProperty(value = "день рождения")
     private ZonedDateTime birthDate;
+    @ApiModelProperty(value = "телефона номер")
+    private List<String> addPhoneNumbers;
+    @ApiModelProperty(value = "ID типа файла")
+    private List<Long> addClientFiles;
+
 
     public Gender getGender() {
         if (isNull(gender)) {
@@ -60,5 +71,15 @@ public class ClientDto {
         this.gender = client.getGender();
         this.birthDate = client.getBirthDate();
         this.location = client.getLocation();
+        if (!CollectionUtils.isEmpty(client.getAddPhoneNumberList())) {
+            this.addPhoneNumbers =client.getAddPhoneNumberList()   .stream()
+                    .map(AddPhoneNumber::getPhoneNumber)
+                    .collect(Collectors.toList());
+        }
+        if (!CollectionUtils.isEmpty(client.getClientFileList())) {
+            this.addClientFiles =client.getClientFileList()   .stream()
+                    .map(ClientFile::getId)
+                    .collect(Collectors.toList());
+        }
     }
 }
