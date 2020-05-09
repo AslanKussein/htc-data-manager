@@ -6,6 +6,7 @@ import kz.dilau.htcdatamanager.domain.Mortgage;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,6 +17,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 public class MortgageDto {
     @ApiModelProperty(value = "ID")
+    @Nullable
     private Long id;
     @ApiModelProperty(value = "Логин")
     private String login;
@@ -28,8 +30,10 @@ public class MortgageDto {
     @ApiModelProperty(value = "Действующие кредиты")
     private Boolean activeCredit;
     @ApiModelProperty(value = "Платеж по действующим займам, тг/мес")
+    @Nullable
     private Long activeCreditSum;
     @ApiModelProperty(value = "Дата посещения офиса")
+    @Nullable
     private ZonedDateTime visitDate;
 
 
@@ -42,6 +46,8 @@ public class MortgageDto {
         this.totalIncome = rc.getTotalIncome();
         this.activeCredit = rc.getActiveCredit();
         this.activeCreditSum = rc.getActiveCreditSum();
-        this.visitDate = ZonedDateTime.ofInstant(rc.getVisitDate().toInstant(), ZoneId.systemDefault());;
+        if(rc.getVisitDate() != null) {
+            this.visitDate = ZonedDateTime.ofInstant(rc.getVisitDate().toInstant(), ZoneId.systemDefault());
+        }
     }
 }

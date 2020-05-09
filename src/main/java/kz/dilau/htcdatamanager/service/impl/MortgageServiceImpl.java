@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -89,6 +91,9 @@ public class MortgageServiceImpl implements MortgageService {
         mortgage.setTotalIncome(dto.getTotalIncome());
         mortgage.setActiveCredit(dto.getActiveCredit());
         mortgage.setActiveCreditSum(dto.getActiveCreditSum());
+        if(dto.getVisitDate()!= null) {
+            mortgage.setVisitDate(ZonedDateTime.ofInstant(dto.getVisitDate().toInstant(), ZoneId.systemDefault()));
+        }
 
         mortgage = mortgageRepository.save(mortgage);
         return new MortgageDto(mortgage);
