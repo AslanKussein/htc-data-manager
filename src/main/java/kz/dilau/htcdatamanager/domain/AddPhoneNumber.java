@@ -21,8 +21,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 public class AddPhoneNumber extends AuditableBaseEntity<String, Long> {
     @Column(name = "phone_number")
     private String phoneNumber;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "client_id")
-    @ToString.Exclude
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
     private Client client;
 }

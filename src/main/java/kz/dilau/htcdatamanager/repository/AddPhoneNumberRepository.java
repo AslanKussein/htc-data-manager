@@ -11,4 +11,5 @@ import java.util.Set;
 public interface AddPhoneNumberRepository extends JpaRepository<AddPhoneNumber, Long> {
     Set<AddPhoneNumber> findByIdIn(List<Long> ids);
     Set<AddPhoneNumber> findByPhoneNumberIn(List<String> ids);
+    List<AddPhoneNumber> getAllByClient_Id(Long id);
 }

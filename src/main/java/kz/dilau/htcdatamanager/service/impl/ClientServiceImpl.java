@@ -2,14 +2,18 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.AddPhoneNumber;
 import kz.dilau.htcdatamanager.domain.Client;
+import kz.dilau.htcdatamanager.domain.ClientFile;
 import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.AddPhoneNumberRepository;
+import kz.dilau.htcdatamanager.repository.ClientFileRepository;
 import kz.dilau.htcdatamanager.repository.ClientRepository;
 import kz.dilau.htcdatamanager.service.ClientService;
+import kz.dilau.htcdatamanager.web.dto.AddPhoneNumbersDto;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
+import kz.dilau.htcdatamanager.web.dto.ClientFileDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.LifecycleState;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import java.util.Set;
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
     private final AddPhoneNumberRepository addPhoneNumberRepository;
+    private final ClientFileRepository clientFileRepository;
 
     @Override
     public ClientDto findClientByPhoneNumber(String phoneNumber) {
@@ -52,17 +57,44 @@ public class ClientServiceImpl implements ClientService {
         client.setPhoneNumber(dto.getPhoneNumber());
         client.setEmail(dto.getEmail());
         client.setGender(dto.getGender());
-        if(!CollectionUtils.isEmpty(dto.getAddPhoneNumbers())){
+        client.getAddPhoneNumberList().clear();
+        if (!CollectionUtils.isEmpty(dto.getAddPhoneNumbers())) {
             List<AddPhoneNumber> addPhoneNumberList = new ArrayList<>();
-            for(String  list : dto.getAddPhoneNumbers()){
+            for (AddPhoneNumbersDto obj : dto.getAddPhoneNumbers()) {
                 AddPhoneNumber addPhoneNumber = new AddPhoneNumber();
-                addPhoneNumber.setPhoneNumber(list);
-                addPhoneNumber.setClient(client);
-                addPhoneNumberList.add(addPhoneNumber);
+                if (obj.getId() != null) {
+                    addPhoneNumber.setId(obj.getId());
                 }
-
-                client.setAddPhoneNumberList(addPhoneNumberList);
+                addPhoneNumber.setPhoneNumber(obj.getPhoneNumber());
+                addPhoneNumber.setClient(client);
+                if (obj.getPhoneNumber().isEmpty()) {
+                    addPhoneNumberRepository.delete(addPhoneNumber);
+                } else {
+                    addPhoneNumberRepository.save(addPhoneNumber);
+                    addPhoneNumberList.add(addPhoneNumber);
+                }
+            }
+            client.getAddPhoneNumberList().addAll(addPhoneNumberList);
         }
+        if (!CollectionUtils.isEmpty(dto.getClientFiles())) {
+            List<ClientFile> clientFileList = new ArrayList<>();
+            for (ClientFileDto obj : dto.getClientFiles()) {
+                ClientFile clientFile = new ClientFile();
+                if (obj.getId() != null) {
+                    clientFile.setId(obj.getId());
+                }
+                clientFile.setGuid(obj.getGuid());
+                clientFile.setClient(client);
+                if (obj.getGuid().isEmpty()) {
+                    clientFileRepository.delete(clientFile);
+                } else {
+                    clientFileRepository.save(clientFile);
+                    clientFileList.add(clientFile);
+                }
+            }
+            client.getClientFileList().addAll(clientFileList);
+        }
+
         client.setGender(dto.getGender());
         client = clientRepository.save(client);
         return new ClientDto(client);

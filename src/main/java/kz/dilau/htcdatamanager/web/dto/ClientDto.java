@@ -7,12 +7,15 @@ import kz.dilau.htcdatamanager.domain.Client;
 import kz.dilau.htcdatamanager.domain.ClientFile;
 import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
+import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import lombok.*;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,10 +51,10 @@ public class ClientDto {
     private String location;
     @ApiModelProperty(value = "день рождения")
     private ZonedDateTime birthDate;
-    @ApiModelProperty(value = "телефона номер")
-    private List<String> addPhoneNumbers;
-    @ApiModelProperty(value = "ID типа файла")
-    private List<Long> addClientFiles;
+    @ApiModelProperty(value = "доп телефон номер")
+    private List<AddPhoneNumbersDto> addPhoneNumbers;
+    @ApiModelProperty(value = "файлы клиента")
+    private List<ClientFileDto> clientFiles;
 
 
     public Gender getGender() {
@@ -72,14 +75,26 @@ public class ClientDto {
         this.birthDate = client.getBirthDate();
         this.location = client.getLocation();
         if (!CollectionUtils.isEmpty(client.getAddPhoneNumberList())) {
-            this.addPhoneNumbers =client.getAddPhoneNumberList()   .stream()
-                    .map(AddPhoneNumber::getPhoneNumber)
-                    .collect(Collectors.toList());
+            List<AddPhoneNumbersDto> addPhoneNumbersDtoList= new ArrayList<>();
+            for (AddPhoneNumber obj : client.getAddPhoneNumberList()) {
+                AddPhoneNumbersDto numbersDto = new AddPhoneNumbersDto();
+                numbersDto.setClientId(obj.getClient().getId());
+                numbersDto.setId(obj.getId());
+                numbersDto.setPhoneNumber(obj.getPhoneNumber());
+                addPhoneNumbersDtoList.add(numbersDto);
+            }
+            this.addPhoneNumbers=(addPhoneNumbersDtoList);
         }
         if (!CollectionUtils.isEmpty(client.getClientFileList())) {
-            this.addClientFiles =client.getClientFileList()   .stream()
-                    .map(ClientFile::getId)
-                    .collect(Collectors.toList());
+            List<ClientFileDto> clientFileDtoList= new ArrayList<>();
+            for (ClientFile obj : client.getClientFileList()) {
+                ClientFileDto clientFileDto = new ClientFileDto();
+                clientFileDto.setClientId(obj.getClient().getId());
+                clientFileDto.setId(obj.getId());
+                clientFileDto.setGuid(obj.getGuid());
+                clientFileDtoList.add(clientFileDto);
+            }
+            this.clientFiles=(clientFileDtoList);
         }
     }
 }

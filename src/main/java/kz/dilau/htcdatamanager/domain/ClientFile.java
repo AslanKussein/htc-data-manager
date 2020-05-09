@@ -20,7 +20,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 public class ClientFile extends AuditableBaseEntity<String, Long> {
     @Column(name = "guid")
     private String guid;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "client_id", nullable = false)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
     private Client client;
 }
