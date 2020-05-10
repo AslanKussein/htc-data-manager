@@ -179,5 +179,16 @@ public enum Dictionary implements AbstractDictionary {
         public DictionaryType getType() {
             return DictionaryType.CUSTOM;
         }
+    },
+    EVENT_TYPES {
+        @Override
+        public String getTableName() {
+            return DICTIONARY_TABLE_NAME_PREFIX + "event_type";
+        }
+
+        @Override
+        public DictionaryType getType() {
+            return DictionaryType.CUSTOM;
+        }
     }
 }

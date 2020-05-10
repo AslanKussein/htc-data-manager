@@ -12,7 +12,7 @@ public class LoggingConfiguration {
         FilterRegistrationBean<LoggingFilter> registrationBean = new FilterRegistrationBean<>();
 
         registrationBean.setFilter(new LoggingFilter());
-        registrationBean.addUrlPatterns(Constants.API_REST_ENDPOINT + "/*");
+        registrationBean.addUrlPatterns(Constants.API_REST_ENDPOINT + "/*", Constants.OPEN_API_REST_ENDPOINT + "/*");
 
         return registrationBean;
     }
