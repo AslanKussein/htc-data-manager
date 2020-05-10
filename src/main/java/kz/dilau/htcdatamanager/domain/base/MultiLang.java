@@ -1,5 +1,7 @@
 package kz.dilau.htcdatamanager.domain.base;
 
+import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -14,6 +16,12 @@ public class MultiLang implements Serializable {
     private String nameEn;
 
     public MultiLang() {
+    }
+
+    public MultiLang(DictionaryItemRequestDto dto) {
+        this.nameKz = dto.getNameKz();
+        this.nameRu = dto.getNameRu();
+        this.nameEn = dto.getNameEn();
     }
 
     public MultiLang(String nameKz, String nameRu, String nameEn) {
