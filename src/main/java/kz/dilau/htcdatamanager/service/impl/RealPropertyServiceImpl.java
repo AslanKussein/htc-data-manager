@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.domain.RealProperty;
@@ -10,11 +11,16 @@ import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
+import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
+import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
+import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
+import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -153,6 +159,36 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                     .balconyAreaPeriod(mapToBigDecimalPeriod(info.getBalconyAreaFrom(), info.getBalconyAreaTo()))
                     .landAreaPeriod(mapToBigDecimalPeriod(info.getLandAreaFrom(), info.getLandAreaTo()))
                     .ceilingHeightPeriod(mapToBigDecimalPeriod(info.getCeilingHeightFrom(), info.getCeilingHeightTo()))
+                    .build();
+        }
+        return null;
+    }
+
+    public RealPropertyClientDto mapToRealPropertyClientDto(RealProperty realProperty) {
+        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
+        return RealPropertyClientDto.builder()
+                .totalArea(realProperty.getTotalArea())
+                .objectTypeId(realProperty.getObjectTypeId())
+                .numberOfRooms(realProperty.getNumberOfRooms())
+                .districtId(realProperty.getDistrict().getId())
+                .residentialComplexId(realProperty.getResidentialComplexId())
+                .floor(realProperty.getFloor())
+                .livingArea(realProperty.getLivingArea())
+                .atelier(realProperty.getAtelier())
+                .separateBathroom(realProperty.getSeparateBathroom())
+                .purchaseInfoClientDto(mapToPurchaseInfoClientDto(realProperty.getPurchaseInfo()))
+                .houseNumber(generalCharacteristics.getHouseNumber())
+                .districtId(generalCharacteristics.getDistrictId())
+                .streetId(generalCharacteristics.getStreetId())
+                .build();
+    }
+
+    private PurchaseInfoClientDto mapToPurchaseInfoClientDto(PurchaseInfo info) {
+        if (nonNull(info)) {
+            return PurchaseInfoClientDto.builder()
+                    .objectPricePeriod(mapToBigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()))
+                    .floorPeriod(mapToIntegerPeriod(info.getFloorFrom(), info.getFloorTo()))
+                    .totalAreaPeriod(mapToBigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo()))
                     .build();
         }
         return null;
