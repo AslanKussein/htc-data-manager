@@ -98,7 +98,9 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     public List<BaseCustomDictionary> getDictionary(String dictionaryName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String getDictMethod = "get" + dictionaryName + "List";
         Method method = this.getClass().getMethod(getDictMethod, DictionaryFilterDto.class);
-        return (List<BaseCustomDictionary>) method.invoke(this, new DictionaryFilterDto());
+        return (List<BaseCustomDictionary>) method.invoke(this, DictionaryFilterDto.builder()
+                .dictionaryName(dictionaryName)
+                .build());
     }
 
     private BaseCustomDictionary getDictionaryById(String dictionaryName, Long id) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -116,13 +118,7 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         Method countMethod = this.getClass().getMethod(getDictCountMethod);
         Long count = (Long) countMethod.invoke(this);
 
-        Optional<AllDict> first = getAllDictList(null).stream().filter(item -> item.getCode().equals(filterDto.getDictionaryName())).findFirst();
-        boolean editable = false;
-        if (first.isPresent()) {
-            editable = first.get().getIsEditable();
-        }
-
-        PageDto<BaseCustomDictionary> listPage = new PageDto(list, filterDto.getPageableDto().getPageNumber(), filterDto.getPageableDto().getPageSize(), count, editable);
+        PageDto<BaseCustomDictionary> listPage = new PageDto(list, filterDto.getPageableDto().getPageNumber(), filterDto.getPageableDto().getPageSize(), count, checkSystem(filterDto.getDictionaryName()));
         return listPage;
     }
 
@@ -170,7 +166,7 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     private boolean checkSystem(String dictionaryName) {
         Optional<AllDict> optional = getAllDictList(null).stream().filter(dict -> dict.getCode().equals(dictionaryName)).findFirst();
         if (optional.isPresent()) {
-            return optional.get().getIsSystem();
+            return optional.get().getIsEditable();
         }
         return false;
     }

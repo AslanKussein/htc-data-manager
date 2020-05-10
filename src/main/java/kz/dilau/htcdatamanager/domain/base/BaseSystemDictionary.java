@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.domain.base;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,7 @@ import javax.persistence.MappedSuperclass;
 public class BaseSystemDictionary extends BaseCustomDictionary {
     @Column(name = "code", unique = true, nullable = false)
     private String code;
-    @Column(name = "is_enabled", nullable = false, columnDefinition = "boolean default true")
-    private Boolean isEnabled = true;
+    @JsonIgnore
     @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
     private Boolean isRemoved = false;
 }
