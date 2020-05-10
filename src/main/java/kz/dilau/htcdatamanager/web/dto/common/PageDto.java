@@ -20,6 +20,7 @@ public class PageDto<T> {
     private int pageNumber;
     private long total;
     private long size;
+    private boolean editable;
 
     public PageDto(Page<T> entity, List<T> entityDto) {
         this.setData(new ListDto(entityDto));
@@ -33,5 +34,13 @@ public class PageDto<T> {
         this.setPageNumber(pageNumber);
         this.setTotal(count);
         this.setSize((long) Math.ceil((double)count / (double)pageSize));
+    }
+
+    public PageDto(List<BaseCustomDictionary> list, int pageNumber, int pageSize, Long count, boolean editable) {
+        this.setData(new ListDto(list));
+        this.setPageNumber(pageNumber);
+        this.setTotal(count);
+        this.setSize((long) Math.ceil((double)count / (double)pageSize));
+        this.setEditable(editable);
     }
 }
