@@ -59,10 +59,10 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
 
     public List<AllDict> getAllDictList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
-            return loadDictionariesFromDatabase("AllDict", filterDto.getPageableDto(), true);
+            return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
         } else {
             if (isNull(allDictList)) {
-                allDictList = loadDictionariesFromDatabase("AllDict", true);
+                allDictList = loadDictionariesFromDatabase(filterDto.getDictionaryName());
             }
         }
         return allDictList;
@@ -73,7 +73,7 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     }
 
     public Long getAllDictListCount() {
-        return loadDictionariesCountFromDatabase("AllDict", true);
+        return loadDictionariesCountFromDatabase("AllDict");
     }
 
     public List<Street> getStreetList(DictionaryFilterDto filterDto) {
@@ -118,7 +118,7 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         Method countMethod = this.getClass().getMethod(getDictCountMethod);
         Long count = (Long) countMethod.invoke(this);
 
-        PageDto<BaseCustomDictionary> listPage = new PageDto(list, filterDto.getPageableDto().getPageNumber(), filterDto.getPageableDto().getPageSize(), count, checkSystem(filterDto.getDictionaryName()));
+        PageDto<BaseCustomDictionary> listPage = new PageDto(list, filterDto.getPageableDto().getPageNumber(), filterDto.getPageableDto().getPageSize(), count, isEditable(filterDto.getDictionaryName()));
         return listPage;
     }
 
@@ -128,23 +128,15 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     }
 
     private List loadDictionariesFromDatabase(String dictionaryEntityName) {
-        return loadDictionariesFromDatabase(dictionaryEntityName, checkSystem(dictionaryEntityName));
-    }
-
-    private List loadDictionariesFromDatabase(String dictionaryEntityName, boolean isSystem) {
-        return entityManager.createQuery("from " + dictionaryEntityName + (isSystem ? " where isRemoved = false" : "") + " order by id")
+        return entityManager.createQuery("from " + dictionaryEntityName + " where isRemoved = false order by id")
                 .getResultList();
     }
 
     private List loadDictionariesFromDatabase(String dictionaryEntityName, PageableDto filterDto) {
-        return loadDictionariesFromDatabase(dictionaryEntityName, filterDto, checkSystem(dictionaryEntityName));
-    }
-
-    private List loadDictionariesFromDatabase(String dictionaryEntityName, PageableDto filterDto, Boolean isSystem) {
         if (isNull(filterDto)) {
-            return loadDictionariesFromDatabase(dictionaryEntityName, checkSystem(dictionaryEntityName));
+            return loadDictionariesFromDatabase(dictionaryEntityName);
         }
-        return entityManager.createQuery("from " + dictionaryEntityName + (checkSystem(dictionaryEntityName) ? " where isRemoved = false" : "") + " order by " + filterDto.getSortBy() + " " + filterDto.getDirection())
+        return entityManager.createQuery("from " + dictionaryEntityName + " where isRemoved = false order by " + filterDto.getSortBy() + " " + filterDto.getDirection())
                 .setFirstResult(filterDto.getPageSize() * filterDto.getPageNumber())
                 .setMaxResults(filterDto.getPageSize())
                 .getResultList();
@@ -155,15 +147,11 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     }
 
     private Long loadDictionariesCountFromDatabase(String dictionaryEntityName) {
-        return loadDictionariesCountFromDatabase(dictionaryEntityName, checkSystem(dictionaryEntityName));
-    }
-
-    private Long loadDictionariesCountFromDatabase(String dictionaryEntityName, boolean isSystem) {
-        return (Long) entityManager.createQuery("select count(*) from " + dictionaryEntityName + (isSystem ? " where isRemoved = false" : ""))
+        return (Long) entityManager.createQuery("select count(*) from " + dictionaryEntityName + " where isRemoved = false")
                 .getSingleResult();
     }
 
-    private boolean checkSystem(String dictionaryName) {
+    private boolean isEditable(String dictionaryName) {
         Optional<AllDict> optional = getAllDictList(null).stream().filter(dict -> dict.getCode().equals(dictionaryName)).findFirst();
         if (optional.isPresent()) {
             return optional.get().getIsEditable();
