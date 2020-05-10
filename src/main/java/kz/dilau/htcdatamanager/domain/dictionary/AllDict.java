@@ -19,7 +19,4 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
 public class AllDict extends BaseSystemDictionary {
     @Column(name = "is_editable", nullable = false, columnDefinition = "boolean default true")
     private Boolean isEditable = false;
-
-    @Column(name = "is_system", nullable = false, columnDefinition = "boolean default true")
-    private Boolean isSystem = false;
 }
