@@ -59,10 +59,10 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
 
     public List<AllDict> getAllDictList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
-            return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
+            return loadDictionariesFromDatabase("AllDict", filterDto.getPageableDto());
         } else {
             if (isNull(allDictList)) {
-                allDictList = loadDictionariesFromDatabase(filterDto.getDictionaryName());
+                allDictList = loadDictionariesFromDatabase("AllDict");
             }
         }
         return allDictList;
