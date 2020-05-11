@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.service.dictionary;
+package kz.dilau.htcdatamanager.service;
 
 import org.springframework.stereotype.Service;
 

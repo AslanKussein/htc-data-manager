@@ -2,8 +2,8 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import io.swagger.annotations.ApiOperation;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryCacheService;
-import kz.dilau.htcdatamanager.service.dictionary.NewDictionaryService;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
+import kz.dilau.htcdatamanager.service.NewDictionaryService;
 import kz.dilau.htcdatamanager.web.dto.common.PageDto;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryFilterDto;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
@@ -70,10 +70,10 @@ public class NewDictionaryResource {
     }
 
     @ApiOperation(value = "Удаление справочных данных", response = Long.class)
-    @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable("id") Long id,
-                                 @RequestBody DictionaryItemRequestDto requestDto) {
-        return ResponseEntity.ok(dictionaryService.delete(id, requestDto));
+    @DeleteMapping("/{dictionaryName}/{id}")
+    public ResponseEntity delete(@PathVariable("dictionaryName") String dictionaryName,
+                                 @PathVariable("id") Long id) {
+        return ResponseEntity.ok(dictionaryService.delete(id, dictionaryName));
     }
 
     @ApiOperation(value = "Очистка кэша справочников", response = Long.class)

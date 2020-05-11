@@ -4,15 +4,15 @@ import kz.dilau.htcdatamanager.domain.base.MultiLang;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.repository.dictionary.DistrictRepository;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryCacheService;
-import kz.dilau.htcdatamanager.service.dictionary.LinearDictionaryService;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
+import kz.dilau.htcdatamanager.service.LinearDictionaryService;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component("District")
-public class DistrictDictionaryService implements LinearDictionaryService {
+public class DistrictDictionaryServiceImpl implements LinearDictionaryService {
     private final DistrictRepository repository;
     private final DictionaryCacheService cacheService;
 
@@ -28,7 +28,7 @@ public class DistrictDictionaryService implements LinearDictionaryService {
     }
 
     @Override
-    public Long delete(Long id, DictionaryItemRequestDto dto) {
+    public Long delete(Long id) {
         District byId = cacheService.getById(District.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
