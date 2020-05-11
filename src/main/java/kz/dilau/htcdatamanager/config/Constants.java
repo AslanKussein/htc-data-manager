@@ -16,6 +16,7 @@ public final class Constants {
     public static final String DICTIONARIES_REST_ENDPOINT = "/open-api/dictionaries";
     public static final String NEW_DICTIONARIES_REST_ENDPOINT = "/open-api/dictionary";
     public static final String MORTGAGE_REST_ENDPOINT = "/api/mortgage";
+    public static final String APPLICATIONS_CLIENT_REST_ENDPOINT = "/api/applications-client";
 
     private Constants() {
     }
