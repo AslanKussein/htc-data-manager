@@ -1,6 +1,10 @@
 package kz.dilau.htcdatamanager.repository.dictionary;
 
 import kz.dilau.htcdatamanager.domain.dictionary.District;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DistrictRepository extends DictionaryRepository<District> {
+import java.util.List;
+
+public interface DistrictRepository extends JpaRepository<District, Long> {
+    List<District> findAllByParentIdAndIsRemovedFalse(Long parentId);
 }

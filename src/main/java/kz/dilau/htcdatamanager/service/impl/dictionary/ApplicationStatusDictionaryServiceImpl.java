@@ -9,6 +9,8 @@ import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component("ApplicationStatus")
 public class ApplicationStatusDictionaryServiceImpl implements LinearDictionaryService {
@@ -31,6 +33,11 @@ public class ApplicationStatusDictionaryServiceImpl implements LinearDictionaryS
         ApplicationStatus byId = cacheService.getById(ApplicationStatus.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
+    }
+
+    @Override
+    public List childList(Long parentId) {
+        return null;
     }
 
     private ApplicationStatus saveDict(ApplicationStatus dict, DictionaryItemRequestDto itemDto) {

@@ -9,6 +9,8 @@ import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component("Sewerage")
 public class SewerageDictionaryServiceImpl implements LinearDictionaryService {
@@ -31,6 +33,11 @@ public class SewerageDictionaryServiceImpl implements LinearDictionaryService {
         Sewerage byId = cacheService.getById(Sewerage.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
+    }
+
+    @Override
+    public List childList(Long parentId) {
+        return null;
     }
 
     private Sewerage saveDict(Sewerage dict, DictionaryItemRequestDto itemDto) {

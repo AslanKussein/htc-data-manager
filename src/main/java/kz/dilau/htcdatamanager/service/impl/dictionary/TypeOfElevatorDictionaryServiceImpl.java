@@ -9,6 +9,8 @@ import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component("TypeOfElevator")
 public class TypeOfElevatorDictionaryServiceImpl implements LinearDictionaryService {
@@ -31,6 +33,11 @@ public class TypeOfElevatorDictionaryServiceImpl implements LinearDictionaryServ
         TypeOfElevator byId = cacheService.getById(TypeOfElevator.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
+    }
+
+    @Override
+    public List childList(Long parentId) {
+        return null;
     }
 
     private TypeOfElevator saveDict(TypeOfElevator dict, DictionaryItemRequestDto itemDto) {

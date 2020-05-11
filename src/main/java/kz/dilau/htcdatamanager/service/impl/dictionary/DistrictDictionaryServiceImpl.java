@@ -10,6 +10,8 @@ import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component("District")
 public class DistrictDictionaryServiceImpl implements LinearDictionaryService {
@@ -32,6 +34,11 @@ public class DistrictDictionaryServiceImpl implements LinearDictionaryService {
         District byId = cacheService.getById(District.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
+    }
+
+    @Override
+    public List childList(Long parentId) {
+        return repository.findAllByParentIdAndIsRemovedFalse(parentId);
     }
 
     private District saveDict(District dict, DictionaryItemRequestDto itemDto) {
