@@ -22,10 +22,6 @@ public class DictionaryItemRequestDto {
     private String nameEn;
     @ApiModelProperty(value = "Наименование на русском языке")
     private String nameRu;
-    @ApiModelProperty(value = "Код")
-    private String code;
-    @ApiModelProperty(value = "Код операции")
-    private String operationCode;
     @ApiModelProperty(value = "id родительского элемента")
     private Long parentId;
 }
