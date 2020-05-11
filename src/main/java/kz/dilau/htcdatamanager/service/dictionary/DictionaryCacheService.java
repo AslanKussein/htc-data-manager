@@ -15,4 +15,8 @@ public interface DictionaryCacheService {
     BaseCustomDictionary getDictionaryItem(String dictionaryName, Long id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 
     void clearDictionaries();
+
+    boolean isEditable(String dictionaryName);
+
+    <T extends BaseCustomDictionary> T getById(Class<T> clazz, Long id);
 }

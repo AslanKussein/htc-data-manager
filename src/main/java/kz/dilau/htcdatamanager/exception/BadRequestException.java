@@ -43,4 +43,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createChangeStatus(String applicationStatus, String status) {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.change.status.error", applicationStatus, status));
     }
+
+    public static BadRequestException createEditDictionary(String dictionaryName) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.edit.dictionary", dictionaryName));
+    }
 }

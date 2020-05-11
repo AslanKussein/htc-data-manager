@@ -4,6 +4,9 @@ import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.dictionary.AllDict;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.Street;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
+import kz.dilau.htcdatamanager.exception.EntityRemovedException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryCacheService;
 import kz.dilau.htcdatamanager.web.dto.common.PageDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
@@ -123,8 +126,7 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     }
 
     public BaseCustomDictionary getDictionaryItem(String dictionaryName, Long id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        BaseCustomDictionary dictionary = getDictionaryById(dictionaryName, id);
-        return dictionary;
+        return getDictionaryById(dictionaryName, id);
     }
 
     private List loadDictionariesFromDatabase(String dictionaryEntityName) {
@@ -142,8 +144,15 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
                 .getResultList();
     }
 
-    private BaseCustomDictionary loadDictionaryByIdFromDatabase(String dictionaryEntityName, Long id) {
-        return (BaseCustomDictionary) entityManager.createQuery("from " + dictionaryEntityName + " where id = " + id).getSingleResult();
+    public BaseCustomDictionary loadDictionaryByIdFromDatabase(String dictionaryEntityName, Long id) {
+        BaseCustomDictionary dictionary = (BaseCustomDictionary) entityManager.createQuery("from " + dictionaryEntityName + " where id = " + id).getSingleResult();
+        if (isNull(dictionary)) {
+            throw NotFoundException.createEntityNotFoundById(dictionaryEntityName, id);
+        } else if (dictionary.getIsRemoved()) {
+            throw EntityRemovedException.createEntityRemovedById(dictionaryEntityName, id);
+        } else {
+            return dictionary;
+        }
     }
 
     private Long loadDictionariesCountFromDatabase(String dictionaryEntityName) {
@@ -151,11 +160,19 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
                 .getSingleResult();
     }
 
-    private boolean isEditable(String dictionaryName) {
+    public boolean isEditable(String dictionaryName) {
         Optional<AllDict> optional = getAllDictList(null).stream().filter(dict -> dict.getCode().equals(dictionaryName)).findFirst();
         if (optional.isPresent()) {
             return optional.get().getIsEditable();
         }
         return false;
+    }
+
+    public <T extends BaseCustomDictionary> T getById(Class<T> clazz, Long id) {
+        try {
+            return (T) getDictionaryItem(clazz.getName(), id);
+        } catch (Exception e) {
+            throw BadRequestException.idMustNotBeNull();
+        }
     }
 }
