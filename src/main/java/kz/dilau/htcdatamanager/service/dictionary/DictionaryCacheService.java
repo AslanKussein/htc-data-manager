@@ -19,4 +19,6 @@ public interface DictionaryCacheService {
     boolean isEditable(String dictionaryName);
 
     <T extends BaseCustomDictionary> T getById(Class<T> clazz, Long id);
+
+    BaseCustomDictionary loadDictionaryByIdFromDatabase(String dictionaryEntityName, Long id);
 }
