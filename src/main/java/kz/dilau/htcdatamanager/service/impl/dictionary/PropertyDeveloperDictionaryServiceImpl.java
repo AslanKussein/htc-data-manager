@@ -9,6 +9,8 @@ import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component("PropertyDeveloper")
 public class PropertyDeveloperDictionaryServiceImpl implements LinearDictionaryService {
@@ -31,6 +33,11 @@ public class PropertyDeveloperDictionaryServiceImpl implements LinearDictionaryS
         PropertyDeveloper byId = cacheService.getById(PropertyDeveloper.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
+    }
+
+    @Override
+    public List childList(Long parentId) {
+        return null;
     }
 
     private PropertyDeveloper saveDict(PropertyDeveloper dict, DictionaryItemRequestDto itemDto) {

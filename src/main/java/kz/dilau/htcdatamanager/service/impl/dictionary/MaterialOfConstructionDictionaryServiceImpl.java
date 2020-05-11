@@ -9,6 +9,8 @@ import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component("MaterialOfConstruction")
 public class MaterialOfConstructionDictionaryServiceImpl implements LinearDictionaryService {
@@ -31,6 +33,11 @@ public class MaterialOfConstructionDictionaryServiceImpl implements LinearDictio
         MaterialOfConstruction byId = cacheService.getById(MaterialOfConstruction.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
+    }
+
+    @Override
+    public List childList(Long parentId) {
+        return null;
     }
 
     private MaterialOfConstruction saveDict(MaterialOfConstruction dict, DictionaryItemRequestDto itemDto) {

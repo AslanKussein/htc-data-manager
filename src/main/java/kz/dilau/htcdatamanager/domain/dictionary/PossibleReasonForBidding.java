@@ -17,6 +17,9 @@ public class PossibleReasonForBidding extends BaseCustomDictionary {
     @JoinColumn(name = "operation_type_id")
     private OperationType operationType;
 
+    @Column(name = "operation_type_id", insertable = false, updatable = false)
+    private Long parentId;
+
     @Column(name = "operation_code")
     private String operationCode;
 }

@@ -9,6 +9,8 @@ import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Component("ParkingType")
 public class ParkingTypeDictionaryServiceImpl implements LinearDictionaryService {
@@ -31,6 +33,11 @@ public class ParkingTypeDictionaryServiceImpl implements LinearDictionaryService
         ParkingType byId = cacheService.getById(ParkingType.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();
+    }
+
+    @Override
+    public List childList(Long parentId) {
+        return null;
     }
 
     private ParkingType saveDict(ParkingType dict, DictionaryItemRequestDto itemDto) {

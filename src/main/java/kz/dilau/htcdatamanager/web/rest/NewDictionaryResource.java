@@ -48,6 +48,14 @@ public class NewDictionaryResource {
         return ResponseEntity.ok(aDictionaries);
     }
 
+    @ApiOperation(value = "Список значений по справочнику по родительскому объекту", responseContainer = "List", response = BaseCustomDictionary.class)
+    @GetMapping("/{dictionaryName}/list/{parentId}")
+    public ResponseEntity getDictionaryValuesByParent(@PathVariable("dictionaryName") String dictionaryName,
+                                                      @PathVariable("parentId") Long parentId) {
+        List aDictionaries = dictionaryService.getChildList(parentId, dictionaryName);
+        return ResponseEntity.ok(aDictionaries);
+    }
+
     @ApiOperation(value = "Значение справочника по id", response = BaseCustomDictionary.class)
     @GetMapping("/{dictionaryName}/{id}")
     public ResponseEntity getDictionaryValue(@PathVariable("dictionaryName") String dictionaryName,

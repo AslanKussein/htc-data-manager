@@ -10,6 +10,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class NewDictionaryServiceImpl implements NewDictionaryService {
@@ -39,6 +41,13 @@ public class NewDictionaryServiceImpl implements NewDictionaryService {
         dictionaryCacheService.clearDictionaries();
         return result;
     }
+
+    @Override
+    public List getChildList(@NonNull Long parentId, @NonNull String dictionaryName) {
+        LinearDictionaryService service = factory.getService(dictionaryName);
+        return service.childList(parentId);
+    }
+
 
     private void checkEditable(String dictionaryName) {
         if (!dictionaryCacheService.isEditable(dictionaryName)) {
