@@ -1,10 +1,10 @@
-package kz.dilau.htcdatamanager.service.impl.dictionary;
+package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.exception.BadRequestException;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryCacheService;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryServiceFactory;
-import kz.dilau.htcdatamanager.service.dictionary.LinearDictionaryService;
-import kz.dilau.htcdatamanager.service.dictionary.NewDictionaryService;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
+import kz.dilau.htcdatamanager.service.DictionaryServiceFactory;
+import kz.dilau.htcdatamanager.service.LinearDictionaryService;
+import kz.dilau.htcdatamanager.service.NewDictionaryService;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,10 @@ public class NewDictionaryServiceImpl implements NewDictionaryService {
         return result;
     }
 
-    public Long delete(@NonNull Long id, @NonNull DictionaryItemRequestDto updateDto) {
-        checkEditable(updateDto.getDictionaryName());
-        LinearDictionaryService service = factory.getService(updateDto.getDictionaryName());
-        Long result = service.delete(id, updateDto);
+    public Long delete(@NonNull Long id, @NonNull String dictionaryName) {
+        checkEditable(dictionaryName);
+        LinearDictionaryService service = factory.getService(dictionaryName);
+        Long result = service.delete(id);
         dictionaryCacheService.clearDictionaries();
         return result;
     }

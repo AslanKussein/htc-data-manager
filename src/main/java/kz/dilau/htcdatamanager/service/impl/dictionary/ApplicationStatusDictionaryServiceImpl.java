@@ -3,15 +3,15 @@ package kz.dilau.htcdatamanager.service.impl.dictionary;
 import kz.dilau.htcdatamanager.domain.base.MultiLang;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryCacheService;
-import kz.dilau.htcdatamanager.service.dictionary.LinearDictionaryService;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
+import kz.dilau.htcdatamanager.service.LinearDictionaryService;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component("ApplicationStatus")
-public class ApplicationStatusDictionaryService implements LinearDictionaryService {
+public class ApplicationStatusDictionaryServiceImpl implements LinearDictionaryService {
     private final ApplicationStatusRepository repository;
     private final DictionaryCacheService cacheService;
 
@@ -27,7 +27,7 @@ public class ApplicationStatusDictionaryService implements LinearDictionaryServi
     }
 
     @Override
-    public Long delete(Long id, DictionaryItemRequestDto dto) {
+    public Long delete(Long id) {
         ApplicationStatus byId = cacheService.getById(ApplicationStatus.class, id);
         byId.setIsRemoved(true);
         return repository.save(byId).getId();

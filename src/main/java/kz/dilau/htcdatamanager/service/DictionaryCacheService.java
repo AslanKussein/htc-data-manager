@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.service.dictionary;
+package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.web.dto.common.PageDto;

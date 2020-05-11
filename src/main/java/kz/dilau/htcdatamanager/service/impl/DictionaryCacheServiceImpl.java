@@ -1,10 +1,10 @@
-package kz.dilau.htcdatamanager.service.impl.dictionary;
+package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryCacheService;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.web.dto.common.PageDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryFilterDto;
