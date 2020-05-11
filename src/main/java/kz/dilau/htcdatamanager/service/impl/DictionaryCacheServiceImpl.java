@@ -2,9 +2,11 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
+import kz.dilau.htcdatamanager.web.dto.common.LocaledValue;
 import kz.dilau.htcdatamanager.web.dto.common.PageDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryFilterDto;
@@ -14,7 +16,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
@@ -253,23 +254,32 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return yardTypeList;
     }
 
-    public List<BaseCustomDictionary> getDictionary(String dictionaryName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String getDictMethod = "get" + dictionaryName + "List";
-        Method method = this.getClass().getMethod(getDictMethod, DictionaryFilterDto.class);
-        return (List<BaseCustomDictionary>) method.invoke(this, DictionaryFilterDto.builder()
-                .dictionaryName(dictionaryName)
-                .build());
+    public List<BaseCustomDictionary> getDictionary(String dictionaryName) {
+        try {
+            String getDictMethod = "get" + dictionaryName + "List";
+            Method method = this.getClass().getMethod(getDictMethod, DictionaryFilterDto.class);
+            return (List<BaseCustomDictionary>) method.invoke(this, DictionaryFilterDto.builder()
+                    .dictionaryName(dictionaryName)
+                    .build());
+
+        } catch (Exception e) {
+            throw new BadRequestException(new LocaledValue(e.getMessage()));
+        }
     }
 
-    public PageDto<BaseCustomDictionary> getDictionary(DictionaryFilterDto filterDto) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String getDictMethod = "get" + filterDto.getDictionaryName() + "List";
-        Method method = this.getClass().getMethod(getDictMethod, DictionaryFilterDto.class);
-        List<BaseCustomDictionary> list = (List<BaseCustomDictionary>) method.invoke(this, filterDto);
+    public PageDto<BaseCustomDictionary> getDictionary(DictionaryFilterDto filterDto) {
+        try {
+            String getDictMethod = "get" + filterDto.getDictionaryName() + "List";
+            Method method = this.getClass().getMethod(getDictMethod, DictionaryFilterDto.class);
+            List<BaseCustomDictionary> list = (List<BaseCustomDictionary>) method.invoke(this, filterDto);
 
-        Long count = loadDictionariesCountFromDatabase(filterDto.getDictionaryName());
+            Long count = loadDictionariesCountFromDatabase(filterDto.getDictionaryName());
 
-        PageDto<BaseCustomDictionary> listPage = new PageDto(list, filterDto.getPageableDto().getPageNumber(), filterDto.getPageableDto().getPageSize(), count, isEditable(filterDto.getDictionaryName()));
-        return listPage;
+            PageDto<BaseCustomDictionary> listPage = new PageDto(list, filterDto.getPageableDto().getPageNumber(), filterDto.getPageableDto().getPageSize(), count, isEditable(filterDto.getDictionaryName()));
+            return listPage;
+        } catch (Exception e) {
+            throw new BadRequestException(new LocaledValue(e.getMessage()));
+        }
     }
 
     private List loadDictionariesFromDatabase(String dictionaryEntityName) {

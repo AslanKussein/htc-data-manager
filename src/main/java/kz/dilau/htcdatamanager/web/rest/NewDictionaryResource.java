@@ -27,24 +27,14 @@ public class NewDictionaryResource {
     @ApiOperation(value = "Список значений по справочнику с пагинацией", response = BaseCustomDictionary.class)
     @PostMapping("list/pageable")
     public ResponseEntity getDictionaryValues(@RequestBody DictionaryFilterDto filterDto) {
-        PageDto<BaseCustomDictionary> aDictionaries = null;
-        try {
-            aDictionaries = dictionaryCacheService.getDictionary(filterDto);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        PageDto<BaseCustomDictionary> aDictionaries = dictionaryCacheService.getDictionary(filterDto);
         return ResponseEntity.ok(aDictionaries);
     }
 
     @ApiOperation(value = "Список значений по справочнику", responseContainer = "List", response = BaseCustomDictionary.class)
     @GetMapping("/{dictionaryName}/list")
     public ResponseEntity getDictionaryValues(@PathVariable("dictionaryName") String dictionaryName) {
-        List<BaseCustomDictionary> aDictionaries = null;
-        try {
-            aDictionaries = dictionaryCacheService.getDictionary(dictionaryName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<BaseCustomDictionary> aDictionaries = dictionaryCacheService.getDictionary(dictionaryName);
         return ResponseEntity.ok(aDictionaries);
     }
 
