@@ -77,10 +77,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return allDictList;
     }
 
-    public BaseCustomDictionary getAllDictById(Long id) {
-        return loadDictionaryByIdFromDatabase("AllDict", id);
-    }
-
     public List<ApplicationStatus> getApplicationStatusList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -90,10 +86,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return applicationStatusList;
-    }
-
-    public BaseCustomDictionary getApplicationStatusById(Long id) {
-        return loadDictionaryByIdFromDatabase("ApplicationStatus", id);
     }
 
     public List<City> getCityList(DictionaryFilterDto filterDto) {
@@ -107,10 +99,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return cityList;
     }
 
-    public BaseCustomDictionary getCityById(Long id) {
-        return loadDictionaryByIdFromDatabase("City", id);
-    }
-
     public List<Country> getCountryList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -120,10 +108,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return countryList;
-    }
-
-    public BaseCustomDictionary getCountryById(Long id) {
-        return loadDictionaryByIdFromDatabase("Country", id);
     }
 
     public List<District> getDistrictList(DictionaryFilterDto filterDto) {
@@ -137,10 +121,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return districtList;
     }
 
-    public BaseCustomDictionary getDistrictById(Long id) {
-        return loadDictionaryByIdFromDatabase("District", id);
-    }
-
     public List<EventType> getEventTypeList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -150,10 +130,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return eventTypeList;
-    }
-
-    public BaseCustomDictionary getEventTypeById(Long id) {
-        return loadDictionaryByIdFromDatabase("EventType", id);
     }
 
     public List<HeatingSystem> getHeatingSystemList(DictionaryFilterDto filterDto) {
@@ -167,10 +143,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return heatingSystemList;
     }
 
-    public BaseCustomDictionary getHeatingSystemById(Long id) {
-        return loadDictionaryByIdFromDatabase("HeatingSystem", id);
-    }
-
     public List<MaterialOfConstruction> getMaterialOfConstructionList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -180,10 +152,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return materialOfConstructionList;
-    }
-
-    public BaseCustomDictionary getMaterialOfConstructionById(Long id) {
-        return loadDictionaryByIdFromDatabase("MaterialOfConstruction", id);
     }
 
     public List<ObjectType> getObjectTypeList(DictionaryFilterDto filterDto) {
@@ -197,10 +165,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return objectTypeList;
     }
 
-    public BaseCustomDictionary getObjectTypeById(Long id) {
-        return loadDictionaryByIdFromDatabase("ObjectType", id);
-    }
-
     public List<OperationType> getOperationTypeList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -210,10 +174,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return operationTypeList;
-    }
-
-    public BaseCustomDictionary getOperationTypeById(Long id) {
-        return loadDictionaryByIdFromDatabase("OperationType", id);
     }
 
     public List<ParkingType> getParkingTypeList(DictionaryFilterDto filterDto) {
@@ -227,10 +187,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return parkingTypeList;
     }
 
-    public BaseCustomDictionary getParkingTypeById(Long id) {
-        return loadDictionaryByIdFromDatabase("ParkingType", id);
-    }
-
     public List<PossibleReasonForBidding> getPossibleReasonForBiddingList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -240,10 +196,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return possibleReasonForBiddingList;
-    }
-
-    public BaseCustomDictionary getPossibleReasonForBiddingById(Long id) {
-        return loadDictionaryByIdFromDatabase("PossibleReasonForBidding", id);
     }
 
     public List<PropertyDeveloper> getPropertyDeveloperList(DictionaryFilterDto filterDto) {
@@ -257,10 +209,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return propertyDeveloperList;
     }
 
-    public BaseCustomDictionary getPropertyDeveloperById(Long id) {
-        return loadDictionaryByIdFromDatabase("PropertyDeveloper", id);
-    }
-
     public List<Sewerage> getSewerageList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -270,10 +218,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return sewerageList;
-    }
-
-    public BaseCustomDictionary getSewerageById(Long id) {
-        return loadDictionaryByIdFromDatabase("Sewerage", id);
     }
 
     public List<Street> getStreetList(DictionaryFilterDto filterDto) {
@@ -287,10 +231,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return streetList;
     }
 
-    public BaseCustomDictionary getStreetById(Long id) {
-        return loadDictionaryByIdFromDatabase("Street", id);
-    }
-
     public List<TypeOfElevator> getTypeOfElevatorList(DictionaryFilterDto filterDto) {
         if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
             return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
@@ -300,10 +240,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return typeOfElevatorList;
-    }
-
-    public BaseCustomDictionary getTypeOfElevatorById(Long id) {
-        return loadDictionaryByIdFromDatabase("TypeOfElevator", id);
     }
 
     public List<YardType> getYardTypeList(DictionaryFilterDto filterDto) {
@@ -317,22 +253,12 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         return yardTypeList;
     }
 
-    public BaseCustomDictionary getYardTypeById(Long id) {
-        return loadDictionaryByIdFromDatabase("YardType", id);
-    }
-
     public List<BaseCustomDictionary> getDictionary(String dictionaryName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String getDictMethod = "get" + dictionaryName + "List";
         Method method = this.getClass().getMethod(getDictMethod, DictionaryFilterDto.class);
         return (List<BaseCustomDictionary>) method.invoke(this, DictionaryFilterDto.builder()
                 .dictionaryName(dictionaryName)
                 .build());
-    }
-
-    private BaseCustomDictionary getDictionaryById(String dictionaryName, Long id) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String getDictMethod = "get" + dictionaryName + "ById";
-        Method method = this.getClass().getMethod(getDictMethod, Long.class);
-        return (BaseCustomDictionary) method.invoke(this, id);
     }
 
     public PageDto<BaseCustomDictionary> getDictionary(DictionaryFilterDto filterDto) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -344,10 +270,6 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
 
         PageDto<BaseCustomDictionary> listPage = new PageDto(list, filterDto.getPageableDto().getPageNumber(), filterDto.getPageableDto().getPageSize(), count, isEditable(filterDto.getDictionaryName()));
         return listPage;
-    }
-
-    public BaseCustomDictionary getDictionaryItem(String dictionaryName, Long id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        return getDictionaryById(dictionaryName, id);
     }
 
     private List loadDictionariesFromDatabase(String dictionaryEntityName) {

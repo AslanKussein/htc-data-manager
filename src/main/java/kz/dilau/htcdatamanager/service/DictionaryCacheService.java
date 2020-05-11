@@ -12,8 +12,6 @@ public interface DictionaryCacheService {
 
     List<BaseCustomDictionary> getDictionary(String dictionaryName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
 
-    BaseCustomDictionary getDictionaryItem(String dictionaryName, Long id) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException;
-
     void clearDictionaries();
 
     boolean isEditable(String dictionaryName);
