@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.web.rest;
+package kz.dilau.htcdatamanager.web.rest.client;
 
 import io.swagger.annotations.ApiParam;
 import kz.dilau.htcdatamanager.config.Constants;
