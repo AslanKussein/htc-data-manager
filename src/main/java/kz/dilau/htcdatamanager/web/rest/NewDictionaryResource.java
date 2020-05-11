@@ -52,12 +52,7 @@ public class NewDictionaryResource {
     @GetMapping("/{dictionaryName}/{id}")
     public ResponseEntity getDictionaryValue(@PathVariable("dictionaryName") String dictionaryName,
                                              @PathVariable("id") Long id) {
-        BaseCustomDictionary aDictionaryItem = null;
-        try {
-            aDictionaryItem = dictionaryCacheService.getDictionaryItem(dictionaryName, id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        BaseCustomDictionary aDictionaryItem = dictionaryCacheService.loadDictionaryByIdFromDatabase(dictionaryName, id);
         return ResponseEntity.ok(aDictionaryItem);
     }
 
