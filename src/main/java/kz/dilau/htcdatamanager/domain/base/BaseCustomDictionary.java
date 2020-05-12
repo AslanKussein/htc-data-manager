@@ -15,14 +15,6 @@ public abstract class BaseCustomDictionary extends BaseEntity<Long> {
     @Embedded
     private MultiLang multiLang;
 
-    public MultiLang getMultiLang() {
-        return multiLang;
-    }
-
-    public void setMultiLang(MultiLang multiLang) {
-        this.multiLang = multiLang;
-    }
-
     @JsonIgnore
     @Column(name = "is_removed", nullable = false, columnDefinition = "boolean default false")
     private Boolean isRemoved = false;

@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.config;
 
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryServiceFactory;
+import kz.dilau.htcdatamanager.service.DictionaryServiceFactory;
 import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

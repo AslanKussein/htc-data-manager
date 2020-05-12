@@ -2,18 +2,16 @@ package kz.dilau.htcdatamanager.domain.dictionary;
 
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.base.BaseEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PREFIX;
 
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
-@Data
 @NoArgsConstructor
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "residential_complex")

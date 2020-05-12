@@ -1,7 +1,8 @@
 package kz.dilau.htcdatamanager.domain.dictionary;
 
 import kz.dilau.htcdatamanager.domain.base.BaseSystemDictionary;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,8 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
  * Справочник всех справочников
  */
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "all_dict")
 public class AllDict extends BaseSystemDictionary {
