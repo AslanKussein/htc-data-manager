@@ -57,13 +57,13 @@ public class RealPropertyClientViewDto  {
     @ApiModelProperty(name = "district", value = "Район")
     private DictionaryDto district;
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
-    private Integer numberOfFloors;//residentialComplex
+    private Integer numberOfFloors;
     @ApiModelProperty(name = "apartmentsOnTheSite", value = "Количество квартир на площадке")
-    private String apartmentsOnTheSite;//residentialComplex
+    private String apartmentsOnTheSite;
     @ApiModelProperty(name = "materialOfConstruction", value = "Материал постройки")
     private DictionaryDto materialOfConstruction;
     @ApiModelProperty(name = "yearOfConstruction", value = "Год постройки")
-    private Integer yearOfConstruction;//residentialComplex
+    private Integer yearOfConstruction;
     @ApiModelProperty(name = "typeOfElevatorList", value = "Тип лифта(мультивыбор)")
     private List<Long> typeOfElevatorList;
     @ApiModelProperty(name = "concierge", value = "Консьерж")
