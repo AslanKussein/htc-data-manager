@@ -33,7 +33,7 @@ public class NewDictionaryResource {
         return ResponseEntity.ok(aDictionaries);
     }
 
-    @ApiOperation(value = "Список значений по справочнику с пагинацией", response = BaseCustomDictionary.class)
+    @ApiOperation(value = "Список всех справочников с пагинацией", response = BaseCustomDictionary.class)
     @PostMapping("allDict/pageable")
     public ResponseEntity getAllDictPageable(@RequestBody PageableDto pageableDto) {
         PageDto<BaseCustomDictionary> aDictionaries = dictionaryCacheService.getDictionary(DictionaryFilterDto.builder()
@@ -50,7 +50,7 @@ public class NewDictionaryResource {
         return ResponseEntity.ok(aDictionaries);
     }
 
-    @ApiOperation(value = "Список значений по справочнику", responseContainer = "List", response = BaseCustomDictionary.class)
+    @ApiOperation(value = "Список всех справочников", responseContainer = "List", response = BaseCustomDictionary.class)
     @GetMapping("/allDict")
     public ResponseEntity getAllDict() {
         List<BaseCustomDictionary> aDictionaries = dictionaryCacheService.getDictionary(ALL_DICT);
