@@ -145,7 +145,7 @@ public class RealPropertyServiceImpl implements RealPropertyService {
         return null;
     }
 
-    private PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info) {
+    public PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info) {
         if (nonNull(info)) {
             return PurchaseInfoDto.builder()
                     .objectPricePeriod(mapToBigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()))

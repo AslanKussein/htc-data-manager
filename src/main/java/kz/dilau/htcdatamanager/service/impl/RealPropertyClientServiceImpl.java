@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.RealPropertyClientService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
@@ -31,22 +32,13 @@ import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
 @RequiredArgsConstructor
 @Service
 public class RealPropertyClientServiceImpl implements RealPropertyClientService {
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
     private final DictionaryCacheService cacheService;
     private final RealPropertyService realPropertyService;
 
-    private String getAuthorName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (nonNull(authentication) && authentication.isAuthenticated()) {
-            return authentication.getName();
-        } else {
-            return null;
-        }
-    }
-
     @Override
     public ApplicationClientViewDto getById(Long id) {
-        Application application = getApplicationById(id);
+        Application application = applicationService.getApplicationById(id);
         return mapToApplicationClientDto(application);
     }
 
@@ -72,7 +64,6 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
                 .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
                 .note(application.getNote())
                 .agent(application.getCurrentAgent())
-//                .statusHistoryDtoList(mapStatusHistoryList(application))
                 .build();
     }
 
@@ -80,17 +71,6 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
         return new ClientDto(client);
     }
 
-    private Application getApplicationById(Long id) {
-        Optional<Application> optionalApplication = applicationRepository.findById(id);
-        if (optionalApplication.isPresent()) {
-            if (optionalApplication.get().getIsRemoved()) {
-                throw EntityRemovedException.createApplicationRemoved(id);
-            }
-            return optionalApplication.get();
-        } else {
-            throw NotFoundException.createApplicationById(id);
-        }
-    }
 
     private <T extends BaseCustomDictionary> DictionaryDto getDicById(Class<T> clazz, Long id) {
         if (id == null) {
@@ -146,7 +126,7 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
                 .heatingSystem(getDicById(HeatingSystem.class, realProperty.getHeatingSystemId()))
                 .numberOfApartments(generalCharacteristics.getNumberOfApartments())
                 .landArea(realProperty.getLandArea())
-                .purchaseInfoDto(mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))
+                .purchaseInfoDto(realPropertyService.mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))
                 .photoIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.PHOTO))
                 .housingPlanImageIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.HOUSING_PLAN))
                 .virtualTourImageIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.VIRTUAL_TOUR))
@@ -156,22 +136,5 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
     }
 
 
-    private PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info) {
-        if (nonNull(info)) {
-            return PurchaseInfoDto.builder()
-                    .objectPricePeriod(mapToBigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()))
-                    .floorPeriod(mapToIntegerPeriod(info.getFloorFrom(), info.getFloorTo()))
-                    .numberOfRoomsPeriod(mapToIntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo()))
-                    .numberOfBedroomsPeriod(mapToIntegerPeriod(info.getNumberOfBedroomsFrom(), info.getNumberOfBedroomsTo()))
-                    .numberOfFloorsPeriod(mapToIntegerPeriod(info.getNumberOfFloorsFrom(), info.getNumberOfFloorsTo()))
-                    .totalAreaPeriod(mapToBigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo()))
-                    .livingAreaPeriod(mapToBigDecimalPeriod(info.getLivingAreaFrom(), info.getLivingAreaTo()))
-                    .kitchenAreaPeriod(mapToBigDecimalPeriod(info.getKitchenAreaFrom(), info.getKitchenAreaTo()))
-                    .balconyAreaPeriod(mapToBigDecimalPeriod(info.getBalconyAreaFrom(), info.getBalconyAreaTo()))
-                    .landAreaPeriod(mapToBigDecimalPeriod(info.getLandAreaFrom(), info.getLandAreaTo()))
-                    .ceilingHeightPeriod(mapToBigDecimalPeriod(info.getCeilingHeightFrom(), info.getCeilingHeightTo()))
-                    .build();
-        }
-        return null;
-    }
+
 }
