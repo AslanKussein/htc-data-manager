@@ -1,18 +1,16 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
-import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
-import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
+import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.RealPropertyClientService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
-import kz.dilau.htcdatamanager.service.dictionary.Dictionary;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationClientViewDto;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
@@ -26,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToBigDecimalPeriod;
 import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
@@ -35,7 +32,7 @@ import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
 @Service
 public class RealPropertyClientServiceImpl implements RealPropertyClientService {
     private final ApplicationRepository applicationRepository;
-    private final DictionaryService dictionaryService;
+    private final DictionaryCacheService cacheService;
     private final RealPropertyService realPropertyService;
 
     private String getAuthorName() {
@@ -45,10 +42,6 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
         } else {
             return null;
         }
-    }
-
-    private String getAppointmentAgent(String agent) {
-        return isNull(agent) || agent.equals("") ? getAuthorName() : agent;
     }
 
     @Override
@@ -99,20 +92,28 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
         }
     }
 
-    private DictionaryDto<Long> getDicById(Dictionary dictionary, Long id) {
+    private <T extends BaseCustomDictionary> DictionaryDto getDicById(Class<T> clazz, Long id) {
         if (id == null) {
             return null;
         }
-        return dictionaryService.getById(dictionary, id);
+        return convertInstanceOfObject(cacheService.getById(clazz, id), DictionaryDto.class);
+    }
+
+    public <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
+        try {
+            return clazz.cast(o);
+        } catch (ClassCastException e) {
+            return null;
+        }
     }
 
     public RealPropertyClientViewDto mapToRealPropertyClientViewDto(RealProperty realProperty) {
         GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
         return RealPropertyClientViewDto.builder()
-                .objectTypeId(realProperty.getObjectTypeId())
-                .city(getDicById(Dictionary.CITIES, generalCharacteristics.getCityId()))
-                .district(getDicById(Dictionary.DISTRICTS, generalCharacteristics.getDistrictId()))
-                .street(getDicById(Dictionary.STREETS, generalCharacteristics.getStreetId()))
+                .objectType(getDicById(ObjectType.class, realProperty.getObjectTypeId()))
+                .city(getDicById(City.class, generalCharacteristics.getCityId()))
+                .district(getDicById(District.class, generalCharacteristics.getDistrictId()))
+                .street(getDicById(Street.class, generalCharacteristics.getStreetId()))
                 .houseNumber(generalCharacteristics.getHouseNumber())
                 .houseNumberFraction(generalCharacteristics.getHouseNumberFraction())
                 .floor(realProperty.getFloor())
@@ -130,19 +131,19 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
                 .separateBathroom(realProperty.getSeparateBathroom())
                 .numberOfFloors(generalCharacteristics.getNumberOfFloors())
                 .apartmentsOnTheSite(realProperty.getApartmentNumber())
-                .materialOfConstruction(getDicById(Dictionary.MATERIALS_OF_CONSTRUCTION, generalCharacteristics.getMaterialOfConstructionId()))
+                .materialOfConstruction(getDicById(MaterialOfConstruction.class, generalCharacteristics.getMaterialOfConstructionId()))
                 .yearOfConstruction(generalCharacteristics.getYearOfConstruction())
                 .concierge(generalCharacteristics.getConcierge())
                 .wheelchair(generalCharacteristics.getWheelchair())
-                .yardType(getDicById(Dictionary.YARD_TYPES, generalCharacteristics.getYardTypeId()))
+                .yardType(getDicById(YardType.class, generalCharacteristics.getYardTypeId()))
                 .playground(generalCharacteristics.getPlayground())
                 .typeOfElevatorList(generalCharacteristics.getTypesOfElevator().stream().map(TypeOfElevator::getId).collect(Collectors.toList()))
-                .parkingTypeIds(generalCharacteristics.getParkingTypes().stream().map(ParkingType::getId).collect(Collectors.toList()))
-                .propertyDeveloperId(generalCharacteristics.getPropertyDeveloperId())
+                //.parkingTypeList(generalCharacteristics.getParkingTypes())
+                .propertyDeveloper(getDicById(PropertyDeveloper.class, generalCharacteristics.getPropertyDeveloperId()))
                 .housingClass(generalCharacteristics.getHousingClass())
                 .housingCondition(generalCharacteristics.getHousingCondition())
-                .sewerage(getDicById(Dictionary.SEWERAGE_SYSTEMS, realProperty.getSewerageId()))
-                .heatingSystem(getDicById(Dictionary.HEATING_SYSTEMS, realProperty.getHeatingSystemId()))
+                .sewerage(getDicById(Sewerage.class, realProperty.getSewerageId()))
+                .heatingSystem(getDicById(HeatingSystem.class, realProperty.getHeatingSystemId()))
                 .numberOfApartments(generalCharacteristics.getNumberOfApartments())
                 .landArea(realProperty.getLandArea())
                 .purchaseInfoDto(mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))

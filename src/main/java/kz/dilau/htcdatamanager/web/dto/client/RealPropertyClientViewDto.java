@@ -2,15 +2,14 @@ package kz.dilau.htcdatamanager.web.dto.client;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryType;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,16 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "Модель сущности недвижимости для клиентского приложения")
-public class RealPropertyClientViewDto {
-    @ApiModelProperty(name = "objectTypeId", value = "ID типа объекта")
-    private Long objectTypeId;
+public class RealPropertyClientViewDto  {
+    @ApiModelProperty(name = "objectType", value = "Тип объекта")
+    private DictionaryDto objectType;
     @ApiModelProperty(name = "city", value = "город")
     private DictionaryDto city;
     @ApiModelProperty(name = "cadastralNumber", value = "Кадастровый номер")
     private String cadastralNumber;
-    @ApiModelProperty(name = "residentialComplex", value = "ID жилого комплекса")
+    @ApiModelProperty(name = "residentialComplex", value = "Жилой комплекс")
     private ResidentialComplexDto residentialComplex;
-    @ApiModelProperty(name = "street", value = "ID улицы")
+    @ApiModelProperty(name = "street", value = "Улица")
     private DictionaryDto street;
     @ApiModelProperty(name = "houseNumber", value = "Номер дома")
     private Integer houseNumber;
@@ -55,7 +54,7 @@ public class RealPropertyClientViewDto {
     private Boolean atelier;
     @ApiModelProperty(name = "separateBathroom", value = "Санузел раздельный")
     private Boolean separateBathroom;
-    @ApiModelProperty(name = "district", value = "ID района")
+    @ApiModelProperty(name = "district", value = "Район")
     private DictionaryDto district;
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
     private Integer numberOfFloors;//residentialComplex
@@ -75,10 +74,10 @@ public class RealPropertyClientViewDto {
     private DictionaryDto yardType;
     @ApiModelProperty(name = "playground", value = "Детская площадка")
     private Boolean playground;
-    @ApiModelProperty(name = "parkingTypeIds", value = "ID вида паркинга (мультивыбор)")
-    private List<Long> parkingTypeIds;
-    @ApiModelProperty(name = "propertyDeveloperId", value = "Застройщик")
-    private Long propertyDeveloperId;
+    @ApiModelProperty(name = "parkingTypeList", value = "вида паркинга (мультивыбор)")
+    private Set<DictionaryDto> parkingTypeList;
+    @ApiModelProperty(name = "propertyDeveloper", value = "Застройщик")
+    private DictionaryDto propertyDeveloper;
     @ApiModelProperty(name = "housingClass", value = "Класс жилья")
     private String housingClass;
     @ApiModelProperty(name = "housingCondition", value = "Состояние жилья")
