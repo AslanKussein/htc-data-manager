@@ -15,6 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class NewDictionaryServiceImpl implements NewDictionaryService {
+    public static final String ALL_DICT = "AllDict";
+
     private final DictionaryCacheService dictionaryCacheService;
     private final DictionaryServiceFactory factory;
 
