@@ -137,7 +137,7 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                 .build();
     }
 
-    private List<String> mapPhotoList(RealProperty realProperty, RealPropertyFileType fileType) {
+    public List<String> mapPhotoList(RealProperty realProperty, RealPropertyFileType fileType) {
         Set<String> photos = realProperty.getFilesMap().get(fileType);
         if (nonNull(photos)) {
             return new ArrayList<>(photos);
