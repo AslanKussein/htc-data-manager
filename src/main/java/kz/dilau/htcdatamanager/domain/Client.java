@@ -41,9 +41,9 @@ public class Client extends AuditableBaseEntity<String, Long> {
     private Gender gender = Gender.UNKNOWN;
     @OneToMany(mappedBy = "client")
     private List<Application> applicationList;
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client" ,cascade = CascadeType.ALL)
     private List<ClientPhoneNumber> clientPhoneNumberList;
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL)
     private List<ClientFile> clientFileList;
     private String location;
     private ZonedDateTime birthDate;

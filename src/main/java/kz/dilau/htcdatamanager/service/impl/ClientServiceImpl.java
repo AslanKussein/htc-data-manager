@@ -15,6 +15,7 @@ import kz.dilau.htcdatamanager.web.dto.ClientDto;
 import kz.dilau.htcdatamanager.web.dto.ClientFileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -47,7 +48,9 @@ public class ClientServiceImpl implements ClientService {
         return saveClient(new Client(), dto);
     }
 
-    private ClientDto saveClient(Client client, ClientDto dto) {
+
+    @Transactional
+    public ClientDto saveClient(Client client, ClientDto dto) {
         client.setFirstName(dto.getFirstName());
         client.setSurname(dto.getSurname());
         client.setPatronymic(dto.getPatronymic());
@@ -65,9 +68,10 @@ public class ClientServiceImpl implements ClientService {
                 clientPhoneNumber.setPhoneNumber(obj.getPhoneNumber());
                 clientPhoneNumber.setClient(client);
                 if (obj.getPhoneNumber().isEmpty()) {
-                    clientPhoneNumberRepository.delete(clientPhoneNumber);
+                    if (obj.getId() != null) {
+                        clientPhoneNumberRepository.delete(clientPhoneNumber);
+                    }
                 } else {
-                    clientPhoneNumberRepository.save(clientPhoneNumber);
                     clientPhoneNumberList.add(clientPhoneNumber);
                 }
             }
@@ -83,9 +87,10 @@ public class ClientServiceImpl implements ClientService {
                 clientFile.setGuid(obj.getGuid());
                 clientFile.setClient(client);
                 if (obj.getGuid().isEmpty()) {
+                    if (obj.getId() != null) {
                     clientFileRepository.delete(clientFile);
+                    }
                 } else {
-                    clientFileRepository.save(clientFile);
                     clientFileList.add(clientFile);
                 }
             }
