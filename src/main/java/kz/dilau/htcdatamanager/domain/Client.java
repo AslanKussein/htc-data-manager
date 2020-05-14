@@ -18,10 +18,10 @@ import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 import static kz.dilau.htcdatamanager.util.StringUtils.mapFullName;
 
-@Builder
-@AllArgsConstructor
 @Data
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "client")
 public class Client extends AuditableBaseEntity<String, Long> {
@@ -41,6 +41,10 @@ public class Client extends AuditableBaseEntity<String, Long> {
     private Gender gender = Gender.UNKNOWN;
     @OneToMany(mappedBy = "client")
     private List<Application> applicationList;
+    @OneToMany(mappedBy = "client" ,cascade = CascadeType.ALL)
+    private List<ClientPhoneNumber> clientPhoneNumberList;
+    @OneToMany(mappedBy = "client",cascade = CascadeType.ALL)
+    private List<ClientFile> clientFileList;
     private String location;
     private ZonedDateTime birthDate;
 
@@ -49,6 +53,20 @@ public class Client extends AuditableBaseEntity<String, Long> {
             applicationList = new ArrayList<>();
         }
         return applicationList;
+    }
+
+
+    public List<ClientPhoneNumber> getClientPhoneNumberList() {
+        if (isNull(clientPhoneNumberList)) {
+            clientPhoneNumberList = new ArrayList<>();
+        }
+        return clientPhoneNumberList;
+    }
+    public List<ClientFile> getClientFileList() {
+        if (isNull(clientFileList)) {
+            clientFileList = new ArrayList<>();
+        }
+        return clientFileList;
     }
 
     @Override

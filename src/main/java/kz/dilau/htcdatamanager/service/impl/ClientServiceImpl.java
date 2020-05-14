@@ -1,21 +1,33 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.domain.ClientPhoneNumber;
 import kz.dilau.htcdatamanager.domain.Client;
+import kz.dilau.htcdatamanager.domain.ClientFile;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
+import kz.dilau.htcdatamanager.repository.ClientPhoneNumberRepository;
+import kz.dilau.htcdatamanager.repository.ClientFileRepository;
 import kz.dilau.htcdatamanager.repository.ClientRepository;
 import kz.dilau.htcdatamanager.service.ClientService;
+import kz.dilau.htcdatamanager.web.dto.ClientPhoneNumbersDto;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
+import kz.dilau.htcdatamanager.web.dto.ClientFileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
+    private final ClientPhoneNumberRepository clientPhoneNumberRepository;
+    private final ClientFileRepository clientFileRepository;
 
     @Override
     public ClientDto findClientByPhoneNumber(String phoneNumber) {
@@ -36,12 +48,55 @@ public class ClientServiceImpl implements ClientService {
         return saveClient(new Client(), dto);
     }
 
-    private ClientDto saveClient(Client client, ClientDto dto) {
+
+    @Transactional
+    public ClientDto saveClient(Client client, ClientDto dto) {
         client.setFirstName(dto.getFirstName());
         client.setSurname(dto.getSurname());
         client.setPatronymic(dto.getPatronymic());
         client.setPhoneNumber(dto.getPhoneNumber());
         client.setEmail(dto.getEmail());
+        client.setGender(dto.getGender());
+        client.getClientPhoneNumberList().clear();
+        if (!CollectionUtils.isEmpty(dto.getClientPhoneNumbersDtoList())) {
+            List<ClientPhoneNumber> clientPhoneNumberList = new ArrayList<>();
+            for (ClientPhoneNumbersDto obj : dto.getClientPhoneNumbersDtoList()) {
+                ClientPhoneNumber clientPhoneNumber = new ClientPhoneNumber();
+                if (obj.getId() != null) {
+                    clientPhoneNumber.setId(obj.getId());
+                }
+                clientPhoneNumber.setPhoneNumber(obj.getPhoneNumber());
+                clientPhoneNumber.setClient(client);
+                if (obj.getPhoneNumber().isEmpty()) {
+                    if (obj.getId() != null) {
+                        clientPhoneNumberRepository.delete(clientPhoneNumber);
+                    }
+                } else {
+                    clientPhoneNumberList.add(clientPhoneNumber);
+                }
+            }
+            client.getClientPhoneNumberList().addAll(clientPhoneNumberList);
+        }
+        if (!CollectionUtils.isEmpty(dto.getClientFileDtoList())) {
+            List<ClientFile> clientFileList = new ArrayList<>();
+            for (ClientFileDto obj : dto.getClientFileDtoList()) {
+                ClientFile clientFile = new ClientFile();
+                if (obj.getId() != null) {
+                    clientFile.setId(obj.getId());
+                }
+                clientFile.setGuid(obj.getGuid());
+                clientFile.setClient(client);
+                if (obj.getGuid().isEmpty()) {
+                    if (obj.getId() != null) {
+                    clientFileRepository.delete(clientFile);
+                    }
+                } else {
+                    clientFileList.add(clientFile);
+                }
+            }
+            client.getClientFileList().addAll(clientFileList);
+        }
+
         client.setGender(dto.getGender());
         client = clientRepository.save(client);
         return new ClientDto(client);
