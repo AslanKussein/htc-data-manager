@@ -367,7 +367,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
-    private Application getApplicationById(Long id) {
+    public Application getApplicationById(Long id) {
         Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
             if (optionalApplication.get().getIsRemoved()) {
