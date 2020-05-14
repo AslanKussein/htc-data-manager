@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddPhoneNumbersDto {
+public class ClientPhoneNumbersDto {
     private Long id;
     private Long clientId;
     private String phoneNumber;

@@ -1,34 +1,31 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.AddPhoneNumber;
+import kz.dilau.htcdatamanager.domain.ClientPhoneNumber;
 import kz.dilau.htcdatamanager.domain.Client;
 import kz.dilau.htcdatamanager.domain.ClientFile;
-import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.AddPhoneNumberRepository;
+import kz.dilau.htcdatamanager.repository.ClientPhoneNumberRepository;
 import kz.dilau.htcdatamanager.repository.ClientFileRepository;
 import kz.dilau.htcdatamanager.repository.ClientRepository;
 import kz.dilau.htcdatamanager.service.ClientService;
-import kz.dilau.htcdatamanager.web.dto.AddPhoneNumbersDto;
+import kz.dilau.htcdatamanager.web.dto.ClientPhoneNumbersDto;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
 import kz.dilau.htcdatamanager.web.dto.ClientFileDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.LifecycleState;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
 public class ClientServiceImpl implements ClientService {
     private final ClientRepository clientRepository;
-    private final AddPhoneNumberRepository addPhoneNumberRepository;
+    private final ClientPhoneNumberRepository clientPhoneNumberRepository;
     private final ClientFileRepository clientFileRepository;
 
     @Override
@@ -57,28 +54,28 @@ public class ClientServiceImpl implements ClientService {
         client.setPhoneNumber(dto.getPhoneNumber());
         client.setEmail(dto.getEmail());
         client.setGender(dto.getGender());
-        client.getAddPhoneNumberList().clear();
-        if (!CollectionUtils.isEmpty(dto.getAddPhoneNumbers())) {
-            List<AddPhoneNumber> addPhoneNumberList = new ArrayList<>();
-            for (AddPhoneNumbersDto obj : dto.getAddPhoneNumbers()) {
-                AddPhoneNumber addPhoneNumber = new AddPhoneNumber();
+        client.getClientPhoneNumberList().clear();
+        if (!CollectionUtils.isEmpty(dto.getClientPhoneNumbersDtoList())) {
+            List<ClientPhoneNumber> clientPhoneNumberList = new ArrayList<>();
+            for (ClientPhoneNumbersDto obj : dto.getClientPhoneNumbersDtoList()) {
+                ClientPhoneNumber clientPhoneNumber = new ClientPhoneNumber();
                 if (obj.getId() != null) {
-                    addPhoneNumber.setId(obj.getId());
+                    clientPhoneNumber.setId(obj.getId());
                 }
-                addPhoneNumber.setPhoneNumber(obj.getPhoneNumber());
-                addPhoneNumber.setClient(client);
+                clientPhoneNumber.setPhoneNumber(obj.getPhoneNumber());
+                clientPhoneNumber.setClient(client);
                 if (obj.getPhoneNumber().isEmpty()) {
-                    addPhoneNumberRepository.delete(addPhoneNumber);
+                    clientPhoneNumberRepository.delete(clientPhoneNumber);
                 } else {
-                    addPhoneNumberRepository.save(addPhoneNumber);
-                    addPhoneNumberList.add(addPhoneNumber);
+                    clientPhoneNumberRepository.save(clientPhoneNumber);
+                    clientPhoneNumberList.add(clientPhoneNumber);
                 }
             }
-            client.getAddPhoneNumberList().addAll(addPhoneNumberList);
+            client.getClientPhoneNumberList().addAll(clientPhoneNumberList);
         }
-        if (!CollectionUtils.isEmpty(dto.getClientFiles())) {
+        if (!CollectionUtils.isEmpty(dto.getClientFileDtoList())) {
             List<ClientFile> clientFileList = new ArrayList<>();
-            for (ClientFileDto obj : dto.getClientFiles()) {
+            for (ClientFileDto obj : dto.getClientFileDtoList()) {
                 ClientFile clientFile = new ClientFile();
                 if (obj.getId() != null) {
                     clientFile.setId(obj.getId());

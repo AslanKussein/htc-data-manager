@@ -2,12 +2,10 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.AddPhoneNumber;
+import kz.dilau.htcdatamanager.domain.ClientPhoneNumber;
 import kz.dilau.htcdatamanager.domain.Client;
 import kz.dilau.htcdatamanager.domain.ClientFile;
-import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
-import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import lombok.*;
 import org.springframework.util.CollectionUtils;
 
@@ -15,9 +13,7 @@ import javax.validation.constraints.*;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 
@@ -51,10 +47,10 @@ public class ClientDto {
     private String location;
     @ApiModelProperty(value = "день рождения")
     private ZonedDateTime birthDate;
-    @ApiModelProperty(value = "доп телефон номер")
-    private List<AddPhoneNumbersDto> addPhoneNumbers;
+    @ApiModelProperty(value = "доп телефоны клиента")
+    private List<ClientPhoneNumbersDto> clientPhoneNumbersDtoList;
     @ApiModelProperty(value = "файлы клиента")
-    private List<ClientFileDto> clientFiles;
+    private List<ClientFileDto> clientFileDtoList;
 
 
     public Gender getGender() {
@@ -74,16 +70,16 @@ public class ClientDto {
         this.gender = client.getGender();
         this.birthDate = client.getBirthDate();
         this.location = client.getLocation();
-        if (!CollectionUtils.isEmpty(client.getAddPhoneNumberList())) {
-            List<AddPhoneNumbersDto> addPhoneNumbersDtoList= new ArrayList<>();
-            for (AddPhoneNumber obj : client.getAddPhoneNumberList()) {
-                AddPhoneNumbersDto numbersDto = new AddPhoneNumbersDto();
+        if (!CollectionUtils.isEmpty(client.getClientPhoneNumberList())) {
+            List<ClientPhoneNumbersDto> clientPhoneNumbersDtoList= new ArrayList<>();
+            for (ClientPhoneNumber obj : client.getClientPhoneNumberList()) {
+                ClientPhoneNumbersDto numbersDto = new ClientPhoneNumbersDto();
                 numbersDto.setClientId(obj.getClient().getId());
                 numbersDto.setId(obj.getId());
                 numbersDto.setPhoneNumber(obj.getPhoneNumber());
-                addPhoneNumbersDtoList.add(numbersDto);
+                clientPhoneNumbersDtoList.add(numbersDto);
             }
-            this.addPhoneNumbers=(addPhoneNumbersDtoList);
+            this.clientPhoneNumbersDtoList=(clientPhoneNumbersDtoList);
         }
         if (!CollectionUtils.isEmpty(client.getClientFileList())) {
             List<ClientFileDto> clientFileDtoList= new ArrayList<>();
@@ -94,7 +90,7 @@ public class ClientDto {
                 clientFileDto.setGuid(obj.getGuid());
                 clientFileDtoList.add(clientFileDto);
             }
-            this.clientFiles=(clientFileDtoList);
+            this.clientFileDtoList=(clientFileDtoList);
         }
     }
 }

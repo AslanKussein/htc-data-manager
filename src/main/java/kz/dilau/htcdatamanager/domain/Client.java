@@ -42,7 +42,7 @@ public class Client extends AuditableBaseEntity<String, Long> {
     @OneToMany(mappedBy = "client")
     private List<Application> applicationList;
     @OneToMany(mappedBy = "client")
-    private List<AddPhoneNumber> addPhoneNumberList;
+    private List<ClientPhoneNumber> clientPhoneNumberList;
     @OneToMany(mappedBy = "client")
     private List<ClientFile> clientFileList;
     private String location;
@@ -56,11 +56,11 @@ public class Client extends AuditableBaseEntity<String, Long> {
     }
 
 
-    public List<AddPhoneNumber> getAddPhoneNumberList() {
-        if (isNull(addPhoneNumberList)) {
-            addPhoneNumberList = new ArrayList<>();
+    public List<ClientPhoneNumber> getClientPhoneNumberList() {
+        if (isNull(clientPhoneNumberList)) {
+            clientPhoneNumberList = new ArrayList<>();
         }
-        return addPhoneNumberList;
+        return clientPhoneNumberList;
     }
     public List<ClientFile> getClientFileList() {
         if (isNull(clientFileList)) {
