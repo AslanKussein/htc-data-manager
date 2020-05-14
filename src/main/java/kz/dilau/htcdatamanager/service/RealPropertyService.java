@@ -1,6 +1,9 @@
 package kz.dilau.htcdatamanager.service;
 
+import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 
@@ -24,4 +27,8 @@ public interface RealPropertyService {
     RealPropertyClientDto mapToRealPropertyClientDto(RealProperty realProperty);
 
     boolean existsByCadastralNumber(String cadastralNumber);
+
+    List<String> mapPhotoList(RealProperty realProperty, RealPropertyFileType fileType);
+
+    PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info);
 }

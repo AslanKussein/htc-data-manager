@@ -2,13 +2,18 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.domain.ClientPhoneNumber;
 import kz.dilau.htcdatamanager.domain.Client;
+import kz.dilau.htcdatamanager.domain.ClientFile;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
 import lombok.*;
+import org.springframework.util.CollectionUtils;
 
 import javax.validation.constraints.*;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Objects.isNull;
 
@@ -42,6 +47,11 @@ public class ClientDto {
     private String location;
     @ApiModelProperty(value = "день рождения")
     private ZonedDateTime birthDate;
+    @ApiModelProperty(value = "доп телефоны клиента")
+    private List<ClientPhoneNumbersDto> clientPhoneNumbersDtoList;
+    @ApiModelProperty(value = "файлы клиента")
+    private List<ClientFileDto> clientFileDtoList;
+
 
     public Gender getGender() {
         if (isNull(gender)) {
@@ -60,5 +70,27 @@ public class ClientDto {
         this.gender = client.getGender();
         this.birthDate = client.getBirthDate();
         this.location = client.getLocation();
+        if (!CollectionUtils.isEmpty(client.getClientPhoneNumberList())) {
+            List<ClientPhoneNumbersDto> clientPhoneNumbersDtoList= new ArrayList<>();
+            for (ClientPhoneNumber obj : client.getClientPhoneNumberList()) {
+                ClientPhoneNumbersDto numbersDto = new ClientPhoneNumbersDto();
+                numbersDto.setClientId(obj.getClient().getId());
+                numbersDto.setId(obj.getId());
+                numbersDto.setPhoneNumber(obj.getPhoneNumber());
+                clientPhoneNumbersDtoList.add(numbersDto);
+            }
+            this.clientPhoneNumbersDtoList=(clientPhoneNumbersDtoList);
+        }
+        if (!CollectionUtils.isEmpty(client.getClientFileList())) {
+            List<ClientFileDto> clientFileDtoList= new ArrayList<>();
+            for (ClientFile obj : client.getClientFileList()) {
+                ClientFileDto clientFileDto = new ClientFileDto();
+                clientFileDto.setClientId(obj.getClient().getId());
+                clientFileDto.setId(obj.getId());
+                clientFileDto.setGuid(obj.getGuid());
+                clientFileDtoList.add(clientFileDto);
+            }
+            this.clientFileDtoList=(clientFileDtoList);
+        }
     }
 }
