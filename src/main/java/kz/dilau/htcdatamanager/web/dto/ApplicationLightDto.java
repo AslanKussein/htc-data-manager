@@ -15,9 +15,9 @@ import javax.validation.constraints.NotNull;
 public class ApplicationLightDto {
     @ApiModelProperty(value = "ID заявки")
     private Long id;
-    @ApiModelProperty(value = "Данные по клиенту", required = true)
-    @NotNull(message = "Client must not be null")
-    private ClientDto clientDto;
+    @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
+    @NotNull
+    private String clientLogin;
     @ApiModelProperty(value = "ID вида операции", required = true)
     @NotNull(message = "Operation type must not be null")
     private Long operationTypeId;
