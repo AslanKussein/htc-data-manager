@@ -1,7 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,26 +33,13 @@ public class Client extends AuditableBaseEntity<String, Long> {
     private String phoneNumber;
     @Column(name = "email")
     private String email;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender", nullable = false)
-    @Builder.Default
-    private Gender gender = Gender.UNKNOWN;
-    @OneToMany(mappedBy = "client")
-    private List<Application> applicationList;
+
     @OneToMany(mappedBy = "client" ,cascade = CascadeType.ALL)
     private List<ClientPhoneNumber> clientPhoneNumberList;
     @OneToMany(mappedBy = "client",cascade = CascadeType.ALL)
     private List<ClientFile> clientFileList;
     private String location;
     private ZonedDateTime birthDate;
-
-    public List<Application> getApplicationList() {
-        if (isNull(applicationList)) {
-            applicationList = new ArrayList<>();
-        }
-        return applicationList;
-    }
-
 
     public List<ClientPhoneNumber> getClientPhoneNumberList() {
         if (isNull(clientPhoneNumberList)) {
@@ -79,8 +64,4 @@ public class Client extends AuditableBaseEntity<String, Long> {
         return mapFullName(this.surname, this.firstName, this.patronymic);
     }
 
-    @Transient
-    public Application getLastApplication() {
-        return getApplicationList().stream().max(Comparator.comparing(Application::getCreatedDate)).orElseGet(null);
-    }
 }

@@ -39,7 +39,7 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
     private ApplicationClientViewDto mapToApplicationClientDto(Application application) {
         return ApplicationClientViewDto.builder()
                 .id(application.getId())
-                .clientDto(mapToClientDto(application.getClient()))
+                .clientLogin(application.getClientLogin())
                 .realPropertyRequestDto(nonNull(application.getRealProperty()) ? mapToRealPropertyClientViewDto(application.getRealProperty()) : null)
                 .operationTypeId(application.getOperationType().getId())
                 .objectPrice(application.getObjectPrice())
@@ -60,11 +60,6 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
                 .agent(application.getCurrentAgent())
                 .build();
     }
-
-    private ClientDto mapToClientDto(Client client) {
-        return new ClientDto(client);
-    }
-
 
     private <T extends BaseCustomDictionary> DictionaryDto<Long> getDicById(Class<T> clazz, Long id) {
         if (id == null) {
