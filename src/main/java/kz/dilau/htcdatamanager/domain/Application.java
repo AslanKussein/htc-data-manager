@@ -4,7 +4,10 @@ import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.domain.dictionary.PossibleReasonForBidding;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -55,13 +58,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
     private boolean isCommissionIncludedInThePrice = false;
     @Column(name = "note")
     private String note;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "client_id", nullable = false)
-    @ToString.Exclude
-    private Client client;
+    private String clientLogin;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "real_property_id")
-    @ToString.Exclude
     private RealProperty realProperty;
     @ManyToOne(optional = false)
     @JoinColumn(name = "application_status_id")

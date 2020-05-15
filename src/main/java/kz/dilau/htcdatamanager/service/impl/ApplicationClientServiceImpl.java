@@ -73,6 +73,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 .district(entityService.mapEntity(District.class, dto.getDistrictId()))
                 .street(entityService.mapEntity(Street.class, dto.getStreetId()))
                 .houseNumber(dto.getHouseNumber())
+                .houseNumberFraction(dto.getHouseNumberFraction())
                 .yearOfConstruction(dto.getYearOfConstruction())
                 .build();
     }
@@ -104,9 +105,9 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     }
 
     @Override
-    public Long create(ApplicationClientDTO dto) {
+    public Long create(String login, ApplicationClientDTO dto) {
         Application application = new Application();
-
+        application.setClientLogin(login);
         fillApplication(application, dto);
 
         applicationRepository.save(application);

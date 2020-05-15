@@ -19,9 +19,9 @@ import java.util.List;
 public class ApplicationClientViewDto {
     @ApiModelProperty(value = "ID заявки")
     private Long id;
-    @ApiModelProperty(value = "Данные по клиенту", required = true)
+    @ApiModelProperty(value = "Логин клиента", required = true)
     @NotNull(message = "Client must not be null")
-    private ClientDto clientDto;
+    private String clientLogin;
     @ApiModelProperty(value = "Данные по невижимости", required = true)
     @NotNull(message = "Real property must not be null")
     private RealPropertyClientViewDto realPropertyRequestDto;
@@ -57,6 +57,4 @@ public class ApplicationClientViewDto {
     private String note;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
-//    @ApiModelProperty(value = "История статусов")
-//    private List<ApplicationStatusHistoryDto> statusHistoryDtoList;
 }

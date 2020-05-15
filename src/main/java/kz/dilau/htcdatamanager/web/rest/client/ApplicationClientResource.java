@@ -6,8 +6,11 @@ import kz.dilau.htcdatamanager.service.ApplicationClientService;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.security.Principal;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -27,14 +30,14 @@ public class ApplicationClientResource {
     }
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody ApplicationClientDTO dto) {
-        Long result = applicationClientService.create(dto);
+    public ResponseEntity<Long> create(@RequestBody ApplicationClientDTO dto,
+                                       @ApiIgnore @AuthenticationPrincipal final Principal principal) {
+        Long result = applicationClientService.create(principal.getName(), dto);
         return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Long> update(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
-                                       @PathVariable("id") Long id,
+    public ResponseEntity<Long> update(@PathVariable("id") Long id,
                                        @RequestBody ApplicationClientDTO dto) {
         Long result = applicationClientService.update(id, dto);
         return ResponseEntity.ok(result);

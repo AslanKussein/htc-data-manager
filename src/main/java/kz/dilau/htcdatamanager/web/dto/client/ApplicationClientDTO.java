@@ -32,4 +32,6 @@ public class ApplicationClientDTO {
     private RealPropertyClientDto realPropertyClientDto;
     @ApiModelProperty(name = "note", value = "Примечание")
     private String note;
+    @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
+    private String clientLogin;
 }

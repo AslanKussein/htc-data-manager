@@ -178,6 +178,7 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                 .separateBathroom(realProperty.getSeparateBathroom())
                 .purchaseInfoClientDto(mapToPurchaseInfoClientDto(realProperty.getPurchaseInfo()))
                 .houseNumber(generalCharacteristics.getHouseNumber())
+                .houseNumberFraction(generalCharacteristics.getHouseNumberFraction())
                 .districtId(generalCharacteristics.getDistrictId())
                 .streetId(generalCharacteristics.getStreetId())
                 .build();
