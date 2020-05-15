@@ -1,7 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.Client;
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
@@ -13,7 +12,6 @@ import kz.dilau.htcdatamanager.service.RealPropertyClientService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationClientViewDto;
-import kz.dilau.htcdatamanager.web.dto.ClientDto;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientViewDto;
 import lombok.RequiredArgsConstructor;
