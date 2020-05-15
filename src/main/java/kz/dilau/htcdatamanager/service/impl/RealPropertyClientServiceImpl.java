@@ -1,12 +1,12 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.*;
+import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.Client;
+import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
-import kz.dilau.htcdatamanager.exception.EntityRemovedException;
-import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.RealPropertyClientService;
@@ -14,20 +14,14 @@ import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationClientViewDto;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
-import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientViewDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
-import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToBigDecimalPeriod;
-import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
 
 @RequiredArgsConstructor
 @Service
@@ -72,19 +66,21 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
     }
 
 
-    private <T extends BaseCustomDictionary> DictionaryDto getDicById(Class<T> clazz, Long id) {
+    private <T extends BaseCustomDictionary> DictionaryDto<Long> getDicById(Class<T> clazz, Long id) {
         if (id == null) {
             return null;
         }
-        return convertInstanceOfObject(cacheService.getById(clazz, id), DictionaryDto.class);
+        BaseCustomDictionary baseCustomDictionary = cacheService.getById(clazz, id);
+        return wrapToDictionaryDto(baseCustomDictionary);
     }
 
-    public <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
-        try {
-            return clazz.cast(o);
-        } catch (ClassCastException e) {
-            return null;
-        }
+    private DictionaryDto<Long> wrapToDictionaryDto(BaseCustomDictionary baseCustomDictionary) {
+        DictionaryDto<Long> dictionaryDto = new DictionaryDto<>();
+        dictionaryDto.setId(baseCustomDictionary.getId());
+        dictionaryDto.setNameRu(baseCustomDictionary.getMultiLang().getNameRu());
+        dictionaryDto.setNameKz(baseCustomDictionary.getMultiLang().getNameKz());
+        dictionaryDto.setNameEn(baseCustomDictionary.getMultiLang().getNameEn());
+        return dictionaryDto;
     }
 
     public RealPropertyClientViewDto mapToRealPropertyClientViewDto(RealProperty realProperty) {
