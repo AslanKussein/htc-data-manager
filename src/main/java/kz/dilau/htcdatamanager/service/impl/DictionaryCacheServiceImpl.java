@@ -298,10 +298,12 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     }
 
     public BaseCustomDictionary loadDictionaryByIdFromDatabase(String dictionaryEntityName, Long id) {
-        BaseCustomDictionary dictionary = (BaseCustomDictionary) entityManager.createQuery("from " + dictionaryEntityName + " where id = " + id).getSingleResult();
-        if (isNull(dictionary)) {
+        List<BaseCustomDictionary> dictionaryList = entityManager.createQuery("from " + dictionaryEntityName + " where id = " + id).getResultList();
+        if (isNull(dictionaryList) || dictionaryList.isEmpty()) {
             throw NotFoundException.createEntityNotFoundById(dictionaryEntityName, id);
-        } else if (dictionary.getIsRemoved()) {
+        }
+        BaseCustomDictionary dictionary = dictionaryList.get(0);
+        if (dictionary.getIsRemoved()) {
             throw EntityRemovedException.createEntityRemovedById(dictionaryEntityName, id);
         } else {
             return dictionary;
