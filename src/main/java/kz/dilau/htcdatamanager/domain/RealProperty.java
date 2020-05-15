@@ -77,12 +77,12 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private Long heatingSystemId;
     @Column(name = "land_area")
     private BigDecimal landArea;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_characteristics_id")
     private GeneralCharacteristics generalCharacteristics;
     @Column(name = "general_characteristics_id", insertable = false, updatable = false)
     private Long generalCharacteristicsId;
-    @OneToOne(mappedBy = "realProperty", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "realProperty", cascade = CascadeType.ALL, orphanRemoval = true)
     private PurchaseInfo purchaseInfo;
     @JsonIgnore
     @OneToOne(mappedBy = "realProperty")

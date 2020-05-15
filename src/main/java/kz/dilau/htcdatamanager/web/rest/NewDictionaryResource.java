@@ -5,6 +5,7 @@ import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.NewDictionaryService;
 import kz.dilau.htcdatamanager.web.dto.common.PageDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryFilterDto;
 import kz.dilau.htcdatamanager.web.dto.dictionary.DictionaryItemRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static kz.dilau.htcdatamanager.config.Constants.NEW_DICTIONARIES_REST_ENDPOINT;
+import static kz.dilau.htcdatamanager.service.impl.NewDictionaryServiceImpl.ALL_DICT;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,10 +33,27 @@ public class NewDictionaryResource {
         return ResponseEntity.ok(aDictionaries);
     }
 
+    @ApiOperation(value = "Список всех справочников с пагинацией", response = BaseCustomDictionary.class)
+    @PostMapping("allDict/pageable")
+    public ResponseEntity getAllDictPageable(@RequestBody PageableDto pageableDto) {
+        PageDto<BaseCustomDictionary> aDictionaries = dictionaryCacheService.getDictionary(DictionaryFilterDto.builder()
+                .dictionaryName(ALL_DICT)
+                .pageableDto(pageableDto)
+                .build());
+        return ResponseEntity.ok(aDictionaries);
+    }
+
     @ApiOperation(value = "Список значений по справочнику", responseContainer = "List", response = BaseCustomDictionary.class)
     @GetMapping("/{dictionaryName}/list")
     public ResponseEntity getDictionaryValues(@PathVariable("dictionaryName") String dictionaryName) {
         List<BaseCustomDictionary> aDictionaries = dictionaryCacheService.getDictionary(dictionaryName);
+        return ResponseEntity.ok(aDictionaries);
+    }
+
+    @ApiOperation(value = "Список всех справочников", responseContainer = "List", response = BaseCustomDictionary.class)
+    @GetMapping("/allDict")
+    public ResponseEntity getAllDict() {
+        List<BaseCustomDictionary> aDictionaries = dictionaryCacheService.getDictionary(ALL_DICT);
         return ResponseEntity.ok(aDictionaries);
     }
 

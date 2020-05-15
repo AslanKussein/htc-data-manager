@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service;
 
+import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
 import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
@@ -19,4 +20,7 @@ public interface ApplicationService {
     Long reassignApplication(AssignmentDto dto);
 
     Long changeStatus(ChangeStatusDto dto);
+
+    Application getApplicationById(Long id);
+
 }

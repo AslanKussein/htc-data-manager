@@ -288,12 +288,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         if (nonNull(application.getId())) {
             realProperty.setId(application.getRealProperty().getId());
-            if (nonNull(application.getRealProperty().getPurchaseInfo()) && nonNull(realProperty.getPurchaseInfo())) {
-                realProperty.getPurchaseInfo().setId(application.getRealProperty().getPurchaseInfo().getId());
-            }
-            if (nonNull(application.getRealProperty().getGeneralCharacteristicsId()) && nonNull(realProperty.getGeneralCharacteristics())) {
-                realProperty.getGeneralCharacteristics().setId(application.getRealProperty().getGeneralCharacteristicsId());
-            }
         } else {
             ApplicationStatus status = applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT);
             application.setApplicationStatus(status);
@@ -338,7 +332,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
-    private Application getApplicationById(Long id) {
+    public Application getApplicationById(Long id) {
         Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
             if (optionalApplication.get().getIsRemoved()) {
