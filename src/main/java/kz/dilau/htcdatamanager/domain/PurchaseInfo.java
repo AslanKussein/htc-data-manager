@@ -1,17 +1,15 @@
 package kz.dilau.htcdatamanager.domain;
 
-import kz.dilau.htcdatamanager.domain.base.BaseEntity;
-import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
-import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 
-import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Data
@@ -20,7 +18,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @AllArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "purchase_info")
-public class PurchaseInfo extends BaseEntity<Long> {
+public class PurchaseInfo extends AGeneralCharacteristics {
     @Column(name = "object_price_from")
     private BigDecimal objectPriceFrom;
     @Column(name = "object_price_to")
@@ -65,85 +63,12 @@ public class PurchaseInfo extends BaseEntity<Long> {
     private Integer numberOfFloorsFrom;
     @Column(name = "number_of_floors_to")
     private Integer numberOfFloorsTo;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private RealProperty realProperty;
-
-    public void setObjectPrice(BigDecimalPeriod period) {
-        if (nonNull(period)) {
-            this.objectPriceFrom = period.getFrom();
-            this.objectPriceTo = period.getTo();
-        }
-    }
-
-    public void setFloor(IntegerPeriod period) {
-        if (nonNull(period)) {
-            this.floorFrom = period.getFrom();
-            this.floorTo = period.getTo();
-        }
-    }
-
-    public void setNumberOfRooms(IntegerPeriod period) {
-        if (nonNull(period)) {
-            this.numberOfRoomsFrom = period.getFrom();
-            this.numberOfRoomsTo = period.getTo();
-        }
-    }
-
-    public void setNumberOfFloors(IntegerPeriod period) {
-        if (nonNull(period)) {
-            this.numberOfFloorsFrom = period.getFrom();
-            this.numberOfFloorsTo = period.getTo();
-        }
-    }
-
-    public void setNumberOfBedrooms(IntegerPeriod period) {
-        if (nonNull(period)) {
-            this.numberOfBedroomsFrom = period.getFrom();
-            this.numberOfBedroomsTo= period.getTo();
-        }
-    }
-
-    public void setTotalArea(BigDecimalPeriod period) {
-        if (nonNull(period)) {
-            this.totalAreaFrom = period.getFrom();
-            this.totalAreaTo = period.getTo();
-        }
-    }
-
-    public void setLivingArea(BigDecimalPeriod period) {
-        if (nonNull(period)) {
-            this.livingAreaFrom = period.getFrom();
-            this.livingAreaTo = period.getTo();
-        }
-    }
-
-    public void setKitchenArea(BigDecimalPeriod period) {
-        if (nonNull(period)) {
-            this.kitchenAreaFrom = period.getFrom();
-            this.kitchenAreaTo = period.getTo();
-        }
-    }
-
-    public void setBalconyArea(BigDecimalPeriod period) {
-        if (nonNull(period)) {
-            this.balconyAreaFrom = period.getFrom();
-            this.balconyAreaTo = period.getTo();
-        }
-    }
-
-    public void setCeilingHeight(BigDecimalPeriod period) {
-        if (nonNull(period)) {
-            this.ceilingHeightFrom = period.getFrom();
-            this.ceilingHeightTo = period.getTo();
-        }
-    }
-
-    public void setLandArea(BigDecimalPeriod period) {
-        if (nonNull(period)) {
-            this.landAreaFrom = period.getFrom();
-            this.landAreaTo = period.getTo();
-        }
-    }
+    @Column(name = "year_of_construction_from")
+    private Integer yearOfConstructionFrom;
+    @Column(name = "year_of_construction_to")
+    private Integer yearOfConstructionTo;
+    @Column(name = "apartments_on_the_site_from")
+    private Integer apartmentsOnTheSiteFrom;
+    @Column(name = "apartments_on_the_site_to")
+    private Integer apartmentsOnTheSiteTo;
 }

@@ -1,26 +1,21 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
-import kz.dilau.htcdatamanager.domain.PurchaseInfo;
-import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
+import kz.dilau.htcdatamanager.domain.old.OldPurchaseInfo;
 import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
 import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
-import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
+import kz.dilau.htcdatamanager.repository.OldRealPropertyRepository;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
 import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
-import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
-import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,14 +26,14 @@ import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
 @Service
 @RequiredArgsConstructor
 public class RealPropertyServiceImpl implements RealPropertyService {
-    private final RealPropertyRepository realPropertyRepository;
+    private final OldRealPropertyRepository realPropertyRepository;
 
     public RealPropertyRequestDto getById(Long id) {
         return mapToRealPropertyDto(realPropertyRepository.getOne(id));
     }
 
     public List<RealPropertyRequestDto> getAll() {
-        List<RealProperty> realPropertyList = realPropertyRepository.findAll();
+        List<OldRealProperty> realPropertyList = realPropertyRepository.findAll();
         List<RealPropertyRequestDto> realPropertyRequestDtoList = new ArrayList<>();
         realPropertyList.forEach(item -> realPropertyRequestDtoList.add(mapToRealPropertyDto(item)));
         return realPropertyRequestDtoList;
@@ -52,18 +47,18 @@ public class RealPropertyServiceImpl implements RealPropertyService {
 //        realPropertyRepository.deleteById(id);
     }
 
-    public void update(Long id, RealProperty var0) {
-//        RealProperty var1 = realPropertyRepository.getOne(id);
+    public void update(Long id, OldRealProperty var0) {
+//        OldRealProperty var1 = realPropertyRepository.getOne(id);
 //        BeanUtils.copyProperties(var0, var1);
 //        realPropertyRepository.save(var1);
     }
 
-    public void save(RealProperty realProperty) {
+    public void save(OldRealProperty realProperty) {
         realPropertyRepository.save(realProperty);
     }
 
     public void addFilesToProperty(Long propertyId, List<String> photoIds, List<String> housingPlans, List<String> virtualTours) {
-        RealProperty realProperty = realPropertyRepository.getOne(propertyId);
+        OldRealProperty realProperty = realPropertyRepository.getOne(propertyId);
         Map<RealPropertyFileType, Set<String>> filesMap = realProperty.getFilesMap();
         if (!CollectionUtils.isEmpty(photoIds)) {
             if (filesMap.containsKey(RealPropertyFileType.PHOTO)) {
@@ -89,8 +84,8 @@ public class RealPropertyServiceImpl implements RealPropertyService {
         realPropertyRepository.save(realProperty);
     }
 
-    public RealPropertyRequestDto mapToRealPropertyDto(RealProperty realProperty) {
-        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
+    public RealPropertyRequestDto mapToRealPropertyDto(OldRealProperty realProperty) {
+        OldGeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
         return RealPropertyRequestDto.builder()
                 .objectTypeId(realProperty.getObjectTypeId())
                 .cityId(generalCharacteristics.getCityId())
@@ -137,7 +132,7 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                 .build();
     }
 
-    public List<String> mapPhotoList(RealProperty realProperty, RealPropertyFileType fileType) {
+    public List<String> mapPhotoList(OldRealProperty realProperty, RealPropertyFileType fileType) {
         Set<String> photos = realProperty.getFilesMap().get(fileType);
         if (nonNull(photos)) {
             return new ArrayList<>(photos);
@@ -145,7 +140,7 @@ public class RealPropertyServiceImpl implements RealPropertyService {
         return null;
     }
 
-    public PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info) {
+    public PurchaseInfoDto mapToPurchaseInfoDto(OldPurchaseInfo info) {
         if (nonNull(info)) {
             return PurchaseInfoDto.builder()
                     .objectPricePeriod(mapToBigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()))
@@ -164,8 +159,8 @@ public class RealPropertyServiceImpl implements RealPropertyService {
         return null;
     }
 
-    public RealPropertyClientDto mapToRealPropertyClientDto(RealProperty realProperty) {
-        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
+    public RealPropertyClientDto mapToRealPropertyClientDto(OldRealProperty realProperty) {
+        OldGeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
         return RealPropertyClientDto.builder()
                 .totalArea(realProperty.getTotalArea())
                 .objectTypeId(realProperty.getObjectTypeId())
@@ -183,7 +178,7 @@ public class RealPropertyServiceImpl implements RealPropertyService {
                 .build();
     }
 
-    private PurchaseInfoClientDto mapToPurchaseInfoClientDto(PurchaseInfo info) {
+    private PurchaseInfoClientDto mapToPurchaseInfoClientDto(OldPurchaseInfo info) {
         if (nonNull(info)) {
             return PurchaseInfoClientDto.builder()
                     .objectPricePeriod(mapToBigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()))

@@ -15,14 +15,14 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = TABLE_NAME_PREFIX + "new_real_property_metadata")
-public class NewRealPropertyMetadata extends AuditableBaseEntity<String, Long> {
+@Table(name = TABLE_NAME_PREFIX + "real_property_metadata")
+public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     @ManyToOne
     @JoinColumn(name = "real_property_id")
-    private NewRealProperty realProperty;
+    private RealProperty realProperty;
     @ManyToOne
     @JoinColumn(name = "application_id")
-    private NewApplication application;
+    private Application application;
 
     @Column(name = "floor")
     private Integer floor;
@@ -49,7 +49,7 @@ public class NewRealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Long houseConditionId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "residential_complex_id")
-    private NewResidentialComplex residentialComplex;
+    private ResidentialComplex residentialComplex;
     @Column(name = "residential_complex_id", insertable = false, updatable = false)
     private Long residentialComplexId;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -66,7 +66,7 @@ public class NewRealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private BigDecimal landArea;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_characteristics_id")
-    private NewGeneralCharacteristics generalCharacteristics;
+    private GeneralCharacteristics generalCharacteristics;
     @Column(name = "general_characteristics_id", insertable = false, updatable = false)
     private Long generalCharacteristicsId;
     @ManyToOne

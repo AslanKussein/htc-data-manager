@@ -1,0 +1,9 @@
+alter table htc_dm_application rename to htc_dm_old_application;
+alter table htc_dm_application_status_history rename to htc_dm_old_application_status_history;
+alter table htc_dm_assignment rename to htc_dm_old_assignment;
+alter table htc_dm_event rename to htc_dm_old_event;
+alter table htc_dm_general_characteristics rename to htc_dm_old_general_characteristics;
+alter table htc_dm_notes rename to htc_dm_old_notes;
+alter table htc_dm_purchase_info rename to htc_dm_old_purchase_info;
+alter table htc_dm_real_property rename to htc_dm_old_real_property;
+alter table htc_dm_residential_complex rename to htc_dm_old_residential_complex;

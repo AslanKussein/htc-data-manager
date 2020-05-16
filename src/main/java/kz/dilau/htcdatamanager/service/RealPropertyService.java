@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.domain.PurchaseInfo;
-import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
+import kz.dilau.htcdatamanager.domain.old.OldPurchaseInfo;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
@@ -16,19 +16,19 @@ public interface RealPropertyService {
 
     void deleteById(Long id);
 
-    void update(Long id, RealProperty var0);
+    void update(Long id, OldRealProperty var0);
 
-    void save(RealProperty realProperty);
+    void save(OldRealProperty realProperty);
 
     void addFilesToProperty(Long propertyId, List<String> photoIds, List<String> housingPlans, List<String> virtualTours);
 
-    RealPropertyRequestDto mapToRealPropertyDto(RealProperty realProperty);
+    RealPropertyRequestDto mapToRealPropertyDto(OldRealProperty realProperty);
 
-    RealPropertyClientDto mapToRealPropertyClientDto(RealProperty realProperty);
+    RealPropertyClientDto mapToRealPropertyClientDto(OldRealProperty realProperty);
 
     boolean existsByCadastralNumber(String cadastralNumber);
 
-    List<String> mapPhotoList(RealProperty realProperty, RealPropertyFileType fileType);
+    List<String> mapPhotoList(OldRealProperty realProperty, RealPropertyFileType fileType);
 
-    PurchaseInfoDto mapToPurchaseInfoDto(PurchaseInfo info);
+    PurchaseInfoDto mapToPurchaseInfoDto(OldPurchaseInfo info);
 }

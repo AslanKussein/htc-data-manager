@@ -29,7 +29,7 @@ public class DataAccessController {
 //    public ApplicationDto getApplicationById(final String token, Long id) {
 //        ApplicationDto dto = new ApplicationDto();
 //        ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessManager.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
-//        Application application = applicationRepository.getOne(id);
+//        OldApplication application = applicationRepository.getOne(id);
 //        checkOperationList
 //                .getData()
 //                .stream()

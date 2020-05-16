@@ -4,9 +4,9 @@ import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
-import kz.dilau.htcdatamanager.exception.EntityRemovedException;
-import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.domain.old.OldApplication;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.RealPropertyClientService;
@@ -14,20 +14,14 @@ import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationClientViewDto;
 import kz.dilau.htcdatamanager.web.dto.ClientDto;
-import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.ResidentialComplexDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientViewDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
-import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToBigDecimalPeriod;
-import static kz.dilau.htcdatamanager.util.PeriodUtils.mapToIntegerPeriod;
 
 @RequiredArgsConstructor
 @Service
@@ -38,11 +32,11 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
 
     @Override
     public ApplicationClientViewDto getById(Long id) {
-        Application application = applicationService.getApplicationById(id);
+        OldApplication application = applicationService.getApplicationById(id);
         return mapToApplicationClientDto(application);
     }
 
-    private ApplicationClientViewDto mapToApplicationClientDto(Application application) {
+    private ApplicationClientViewDto mapToApplicationClientDto(OldApplication application) {
         return ApplicationClientViewDto.builder()
                 .id(application.getId())
                 .clientDto(mapToClientDto(application.getClient()))
@@ -87,8 +81,8 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
         }
     }
 
-    public RealPropertyClientViewDto mapToRealPropertyClientViewDto(RealProperty realProperty) {
-        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
+    public RealPropertyClientViewDto mapToRealPropertyClientViewDto(OldRealProperty realProperty) {
+        OldGeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
         return RealPropertyClientViewDto.builder()
                 .objectType(getDicById(ObjectType.class, realProperty.getObjectTypeId()))
                 .city(getDicById(City.class, generalCharacteristics.getCityId()))

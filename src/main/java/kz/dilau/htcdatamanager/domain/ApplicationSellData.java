@@ -27,7 +27,7 @@ public class ApplicationSellData extends AApplicationData {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "real_property_id")
     @ToString.Exclude
-    private NewRealProperty realProperty;
+    private RealProperty realProperty;
     @Column(name = "object_price")
     private BigDecimal objectPrice;
     @Column(name = "encumbrance")

@@ -29,7 +29,7 @@ public class ApplicationPurchaseData extends AApplicationData {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_info_id")
-    private NewPurchaseInfo purchaseInfo;
+    private PurchaseInfo purchaseInfo;
     @Column(name = "purchase_info_id", insertable = false, updatable = false)
     private Long purchaseInfoId;
 

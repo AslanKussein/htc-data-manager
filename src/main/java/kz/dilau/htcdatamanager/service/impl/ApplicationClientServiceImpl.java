@@ -1,12 +1,12 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
-import kz.dilau.htcdatamanager.domain.PurchaseInfo;
-import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.old.OldApplication;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldPurchaseInfo;
+import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.repository.OldApplicationRepository;
 import kz.dilau.htcdatamanager.service.ApplicationClientService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
@@ -24,12 +24,12 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 @Service
 public class ApplicationClientServiceImpl implements ApplicationClientService {
-    private final ApplicationRepository applicationRepository;
+    private final OldApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final RealPropertyService realPropertyService;
 
-    private Application getApplicationById(Long id) {
-        Optional<Application> optionalApplication = applicationRepository.findByIdAndIsRemovedFalse(id);
+    private OldApplication getApplicationById(Long id) {
+        Optional<OldApplication> optionalApplication = applicationRepository.findByIdAndIsRemovedFalse(id);
         if (optionalApplication.isPresent()) {
             return optionalApplication.get();
         } else {
@@ -39,11 +39,11 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public ApplicationClientDTO getById(Long id) {
-        Application application = getApplicationById(id);
+        OldApplication application = getApplicationById(id);
         return fillApplicationClientDTO(application);
     }
 
-    private ApplicationClientDTO fillApplicationClientDTO(Application application) {
+    private ApplicationClientDTO fillApplicationClientDTO(OldApplication application) {
         return ApplicationClientDTO.builder()
                 .id(application.getId())
                 .operationTypeId(application.getOperationType().getId())
@@ -57,19 +57,19 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 .build();
     }
 
-    private PurchaseInfo fillPurchaseInfoDto(PurchaseInfoClientDto dto) {
-        PurchaseInfo purchaseInfo = new PurchaseInfo();
+    private OldPurchaseInfo fillPurchaseInfoDto(PurchaseInfoClientDto dto) {
+        OldPurchaseInfo purchaseInfo = new OldPurchaseInfo();
         purchaseInfo.setObjectPrice(dto.getObjectPricePeriod());
         purchaseInfo.setTotalArea(dto.getTotalAreaPeriod());
         purchaseInfo.setFloor(dto.getFloorPeriod());
         return purchaseInfo;
     }
 
-    private GeneralCharacteristics fillGeneralCharacteristics(RealPropertyClientDto dto) {
+    private OldGeneralCharacteristics fillGeneralCharacteristics(RealPropertyClientDto dto) {
         if (!isNull(dto.getResidentialComplexId())) {
             return null;
         }
-        return GeneralCharacteristics.builder()
+        return OldGeneralCharacteristics.builder()
                 .district(entityService.mapEntity(District.class, dto.getDistrictId()))
                 .street(entityService.mapEntity(Street.class, dto.getStreetId()))
                 .houseNumber(dto.getHouseNumber())
@@ -77,8 +77,8 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 .build();
     }
 
-    private RealProperty fillRealProperty(RealPropertyClientDto dto) {
-        return RealProperty.builder()
+    private OldRealProperty fillRealProperty(RealPropertyClientDto dto) {
+        return OldRealProperty.builder()
                 .totalArea(dto.getTotalArea())
                 .objectType(entityService.mapEntity(ObjectType.class, dto.getObjectTypeId()))
                 .numberOfRooms(dto.getNumberOfRooms())
@@ -87,12 +87,12 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 .livingArea(dto.getLivingArea())
                 .atelier(dto.getAtelier())
                 .separateBathroom(dto.getSeparateBathroom())
-                .residentialComplex(entityService.mapEntity(ResidentialComplex.class, dto.getResidentialComplexId()))
+                .residentialComplex(entityService.mapEntity(OldResidentialComplex.class, dto.getResidentialComplexId()))
                 .generalCharacteristics(fillGeneralCharacteristics(dto))
                 .build();
     }
 
-    private void fillApplication(Application application, ApplicationClientDTO dto) {
+    private void fillApplication(OldApplication application, ApplicationClientDTO dto) {
         application.setOperationType(entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId()));
         application.setProbabilityOfBidding(dto.getProbabilityOfBidding());
         application.setExchange(dto.getExchange());
@@ -105,7 +105,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public Long create(ApplicationClientDTO dto) {
-        Application application = new Application();
+        OldApplication application = new OldApplication();
 
         fillApplication(application, dto);
 
@@ -116,7 +116,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public Long update(Long id, ApplicationClientDTO dto) {
-        Application application = getApplicationById(id);
+        OldApplication application = getApplicationById(id);
 
         fillApplication(application, dto);
 
@@ -127,7 +127,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public Long deleteById(Long id) {
-        Application application = getApplicationById(id);
+        OldApplication application = getApplicationById(id);
         application.setIsRemoved(Boolean.TRUE);
         return applicationRepository.save(application).getId();
     }

@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.enums.Gender;
+import kz.dilau.htcdatamanager.domain.old.OldApplication;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,7 +41,7 @@ public class Client extends AuditableBaseEntity<String, Long> {
     @Builder.Default
     private Gender gender = Gender.UNKNOWN;
     @OneToMany(mappedBy = "client")
-    private List<Application> applicationList;
+    private List<OldApplication> applicationList;
     @OneToMany(mappedBy = "client" ,cascade = CascadeType.ALL)
     private List<ClientPhoneNumber> clientPhoneNumberList;
     @OneToMany(mappedBy = "client",cascade = CascadeType.ALL)
@@ -48,7 +49,7 @@ public class Client extends AuditableBaseEntity<String, Long> {
     private String location;
     private ZonedDateTime birthDate;
 
-    public List<Application> getApplicationList() {
+    public List<OldApplication> getApplicationList() {
         if (isNull(applicationList)) {
             applicationList = new ArrayList<>();
         }
@@ -80,7 +81,7 @@ public class Client extends AuditableBaseEntity<String, Long> {
     }
 
     @Transient
-    public Application getLastApplication() {
-        return getApplicationList().stream().max(Comparator.comparing(Application::getCreatedDate)).orElseGet(null);
+    public OldApplication getLastApplication() {
+        return getApplicationList().stream().max(Comparator.comparing(OldApplication::getCreatedDate)).orElseGet(null);
     }
 }
