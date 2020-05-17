@@ -241,8 +241,6 @@ create table htc_dm_general_characteristics
 alter table htc_dm_general_characteristics
   owner to postgres;
 
-comment on table htc_dm_dic_residential_complex is 'Справочник ЖК';
-
 create table htc_dm_dic_residential_complex
 (
   id                         bigserial             not null
