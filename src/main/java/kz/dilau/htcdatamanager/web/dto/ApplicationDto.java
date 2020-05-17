@@ -18,9 +18,6 @@ import java.util.List;
 public class ApplicationDto {
     @ApiModelProperty(value = "ID заявки")
     private Long id;
-    @ApiModelProperty(value = "Данные по клиенту", required = true)
-    @NotNull(message = "Client must not be null")
-    private ClientDto clientDto;
     @ApiModelProperty(value = "Данные по невижимости", required = true)
     @NotNull(message = "Real property must not be null")
     private RealPropertyRequestDto realPropertyRequestDto;
@@ -56,6 +53,8 @@ public class ApplicationDto {
     private String note;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
+    @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
+    private String clientLogin;
 //    @ApiModelProperty(value = "История статусов")
 //    private List<ApplicationStatusHistoryDto> statusHistoryDtoList;
 }

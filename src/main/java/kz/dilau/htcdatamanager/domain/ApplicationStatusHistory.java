@@ -24,7 +24,6 @@ public class ApplicationStatusHistory extends AuditableBaseEntity<String, Long> 
     private ApplicationStatus applicationStatus;
     @ManyToOne
     @JoinColumn(name = "application_id")
-    @ToString.Exclude
     private Application application;
     private String comment;
 }

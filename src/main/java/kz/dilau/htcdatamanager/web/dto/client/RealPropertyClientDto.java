@@ -29,6 +29,10 @@ public class RealPropertyClientDto {
     private Long residentialComplexId;
     @ApiModelProperty(name = "houseNumber", value = "Номер дома")
     private Integer houseNumber;
+    @ApiModelProperty(name = "houseNumberFraction(fraction/letter/building)", value = "Номер дома(дробь/буква/строение)")
+    private String houseNumberFraction;
+    @ApiModelProperty(name = "apartmentNumber", value = "Номер квартиры(/буква)")
+    private String apartmentNumber;
     @ApiModelProperty(name = "yearOfConstruction", value = "Год постройки")
     private Integer yearOfConstruction;//residentialComplex
     @ApiModelProperty(name = "floor", value = "Этаж")
