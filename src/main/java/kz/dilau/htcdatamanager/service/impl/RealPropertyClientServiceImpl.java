@@ -1,11 +1,11 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
-import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.domain.old.OldApplication;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.RealPropertyClientService;
@@ -30,11 +30,11 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
 
     @Override
     public ApplicationClientViewDto getById(Long id) {
-        Application application = applicationService.getApplicationById(id);
+        OldApplication application = applicationService.getApplicationById(id);
         return mapToApplicationClientDto(application);
     }
 
-    private ApplicationClientViewDto mapToApplicationClientDto(Application application) {
+    private ApplicationClientViewDto mapToApplicationClientDto(OldApplication application) {
         return ApplicationClientViewDto.builder()
                 .id(application.getId())
                 .clientLogin(application.getClientLogin())
@@ -76,8 +76,8 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
         return dictionaryDto;
     }
 
-    public RealPropertyClientViewDto mapToRealPropertyClientViewDto(RealProperty realProperty) {
-        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
+    public RealPropertyClientViewDto mapToRealPropertyClientViewDto(OldRealProperty realProperty) {
+        OldGeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
         return RealPropertyClientViewDto.builder()
                 .objectType(getDicById(ObjectType.class, realProperty.getObjectTypeId()))
                 .city(getDicById(City.class, generalCharacteristics.getCityId()))

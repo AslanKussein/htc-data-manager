@@ -1,11 +1,11 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.ResidentialComplexRepository;
+import kz.dilau.htcdatamanager.repository.dictionary.OldResidentialComplexRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.ResidentialComplexService;
@@ -30,14 +30,14 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 @Service
 public class ResidentialComplexServiceImpl implements ResidentialComplexService {
-    private final ResidentialComplexRepository residentialComplexRepository;
+    private final OldResidentialComplexRepository residentialComplexRepository;
     private final TypeOfElevatorRepository typeOfElevatorRepository;
     private final ParkingTypeRepository parkingTypeRepository;
     private final EntityService entityService;
 
     @Override
     public ResidentialComplexDto getById(Long id) {
-        ResidentialComplex residentialComplex = getResidentialComplexById(id);
+        OldResidentialComplex residentialComplex = getResidentialComplexById(id);
         return new ResidentialComplexDto(residentialComplex);
     }
 
@@ -53,7 +53,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
     @Override
     public PageDto<ResidentialComplexDto> getAllPageable(PageableDto dto) {
         List<ResidentialComplexDto> residentialComplexDtoList = new ArrayList<>();
-        Page<ResidentialComplex> residentialComplexPage = residentialComplexRepository.findPageByRemovedFalse(PageableUtils.createPageRequest(dto));
+        Page<OldResidentialComplex> residentialComplexPage = residentialComplexRepository.findPageByRemovedFalse(PageableUtils.createPageRequest(dto));
         residentialComplexPage.forEach(item -> residentialComplexDtoList.add(new ResidentialComplexDto(item)));
         return new PageDto(residentialComplexPage, residentialComplexDtoList);
     }
@@ -61,11 +61,11 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
     @Transactional
     @Override
     public ResidentialComplexDto save(String token, ResidentialComplexDto dto) {
-        return saveResidentialComplex(new ResidentialComplex(), dto);
+        return saveResidentialComplex(new OldResidentialComplex(), dto);
     }
 
-    private ResidentialComplexDto saveResidentialComplex(ResidentialComplex residentialComplex, ResidentialComplexDto dto) {
-        GeneralCharacteristics generalCharacteristics = GeneralCharacteristics.builder()
+    private ResidentialComplexDto saveResidentialComplex(OldResidentialComplex residentialComplex, ResidentialComplexDto dto) {
+        OldGeneralCharacteristics generalCharacteristics = OldGeneralCharacteristics.builder()
                 .apartmentsOnTheSite(dto.getApartmentsOnTheSite())
                 .ceilingHeight(dto.getCeilingHeight())
                 .concierge(dto.getConcierge())
@@ -108,20 +108,20 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
 
     @Override
     public ResidentialComplexDto update(String token, Long id, ResidentialComplexDto input) {
-        ResidentialComplex residentialComplex = getResidentialComplexById(id);
+        OldResidentialComplex residentialComplex = getResidentialComplexById(id);
         return saveResidentialComplex(residentialComplex, input);
     }
 
     @Override
     public ResidentialComplexDto deleteById(String token, Long id) {
-        ResidentialComplex residentialComplex = getResidentialComplexById(id);
+        OldResidentialComplex residentialComplex = getResidentialComplexById(id);
         residentialComplex.setIsRemoved(true);
         residentialComplex = residentialComplexRepository.save(residentialComplex);
         return new ResidentialComplexDto(residentialComplex);
     }
 
-    private ResidentialComplex getResidentialComplexById(Long id) {
-        Optional<ResidentialComplex> optionalResidentialComplex = residentialComplexRepository.findById(id);
+    private OldResidentialComplex getResidentialComplexById(Long id) {
+        Optional<OldResidentialComplex> optionalResidentialComplex = residentialComplexRepository.findById(id);
         if (optionalResidentialComplex.isPresent()) {
             if (optionalResidentialComplex.get().getIsRemoved()) {
                 throw EntityRemovedException.createResidentialComplexRemoved(id);

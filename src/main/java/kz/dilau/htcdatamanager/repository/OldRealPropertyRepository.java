@@ -1,10 +1,10 @@
 package kz.dilau.htcdatamanager.repository;
 
-import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RealPropertyRepository extends JpaRepository<RealProperty, Long> {
+public interface OldRealPropertyRepository extends JpaRepository<OldRealProperty, Long> {
     boolean existsByCadastralNumber(String cadastralNumber);
 }

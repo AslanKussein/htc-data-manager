@@ -1,15 +1,15 @@
 package kz.dilau.htcdatamanager.repository;
 
-import kz.dilau.htcdatamanager.domain.Notes;
+import kz.dilau.htcdatamanager.domain.old.OldNotes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface NotesRepository extends JpaRepository<Notes, Long> {
+public interface NotesRepository extends JpaRepository<OldNotes, Long> {
 
-    Page<Notes> findAllByRealProperty_IdAndIsRemovedFalse(Long id, Pageable pageable);
+    Page<OldNotes> findAllByRealProperty_IdAndIsRemovedFalse(Long id, Pageable pageable);
 
-    Optional<Notes> findByIdAndIsRemovedFalse(Long id);
+    Optional<OldNotes> findByIdAndIsRemovedFalse(Long id);
 }

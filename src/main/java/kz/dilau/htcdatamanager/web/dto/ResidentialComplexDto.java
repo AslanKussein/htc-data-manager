@@ -2,9 +2,9 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
-import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
+import kz.dilau.htcdatamanager.domain.dictionary.OldResidentialComplex;
 import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -70,12 +70,12 @@ public class ResidentialComplexDto {
     @ApiModelProperty(value = "Детская площадка")
     private Boolean playground;
 
-    public ResidentialComplexDto(ResidentialComplex rc) {
+    public ResidentialComplexDto(OldResidentialComplex rc) {
         this.id = rc.getId();
         this.houseName = rc.getHouseName();
         this.numberOfEntrances = rc.getNumberOfEntrances();
         if (Objects.nonNull(rc.getGeneralCharacteristics())) {
-            GeneralCharacteristics gc = rc.getGeneralCharacteristics();
+            OldGeneralCharacteristics gc = rc.getGeneralCharacteristics();
             this.apartmentsOnTheSite = gc.getApartmentsOnTheSite();
             this.ceilingHeight = gc.getCeilingHeight();
             this.concierge = gc.getConcierge();

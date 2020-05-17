@@ -1,13 +1,14 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.*;
+import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.domain.old.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
+import kz.dilau.htcdatamanager.repository.OldApplicationRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.PossibleReasonForBiddingRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
@@ -35,7 +36,7 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
-    private final ApplicationRepository applicationRepository;
+    private final OldApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final ParkingTypeRepository parkingTypeRepository;
@@ -58,7 +59,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationDto getById(final String token, Long id) {
-        Application application = getApplicationById(id);
+        OldApplication application = getApplicationById(id);
         return mapToApplicationDto(application);
 //        ApplicationDto dto = new ApplicationDto();
 //        ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
@@ -108,10 +109,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 //        return mapToApplicationDto(application);
     }
 
-    private ApplicationDto mapToApplicationDto(Application application) {
+    private ApplicationDto mapToApplicationDto(OldApplication application) {
         return ApplicationDto.builder()
                 .id(application.getId())
-                .clientLogin(application.getClientLogin())
                 .realPropertyRequestDto(nonNull(application.getRealProperty()) ? realPropertyService.mapToRealPropertyDto(application.getRealProperty()) : null)
                 .operationTypeId(application.getOperationType().getId())
                 .objectPrice(application.getObjectPrice())
@@ -148,20 +148,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public Long save(ApplicationDto dto) {
-        return saveApplication(new Application(), dto);
+        return saveApplication(new OldApplication(), dto);
     }
 
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
         String agent = getAppointmentAgent(dto.getAgent());
-        Application application = Application.builder()
-                .clientLogin(dto.getClientLogin())
+        OldApplication application = OldApplication.builder()
                 .operationType(entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId()))
                 .note(dto.getNote())
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .currentAgent(agent)
                 .build();
-        Assignment assignment = Assignment.builder()
+        OldAssignment assignment = OldAssignment.builder()
                 .application(application)
                 .agent(agent)
                 .build();
@@ -171,12 +170,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Long reassignApplication(AssignmentDto dto) {
-        Application application = getApplicationById(dto.getApplicationId());
+        OldApplication application = getApplicationById(dto.getApplicationId());
         if (application.getCurrentAgent().equals(dto.getAgent())) {
             throw BadRequestException.createReassignToSameAgent();
         }
         application.setCurrentAgent(dto.getAgent());
-        Assignment assignment = Assignment.builder()
+        OldAssignment assignment = OldAssignment.builder()
                 .application(application)
                 .agent(dto.getAgent())
                 .build();
@@ -185,7 +184,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    private Long saveApplication(Application application, ApplicationDto dto) {
+    private Long saveApplication(OldApplication application, ApplicationDto dto) {
         OperationType operationType;
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
@@ -196,14 +195,14 @@ public class ApplicationServiceImpl implements ApplicationService {
 //            }
             String agent = getAppointmentAgent(dto.getAgent());
             application.setCurrentAgent(agent);
-            Assignment assignment = Assignment.builder()
+            OldAssignment assignment = OldAssignment.builder()
                     .application(application)
                     .agent(agent)
                     .build();
             application.getAssignmentList().add(assignment);
         }
         RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
-        RealProperty realProperty = RealProperty.builder()
+        OldRealProperty realProperty = OldRealProperty.builder()
                 .objectType(entityService.mapEntity(ObjectType.class, realPropertyRequestDto.getObjectTypeId()))
                 .cadastralNumber(realPropertyRequestDto.getCadastralNumber())
                 .floor(realPropertyRequestDto.getFloor())
@@ -219,14 +218,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .landArea(realPropertyRequestDto.getLandArea())
                 .sewerage(entityService.mapEntity(Sewerage.class, realPropertyRequestDto.getSewerageId()))
                 .heatingSystem(entityService.mapEntity(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
-                .residentialComplex(entityService.mapEntity(ResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
+                .residentialComplex(entityService.mapEntity(OldResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
                 .generalCharacteristics(null)
                 .latitude(realPropertyRequestDto.getLatitude())
                 .longitude(realPropertyRequestDto.getLongitude())
                 .build();
 
         if (isNull(realProperty.getResidentialComplexId())) {
-            GeneralCharacteristics generalCharacteristics = GeneralCharacteristics.builder()
+            OldGeneralCharacteristics generalCharacteristics = OldGeneralCharacteristics.builder()
                     .houseNumber(realPropertyRequestDto.getHouseNumber())
                     .houseNumberFraction(realPropertyRequestDto.getHouseNumberFraction())
                     .ceilingHeight(realPropertyRequestDto.getCeilingHeight())
@@ -259,7 +258,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         if (operationType.getCode().equals(OperationType.BUY) && nonNull(realPropertyRequestDto.getPurchaseInfoDto())) {
             PurchaseInfoDto infoDto = realPropertyRequestDto.getPurchaseInfoDto();
-            PurchaseInfo purchaseInfo = new PurchaseInfo();
+            OldPurchaseInfo purchaseInfo = new OldPurchaseInfo();
             purchaseInfo.setObjectPrice(infoDto.getObjectPricePeriod());
             purchaseInfo.setFloor(infoDto.getFloorPeriod());
             purchaseInfo.setNumberOfRooms(infoDto.getNumberOfRoomsPeriod());
@@ -291,14 +290,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             ApplicationStatus status = applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT);
             application.setApplicationStatus(status);
-            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+            OldApplicationStatusHistory statusHistory = OldApplicationStatusHistory.builder()
                     .application(application)
                     .applicationStatus(status)
                     .build();
             application.getStatusHistoryList().add(statusHistory);
         }
         application.setRealProperty(realProperty);
-        application.setClientLogin(dto.getClientLogin());
         application.setOperationType(operationType);
         application.setNote(dto.getNote());
         application.setObjectPrice(dto.getObjectPrice());
@@ -321,19 +319,19 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Long update(String token, Long id, ApplicationDto input) {
-        Application application = getApplicationById(id);
+        OldApplication application = getApplicationById(id);
         return saveApplication(application, input);
     }
 
     @Override
     public Long deleteById(String token, Long id) {
-        Application application = getApplicationById(id);
+        OldApplication application = getApplicationById(id);
         application.setIsRemoved(true);
         return applicationRepository.save(application).getId();
     }
 
-    public Application getApplicationById(Long id) {
-        Optional<Application> optionalApplication = applicationRepository.findById(id);
+    public OldApplication getApplicationById(Long id) {
+        Optional<OldApplication> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
             if (optionalApplication.get().getIsRemoved()) {
                 throw EntityRemovedException.createApplicationRemoved(id);
@@ -346,7 +344,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Long changeStatus(ChangeStatusDto dto) {
-        Application application = getApplicationById(dto.getApplicationId());
+        OldApplication application = getApplicationById(dto.getApplicationId());
         ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId());
         if (dto.getStatusId().equals(ApplicationStatus.DEMO) || dto.getStatusId().equals(ApplicationStatus.PHOTO_SHOOT) || dto.getStatusId().equals(ApplicationStatus.ADS)) {
             if (application.getApplicationStatus().getId().equals(ApplicationStatus.CONTRACT) || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS)) {
