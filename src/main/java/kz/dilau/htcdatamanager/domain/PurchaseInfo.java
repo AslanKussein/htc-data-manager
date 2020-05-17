@@ -78,21 +78,10 @@ public class PurchaseInfo extends AGeneralCharacteristics {
     private Integer apartmentsOnTheSiteFrom;
     @Column(name = "apartments_on_the_site_to")
     private Integer apartmentsOnTheSiteTo;
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = TABLE_NAME_PREFIX + "purchase_info_parking_type",
-//            joinColumns = @JoinColumn(name = "purchase_info_id"),
-//            inverseJoinColumns = @JoinColumn(name = "parking_type_id")
-//    )
+
     @Type(type = "jsonb")
     @Column(name = "parking_types", columnDefinition = "jsonb")
     private Set<IdItem> parkingTypes = new HashSet<>();
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(
-//            name = TABLE_NAME_PREFIX + "purchase_info_type_of_elevator",
-//            joinColumns = @JoinColumn(name = "purchase_info_id"),
-//            inverseJoinColumns = @JoinColumn(name = "type_of_elevator_id")
-//    )
     @Type(type = "jsonb")
     @Column(name = "types_of_elevator", columnDefinition = "jsonb")
     private Set<IdItem> typesOfElevator = new HashSet<>();

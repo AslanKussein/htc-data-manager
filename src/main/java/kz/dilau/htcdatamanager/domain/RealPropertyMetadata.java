@@ -1,7 +1,10 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.domain.dictionary.HeatingSystem;
+import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
+import kz.dilau.htcdatamanager.domain.dictionary.Sewerage;
 import lombok.*;
 
 import javax.persistence.*;
@@ -42,11 +45,6 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Boolean atelier;//студия
     @Column(name = "separate_bathroom")
     private Boolean separateBathroom;
-    @ManyToOne
-    @JoinColumn(name = "house_condition_id", insertable = false, updatable = false)
-    private HouseCondition houseCondition;
-    @Column(name = "house_condition_id")
-    private Long houseConditionId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "residential_complex_id")
     private ResidentialComplex residentialComplex;

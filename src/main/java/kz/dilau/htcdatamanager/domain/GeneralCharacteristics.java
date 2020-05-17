@@ -2,12 +2,14 @@ package kz.dilau.htcdatamanager.domain;
 
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import kz.dilau.htcdatamanager.domain.dictionary.HouseCondition;
 import kz.dilau.htcdatamanager.domain.dictionary.PropertyDeveloper;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,21 +40,17 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
     private Integer numberOfApartments;
     @Column(name = "apartments_on_the_site")
     private Integer apartmentsOnTheSite;
-    //    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = TABLE_NAME_PREFIX + "general_characteristics_parking_type",
-//            joinColumns = @JoinColumn(name = "general_characteristics_id"),
-//            inverseJoinColumns = @JoinColumn(name = "parking_type_id")
-//    )
+    @Column(name = "ceiling_height")
+    private BigDecimal ceilingHeight;
+    @ManyToOne
+    @JoinColumn(name = "house_condition_id")
+    private HouseCondition houseCondition;
+    @Column(name = "house_condition_id", insertable = false, updatable = false)
+    private Long houseConditionId;
+
     @Type(type = "jsonb")
     @Column(name = "parking_types", columnDefinition = "jsonb")
     private Set<IdItem> parkingTypes = new HashSet<>();
-    //    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(
-//            name = TABLE_NAME_PREFIX + "general_characteristics_type_of_elevator",
-//            joinColumns = @JoinColumn(name = "general_characteristics_id"),
-//            inverseJoinColumns = @JoinColumn(name = "type_of_elevator_id")
-//    )
     @Type(type = "jsonb")
     @Column(name = "types_of_elevator", columnDefinition = "jsonb")
     private Set<IdItem> typesOfElevator = new HashSet<>();
