@@ -41,6 +41,8 @@ public class ApplicationSellData extends AApplicationData {
     private Boolean sharedOwnershipProperty;//общая долевая собственность
     @Column(name = "is_exchange")
     private Boolean exchange;//обмен
+    @Column(name = "description")
+    private String description;
     @Type(type = "jsonb")
     @Column(name = "files_map", columnDefinition = "jsonb")
     private Map<RealPropertyFileType, Set<String>> filesMap = new HashMap<>();
