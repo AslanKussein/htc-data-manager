@@ -24,6 +24,10 @@ public class NotFoundException extends DetailedException {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.residential.complex.not.found", id));
     }
 
+    public static NotFoundException createResidentialComplexByPostcode(String postcode) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.residential.complex.postcode.not.found", postcode));
+    }
+
     public static NotFoundException createEventById(Long id) {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.event.not.found", id));
     }

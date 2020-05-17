@@ -26,6 +26,12 @@ public class ResidentialComplexResource {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/{postcode}")
+    public ResponseEntity<ResidentialComplexDto> getByPostcode(@PathVariable("postcode") String postcode) {
+        ResidentialComplexDto dto = residentialComplexService.getByPostcode(postcode);
+        return ResponseEntity.ok(dto);
+    }
+
     @GetMapping
     public ResponseEntity<List<ResidentialComplexDto>> getAll() {
         List<ResidentialComplexDto> list = residentialComplexService.getAll();

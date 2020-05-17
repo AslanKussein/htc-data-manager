@@ -3,6 +3,7 @@ package kz.dilau.htcdatamanager.domain;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.District;
+import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import kz.dilau.htcdatamanager.domain.dictionary.Street;
 import lombok.*;
 
@@ -44,4 +45,7 @@ public class Building extends AuditableBaseEntity<String, Long> {
     private BigDecimal latitude;
     @Column(name = "longitude")
     private BigDecimal longitude;
+
+    @OneToOne(mappedBy = "building")
+    private ResidentialComplex residentialComplex;
 }
