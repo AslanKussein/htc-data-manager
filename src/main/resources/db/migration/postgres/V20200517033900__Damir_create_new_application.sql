@@ -253,7 +253,7 @@ create table htc_dm_dic_residential_complex
       references htc_dm_building,
   general_characteristics_id bigint                not null
     constraint fk_residential_complex_characteristics
-      references htc_dm_general_characteristics,
+      references htc_dm_general_characteristics
 );
 
 alter table htc_dm_dic_residential_complex
