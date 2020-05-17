@@ -1,6 +1,5 @@
 package kz.dilau.htcdatamanager.domain.old;
 
-import kz.dilau.htcdatamanager.domain.Client;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
@@ -56,10 +55,8 @@ public class OldApplication extends AuditableBaseEntity<String, Long> {
     private boolean isCommissionIncludedInThePrice = false;
     @Column(name = "note")
     private String note;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "client_id", nullable = false)
-    @ToString.Exclude
-    private Client client;
+    private String clientLogin;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "real_property_id")
     @ToString.Exclude

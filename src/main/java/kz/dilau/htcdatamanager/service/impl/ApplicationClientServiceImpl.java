@@ -1,10 +1,10 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.old.OldApplication;
 import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.old.OldPurchaseInfo;
 import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
-import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.OldApplicationRepository;
 import kz.dilau.htcdatamanager.service.ApplicationClientService;
@@ -73,6 +73,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 .district(entityService.mapEntity(District.class, dto.getDistrictId()))
                 .street(entityService.mapEntity(Street.class, dto.getStreetId()))
                 .houseNumber(dto.getHouseNumber())
+                .houseNumberFraction(dto.getHouseNumberFraction())
                 .yearOfConstruction(dto.getYearOfConstruction())
                 .build();
     }
@@ -104,9 +105,9 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     }
 
     @Override
-    public Long create(ApplicationClientDTO dto) {
+    public Long create(String login, ApplicationClientDTO dto) {
         OldApplication application = new OldApplication();
-
+        application.setClientLogin(login);
         fillApplication(application, dto);
 
         applicationRepository.save(application);

@@ -1,19 +1,18 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.*;
+import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.domain.old.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.OldApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
+import kz.dilau.htcdatamanager.repository.OldApplicationRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.PossibleReasonForBiddingRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.ClientService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
@@ -43,7 +42,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final ParkingTypeRepository parkingTypeRepository;
     private final PossibleReasonForBiddingRepository reasonForBiddingRepository;
     private final RealPropertyService realPropertyService;
-    private final ClientService clientService;
     private final TypeOfElevatorRepository typeOfElevatorRepository;
 
     private String getAuthorName() {
@@ -114,7 +112,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     private ApplicationDto mapToApplicationDto(OldApplication application) {
         return ApplicationDto.builder()
                 .id(application.getId())
-                .clientDto(mapToClientDto(application.getClient()))
                 .realPropertyRequestDto(nonNull(application.getRealProperty()) ? realPropertyService.mapToRealPropertyDto(application.getRealProperty()) : null)
                 .operationTypeId(application.getOperationType().getId())
                 .objectPrice(application.getObjectPrice())
@@ -137,7 +134,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .build();
     }
 
-    private List<ApplicationStatusHistoryDto> mapStatusHistoryList(OldApplication application) {
+    private List<ApplicationStatusHistoryDto> mapStatusHistoryList(Application application) {
         List<ApplicationStatusHistoryDto> statusHistoryList = new ArrayList<>();
         application.getStatusHistoryList().forEach(history ->
                 statusHistoryList.add(ApplicationStatusHistoryDto.builder()
@@ -148,10 +145,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return statusHistoryList;
     }
 
-    private ClientDto mapToClientDto(Client client) {
-        return new ClientDto(client);
-    }
-
     @Override
     @Transactional
     public Long save(ApplicationDto dto) {
@@ -160,10 +153,8 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
-        Client client = getClient(dto.getClientDto());
         String agent = getAppointmentAgent(dto.getAgent());
         OldApplication application = OldApplication.builder()
-                .client(client)
                 .operationType(entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId()))
                 .note(dto.getNote())
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
@@ -194,7 +185,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
 
     private Long saveApplication(OldApplication application, ApplicationDto dto) {
-        Client client = getClient(dto.getClientDto());
         OperationType operationType;
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
@@ -307,7 +297,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.getStatusHistoryList().add(statusHistory);
         }
         application.setRealProperty(realProperty);
-        application.setClient(client);
         application.setOperationType(operationType);
         application.setNote(dto.getNote());
         application.setObjectPrice(dto.getObjectPrice());
@@ -326,27 +315,6 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.getPossibleReasonsForBidding().addAll(reasonForBiddingRepository.findByIdIn(dto.getPossibleReasonForBiddingIdList()));
         }
         return applicationRepository.save(application).getId();
-    }
-
-    private Client getClient(ClientDto dto) {
-        Client client;
-        if (isNull(dto.getId()) || dto.getId() == 0L) {
-            ClientDto clientFromBd = clientService.findClientByPhoneNumber(dto.getPhoneNumber());
-            if (nonNull(clientFromBd)) {
-                throw BadRequestException.createClientHasFounded(dto.getPhoneNumber());
-            }
-            client = Client.builder()
-                    .firstName(dto.getFirstName())
-                    .surname(dto.getSurname())
-                    .patronymic(dto.getPatronymic())
-                    .phoneNumber(dto.getPhoneNumber())
-                    .email(dto.getEmail())
-                    .gender(dto.getGender())
-                    .build();
-        } else {
-            client = clientService.getClientById(dto.getId());
-        }
-        return client;
     }
 
     @Override
