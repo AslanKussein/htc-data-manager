@@ -18,6 +18,7 @@ public final class Constants {
     public static final String MORTGAGE_REST_ENDPOINT = "/api/mortgage";
     public static final String APPLICATIONS_CLIENT_REST_ENDPOINT = "/api/applications-client";
     public static final String REAL_PROPERTY_CLIENT_VIEW_REST_ENDPOINT = "/open-api/real-property-client-view";
+    public static final String BUILDING_REST_ENDPOINT = "/api/buildings";
 
     private Constants() {
     }

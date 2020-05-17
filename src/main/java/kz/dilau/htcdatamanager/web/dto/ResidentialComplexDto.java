@@ -2,10 +2,10 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
-import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
-import kz.dilau.htcdatamanager.domain.dictionary.OldResidentialComplex;
-import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
+import kz.dilau.htcdatamanager.domain.Building;
+import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.IdItem;
+import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,18 +23,8 @@ import java.util.stream.Collectors;
 public class ResidentialComplexDto {
     @ApiModelProperty(value = "ID жилого комплекса")
     private Long id;
-//    @ApiModelProperty(value = "ID страны")
-//    private Long countryId;
-    @ApiModelProperty(value = "ID города")
-    private Long cityId;
-    @ApiModelProperty(value = "ID района")
-    private Long districtId;
-    @ApiModelProperty(value = "ID улицы")
-    private Long streetId;
-    @ApiModelProperty(value = "Номер здания(дома)")
-    private Integer houseNumber;
-    @ApiModelProperty(value = "Номер дома(дробь/буква/строение)")
-    private String houseNumberFraction;
+    @ApiModelProperty(value = "Здание", required = true)
+    private BuildingDto buildingDto;
     @ApiModelProperty(value = "Название дома(ЖК)")
     private String houseName;
     @ApiModelProperty(value = "Год постройки")
@@ -48,7 +38,7 @@ public class ResidentialComplexDto {
     @ApiModelProperty(value = "Количество квартир")
     private Integer numberOfApartments;
     @ApiModelProperty(value = "Количество квартир на площадке")
-    private String apartmentsOnTheSite;
+    private Integer apartmentsOnTheSite;
     @ApiModelProperty(value = "Высота потолков")
     private BigDecimal ceilingHeight;
     @ApiModelProperty(value = "ID материала постройки")
@@ -56,7 +46,7 @@ public class ResidentialComplexDto {
     @ApiModelProperty(value = "Класс жилья")
     private String housingClass;
     @ApiModelProperty(value = "Состояние жилья")
-    private String housingCondition;
+    private Long housingConditionId;
     @ApiModelProperty(value = "Тип лифта(список)")
     private List<Long> typeOfElevatorIdList;
     @ApiModelProperty(value = "Консьерж")
@@ -70,19 +60,17 @@ public class ResidentialComplexDto {
     @ApiModelProperty(value = "Детская площадка")
     private Boolean playground;
 
-    public ResidentialComplexDto(OldResidentialComplex rc) {
-        this.id = rc.getId();
-        this.houseName = rc.getHouseName();
-        this.numberOfEntrances = rc.getNumberOfEntrances();
-        if (Objects.nonNull(rc.getGeneralCharacteristics())) {
-            OldGeneralCharacteristics gc = rc.getGeneralCharacteristics();
+    public ResidentialComplexDto(ResidentialComplex residentialComplex) {
+        this.id = residentialComplex.getId();
+        this.houseName = residentialComplex.getHouseName();
+        this.numberOfEntrances = residentialComplex.getNumberOfEntrances();
+        if (Objects.nonNull(residentialComplex.getGeneralCharacteristics())) {
+            GeneralCharacteristics gc = residentialComplex.getGeneralCharacteristics();
             this.apartmentsOnTheSite = gc.getApartmentsOnTheSite();
             this.ceilingHeight = gc.getCeilingHeight();
             this.concierge = gc.getConcierge();
-            this.houseNumber = gc.getHouseNumber();
-            this.houseNumberFraction = gc.getHouseNumberFraction();
             this.housingClass = gc.getHousingClass();
-            this.housingCondition = gc.getHousingCondition();
+            this.housingConditionId = gc.getHouseConditionId();
             this.numberOfApartments = gc.getNumberOfApartments();
             this.numberOfFloors = gc.getNumberOfFloors();
             this.playground = gc.getPlayground();
@@ -90,12 +78,6 @@ public class ResidentialComplexDto {
             this.yearOfConstruction = gc.getYearOfConstruction();
             if (Objects.nonNull(gc.getYardType())) {
                 this.yardTypeId = gc.getYardType().getId();
-            }
-            if (Objects.nonNull(gc.getCity())) {
-                this.cityId = gc.getCity().getId();
-            }
-            if (Objects.nonNull(gc.getDistrict())) {
-                this.districtId = gc.getDistrict().getId();
             }
             if (Objects.nonNull(gc.getMaterialOfConstruction())) {
                 this.materialOfConstructionId = gc.getMaterialOfConstruction().getId();
@@ -107,19 +89,20 @@ public class ResidentialComplexDto {
                 this.typeOfElevatorIdList = gc
                         .getTypesOfElevator()
                         .stream()
-                        .map(TypeOfElevator::getId)
+                        .map(IdItem::getId)
                         .collect(Collectors.toList());
             }
             if (!CollectionUtils.isEmpty(gc.getParkingTypes())) {
                 this.parkingTypeIds = gc
                         .getParkingTypes()
                         .stream()
-                        .map(ParkingType::getId)
+                        .map(IdItem::getId)
                         .collect(Collectors.toList());
             }
-            if (Objects.nonNull(gc.getStreet())) {
-                this.streetId = gc.getStreet().getId();
-            }
+        }
+        if (Objects.nonNull(residentialComplex.getBuilding())) {
+            Building building = residentialComplex.getBuilding();
+            this.buildingDto = new BuildingDto(building);
         }
     }
 }

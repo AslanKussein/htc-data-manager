@@ -86,7 +86,7 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
                 .houseNumber(generalCharacteristics.getHouseNumber())
                 .houseNumberFraction(generalCharacteristics.getHouseNumberFraction())
                 .floor(realProperty.getFloor())
-                .residentialComplex(new ResidentialComplexDto(realProperty.getResidentialComplex()))
+//                .residentialComplex(new ResidentialComplexDto(realProperty.getResidentialComplex()))
                 .cadastralNumber(realProperty.getCadastralNumber())
                 .apartmentNumber(realProperty.getApartmentNumber())
                 .numberOfRooms(realProperty.getNumberOfRooms())
