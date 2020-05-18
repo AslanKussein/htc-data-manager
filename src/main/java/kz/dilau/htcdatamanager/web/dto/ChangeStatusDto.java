@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Модель для смены статуса по воронке")
+@ApiModel(value = "ChangeStatusDto", description = "Модель для смены статуса по воронке")
 public class ChangeStatusDto {
     @NonNull
     @ApiModelProperty(value = "ID заявки", required = true)

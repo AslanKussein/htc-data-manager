@@ -14,18 +14,18 @@ import javax.persistence.*;
 public abstract class AGeneralCharacteristics extends BaseEntity<Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "material_of_construction_id")
-    private MaterialOfConstruction materialOfConstruction;
+    protected MaterialOfConstruction materialOfConstruction;
     @Column(name = "material_of_construction_id", insertable = false, updatable = false)
-    private Long materialOfConstructionId;
+    protected Long materialOfConstructionId;
     @Column(name = "concierge")
-    private Boolean concierge;
+    protected Boolean concierge;
     @Column(name = "wheelchair")
-    private Boolean wheelchair;
+    protected Boolean wheelchair;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "yard_type_id")
-    private YardType yardType;
+    protected YardType yardType;
     @Column(name = "yard_type_id", insertable = false, updatable = false)
-    private Long yardTypeId;
+    protected Long yardTypeId;
     @Column(name = "playground")
-    private Boolean playground;
+    protected Boolean playground;
 }

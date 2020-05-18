@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@ApiModel(description = "Модель для справочника Жилой комплекс")
 @Getter
 @Setter
 @NoArgsConstructor
+@ApiModel(value = "ResidentialComplexDto", description = "Модель для справочника Жилой комплекс")
 public class ResidentialComplexDto {
     @ApiModelProperty(value = "ID жилого комплекса")
     private Long id;
@@ -70,7 +70,7 @@ public class ResidentialComplexDto {
             this.ceilingHeight = gc.getCeilingHeight();
             this.concierge = gc.getConcierge();
             this.housingClass = gc.getHousingClass();
-            this.housingConditionId = gc.getHouseConditionId();
+            this.housingConditionId = gc.getHouseCondition().getId();
             this.numberOfApartments = gc.getNumberOfApartments();
             this.numberOfFloors = gc.getNumberOfFloors();
             this.playground = gc.getPlayground();

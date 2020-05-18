@@ -5,9 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,43 +15,29 @@ import java.util.List;
 public class ApplicationDto {
     @ApiModelProperty(value = "ID заявки")
     private Long id;
-    @ApiModelProperty(value = "Данные по невижимости", required = true)
-    @NotNull(message = "Real property must not be null")
-    private RealPropertyRequestDto realPropertyRequestDto;
     @ApiModelProperty(value = "ID вида операции", required = true)
     @NotNull(message = "Operation type must not be null")
     private Long operationTypeId;
-    @ApiModelProperty(name = "objectPrice", value = "Цена объекта(млн тг)")
-    private BigDecimal objectPrice;
-    @ApiModelProperty(name = "mortgage", value = "Ипотека")
-    private Boolean mortgage;//ипотека
-    @ApiModelProperty(name = "encumbrance", value = "Обременение")
-    private Boolean encumbrance;//обременение
-    @ApiModelProperty(name = "sharedOwnershipProperty", value = "Общая долевая собственность")
-    private Boolean sharedOwnershipProperty;//общая долевая собственность
-    @ApiModelProperty(name = "exchange", value = "Обмен")
-    private Boolean exchange;//обмен
-    @ApiModelProperty(name = "probabilityOfBidding", value = "Вероятность торга")
-    private Boolean probabilityOfBidding;//вероятность торга
-    @ApiModelProperty(name = "theSizeOfTrades", value = "Размер торга")
-    private String theSizeOfTrades;//размер торга
-    @ApiModelProperty(name = "possibleReasonForBiddingIdList", value = "ID возможных причин торга")
-    private List<Long> possibleReasonForBiddingIdList;
-    @ApiModelProperty(name = "contractPeriod", value = "Срок действия договора")
-    private Date contractPeriod;
-    @ApiModelProperty(value = "Номер договора")
-    private String contractNumber;
-    @ApiModelProperty(name = "amount", value = "Сумма по договору")
-    private BigDecimal amount;
-    @ApiModelProperty(name = "isCommissionIncludedInThePrice", value = "Комиссия включена в стоимость")
-    @NotNull(message = "Commission is included in the price must not be null")
-    private boolean isCommissionIncludedInThePrice = false;
-    @ApiModelProperty(name = "note", value = "Примечание")
-    private String note;
+    @ApiModelProperty(value = "ID типа объекта", required = true)
+    private Long objectTypeId;
+
+    @ApiModelProperty(value = "Общая информация о сделке продажи объекта")
+    private ApplicationSellDataDto sellDataDto;
+
+    @ApiModelProperty(value = "Общая информация о сделке покупки объекта")
+    private ApplicationPurchaseDataDto purchaseDataDto;
+
+    @ApiModelProperty(value = "Идентификационные данные сделки")
+    private ContractDto contractDto;
+
+    @ApiModelProperty(value = "Общая информация об объекте продажи")
+    private RealPropertyDto realPropertyDto;
+
+    @ApiModelProperty(value = "Общая информация об объекте покупки")
+    private PurchaseInfoDto purchaseInfoDto;
+
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
-    @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
+    @ApiModelProperty(value = "Логин Клиента")
     private String clientLogin;
-//    @ApiModelProperty(value = "История статусов")
-//    private List<ApplicationStatusHistoryDto> statusHistoryDtoList;
 }

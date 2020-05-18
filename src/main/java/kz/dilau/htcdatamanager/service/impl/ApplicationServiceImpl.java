@@ -1,20 +1,15 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
-import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
-import kz.dilau.htcdatamanager.domain.old.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
+import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
-import kz.dilau.htcdatamanager.repository.OldApplicationRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.ParkingTypeRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.PossibleReasonForBiddingRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.TypeOfElevatorRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
+import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
-import kz.dilau.htcdatamanager.service.RealPropertyService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +17,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -36,13 +28,10 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
-    private final OldApplicationRepository applicationRepository;
+    private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
-    private final ParkingTypeRepository parkingTypeRepository;
-    private final PossibleReasonForBiddingRepository reasonForBiddingRepository;
-    private final RealPropertyService realPropertyService;
-    private final TypeOfElevatorRepository typeOfElevatorRepository;
+    private final BuildingService buildingService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,7 +48,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationDto getById(final String token, Long id) {
-        OldApplication application = getApplicationById(id);
+        Application application = getApplicationById(id);
         return mapToApplicationDto(application);
 //        ApplicationDto dto = new ApplicationDto();
 //        ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
@@ -109,29 +98,32 @@ public class ApplicationServiceImpl implements ApplicationService {
 //        return mapToApplicationDto(application);
     }
 
-    private ApplicationDto mapToApplicationDto(OldApplication application) {
-        return ApplicationDto.builder()
+    private ApplicationDto mapToApplicationDto(Application application) {
+        ApplicationDto applicationDto = ApplicationDto.builder()
                 .id(application.getId())
-                .realPropertyRequestDto(nonNull(application.getRealProperty()) ? realPropertyService.mapToRealPropertyDto(application.getRealProperty()) : null)
-                .operationTypeId(application.getOperationType().getId())
-                .objectPrice(application.getObjectPrice())
-                .mortgage(application.getMortgage())
-                .encumbrance(application.getEncumbrance())
-                .sharedOwnershipProperty(application.getSharedOwnershipProperty())
-                .exchange(application.getExchange())
-                .probabilityOfBidding(application.getProbabilityOfBidding())
-                .theSizeOfTrades(application.getTheSizeOfTrades())
-                .possibleReasonForBiddingIdList(application.getPossibleReasonsForBidding().stream()
-                        .map(PossibleReasonForBidding::getId)
-                        .collect(Collectors.toList()))
-                .contractPeriod(application.getContractPeriod())
-                .contractNumber(application.getContractNumber())
-                .amount(application.getAmount())
-                .isCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice())
-                .note(application.getNote())
+                .operationTypeId(application.getOperationTypeId())
+                .objectTypeId(application.getObjectTypeId())
                 .agent(application.getCurrentAgent())
-//                .statusHistoryDtoList(mapStatusHistoryList(application))
+                .clientLogin(application.getClientLogin())
                 .build();
+        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())) {
+            ApplicationSellData sellData = application.getApplicationSellData();
+            ApplicationSellDataDto sellDataDto = new ApplicationSellDataDto(sellData);
+            applicationDto.setSellDataDto(sellDataDto);
+            if (nonNull(sellData.getRealProperty())) {
+                RealPropertyDto realPropertyDto = new RealPropertyDto(sellData.getRealProperty());
+                applicationDto.setRealPropertyDto(realPropertyDto);
+            }
+        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())) {
+            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+            ApplicationPurchaseDataDto purchaseDataDto = new ApplicationPurchaseDataDto(purchaseData);
+            applicationDto.setPurchaseDataDto(purchaseDataDto);
+            if (nonNull(purchaseData.getPurchaseInfo())) {
+                PurchaseInfoDto infoDto = new PurchaseInfoDto(purchaseData.getPurchaseInfo());
+                applicationDto.setPurchaseInfoDto(infoDto);
+            }
+        }
+        return applicationDto;
     }
 
     private List<ApplicationStatusHistoryDto> mapStatusHistoryList(Application application) {
@@ -148,19 +140,19 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     @Transactional
     public Long save(ApplicationDto dto) {
-        return saveApplication(new OldApplication(), dto);
+        return saveApplication(new Application(), dto);
     }
 
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
         String agent = getAppointmentAgent(dto.getAgent());
-        OldApplication application = OldApplication.builder()
+        Application application = Application.builder()
                 .operationType(entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId()))
-                .note(dto.getNote())
+                .applicationSellData(new ApplicationSellData(dto.getNote()))
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .currentAgent(agent)
                 .build();
-        OldAssignment assignment = OldAssignment.builder()
+        Assignment assignment = Assignment.builder()
                 .application(application)
                 .agent(agent)
                 .build();
@@ -170,12 +162,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Long reassignApplication(AssignmentDto dto) {
-        OldApplication application = getApplicationById(dto.getApplicationId());
+        Application application = getApplicationById(dto.getApplicationId());
         if (application.getCurrentAgent().equals(dto.getAgent())) {
             throw BadRequestException.createReassignToSameAgent();
         }
         application.setCurrentAgent(dto.getAgent());
-        OldAssignment assignment = OldAssignment.builder()
+        Assignment assignment = Assignment.builder()
                 .application(application)
                 .agent(dto.getAgent())
                 .build();
@@ -184,7 +176,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
 
-    private Long saveApplication(OldApplication application, ApplicationDto dto) {
+    private Long saveApplication(Application application, ApplicationDto dto) {
         OperationType operationType;
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
@@ -195,143 +187,76 @@ public class ApplicationServiceImpl implements ApplicationService {
 //            }
             String agent = getAppointmentAgent(dto.getAgent());
             application.setCurrentAgent(agent);
-            OldAssignment assignment = OldAssignment.builder()
+            Assignment assignment = Assignment.builder()
                     .application(application)
                     .agent(agent)
                     .build();
             application.getAssignmentList().add(assignment);
-        }
-        RealPropertyRequestDto realPropertyRequestDto = dto.getRealPropertyRequestDto();
-        OldRealProperty realProperty = OldRealProperty.builder()
-                .objectType(entityService.mapEntity(ObjectType.class, realPropertyRequestDto.getObjectTypeId()))
-                .cadastralNumber(realPropertyRequestDto.getCadastralNumber())
-                .floor(realPropertyRequestDto.getFloor())
-                .apartmentNumber(realPropertyRequestDto.getApartmentNumber())
-                .numberOfRooms(realPropertyRequestDto.getNumberOfRooms())
-                .totalArea(realPropertyRequestDto.getTotalArea())
-                .livingArea(realPropertyRequestDto.getLivingArea())
-                .kitchenArea(realPropertyRequestDto.getKitchenArea())
-                .balconyArea(realPropertyRequestDto.getBalconyArea())
-                .numberOfBedrooms(realPropertyRequestDto.getNumberOfBedrooms())
-                .atelier(realPropertyRequestDto.getAtelier())
-                .separateBathroom(realPropertyRequestDto.getSeparateBathroom())
-                .landArea(realPropertyRequestDto.getLandArea())
-                .sewerage(entityService.mapEntity(Sewerage.class, realPropertyRequestDto.getSewerageId()))
-                .heatingSystem(entityService.mapEntity(HeatingSystem.class, realPropertyRequestDto.getHeatingSystemId()))
-                .residentialComplex(entityService.mapEntity(OldResidentialComplex.class, realPropertyRequestDto.getResidentialComplexId()))
-                .generalCharacteristics(null)
-                .latitude(realPropertyRequestDto.getLatitude())
-                .longitude(realPropertyRequestDto.getLongitude())
-                .build();
 
-        if (isNull(realProperty.getResidentialComplexId())) {
-            OldGeneralCharacteristics generalCharacteristics = OldGeneralCharacteristics.builder()
-                    .houseNumber(realPropertyRequestDto.getHouseNumber())
-                    .houseNumberFraction(realPropertyRequestDto.getHouseNumberFraction())
-                    .ceilingHeight(realPropertyRequestDto.getCeilingHeight())
-                    .housingClass(realPropertyRequestDto.getHousingClass())
-                    .housingCondition(realPropertyRequestDto.getHousingCondition())
-                    .yearOfConstruction(realPropertyRequestDto.getYearOfConstruction())
-                    .numberOfFloors(realPropertyRequestDto.getNumberOfFloors())
-                    .numberOfApartments(realPropertyRequestDto.getNumberOfApartments())
-                    .apartmentsOnTheSite(realPropertyRequestDto.getApartmentsOnTheSite())
-                    .concierge(realPropertyRequestDto.getConcierge())
-                    .wheelchair(realPropertyRequestDto.getWheelchair())
-                    .playground(realPropertyRequestDto.getPlayground())
-                    .materialOfConstruction(entityService.mapEntity(MaterialOfConstruction.class, realPropertyRequestDto.getMaterialOfConstructionId()))
-                    .city(entityService.mapRequiredEntity(City.class, realPropertyRequestDto.getCityId()))
-                    .district(entityService.mapEntity(District.class, realPropertyRequestDto.getDistrictId()))
-                    .propertyDeveloper(entityService.mapEntity(PropertyDeveloper.class, realPropertyRequestDto.getPropertyDeveloperId()))
-                    .street(entityService.mapEntity(Street.class, realPropertyRequestDto.getStreetId()))
-                    .yardType(entityService.mapEntity(YardType.class, realPropertyRequestDto.getYardTypeId()))
-                    .build();
+            application.setClientLogin(getAuthorName());
+            application.setOperationType(operationType);
 
-            if (nonNull(realPropertyRequestDto.getParkingTypeIds()) && !realPropertyRequestDto.getParkingTypeIds().isEmpty()) {
-                generalCharacteristics.getParkingTypes().clear();
-                generalCharacteristics.getParkingTypes().addAll(parkingTypeRepository.findByIdIn(realPropertyRequestDto.getParkingTypeIds()));
-            }
-            if (nonNull(realPropertyRequestDto.getTypeOfElevatorList()) && !realPropertyRequestDto.getTypeOfElevatorList().isEmpty()) {
-                generalCharacteristics.getTypesOfElevator().clear();
-                generalCharacteristics.getTypesOfElevator().addAll(typeOfElevatorRepository.findByIdIn(realPropertyRequestDto.getTypeOfElevatorList()));
-            }
-            realProperty.setGeneralCharacteristics(generalCharacteristics);
-        }
-        if (operationType.getCode().equals(OperationType.BUY) && nonNull(realPropertyRequestDto.getPurchaseInfoDto())) {
-            PurchaseInfoDto infoDto = realPropertyRequestDto.getPurchaseInfoDto();
-            OldPurchaseInfo purchaseInfo = new OldPurchaseInfo();
-            purchaseInfo.setObjectPrice(infoDto.getObjectPricePeriod());
-            purchaseInfo.setFloor(infoDto.getFloorPeriod());
-            purchaseInfo.setNumberOfRooms(infoDto.getNumberOfRoomsPeriod());
-            purchaseInfo.setNumberOfBedrooms(infoDto.getNumberOfBedroomsPeriod());
-            purchaseInfo.setNumberOfFloors(infoDto.getNumberOfFloorsPeriod());
-            purchaseInfo.setTotalArea(infoDto.getTotalAreaPeriod());
-            purchaseInfo.setLivingArea(infoDto.getLivingAreaPeriod());
-            purchaseInfo.setKitchenArea(infoDto.getKitchenAreaPeriod());
-            purchaseInfo.setLandArea(infoDto.getLandAreaPeriod());
-            purchaseInfo.setBalconyArea(infoDto.getBalconyAreaPeriod());
-            purchaseInfo.setCeilingHeight(infoDto.getCeilingHeightPeriod());
-            purchaseInfo.setRealProperty(realProperty);
-
-            realProperty.setPurchaseInfo(purchaseInfo);
-        }
-        if (operationType.getCode().equals(OperationType.SELL)) {
-            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getHousingPlanImageIdList())) {
-                realProperty.getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(realPropertyRequestDto.getHousingPlanImageIdList()));
-            }
-            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getPhotoIdList())) {
-                realProperty.getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(realPropertyRequestDto.getPhotoIdList()));
-            }
-            if (!CollectionUtils.isEmpty(realPropertyRequestDto.getVirtualTourImageIdList())) {
-                realProperty.getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(realPropertyRequestDto.getVirtualTourImageIdList()));
-            }
-        }
-        if (nonNull(application.getId())) {
-            realProperty.setId(application.getRealProperty().getId());
-        } else {
-            ApplicationStatus status = applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT);
+            ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.FIRST_CONTACT);
             application.setApplicationStatus(status);
-            OldApplicationStatusHistory statusHistory = OldApplicationStatusHistory.builder()
+            application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
                     .application(application)
                     .applicationStatus(status)
-                    .build();
-            application.getStatusHistoryList().add(statusHistory);
+                    .build());
         }
-        application.setRealProperty(realProperty);
-        application.setOperationType(operationType);
-        application.setNote(dto.getNote());
-        application.setObjectPrice(dto.getObjectPrice());
-        application.setMortgage(dto.getMortgage());
-        application.setEncumbrance(dto.getEncumbrance());
-        application.setSharedOwnershipProperty(dto.getSharedOwnershipProperty());
-        application.setExchange(dto.getExchange());
-        application.setProbabilityOfBidding(dto.getProbabilityOfBidding());
-        application.setTheSizeOfTrades(dto.getTheSizeOfTrades());
-        application.setContractPeriod(dto.getContractPeriod());
-        application.setContractNumber(dto.getContractNumber());
-        application.setAmount(dto.getAmount());
-        application.setCommissionIncludedInThePrice(dto.isCommissionIncludedInThePrice());
-        if (nonNull(dto.getPossibleReasonForBiddingIdList()) && !dto.getPossibleReasonForBiddingIdList().isEmpty()) {
-            application.getPossibleReasonsForBidding().clear();
-            application.getPossibleReasonsForBidding().addAll(reasonForBiddingRepository.findByIdIn(dto.getPossibleReasonForBiddingIdList()));
+        application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
+        if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseDataDto())) {
+            PurchaseInfoDto infoDto = dto.getPurchaseInfoDto();
+            ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
+            ApplicationPurchaseData data = new ApplicationPurchaseData(dataDto, dto.getPurchaseInfoDto(),
+                    entityService.mapRequiredEntity(City.class, dataDto.getCityId()), entityService.mapEntity(District.class, dataDto.getDistrictId()),
+                    nonNull(infoDto) && nonNull(infoDto.getMaterialOfConstructionId()) ? entityService.mapRequiredEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()) : null,
+                    nonNull(infoDto) && nonNull(infoDto.getYardTypeId()) ? entityService.mapRequiredEntity(YardType.class, infoDto.getYardTypeId()) : null);
+            data.setApplication(application);
+            application.setApplicationPurchaseData(data);
+        } else if (operationType.getCode().equals(OperationType.SELL)) {
+            if (nonNull(dto.getSellDataDto())) {
+                ApplicationSellDataDto dataDto = dto.getSellDataDto();
+                Building building = null;
+                if (nonNull(dto.getRealPropertyDto()) && nonNull(dto.getRealPropertyDto().getBuildingDto())) {
+                    building = buildingService.getByPostcode(dto.getRealPropertyDto().getBuildingDto().getPostcode());
+                    if (isNull(building)) {
+                        BuildingDto buildingDto = dto.getRealPropertyDto().getBuildingDto();
+                        building = new Building(buildingDto,
+                                entityService.mapRequiredEntity(City.class, buildingDto.getCityId()),
+                                entityService.mapRequiredEntity(District.class, buildingDto.getDistrictId()),
+                                entityService.mapRequiredEntity(Street.class, buildingDto.getStreetId()));
+                    }
+                }
+                RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
+                RealPropertyMetadata metadata = new RealPropertyMetadata(realPropertyDto,
+                        entityService.mapEntity(Sewerage.class, realPropertyDto.getSewerageId()),
+                        entityService.mapEntity(HeatingSystem.class, realPropertyDto.getHeatingSystemId()),
+                        entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataId()),
+                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
+                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null);
+                ApplicationSellData sellData = new ApplicationSellData(dataDto, dto.getRealPropertyDto(), building, metadata);
+                sellData.setApplication(application);
+                application.setApplicationSellData(sellData);
+            }
         }
         return applicationRepository.save(application).getId();
     }
 
     @Override
     public Long update(String token, Long id, ApplicationDto input) {
-        OldApplication application = getApplicationById(id);
+        Application application = getApplicationById(id);
         return saveApplication(application, input);
     }
 
     @Override
     public Long deleteById(String token, Long id) {
-        OldApplication application = getApplicationById(id);
+        Application application = getApplicationById(id);
         application.setIsRemoved(true);
         return applicationRepository.save(application).getId();
     }
 
-    public OldApplication getApplicationById(Long id) {
-        Optional<OldApplication> optionalApplication = applicationRepository.findById(id);
+    public Application getApplicationById(Long id) {
+        Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
             if (optionalApplication.get().getIsRemoved()) {
                 throw EntityRemovedException.createApplicationRemoved(id);
@@ -344,7 +269,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Long changeStatus(ChangeStatusDto dto) {
-        OldApplication application = getApplicationById(dto.getApplicationId());
+        Application application = getApplicationById(dto.getApplicationId());
         ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId());
         if (dto.getStatusId().equals(ApplicationStatus.DEMO) || dto.getStatusId().equals(ApplicationStatus.PHOTO_SHOOT) || dto.getStatusId().equals(ApplicationStatus.ADS)) {
             if (application.getApplicationStatus().getId().equals(ApplicationStatus.CONTRACT) || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS)) {
