@@ -240,7 +240,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null);
                 metadata.setApplication(application);
-                log.info("ApartmentNumber " + realPropertyDto.getApartmentNumber() + " building: " + building);
+                log.info("ApartmentNumber " + realPropertyDto.getApartmentNumber() + " building id: " + building.getId());
                 RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
                 if (isNull(realProperty)) {
                     log.info("null realProperty");
@@ -250,7 +250,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.NOT_APPROVED));
                     realProperty.getMetadataList().add(metadata);
                 }
-                log.info("RealProperty: " + realProperty.toString());
+                log.info("RealProperty id: " + realProperty.getId());
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 sellData.setRealProperty(realProperty);
                 sellData.setApplication(application);
