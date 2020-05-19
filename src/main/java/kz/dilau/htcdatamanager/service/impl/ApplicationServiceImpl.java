@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -293,6 +294,25 @@ public class ApplicationServiceImpl implements ApplicationService {
             return optionalApplication.get();
         } else {
             throw NotFoundException.createApplicationById(id);
+        }
+    }
+
+    @Override
+    public List<ApplicationByRealPropertyDto> getApartmentByNumberAndPostcode(String apartmentNumber, String postcode) {
+        RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndPostcode(apartmentNumber, postcode);
+        if (nonNull(realProperty) && nonNull(realProperty.getSellDataList()) && !realProperty.getSellDataList().isEmpty()) {
+            return realProperty.getSellDataList()
+                    .stream()
+                    .map(item -> ApplicationByRealPropertyDto.builder()
+                            .id(item.getApplication().getId())
+                            .creationDate(item.getApplication().getCreatedDate())
+                            .agent(item.getApplication().getCurrentAgent())
+                            .objectPrice(item.getObjectPrice())
+                            .build())
+                    .collect(Collectors.toList());
+//            Set<String> agents = dtoList.stream().map(ApplicationByRealPropertyDto::getAgent).collect(Collectors.toSet());
+        } else {
+            throw NotFoundException.createApartmentByNumberAndPostcode(apartmentNumber, postcode);
         }
     }
 

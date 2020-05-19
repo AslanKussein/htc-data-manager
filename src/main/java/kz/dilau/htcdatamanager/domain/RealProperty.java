@@ -32,6 +32,9 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private List<RealPropertyMetadata> metadataList;
 
+    @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
+    private List<ApplicationSellData> sellDataList;
+
     public RealProperty(RealPropertyDto realPropertyDto, Building building, RealPropertyMetadata metadata) {
         this.id = realPropertyDto.getId();
         this.building = building;
