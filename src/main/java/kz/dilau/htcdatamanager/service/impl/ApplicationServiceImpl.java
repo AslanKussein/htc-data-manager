@@ -303,6 +303,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(realProperty) && nonNull(realProperty.getSellDataList()) && !realProperty.getSellDataList().isEmpty()) {
             return realProperty.getSellDataList()
                     .stream()
+                    .filter(item -> !item.getApplication().getIsRemoved())
                     .map(item -> ApplicationByRealPropertyDto.builder()
                             .id(item.getApplication().getId())
                             .creationDate(item.getApplication().getCreatedDate())
