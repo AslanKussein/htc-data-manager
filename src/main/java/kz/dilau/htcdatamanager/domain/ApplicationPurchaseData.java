@@ -44,7 +44,7 @@ public class ApplicationPurchaseData extends AApplicationData {
     @Column(name = "district_id", insertable = false, updatable = false)
     private Long districtId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "purchase_info_id")
     private PurchaseInfo purchaseInfo;
     @Column(name = "purchase_info_id", insertable = false, updatable = false)

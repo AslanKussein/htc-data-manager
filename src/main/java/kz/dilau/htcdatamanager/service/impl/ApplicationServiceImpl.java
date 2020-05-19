@@ -216,6 +216,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                     nonNull(infoDto) && nonNull(infoDto.getMaterialOfConstructionId()) ? entityService.mapRequiredEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()) : null,
                     nonNull(infoDto) && nonNull(infoDto.getYardTypeId()) ? entityService.mapRequiredEntity(YardType.class, infoDto.getYardTypeId()) : null);
             data.setApplication(application);
+//            if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData())) {
+//                data.setId(application.getApplicationPurchaseData().getId());
+//                if (nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+//                    data.getPurchaseInfo().setId(application.getApplicationPurchaseData().getPurchaseInfo().getId());
+//                }
+//            }
             application.setApplicationPurchaseData(data);
             application = applicationRepository.save(application);
         } else if (operationType.getCode().equals(OperationType.SELL)) {
@@ -236,7 +242,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 RealPropertyMetadata metadata = new RealPropertyMetadata(realPropertyDto,
                         entityService.mapEntity(Sewerage.class, realPropertyDto.getSewerageId()),
                         entityService.mapEntity(HeatingSystem.class, realPropertyDto.getHeatingSystemId()),
-                        entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataId()),
+                        entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataStatusId()),
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null,
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(MaterialOfConstruction.class, realPropertyDto.getGeneralCharacteristicsDto().getMaterialOfConstructionId()) : null,
@@ -253,6 +259,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 sellData.setRealProperty(realProperty);
                 sellData.setApplication(application);
+//                if (nonNull(application.getId()) && nonNull(application.getApplicationSellData())) {
+//                    sellData.setId(application.getApplicationSellData().getId());
+//                }
                 application.setApplicationSellData(sellData);
                 application = applicationRepository.save(application);
             }
