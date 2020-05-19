@@ -32,9 +32,9 @@ public class NotesDto {
 
     public NotesDto(OldNotes notes) {
         this.id = notes.getId();
-        this.createdBy = notes.getCreatedBy();
+//        this.createdBy = notes.getCreatedBy();
         this.text = notes.getText();
-        this.crDate = ZonedDateTime.ofInstant(notes.getCreatedDate().toInstant(), ZoneId.systemDefault());
+//        this.crDate = ZonedDateTime.ofInstant(notes.getCreatedDate().toInstant(), ZoneId.systemDefault());
         this.realPropertyId = notes.getRealProperty().getId();
     }
 
