@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
@@ -49,6 +50,18 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
             metadataList = new ArrayList<>();
         }
         return metadataList;
+    }
+
+    public List<ApplicationSellData> getSellDataList() {
+        if (isNull(sellDataList)) {
+            sellDataList = new ArrayList<>();
+        }
+        return sellDataList;
+    }
+
+    @Transient
+    public List<ApplicationSellData> getActualSellDataList() {
+        return getSellDataList().stream().filter(item -> !item.getApplication().getIsRemoved()).collect(Collectors.toList());
     }
 
     @Transient

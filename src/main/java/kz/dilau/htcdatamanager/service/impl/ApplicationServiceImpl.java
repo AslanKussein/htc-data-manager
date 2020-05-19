@@ -32,6 +32,8 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
+    private static final Integer MAX_APPLICATION_COUNT = 3;
+
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
@@ -249,10 +251,16 @@ public class ApplicationServiceImpl implements ApplicationService {
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(MaterialOfConstruction.class, realPropertyDto.getGeneralCharacteristicsDto().getMaterialOfConstructionId()) : null,
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(YardType.class, realPropertyDto.getGeneralCharacteristicsDto().getYardTypeId()) : null);
                 metadata.setApplication(application);
-                RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
+                RealProperty realProperty = null;
+                if (nonNull(building)) {
+                    realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
+                }
                 if (isNull(realProperty)) {
                     realProperty = new RealProperty(realPropertyDto, building, metadata);
                 } else {
+                    if (realProperty.getActualSellDataList().size() > MAX_APPLICATION_COUNT) {
+                        throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                    }
                     realProperty.getMetadataList().add(metadata);
                 }
                 metadata.setRealProperty(realProperty);
