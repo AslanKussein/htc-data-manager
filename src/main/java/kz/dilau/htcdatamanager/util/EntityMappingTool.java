@@ -55,7 +55,9 @@ public class EntityMappingTool {
         RealPropertyMetadata metadata = convertRealPropertyMetadata(dto.getRealPropertyDto());
         ApplicationSellDataDto dataDto = dto.getSellDataDto();
         RealProperty realProperty = new RealProperty(dto.getRealPropertyDto(), building, metadata);
-        return new ApplicationSellData(dataDto, realProperty);
+        ApplicationSellData sellData = new ApplicationSellData(dataDto);
+        sellData.setRealProperty(realProperty);
+        return sellData;
     }
 
 
