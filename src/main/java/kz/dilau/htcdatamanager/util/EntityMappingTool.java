@@ -1,9 +1,6 @@
 package kz.dilau.htcdatamanager.util;
 
-import kz.dilau.htcdatamanager.domain.ApplicationPurchaseData;
-import kz.dilau.htcdatamanager.domain.ApplicationSellData;
-import kz.dilau.htcdatamanager.domain.Building;
-import kz.dilau.htcdatamanager.domain.RealPropertyMetadata;
+import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
@@ -57,7 +54,8 @@ public class EntityMappingTool {
         Building building = convertBuilding(dto);
         RealPropertyMetadata metadata = convertRealPropertyMetadata(dto.getRealPropertyDto());
         ApplicationSellDataDto dataDto = dto.getSellDataDto();
-        return new ApplicationSellData(dataDto, dto.getRealPropertyDto(), building, metadata);
+        RealProperty realProperty = new RealProperty(dto.getRealPropertyDto(), building, metadata);
+        return new ApplicationSellData(dataDto, realProperty);
     }
 
 
