@@ -234,6 +234,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataId()),
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null);
+                metadata.setApplication(application);
                 ApplicationSellData sellData = new ApplicationSellData(dataDto, dto.getRealPropertyDto(), building, metadata);
                 sellData.setApplication(application);
                 application.setApplicationSellData(sellData);

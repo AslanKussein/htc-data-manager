@@ -29,7 +29,7 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @Column(name = "cadastral_number")
     private String cadastralNumber;
 
-    @OneToMany(mappedBy = "realProperty")
+    @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private List<RealPropertyMetadata> metadataList;
 
     public RealProperty(RealPropertyDto realPropertyDto, Building building, RealPropertyMetadata metadata) {
@@ -37,6 +37,7 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
         this.building = building;
         this.apartmentNumber = realPropertyDto.getApartmentNumber();
         this.cadastralNumber = realPropertyDto.getCadastralNumber();
+        metadata.setRealProperty(this);
         getMetadataList().add(metadata);
     }
 
