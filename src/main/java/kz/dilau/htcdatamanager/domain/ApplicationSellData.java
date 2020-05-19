@@ -56,7 +56,7 @@ public class ApplicationSellData extends AApplicationData {
     @Column(name = "possible_reasons_for_bidding", columnDefinition = "jsonb")
     private Set<IdItem> possibleReasonsForBidding = new HashSet<>();
 
-    public ApplicationSellData(ApplicationSellDataDto dataDto, RealPropertyDto realPropertyDto, Building building, RealPropertyMetadata metadata) {
+    public ApplicationSellData(ApplicationSellDataDto dataDto, RealProperty realProperty) {
         this.id = dataDto.getId();
         this.objectPrice = dataDto.getObjectPrice();
         this.encumbrance = dataDto.getEncumbrance();
@@ -80,8 +80,8 @@ public class ApplicationSellData extends AApplicationData {
         if (!CollectionUtils.isEmpty(dataDto.getVirtualTourImageIdList())) {
             getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(dataDto.getVirtualTourImageIdList()));
         }
-        if (nonNull(realPropertyDto)) {
-            this.realProperty = new RealProperty(realPropertyDto, building, metadata);
+        if (nonNull(realProperty)) {
+            this.realProperty = realProperty;
         }
     }
 

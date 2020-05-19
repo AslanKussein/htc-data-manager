@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
+import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
@@ -32,6 +33,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final BuildingService buildingService;
+    private final RealPropertyRepository realPropertyRepository;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -235,7 +237,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
                         nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null);
                 metadata.setApplication(application);
-                ApplicationSellData sellData = new ApplicationSellData(dataDto, dto.getRealPropertyDto(), building, metadata);
+                metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.NOT_APPROVED));
+                RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
+                if( isNull(realProperty)) {
+                    realProperty = new RealProperty(realPropertyDto, building, metadata);
+                } else {
+                    realProperty.getMetadataList().add(metadata);
+                }
+                ApplicationSellData sellData = new ApplicationSellData(dataDto, realProperty);
                 sellData.setApplication(application);
                 application.setApplicationSellData(sellData);
             }

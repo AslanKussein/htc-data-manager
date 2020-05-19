@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RealPropertyRepository extends JpaRepository<RealProperty, Long> {
     boolean existsByCadastralNumber(String cadastralNumber);
 
+    RealProperty findByApartmentNumberAndBuildingId(String apartmentNumber, Long buildingId);
 }

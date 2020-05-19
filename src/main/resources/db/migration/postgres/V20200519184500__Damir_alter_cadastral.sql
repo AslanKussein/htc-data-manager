@@ -1,0 +1,2 @@
+alter table htc_dm_real_property
+  drop constraint uk_real_property_cadastral_number;
