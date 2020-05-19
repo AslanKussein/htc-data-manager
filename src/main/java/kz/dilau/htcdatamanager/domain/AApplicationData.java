@@ -12,11 +12,11 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class AApplicationData extends BaseEntity<Long> {
     @Column(name = "mortgage")
-    private Boolean mortgage;//ипотека
+    protected Boolean mortgage;//ипотека
     @Column(name = "has_probability_of_bidding")
-    private Boolean probabilityOfBidding;//вероятность торга
+    protected Boolean probabilityOfBidding;//вероятность торга
     @Column(name = "the_size_of_trades")
-    private Integer theSizeOfTrades;//размер торга
+    protected Integer theSizeOfTrades;//размер торга
     @Column(name = "note")
-    private String note;
+    protected String note;
 }

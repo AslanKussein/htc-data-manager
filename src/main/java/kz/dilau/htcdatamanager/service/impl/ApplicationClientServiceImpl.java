@@ -52,7 +52,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 .exchange(application.getExchange())
                 .mortgage(application.getMortgage())
                 .note(application.getNote())
-                .realPropertyClientDto(nonNull(application.getRealProperty()) ? realPropertyService.mapToRealPropertyClientDto(application.getRealProperty()) : null)
+//                .realPropertyClientDto(nonNull(application.getRealProperty()) ? realPropertyService.mapToRealPropertyClientDto(application.getRealProperty()) : null)
 
                 .build();
     }

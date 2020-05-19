@@ -136,6 +136,16 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
         return new ResidentialComplexDto(residentialComplex);
     }
 
+    @Override
+    public ResidentialComplexDto getByPostcode(String postcode) {
+        Building building = buildingService.getByPostcode(postcode);
+        if (nonNull(building) && nonNull(building.getResidentialComplex())) {
+            return new ResidentialComplexDto(building.getResidentialComplex());
+        } else {
+            throw NotFoundException.createResidentialComplexByPostcode(postcode);
+        }
+    }
+
     private ResidentialComplex getResidentialComplexById(Long id) {
         Optional<ResidentialComplex> optionalResidentialComplex = residentialComplexRepository.findById(id);
         if (optionalResidentialComplex.isPresent()) {

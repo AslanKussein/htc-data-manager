@@ -2,8 +2,11 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.old.OldEvent;
-import lombok.*;
+import kz.dilau.htcdatamanager.domain.Event;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -36,7 +39,7 @@ public class EventDto {
     @ApiModelProperty(value = "Комментарий (Результат события)")
     private String comment;
 
-    public EventDto(OldEvent event) {
+    public EventDto(Event event) {
         this.id = event.getId();
         this.eventDate = event.getEventDate();
         this.eventTypeId = event.getEventType().getId();

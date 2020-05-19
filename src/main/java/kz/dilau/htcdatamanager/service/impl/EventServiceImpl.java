@@ -1,15 +1,15 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.old.OldEvent;
-import kz.dilau.htcdatamanager.domain.old.OldApplication;
-import kz.dilau.htcdatamanager.domain.old.OldApplicationStatusHistory;
+import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.ApplicationStatusHistory;
+import kz.dilau.htcdatamanager.domain.Event;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.EventType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.OldApplicationRepository;
-import kz.dilau.htcdatamanager.repository.OldEventRepository;
+import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.repository.EventRepository;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
@@ -22,25 +22,25 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class EventServiceImpl implements EventService {
-    private final OldEventRepository eventRepository;
+    private final EventRepository eventRepository;
     private final EntityService entityService;
-    private final OldApplicationRepository applicationRepository;
+    private final ApplicationRepository applicationRepository;
 
     @Override
     @Transactional
     public Long addEvent(EventDto dto) {
-        OldEvent event = OldEvent.builder()
+        Event event = Event.builder()
                 .eventDate(dto.getEventDate())
                 .eventType(entityService.mapRequiredEntity(EventType.class, dto.getEventTypeId()))
                 .description(dto.getDescription())
                 .build();
-        OldApplication sourceApplication = entityService.mapRequiredEntity(OldApplication.class, dto.getSourceApplicationId());
+        Application sourceApplication = entityService.mapRequiredEntity(Application.class, dto.getSourceApplicationId());
         event.setSourceApplication(sourceApplication);
         if (eventRepository.existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(sourceApplication.getId(), dto.getEventDate())) {
             throw BadRequestException.createDuplicateEvent(sourceApplication.getId());
         }
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
-            OldApplication targetApplication = entityService.mapRequiredEntity(OldApplication.class, dto.getTargetApplicationId());
+            Application targetApplication = entityService.mapRequiredEntity(Application.class, dto.getTargetApplicationId());
             event.setTargetApplication(targetApplication);
             if (sourceApplication.getOperationType().getId().equals(targetApplication.getOperationType().getId())) {
                 throw BadRequestException.createRequiredIsEmpty("");
@@ -66,10 +66,10 @@ public class EventServiceImpl implements EventService {
         return eventRepository.save(event).getId();
     }
 
-    private void setStatusHistory(OldApplication application, Long statusId) {
+    private void setStatusHistory(Application application, Long statusId) {
         ApplicationStatus status = entityService.mapEntity(ApplicationStatus.class, statusId);
         application.setApplicationStatus(status);
-        OldApplicationStatusHistory statusHistory = OldApplicationStatusHistory.builder()
+        ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
                 .application(application)
                 .applicationStatus(status)
                 .build();
@@ -81,8 +81,8 @@ public class EventServiceImpl implements EventService {
         return new EventDto(getById(id));
     }
 
-    private OldEvent getById(Long id) {
-        Optional<OldEvent> optionalEvent = eventRepository.findById(id);
+    private Event getById(Long id) {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
         if (optionalEvent.isPresent()) {
             if (optionalEvent.get().getIsRemoved()) {
                 throw EntityRemovedException.createEventRemoved(id);
@@ -95,7 +95,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Long updateEvent(String token, Long id, EventDto dto) {
-        OldEvent event = getById(id);
+        Event event = getById(id);
         event.setEventDate(dto.getEventDate());
         event.setDescription(dto.getDescription());
         return eventRepository.save(event).getId();
@@ -103,14 +103,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Long commentEvent(String token, Long id, String comment) {
-        OldEvent event = getById(id);
+        Event event = getById(id);
         event.setComment(comment);
         return eventRepository.save(event).getId();
     }
 
     @Override
     public Long deleteEventById(String token, Long id) {
-        OldEvent event = getById(id);
+        Event event = getById(id);
         event.setIsRemoved(true);
         return eventRepository.save(event).getId();
     }

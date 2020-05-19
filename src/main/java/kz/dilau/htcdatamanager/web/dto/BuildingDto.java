@@ -32,9 +32,9 @@ public class BuildingDto {
     private BigDecimal longitude;
 
     public BuildingDto(Building building) {
-        this.cityId = building.getCityId();
-        this.districtId = building.getDistrictId();
-        this.streetId = building.getStreetId();
+        this.cityId = building.getCity().getId();
+        this.districtId = building.getDistrict().getId();
+        this.streetId = building.getStreet().getId();
         this.houseNumber = building.getHouseNumber();
         this.houseNumberFraction = building.getHouseNumberFraction();
         this.postcode = building.getPostcode();

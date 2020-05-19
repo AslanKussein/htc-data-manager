@@ -18,4 +18,6 @@ public interface ResidentialComplexService {
     ResidentialComplexDto update(String token, Long id, ResidentialComplexDto input);
 
     ResidentialComplexDto deleteById(String token, Long id);
+
+    ResidentialComplexDto getByPostcode(String postcode);
 }

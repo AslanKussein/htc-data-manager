@@ -1,10 +1,8 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.HeatingSystem;
-import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
-import kz.dilau.htcdatamanager.domain.dictionary.Sewerage;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -45,11 +43,11 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Boolean atelier;//студия
     @Column(name = "separate_bathroom")
     private Boolean separateBathroom;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "residential_complex_id")
-    private ResidentialComplex residentialComplex;
-    @Column(name = "residential_complex_id", insertable = false, updatable = false)
-    private Long residentialComplexId;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "residential_complex_id")
+//    private ResidentialComplex residentialComplex;
+//    @Column(name = "residential_complex_id", insertable = false, updatable = false)
+//    private Long residentialComplexId;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sewerage_id")
     private Sewerage sewerage;
@@ -72,5 +70,25 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private MetadataStatus metadataStatus;
     @Column(name = "metadata_status_id", insertable = false, updatable = false)
     private Long metadataStatusId;
+
+    public RealPropertyMetadata(RealPropertyDto dto, Sewerage sewerage,
+                                HeatingSystem heatingSystem, MetadataStatus metadataStatus,
+                                PropertyDeveloper propertyDeveloper, HouseCondition houseCondition) {
+        this.id = dto.getMetadataId();
+        this.floor = dto.getFloor();
+        this.numberOfRooms = dto.getNumberOfRooms();
+        this.numberOfBedrooms = dto.getNumberOfBedrooms();
+        this.totalArea = dto.getTotalArea();
+        this.livingArea = dto.getLivingArea();
+        this.kitchenArea = dto.getKitchenArea();
+        this.balconyArea = dto.getBalconyArea();
+        this.atelier = dto.getAtelier();
+        this.separateBathroom = dto.getSeparateBathroom();
+        this.sewerage = sewerage;
+        this.heatingSystem = heatingSystem;
+        this.landArea = dto.getLandArea();
+        this.metadataStatus = metadataStatus;
+        this.generalCharacteristics = new GeneralCharacteristics(dto.getGeneralCharacteristicsDto(), propertyDeveloper, houseCondition);
+    }
 }
 

@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Модель краткой формы заявки")
+@ApiModel(value = "ApplicationLightDto", description = "Модель краткой формы заявки")
 public class ApplicationLightDto {
     @ApiModelProperty(value = "ID заявки")
     private Long id;

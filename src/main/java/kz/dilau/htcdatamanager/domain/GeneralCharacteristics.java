@@ -4,6 +4,7 @@ package kz.dilau.htcdatamanager.domain;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.domain.dictionary.HouseCondition;
 import kz.dilau.htcdatamanager.domain.dictionary.PropertyDeveloper;
+import kz.dilau.htcdatamanager.web.dto.GeneralCharacteristicsDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
@@ -54,6 +56,27 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
     @Type(type = "jsonb")
     @Column(name = "types_of_elevator", columnDefinition = "jsonb")
     private Set<IdItem> typesOfElevator = new HashSet<>();
+
+    public GeneralCharacteristics(GeneralCharacteristicsDto dto,
+                                  PropertyDeveloper propertyDeveloper, HouseCondition houseCondition) {
+        this.id = dto.getId();
+        this.propertyDeveloper = propertyDeveloper;
+        this.houseCondition = houseCondition;
+        this.housingClass = dto.getHousingClass();
+        this.yearOfConstruction = dto.getYearOfConstruction();
+        this.numberOfFloors = dto.getNumberOfFloors();
+        this.numberOfApartments = dto.getNumberOfApartments();
+        this.apartmentsOnTheSite = dto.getApartmentsOnTheSite();
+        this.ceilingHeight = dto.getCeilingHeight();
+        this.parkingTypes = dto.getParkingTypeIds()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
+        this.typesOfElevator = dto.getTypeOfElevatorList()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
+    }
 
     public Set<IdItem> getParkingTypes() {
         if (isNull(parkingTypes)) {
