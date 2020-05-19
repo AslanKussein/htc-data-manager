@@ -70,7 +70,7 @@ public class NotesServiceImpl implements NotesService {
             throw BadRequestException.idMustNotBeNull();
         }
         OldNotes notes = getNotesById(notesDto.getId());
-        notes.setIsRemoved(Boolean.TRUE);
+//        notes.setIsRemoved(Boolean.TRUE);
         notes = notesRepository.save(notes);
 
         return new NotesDto(notes);
