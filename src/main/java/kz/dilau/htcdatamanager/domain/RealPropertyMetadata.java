@@ -18,9 +18,11 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "real_property_metadata")
 public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "application_id")
     private Application application;
@@ -43,7 +45,7 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Boolean atelier;//студия
     @Column(name = "separate_bathroom")
     private Boolean separateBathroom;
-//    @ManyToOne(fetch = FetchType.LAZY)
+    //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "residential_complex_id")
 //    private ResidentialComplex residentialComplex;
 //    @Column(name = "residential_complex_id", insertable = false, updatable = false)
