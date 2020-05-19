@@ -34,7 +34,7 @@ public class ApplicationSellData extends AApplicationData {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "real_property_id")
     @ToString.Exclude
     private RealProperty realProperty;
@@ -56,7 +56,7 @@ public class ApplicationSellData extends AApplicationData {
     @Column(name = "possible_reasons_for_bidding", columnDefinition = "jsonb")
     private Set<IdItem> possibleReasonsForBidding = new HashSet<>();
 
-    public ApplicationSellData(ApplicationSellDataDto dataDto, RealProperty realProperty) {
+    public ApplicationSellData(ApplicationSellDataDto dataDto) {
         this.id = dataDto.getId();
         this.objectPrice = dataDto.getObjectPrice();
         this.encumbrance = dataDto.getEncumbrance();
@@ -79,9 +79,6 @@ public class ApplicationSellData extends AApplicationData {
         }
         if (!CollectionUtils.isEmpty(dataDto.getVirtualTourImageIdList())) {
             getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(dataDto.getVirtualTourImageIdList()));
-        }
-        if (nonNull(realProperty)) {
-            this.realProperty = realProperty;
         }
     }
 
