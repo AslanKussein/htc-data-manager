@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -64,25 +66,27 @@ public class ResidentialComplexDto {
         this.id = residentialComplex.getId();
         this.houseName = residentialComplex.getHouseName();
         this.numberOfEntrances = residentialComplex.getNumberOfEntrances();
-        if (Objects.nonNull(residentialComplex.getGeneralCharacteristics())) {
+        if (nonNull(residentialComplex.getGeneralCharacteristics())) {
             GeneralCharacteristics gc = residentialComplex.getGeneralCharacteristics();
             this.apartmentsOnTheSite = gc.getApartmentsOnTheSite();
             this.ceilingHeight = gc.getCeilingHeight();
             this.concierge = gc.getConcierge();
             this.housingClass = gc.getHousingClass();
-            this.housingConditionId = gc.getHouseCondition().getId();
+            if (nonNull(gc.getHouseCondition())) {
+                this.housingConditionId = gc.getHouseCondition().getId();
+            }
             this.numberOfApartments = gc.getNumberOfApartments();
             this.numberOfFloors = gc.getNumberOfFloors();
             this.playground = gc.getPlayground();
             this.wheelchair = gc.getWheelchair();
             this.yearOfConstruction = gc.getYearOfConstruction();
-            if (Objects.nonNull(gc.getYardType())) {
+            if (nonNull(gc.getYardType())) {
                 this.yardTypeId = gc.getYardType().getId();
             }
-            if (Objects.nonNull(gc.getMaterialOfConstruction())) {
+            if (nonNull(gc.getMaterialOfConstruction())) {
                 this.materialOfConstructionId = gc.getMaterialOfConstruction().getId();
             }
-            if (Objects.nonNull(gc.getPropertyDeveloper())) {
+            if (nonNull(gc.getPropertyDeveloper())) {
                 this.propertyDeveloperId = gc.getPropertyDeveloper().getId();
             }
             if (!CollectionUtils.isEmpty(gc.getTypesOfElevator())) {
@@ -100,7 +104,7 @@ public class ResidentialComplexDto {
                         .collect(Collectors.toList());
             }
         }
-        if (Objects.nonNull(residentialComplex.getBuilding())) {
+        if (nonNull(residentialComplex.getBuilding())) {
             Building building = residentialComplex.getBuilding();
             this.buildingDto = new BuildingDto(building);
         }
