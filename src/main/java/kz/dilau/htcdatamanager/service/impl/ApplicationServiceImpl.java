@@ -255,7 +255,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                     realProperty.getMetadataList().add(metadata);
                 }
                 metadata.setRealProperty(realProperty);
-                metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, isNull(realProperty.getId()) ? MetadataStatus.APPROVED : MetadataStatus.NOT_APPROVED));
+                if (isNull(metadata.getMetadataStatus())) {
+                    metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, isNull(realProperty.getId()) ? MetadataStatus.APPROVED : MetadataStatus.NOT_APPROVED));
+                }
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 sellData.setRealProperty(realProperty);
                 sellData.setApplication(application);
