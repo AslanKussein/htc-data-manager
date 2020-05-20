@@ -16,4 +16,5 @@ public class DataProperties {
     private String keycloakRoleManagerUrl;
     private String keycloakRoleManagerLogin;
     private String keycloakRoleManagerPassword;
+    private int maxApplicationCountForOneRealProperty;
 }

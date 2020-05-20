@@ -1,7 +1,11 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
+import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
@@ -12,6 +16,7 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +37,13 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
-    private static final Integer MAX_APPLICATION_COUNT = 3;
-
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final BuildingService buildingService;
     private final RealPropertyRepository realPropertyRepository;
+    private final DataProperties dataProperties;
+    private final EntityMappingTool entityMappingTool;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -222,12 +227,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
         if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseDataDto())) {
-            PurchaseInfoDto infoDto = dto.getPurchaseInfoDto();
-            ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
-            ApplicationPurchaseData data = new ApplicationPurchaseData(dataDto, dto.getPurchaseInfoDto(),
-                    entityService.mapRequiredEntity(City.class, dataDto.getCityId()), entityService.mapEntity(District.class, dataDto.getDistrictId()),
-                    nonNull(infoDto) && nonNull(infoDto.getMaterialOfConstructionId()) ? entityService.mapRequiredEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()) : null,
-                    nonNull(infoDto) && nonNull(infoDto.getYardTypeId()) ? entityService.mapRequiredEntity(YardType.class, infoDto.getYardTypeId()) : null);
+            ApplicationPurchaseData data = entityMappingTool.convertApplicationPurchaseData(dto);
             data.setApplication(application);
             if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData())) {
                 data.setId(application.getApplicationPurchaseData().getId());
@@ -240,42 +240,49 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else if (operationType.getCode().equals(OperationType.SELL)) {
             if (nonNull(dto.getSellDataDto())) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
-                Building building = null;
-                if (nonNull(dto.getRealPropertyDto()) && nonNull(dto.getRealPropertyDto().getBuildingDto())) {
-                    building = buildingService.getByPostcode(dto.getRealPropertyDto().getBuildingDto().getPostcode());
-                    if (isNull(building)) {
-                        BuildingDto buildingDto = dto.getRealPropertyDto().getBuildingDto();
-                        building = new Building(buildingDto,
-                                entityService.mapRequiredEntity(City.class, buildingDto.getCityId()),
-                                entityService.mapRequiredEntity(District.class, buildingDto.getDistrictId()),
-                                entityService.mapRequiredEntity(Street.class, buildingDto.getStreetId()));
-                    }
-                }
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
-                RealPropertyMetadata metadata = new RealPropertyMetadata(realPropertyDto,
-                        entityService.mapEntity(Sewerage.class, realPropertyDto.getSewerageId()),
-                        entityService.mapEntity(HeatingSystem.class, realPropertyDto.getHeatingSystemId()),
-                        entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataStatusId()),
-                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
-                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null,
-                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(MaterialOfConstruction.class, realPropertyDto.getGeneralCharacteristicsDto().getMaterialOfConstructionId()) : null,
-                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(YardType.class, realPropertyDto.getGeneralCharacteristicsDto().getYardTypeId()) : null);
-                metadata.setApplication(application);
                 RealProperty realProperty = null;
-                if (nonNull(building)) {
-                    realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
-                }
-                if (isNull(realProperty)) {
-                    realProperty = new RealProperty(realPropertyDto, building, metadata);
-                } else {
-                    if (realProperty.getActualSellDataList().size() > MAX_APPLICATION_COUNT) {
-                        throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                Building building = null;
+                RealPropertyMetadata metadata;
+                if (nonNull(realPropertyDto)) {
+                    metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
+                    if (nonNull(realPropertyDto.getBuildingDto())) {
+                        building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
+                        if (isNull(building)) {
+                            building = entityMappingTool.convertBuilding(realPropertyDto.getBuildingDto());
+                            realProperty = new RealProperty(realPropertyDto, building, metadata);
+                        } else {
+                            realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
+                        }
+                    }
+                    if (nonNull(realProperty.getId())) {
+                        List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
+                        if (actualSellDataList.size() > dataProperties.getMaxApplicationCountForOneRealProperty()) {
+                            throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                        }
+                        RealPropertyMetadata metadataByStatus = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
+                        if (realPropertyDto.getEdited()) {
+                            if (nonNull(application.getId()) && actualSellDataList.size() == 1 && actualSellDataList.get(0).getApplication().getId().equals(application.getId())) {
+                                if (nonNull(metadataByStatus)) {
+                                    metadata.setId(metadataByStatus.getId());
+                                    metadata.setMetadataStatus(metadataByStatus.getMetadataStatus());
+                                }
+                            } else {
+                                metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.NOT_APPROVED));
+                            }
+                        } else {
+                            metadata = metadataByStatus;
+                        }
+                    } else {
+                        metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED));
+                    }
+                    metadata.setRealProperty(realProperty);
+                    if (!metadata.getMetadataStatus().getId().equals(MetadataStatus.APPROVED)) {
+                        metadata.setApplication(application);
+                    } else {
+                        metadata.setApplication(null);
                     }
                     realProperty.getMetadataList().add(metadata);
-                }
-                metadata.setRealProperty(realProperty);
-                if (isNull(metadata.getMetadataStatus())) {
-                    metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, isNull(realProperty.getId()) ? MetadataStatus.APPROVED : MetadataStatus.NOT_APPROVED));
                 }
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 sellData.setRealProperty(realProperty);

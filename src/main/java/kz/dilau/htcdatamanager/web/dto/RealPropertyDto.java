@@ -28,9 +28,6 @@ public class RealPropertyDto extends AIdentifierDto {
     @ApiModelProperty(value = "id метаданных")
     private Long metadataId;
 
-    @ApiModelProperty(value = "Статус метаданных")
-    private Long metadataStatusId;
-
     @ApiModelProperty(name = "floor", value = "Этаж")
     private Integer floor;
     @ApiModelProperty(name = "numberOfRooms", value = "Количество комнат")
@@ -56,6 +53,9 @@ public class RealPropertyDto extends AIdentifierDto {
     @ApiModelProperty(value = "Санузел раздельный")
     protected Boolean separateBathroom;
 
+    @ApiModelProperty(value = "Признак редактирования")
+    protected Boolean edited = false;
+
     @ApiModelProperty(value = "Характеристики недвижимости")
     private GeneralCharacteristicsDto generalCharacteristicsDto;
 
@@ -67,7 +67,6 @@ public class RealPropertyDto extends AIdentifierDto {
         RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
         if (nonNull(metadata)) {
             this.metadataId = metadata.getId();
-            this.metadataStatusId = metadata.getMetadataStatusId();
             this.floor = metadata.getFloor();
             this.numberOfRooms = metadata.getNumberOfRooms();
             this.numberOfBedrooms = metadata.getNumberOfBedrooms();
