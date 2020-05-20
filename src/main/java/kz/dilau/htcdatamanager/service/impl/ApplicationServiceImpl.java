@@ -11,6 +11,7 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
+import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
@@ -18,10 +19,13 @@ import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
+import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -45,6 +49,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final DataProperties dataProperties;
     private final EntityMappingTool entityMappingTool;
     private final KeycloakService keycloakService;
+    private final RealPropertyMetadataRepository metadataRepository;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -349,6 +354,56 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             throw NotFoundException.createApartmentByNumberAndPostcode(apartmentNumber, postcode);
         }
+    }
+
+    @Override
+    public Page<ApplicationDto> getNotApprovedMetadata(PageableDto pageableDto) {
+        Page<Application> applications = applicationRepository.findAllByMetadataStatus(MetadataStatus.NOT_APPROVED, PageableUtils.createPageRequest(pageableDto));
+        if (nonNull(applications) && !applications.isEmpty()) {
+            return applications.map(this::mapMetadataToAppicationDto);
+        } else {
+            return null;
+        }
+
+    }
+
+    @Override
+    public Long approveMetadata(Long applicationId, Long statusId) {
+        Application application = getApplicationById(applicationId);
+        if (nonNull(application.getApplicationSellData()) && nonNull(application.getApplicationSellData().getRealProperty())) {
+            RealPropertyMetadata metadata = application.getApplicationSellData().getRealProperty().getMetadataByStatusAndApplication(MetadataStatus.NOT_APPROVED, applicationId);
+            if (statusId.equals(MetadataStatus.APPROVED)) {
+                List<RealPropertyMetadata> approvedMetadataList = application.getApplicationSellData().getRealProperty().getMetadataListByStatus(MetadataStatus.APPROVED);
+                if (nonNull(metadata)) {
+                    metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED));
+                    metadataRepository.save(metadata);
+                    for (val data : approvedMetadataList) {
+                        data.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.ARCHIVE));
+                        metadataRepository.save(data);
+                    }
+                } else {
+                    throw NotFoundException.createEntityNotFoundById("RealPropertyMetadata", statusId);
+                }
+            } else if (statusId.equals(MetadataStatus.REJECTED)) {
+                metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.REJECTED));
+                metadataRepository.save(metadata);
+            }
+        } else {
+            throw NotFoundException.createEntityNotFoundById("RealPropertyMetadata", statusId);
+        }
+        return applicationId;
+    }
+
+    private ApplicationDto mapMetadataToAppicationDto(Application application) {
+        ApplicationDto applicationDto = new ApplicationDto();
+        ApplicationSellData sellData = application.getApplicationSellData();
+        ApplicationSellDataDto sellDataDto = new ApplicationSellDataDto(sellData);
+        applicationDto.setSellDataDto(sellDataDto);
+        if (nonNull(sellData.getRealProperty())) {
+            RealPropertyDto realPropertyDto = new RealPropertyDto(sellData.getRealProperty(), application.getId());
+            applicationDto.setRealPropertyDto(realPropertyDto);
+        }
+        return applicationDto;
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Builder
@@ -66,6 +67,23 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
 
     @Transient
     public RealPropertyMetadata getMetadataByStatus(Long statusId) {
-        return getMetadataList().stream().filter(data -> data.getMetadataStatusId().equals(statusId)).findFirst().orElse(null);
+        List<RealPropertyMetadata> metadataListByStatus = getMetadataListByStatus(statusId);
+        if (nonNull(metadataListByStatus) && !metadataListByStatus.isEmpty()) {
+            return metadataListByStatus.get(0);
+        }
+        return null;
+    }
+
+    @Transient
+    public List<RealPropertyMetadata> getMetadataListByStatus(Long statusId) {
+        return getMetadataList().stream().filter(data -> data.getMetadataStatusId().equals(statusId)).collect(Collectors.toList());
+    }
+
+    @Transient
+    public RealPropertyMetadata getMetadataByStatusAndApplication(Long statusId, Long applicationId) {
+        return getMetadataList()
+                .stream()
+                .filter(data -> data.getMetadataStatusId().equals(statusId) && nonNull(data.getApplication()) && data.getApplication().getId().equals(applicationId))
+                .findFirst().orElse(null);
     }
 }

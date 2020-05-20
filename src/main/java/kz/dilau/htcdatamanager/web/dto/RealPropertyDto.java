@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.domain.RealPropertyMetadata;
 import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
@@ -65,6 +66,30 @@ public class RealPropertyDto extends AIdentifierDto {
         this.cadastralNumber = realProperty.getCadastralNumber();
         this.apartmentNumber = realProperty.getApartmentNumber();
         RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
+        if (nonNull(metadata)) {
+            this.metadataId = metadata.getId();
+            this.floor = metadata.getFloor();
+            this.numberOfRooms = metadata.getNumberOfRooms();
+            this.numberOfBedrooms = metadata.getNumberOfBedrooms();
+            this.totalArea = metadata.getTotalArea();
+            this.livingArea = metadata.getLivingArea();
+            this.kitchenArea = metadata.getKitchenArea();
+            this.balconyArea = metadata.getBalconyArea();
+            this.sewerageId = metadata.getSewerageId();
+            this.heatingSystemId = metadata.getHeatingSystemId();
+            this.landArea = metadata.getLandArea();
+            this.atelier = metadata.getAtelier();
+            this.separateBathroom = metadata.getSeparateBathroom();
+            this.generalCharacteristicsDto = new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics());
+        }
+    }
+
+    public RealPropertyDto(RealProperty realProperty, Long applicationId) {
+        this.id = realProperty.getId();
+        this.buildingDto = new BuildingDto(realProperty.getBuilding());
+        this.cadastralNumber = realProperty.getCadastralNumber();
+        this.apartmentNumber = realProperty.getApartmentNumber();
+        RealPropertyMetadata metadata = realProperty.getMetadataByStatusAndApplication(MetadataStatus.NOT_APPROVED, applicationId);
         if (nonNull(metadata)) {
             this.metadataId = metadata.getId();
             this.floor = metadata.getFloor();
