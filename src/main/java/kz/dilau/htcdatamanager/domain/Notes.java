@@ -3,7 +3,8 @@ package kz.dilau.htcdatamanager.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -37,6 +38,7 @@ public class Notes extends AuditableBaseEntity<String, Long> {
         Notes other = (Notes) object;
         return (this.id != null || other.id == null) && (this.id == null || this.id.equals(other.id));
     }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)

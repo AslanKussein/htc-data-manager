@@ -2,7 +2,7 @@ package kz.dilau.htcdatamanager.util;
 
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import lombok.experimental.UtilityClass;
 
@@ -38,7 +38,7 @@ public class DictionaryMappingTool {
                 .build();
     }
 
-    public static MultiLangText mapAddressToMultiLang(GeneralCharacteristics generalCharacteristics, String apartmentNumber) {
+    public static MultiLangText mapAddressToMultiLang(OldGeneralCharacteristics generalCharacteristics, String apartmentNumber) {
         if (isNull(generalCharacteristics)) {
             return MultiLangText.NULL_OBJECT;
         }

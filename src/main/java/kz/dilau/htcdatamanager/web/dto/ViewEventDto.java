@@ -2,7 +2,7 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.Event;
+import kz.dilau.htcdatamanager.domain.old.OldEvent;
 import lombok.*;
 
 import java.util.Date;
@@ -39,7 +39,7 @@ public class ViewEventDto {
     @ApiModelProperty(value = "ID объекта")
     private Long realPropertyId;
 
-    public ViewEventDto(Event event) {
+    public ViewEventDto(OldEvent event) {
         this.id = event.getId();
         this.eventDate = event.getEventDate();
         this.eventTypeId = event.getEventType().getId();

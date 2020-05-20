@@ -1,18 +1,18 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyRequestDto;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 
 import java.util.List;
 
 public interface RealPropertyService {
-    RealPropertyRequestDto getById(Long id);
+    RealPropertyDto getById(Long id);
 
-    List<RealPropertyRequestDto> getAll();
+    List<RealPropertyDto> getAll();
 
     void deleteById(Long id);
 
@@ -22,7 +22,7 @@ public interface RealPropertyService {
 
     void addFilesToProperty(Long propertyId, List<String> photoIds, List<String> housingPlans, List<String> virtualTours);
 
-    RealPropertyRequestDto mapToRealPropertyDto(RealProperty realProperty);
+    RealPropertyDto mapToRealPropertyDto(RealProperty realProperty);
 
     RealPropertyClientDto mapToRealPropertyClientDto(RealProperty realProperty);
 

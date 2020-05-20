@@ -1,9 +1,8 @@
 package kz.dilau.htcdatamanager.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.Notes;
+import kz.dilau.htcdatamanager.domain.old.OldNotes;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +30,7 @@ public class NotesDto {
     @NotNull
     private Long realPropertyId;
 
-    public NotesDto(Notes notes) {
+    public NotesDto(OldNotes notes) {
         this.id = notes.getId();
         this.createdBy = notes.getCreatedBy();
         this.text = notes.getText();

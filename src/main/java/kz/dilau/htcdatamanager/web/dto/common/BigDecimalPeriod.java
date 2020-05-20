@@ -17,17 +17,17 @@ public class BigDecimalPeriod {
     private BigDecimal from;
     private BigDecimal to;
 
-    public BigDecimal getFrom() {
-        if (isNull(from)) {
-            from = BigDecimal.valueOf(0);
-        }
-        return from;
-    }
-
-    public BigDecimal getTo() {
-        if (isNull(to)) {
-            to = BigDecimal.valueOf(1000000000);
-        }
-        return to;
-    }
+//    public BigDecimal getFrom() {
+//        if (isNull(from)) {
+//            from = BigDecimal.valueOf(0);
+//        }
+//        return from;
+//    }
+//
+//    public BigDecimal getTo() {
+//        if (isNull(to)) {
+//            to = BigDecimal.valueOf(1000000000);
+//        }
+//        return to;
+//    }
 }

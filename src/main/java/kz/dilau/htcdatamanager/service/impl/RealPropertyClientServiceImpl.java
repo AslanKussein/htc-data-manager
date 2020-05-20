@@ -1,11 +1,12 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
-import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.domain.old.OldApplication;
+import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
+import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.RealPropertyClientService;
@@ -31,10 +32,11 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
     @Override
     public ApplicationClientViewDto getById(Long id) {
         Application application = applicationService.getApplicationById(id);
-        return mapToApplicationClientDto(application);
+//        return mapToApplicationClientDto(application);
+        return null;
     }
 
-    private ApplicationClientViewDto mapToApplicationClientDto(Application application) {
+    private ApplicationClientViewDto mapToApplicationClientDto(OldApplication application) {
         return ApplicationClientViewDto.builder()
                 .id(application.getId())
                 .clientLogin(application.getClientLogin())
@@ -76,8 +78,8 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
         return dictionaryDto;
     }
 
-    public RealPropertyClientViewDto mapToRealPropertyClientViewDto(RealProperty realProperty) {
-        GeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
+    public RealPropertyClientViewDto mapToRealPropertyClientViewDto(OldRealProperty realProperty) {
+        OldGeneralCharacteristics generalCharacteristics = nonNull(realProperty.getResidentialComplex()) ? realProperty.getResidentialComplex().getGeneralCharacteristics() : realProperty.getGeneralCharacteristics();
         return RealPropertyClientViewDto.builder()
                 .objectType(getDicById(ObjectType.class, realProperty.getObjectTypeId()))
                 .city(getDicById(City.class, generalCharacteristics.getCityId()))
@@ -86,7 +88,7 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
                 .houseNumber(generalCharacteristics.getHouseNumber())
                 .houseNumberFraction(generalCharacteristics.getHouseNumberFraction())
                 .floor(realProperty.getFloor())
-                .residentialComplex(new ResidentialComplexDto(realProperty.getResidentialComplex()))
+//                .residentialComplex(new ResidentialComplexDto(realProperty.getResidentialComplex()))
                 .cadastralNumber(realProperty.getCadastralNumber())
                 .apartmentNumber(realProperty.getApartmentNumber())
                 .numberOfRooms(realProperty.getNumberOfRooms())
@@ -115,10 +117,10 @@ public class RealPropertyClientServiceImpl implements RealPropertyClientService 
                 .heatingSystem(getDicById(HeatingSystem.class, realProperty.getHeatingSystemId()))
                 .numberOfApartments(generalCharacteristics.getNumberOfApartments())
                 .landArea(realProperty.getLandArea())
-                .purchaseInfoDto(realPropertyService.mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))
-                .photoIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.PHOTO))
-                .housingPlanImageIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.HOUSING_PLAN))
-                .virtualTourImageIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.VIRTUAL_TOUR))
+//                .purchaseInfoDto(realPropertyService.mapToPurchaseInfoDto(realProperty.getPurchaseInfo()))
+//                .photoIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.PHOTO))
+//                .housingPlanImageIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.HOUSING_PLAN))
+//                .virtualTourImageIdList(realPropertyService.mapPhotoList(realProperty, RealPropertyFileType.VIRTUAL_TOUR))
                 .latitude(realProperty.getLatitude())
                 .longitude(realProperty.getLongitude())
                 .build();

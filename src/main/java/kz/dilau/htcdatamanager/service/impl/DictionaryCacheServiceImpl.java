@@ -46,6 +46,8 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     private List<Street> streetList;
     private List<TypeOfElevator> typeOfElevatorList;
     private List<YardType> yardTypeList;
+    private List<HouseCondition> houseConditionList;
+    private List<MetadataStatus> metadataStatusList;
 
     public void clearDictionaries() {
         allDictList = null;
@@ -65,6 +67,8 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         streetList = null;
         typeOfElevatorList = null;
         yardTypeList = null;
+        houseConditionList = null;
+        metadataStatusList = null;
     }
 
     public List<AllDict> getAllDictList(DictionaryFilterDto filterDto) {
@@ -252,6 +256,28 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return yardTypeList;
+    }
+
+    public List<HouseCondition> getHouseConditionList(DictionaryFilterDto filterDto) {
+        if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
+            return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
+        } else {
+            if (isNull(houseConditionList)) {
+                houseConditionList = loadDictionariesFromDatabase(filterDto.getDictionaryName());
+            }
+        }
+        return houseConditionList;
+    }
+
+    public List<MetadataStatus> getMetadataStatusList(DictionaryFilterDto filterDto) {
+        if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
+            return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
+        } else {
+            if (isNull(metadataStatusList)) {
+                metadataStatusList = loadDictionariesFromDatabase(filterDto.getDictionaryName());
+            }
+        }
+        return metadataStatusList;
     }
 
     public List<BaseCustomDictionary> getDictionary(String dictionaryName) {

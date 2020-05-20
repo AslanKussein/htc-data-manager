@@ -10,7 +10,6 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.EventRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.EventTypeRepository;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.web.dto.EventDto;

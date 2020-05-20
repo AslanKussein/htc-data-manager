@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(description = "Модель для переназначения заявки агенту")
+@ApiModel(value = "AssignmentDto", description = "Модель для переназначения заявки агенту")
 public class AssignmentDto {
     @NonNull
     @ApiModelProperty(value = "ID заявки", required = true)

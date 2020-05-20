@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.domain.dictionary;
 
+import kz.dilau.htcdatamanager.domain.Building;
 import kz.dilau.htcdatamanager.domain.GeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.base.BaseEntity;
 import lombok.*;
@@ -20,6 +21,9 @@ public class ResidentialComplex extends BaseEntity<Long> {
     private String houseName;
     @Column(name = "number_of_entrances")
     private Integer numberOfEntrances;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "building_id")
+    private Building building;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "general_characteristics_id")
     private GeneralCharacteristics generalCharacteristics;

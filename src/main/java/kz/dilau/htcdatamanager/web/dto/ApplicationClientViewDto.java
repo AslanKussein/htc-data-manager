@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "Модель заявки", description = "Модель заявки для клиентского приложения" )
+@ApiModel(value = "ApplicationClientViewDto", description = "Модель заявки для клиентского приложения" )
 public class ApplicationClientViewDto {
     @ApiModelProperty(value = "ID заявки")
     private Long id;
