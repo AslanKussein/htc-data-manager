@@ -3,7 +3,6 @@ package kz.dilau.htcdatamanager.domain;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -18,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -82,6 +80,11 @@ public class ApplicationSellData extends AApplicationData {
         }
     }
 
+    public ApplicationSellData(Application application, String note) {
+        this.application = application;
+        this.note = note;
+    }
+
     public Map<RealPropertyFileType, Set<String>> getFilesMap() {
         if (filesMap == null) {
             filesMap = new HashMap<>();
@@ -94,9 +97,5 @@ public class ApplicationSellData extends AApplicationData {
             possibleReasonsForBidding = new HashSet<>();
         }
         return possibleReasonsForBidding;
-    }
-
-    public ApplicationSellData(String note) {
-        this.note = note;
     }
 }

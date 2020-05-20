@@ -54,8 +54,10 @@ public class ApplicationSellDataDto extends AApplicationDataDto {
                     .map(IdItem::getId)
                     .collect(Collectors.toList());
         }
-        this.photoIdList = new ArrayList<>(sellData.getFilesMap().get(RealPropertyFileType.PHOTO));
-        this.housingPlanImageIdList = new ArrayList<>(sellData.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
-        this.virtualTourImageIdList = new ArrayList<>(sellData.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
+        if (!sellData.getFilesMap().isEmpty()) {
+            this.photoIdList = new ArrayList<>(sellData.getFilesMap().get(RealPropertyFileType.PHOTO));
+            this.housingPlanImageIdList = new ArrayList<>(sellData.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
+            this.virtualTourImageIdList = new ArrayList<>(sellData.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
+        }
     }
 }

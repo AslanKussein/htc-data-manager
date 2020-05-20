@@ -153,12 +153,21 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
         String agent = getAppointmentAgent(dto.getAgent());
+        OperationType operationType = entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId());
         Application application = Application.builder()
-                .operationType(entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId()))
-                .applicationSellData(new ApplicationSellData(dto.getNote()))
+                .operationType(operationType)
+                .objectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()))
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .currentAgent(agent)
+                .clientLogin(dto.getClientLogin())
                 .build();
+        if (operationType.getCode().equals(OperationType.BUY)) {
+            ApplicationPurchaseData data = new ApplicationPurchaseData(application, dto.getNote());
+            application.setApplicationPurchaseData(data);
+        } else if (operationType.getCode().equals(OperationType.SELL)) {
+            ApplicationSellData data = new ApplicationSellData(application, dto.getNote());
+            application.setApplicationSellData(data);
+        }
         Assignment assignment = Assignment.builder()
                 .application(application)
                 .agent(agent)
@@ -209,8 +218,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .application(application)
                     .applicationStatus(status)
                     .build());
+
+            application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
-        application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseDataDto())) {
             PurchaseInfoDto infoDto = dto.getPurchaseInfoDto();
             ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
