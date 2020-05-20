@@ -21,6 +21,9 @@ public class ApplicationLightDto {
     @ApiModelProperty(value = "ID вида операции", required = true)
     @NotNull(message = "Operation type must not be null")
     private Long operationTypeId;
+    @ApiModelProperty(value = "ID вида недвижимости", required = true)
+    @NotNull(message = "Object type must not be null")
+    private Long objectTypeId;
     @ApiModelProperty(value = "Примечание")
     private String note;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")

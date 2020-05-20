@@ -72,6 +72,11 @@ public class ApplicationPurchaseData extends AApplicationData {
         }
     }
 
+    public ApplicationPurchaseData(Application application, String note) {
+        this.application = application;
+        this.note = note;
+    }
+
     public Set<IdItem> getPossibleReasonsForBidding() {
         if (isNull(possibleReasonsForBidding)) {
             possibleReasonsForBidding = new HashSet<>();

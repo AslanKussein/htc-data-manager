@@ -82,6 +82,11 @@ public class ApplicationSellData extends AApplicationData {
         }
     }
 
+    public ApplicationSellData(Application application, String note) {
+        this.application = application;
+        this.note = note;
+    }
+
     public Map<RealPropertyFileType, Set<String>> getFilesMap() {
         if (filesMap == null) {
             filesMap = new HashMap<>();
@@ -94,9 +99,5 @@ public class ApplicationSellData extends AApplicationData {
             possibleReasonsForBidding = new HashSet<>();
         }
         return possibleReasonsForBidding;
-    }
-
-    public ApplicationSellData(String note) {
-        this.note = note;
     }
 }
