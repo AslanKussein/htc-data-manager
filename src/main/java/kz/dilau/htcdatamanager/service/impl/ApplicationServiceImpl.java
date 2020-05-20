@@ -159,6 +159,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .objectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()))
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .currentAgent(agent)
+                .clientLogin(dto.getClientLogin())
                 .build();
         if (operationType.getCode().equals(OperationType.BUY)) {
             ApplicationPurchaseData data = new ApplicationPurchaseData(application, dto.getNote());
