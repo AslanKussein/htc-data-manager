@@ -60,19 +60,16 @@ public class KazPostServiceImpl implements KazPostService {
         City city = getCity(cityData.getType());
         if (city == null) {
             setErrorStatus(kazPostData);
-            return;
         }
         KazPostDTO.Parts districtData = parts.get(1);
         District district = getDistrict(districtData.getType(), city);
         if (district == null) {
             setErrorStatus(kazPostData);
-            return;
         }
         KazPostDTO.Parts streetData = parts.get(0);
         Street street = getStreet(streetData.getType(), district);
         if (street == null) {
             setErrorStatus(kazPostData);
-            return;
         }
     }
 
