@@ -395,7 +395,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     private ApplicationDto mapMetadataToAppicationDto(Application application) {
-        ApplicationDto applicationDto = new ApplicationDto();
+        ApplicationDto applicationDto = ApplicationDto.builder()
+                .id(application.getId())
+                .operationTypeId(application.getOperationTypeId())
+                .objectTypeId(application.getObjectTypeId())
+                .agent(application.getCurrentAgent())
+                .clientLogin(application.getClientLogin())
+                .build();
         ApplicationSellData sellData = application.getApplicationSellData();
         ApplicationSellDataDto sellDataDto = new ApplicationSellDataDto(sellData);
         applicationDto.setSellDataDto(sellDataDto);
