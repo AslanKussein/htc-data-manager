@@ -15,19 +15,19 @@ import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
+import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -44,6 +44,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final RealPropertyRepository realPropertyRepository;
     private final DataProperties dataProperties;
     private final EntityMappingTool entityMappingTool;
+    private final KeycloakService keycloakService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -325,21 +326,26 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public MetadataWithApplicationsDto getApartmentByNumberAndPostcode(String apartmentNumber, String postcode) {
         RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndPostcode(apartmentNumber, postcode);
-        if (nonNull(realProperty) && nonNull(realProperty.getSellDataList()) && !realProperty.getSellDataList().isEmpty()) {
+        if (nonNull(realProperty)) {
+            List<ApplicationSellData> sellDataList = realProperty.getActualSellDataList();
+            List<ApplicationByRealPropertyDto> applicationByRealPropertyDtoList = new ArrayList<>();
+            if (!sellDataList.isEmpty()) {
+                Set<String> agents = sellDataList.stream().map(item -> item.getApplication().getCurrentAgent()).collect(Collectors.toSet());
+                Map<String, UserInfoDto> userInfoDtoMap = keycloakService.mapUserInfos(new ArrayList<>(agents));
+                for (val item : realProperty.getActualSellDataList()) {
+                    UserInfoDto userInfoDto = userInfoDtoMap.get(item.getApplication().getCurrentAgent());
+                    applicationByRealPropertyDtoList.add(ApplicationByRealPropertyDto.builder()
+                            .id(item.getApplication().getId())
+                            .creationDate(item.getApplication().getCreatedDate())
+                            .agent(nonNull(userInfoDto) ? userInfoDto.getFullname() : null)
+                            .objectPrice(item.getObjectPrice())
+                            .build());
+                }
+            }
             return MetadataWithApplicationsDto.builder()
                     .realPropertyDto(new RealPropertyDto(realProperty))
-                    .applicationByRealPropertyDtoList(realProperty.getSellDataList()
-                            .stream()
-                            .filter(item -> !item.getApplication().getIsRemoved())
-                            .map(item -> ApplicationByRealPropertyDto.builder()
-                                    .id(item.getApplication().getId())
-                                    .creationDate(item.getApplication().getCreatedDate())
-                                    .agent(item.getApplication().getCurrentAgent())
-                                    .objectPrice(item.getObjectPrice())
-                                    .build())
-                            .collect(Collectors.toList()))
+                    .applicationByRealPropertyDtoList(applicationByRealPropertyDtoList)
                     .build();
-//            Set<String> agents = dtoList.stream().map(ApplicationByRealPropertyDto::getAgent).collect(Collectors.toSet());
         } else {
             throw NotFoundException.createApartmentByNumberAndPostcode(apartmentNumber, postcode);
         }
