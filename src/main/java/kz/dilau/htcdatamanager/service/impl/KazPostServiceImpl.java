@@ -100,9 +100,9 @@ public class KazPostServiceImpl implements KazPostService {
     private <T> Specification<T> getMultiLangLikeSpecification(KazPostDTO.Type type) {
         Specification<T> where;
         where = (root, criteriaQuery, cb) -> cb.or(
-                cb.like(cb.lower(root.get("ru")), "%" + type.getNameRus().trim().toLowerCase() + "%"),
-                cb.like(cb.lower(root.get("kk")), "%" + type.getNameKaz().trim().toLowerCase() + "%"),
-                cb.like(cb.lower(root.get("en")), "%" + type.getNameLat().trim().toLowerCase() + "%")
+                cb.like(cb.lower(root.get("name_ru")), "%" + type.getNameRus().trim().toLowerCase() + "%"),
+                cb.like(cb.lower(root.get("name_kz")), "%" + type.getNameKaz().trim().toLowerCase() + "%"),
+                cb.like(cb.lower(root.get("name_en")), "%" + type.getNameLat().trim().toLowerCase() + "%")
         );
         return where;
     }
