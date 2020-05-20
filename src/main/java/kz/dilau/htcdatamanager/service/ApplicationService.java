@@ -1,10 +1,9 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
-import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
-import kz.dilau.htcdatamanager.web.dto.ChangeStatusDto;
+import kz.dilau.htcdatamanager.web.dto.*;
+
+import java.util.List;
 
 public interface ApplicationService {
     ApplicationDto getById(final String token, Long id);
@@ -23,4 +22,5 @@ public interface ApplicationService {
 
     Application getApplicationById(Long id);
 
+    List<ApplicationByRealPropertyDto> getApartmentByNumberAndPostcode(String apartmentNumber, String postcode);
 }

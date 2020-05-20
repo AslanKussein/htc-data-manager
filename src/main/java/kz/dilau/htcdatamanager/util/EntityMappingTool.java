@@ -1,9 +1,6 @@
 package kz.dilau.htcdatamanager.util;
 
-import kz.dilau.htcdatamanager.domain.ApplicationPurchaseData;
-import kz.dilau.htcdatamanager.domain.ApplicationSellData;
-import kz.dilau.htcdatamanager.domain.Building;
-import kz.dilau.htcdatamanager.domain.RealPropertyMetadata;
+import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
@@ -50,14 +47,19 @@ public class EntityMappingTool {
                 entityService.mapEntity(HeatingSystem.class, realPropertyDto.getHeatingSystemId()),
                 entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataId()),
                 nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
-                nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null);
+                nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null,
+                nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(MaterialOfConstruction.class, realPropertyDto.getGeneralCharacteristicsDto().getMaterialOfConstructionId()) : null,
+                nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(YardType.class, realPropertyDto.getGeneralCharacteristicsDto().getYardTypeId()) : null);
     }
 
     public ApplicationSellData convertApplicationSellData(ApplicationDto dto) {
         Building building = convertBuilding(dto);
         RealPropertyMetadata metadata = convertRealPropertyMetadata(dto.getRealPropertyDto());
         ApplicationSellDataDto dataDto = dto.getSellDataDto();
-        return new ApplicationSellData(dataDto, dto.getRealPropertyDto(), building, metadata);
+        RealProperty realProperty = new RealProperty(dto.getRealPropertyDto(), building, metadata);
+        ApplicationSellData sellData = new ApplicationSellData(dataDto);
+        sellData.setRealProperty(realProperty);
+        return sellData;
     }
 
 

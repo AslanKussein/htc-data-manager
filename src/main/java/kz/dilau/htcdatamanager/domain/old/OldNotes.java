@@ -2,8 +2,9 @@ package kz.dilau.htcdatamanager.domain.old;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
-import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import lombok.*;
+import kz.dilau.htcdatamanager.domain.base.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -13,7 +14,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Setter
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "old_notes")
-public class OldNotes extends AuditableBaseEntity<String, Long> {
+public class OldNotes extends BaseEntity<Long> {
 
     private String text;
     @JsonIgnore

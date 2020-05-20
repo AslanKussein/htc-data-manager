@@ -3,7 +3,9 @@ package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.domain.dictionary.HouseCondition;
+import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
 import kz.dilau.htcdatamanager.domain.dictionary.PropertyDeveloper;
+import kz.dilau.htcdatamanager.domain.dictionary.YardType;
 import kz.dilau.htcdatamanager.web.dto.GeneralCharacteristicsDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -58,7 +60,8 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
     private Set<IdItem> typesOfElevator = new HashSet<>();
 
     public GeneralCharacteristics(GeneralCharacteristicsDto dto,
-                                  PropertyDeveloper propertyDeveloper, HouseCondition houseCondition) {
+                                  PropertyDeveloper propertyDeveloper, HouseCondition houseCondition,
+                                  MaterialOfConstruction materialOfConstruction, YardType yardType) {
         this.id = dto.getId();
         this.propertyDeveloper = propertyDeveloper;
         this.houseCondition = houseCondition;
@@ -76,6 +79,11 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
                 .stream()
                 .map(IdItem::new)
                 .collect(Collectors.toSet());
+        this.materialOfConstruction = materialOfConstruction;
+        this.concierge = dto.getConcierge();
+        this.wheelchair = dto.getWheelchair();
+        this.yardType = yardType;
+        this.playground = dto.getPlayground();
     }
 
     public Set<IdItem> getParkingTypes() {

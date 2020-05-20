@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
@@ -29,14 +30,18 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @Column(name = "cadastral_number")
     private String cadastralNumber;
 
-    @OneToMany(mappedBy = "realProperty")
+    @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private List<RealPropertyMetadata> metadataList;
+
+    @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
+    private List<ApplicationSellData> sellDataList;
 
     public RealProperty(RealPropertyDto realPropertyDto, Building building, RealPropertyMetadata metadata) {
         this.id = realPropertyDto.getId();
         this.building = building;
         this.apartmentNumber = realPropertyDto.getApartmentNumber();
         this.cadastralNumber = realPropertyDto.getCadastralNumber();
+        metadata.setRealProperty(this);
         getMetadataList().add(metadata);
     }
 
@@ -45,6 +50,18 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
             metadataList = new ArrayList<>();
         }
         return metadataList;
+    }
+
+    public List<ApplicationSellData> getSellDataList() {
+        if (isNull(sellDataList)) {
+            sellDataList = new ArrayList<>();
+        }
+        return sellDataList;
+    }
+
+    @Transient
+    public List<ApplicationSellData> getActualSellDataList() {
+        return getSellDataList().stream().filter(item -> !item.getApplication().getIsRemoved()).collect(Collectors.toList());
     }
 
     @Transient
