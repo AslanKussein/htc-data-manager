@@ -1,6 +1,8 @@
 package kz.dilau.htcdatamanager.domain.dictionary;
 
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -10,4 +12,7 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "city")
 public class City extends BaseCustomDictionary {
+    @Getter
+    @Setter
+    private String kazPostId;
 }

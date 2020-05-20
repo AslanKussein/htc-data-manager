@@ -19,4 +19,6 @@ public class District extends BaseCustomDictionary {
 
     @Column(name = "city_id", insertable = false, updatable = false)
     private Long parentId;
+
+    private String kazPostId;
 }
