@@ -65,7 +65,7 @@ public class ApplicationResource {
     }
 
     @GetMapping("/getApartmentByNumberAndPostcode/{apartmentNumber}/{postcode}")
-    public ResponseEntity<List<ApplicationByRealPropertyDto>> getApartmentByNumberAndPostcode(@PathVariable("apartmentNumber") String apartmentNumber,
+    public ResponseEntity<MetadataWithApplicationsDto> getApartmentByNumberAndPostcode(@PathVariable("apartmentNumber") String apartmentNumber,
                                                                                               @PathVariable("postcode") String postcode) {
         return ResponseEntity.ok(applicationService.getApartmentByNumberAndPostcode(apartmentNumber, postcode));
     }
