@@ -74,7 +74,7 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Long metadataStatusId;
 
     public RealPropertyMetadata(RealPropertyDto dto, Sewerage sewerage,
-                                HeatingSystem heatingSystem, MetadataStatus metadataStatus,
+                                HeatingSystem heatingSystem,
                                 PropertyDeveloper propertyDeveloper, HouseCondition houseCondition,
                                 MaterialOfConstruction materialOfConstruction, YardType yardType) {
         this.id = dto.getMetadataId();
@@ -90,7 +90,6 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
         this.sewerage = sewerage;
         this.heatingSystem = heatingSystem;
         this.landArea = dto.getLandArea();
-        this.metadataStatus = metadataStatus;
         this.generalCharacteristics = new GeneralCharacteristics(dto.getGeneralCharacteristicsDto(),
                 propertyDeveloper, houseCondition, materialOfConstruction, yardType);
     }

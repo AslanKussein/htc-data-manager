@@ -26,26 +26,17 @@ public class EntityMappingTool {
                 nonNull(infoDto) && nonNull(infoDto.getYardTypeId()) ? entityService.mapRequiredEntity(YardType.class, infoDto.getYardTypeId()) : null);
     }
 
-    public Building convertBuilding(ApplicationDto dto) {
-        Building building = null;
-        if (nonNull(dto.getRealPropertyDto()) && nonNull(dto.getRealPropertyDto().getBuildingDto())) {
-            building = buildingService.getByPostcode(dto.getRealPropertyDto().getBuildingDto().getPostcode());
-            if (isNull(building)) {
-                BuildingDto buildingDto = dto.getRealPropertyDto().getBuildingDto();
-                building = new Building(buildingDto,
+    public Building convertBuilding(BuildingDto buildingDto) {
+        return new Building(buildingDto,
                         entityService.mapRequiredEntity(City.class, buildingDto.getCityId()),
                         entityService.mapRequiredEntity(District.class, buildingDto.getDistrictId()),
                         entityService.mapRequiredEntity(Street.class, buildingDto.getStreetId()));
-            }
-        }
-        return building;
     }
 
     public RealPropertyMetadata convertRealPropertyMetadata(RealPropertyDto realPropertyDto) {
         return new RealPropertyMetadata(realPropertyDto,
                 entityService.mapEntity(Sewerage.class, realPropertyDto.getSewerageId()),
                 entityService.mapEntity(HeatingSystem.class, realPropertyDto.getHeatingSystemId()),
-                entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataId()),
                 nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
                 nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null,
                 nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(MaterialOfConstruction.class, realPropertyDto.getGeneralCharacteristicsDto().getMaterialOfConstructionId()) : null,
@@ -53,7 +44,7 @@ public class EntityMappingTool {
     }
 
     public ApplicationSellData convertApplicationSellData(ApplicationDto dto) {
-        Building building = convertBuilding(dto);
+        Building building = convertBuilding(dto.getRealPropertyDto().getBuildingDto());
         RealPropertyMetadata metadata = convertRealPropertyMetadata(dto.getRealPropertyDto());
         ApplicationSellDataDto dataDto = dto.getSellDataDto();
         RealProperty realProperty = new RealProperty(dto.getRealPropertyDto(), building, metadata);
