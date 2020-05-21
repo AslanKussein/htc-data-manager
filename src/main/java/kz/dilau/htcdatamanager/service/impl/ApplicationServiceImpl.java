@@ -252,11 +252,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                 if (nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
                     Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
                     metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
-                    if (isNull(building)) {
-                        building = entityMappingTool.convertBuilding(realPropertyDto.getBuildingDto());
-                        realProperty = new RealProperty(realPropertyDto, building, metadata);
-                    } else {
+                    if (nonNull(building)) {
                         realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
+                    } else {
+                        building = entityMappingTool.convertBuilding(realPropertyDto.getBuildingDto());
+                    }
+                    if (isNull(realProperty)) {
+                        realProperty = new RealProperty(realPropertyDto, building, metadata);
                     }
                     if (nonNull(realProperty.getId())) {
                         List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
