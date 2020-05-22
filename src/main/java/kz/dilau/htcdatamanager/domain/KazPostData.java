@@ -21,5 +21,5 @@ public class KazPostData {
     private String value;
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private KazPostDataStatus status = KazPostDataStatus.WAITING;
+    private KazPostDataStatus status;
 }

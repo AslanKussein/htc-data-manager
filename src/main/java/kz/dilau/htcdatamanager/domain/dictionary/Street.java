@@ -23,4 +23,5 @@ public class Street extends BaseCustomDictionary {
     private Long parentId;
 
     private String kazPostId;
+    private String streetTypeId;
 }

@@ -1,17 +1,20 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import com.google.gson.Gson;
+import kz.dilau.htcdatamanager.config.KazPostMapperProperties;
 import kz.dilau.htcdatamanager.domain.KazPostData;
 import kz.dilau.htcdatamanager.domain.base.MultiLang;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.domain.dictionary.Street;
+import kz.dilau.htcdatamanager.domain.dictionary.StreetType;
 import kz.dilau.htcdatamanager.domain.enums.KazPostDataStatus;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.KazPostDataRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.CityRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.DistrictRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetRepository;
+import kz.dilau.htcdatamanager.repository.dictionary.StreetTypeRepository;
 import kz.dilau.htcdatamanager.service.KazPostService;
 import kz.dilau.htcdatamanager.web.dto.KazPostDTO;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +30,12 @@ import java.util.Optional;
 @Service
 public class KazPostServiceImpl implements KazPostService {
 
-    private KazPostDataRepository kazPostDataRepository;
-    private StreetRepository streetRepository;
-    private DistrictRepository districtRepository;
-    private CityRepository cityRepository;
+    private final KazPostDataRepository kazPostDataRepository;
+    private final StreetRepository streetRepository;
+    private final DistrictRepository districtRepository;
+    private final CityRepository cityRepository;
+    private final KazPostMapperProperties kazPostMapperProperties;
+    private final StreetTypeRepository streetTypeRepository;
 
     private void setErrorStatus(KazPostData data) {
         data.setStatus(KazPostDataStatus.ERROR);
@@ -56,17 +61,17 @@ public class KazPostServiceImpl implements KazPostService {
     }
 
     private void fillData(KazPostData kazPostData, List<KazPostDTO.Parts> parts) {
-        KazPostDTO.Parts cityData = parts.get(2);
+        KazPostDTO.Parts cityData = parts.get(kazPostMapperProperties.getCity());
         City city = getCity(cityData);
         if (city == null) {
             setErrorStatus(kazPostData);
         }
-        KazPostDTO.Parts districtData = parts.get(1);
+        KazPostDTO.Parts districtData = parts.get(kazPostMapperProperties.getDistrict());
         District district = getDistrict(districtData, city);
         if (district == null) {
             setErrorStatus(kazPostData);
         }
-        KazPostDTO.Parts streetData = parts.get(0);
+        KazPostDTO.Parts streetData = parts.get(kazPostMapperProperties.getStreet());
         Street street = getStreet(streetData, district);
         if (street == null) {
             setErrorStatus(kazPostData);
@@ -115,11 +120,24 @@ public class KazPostServiceImpl implements KazPostService {
         return districtRepository.saveAndFlush(district);
     }
 
+    private String saveStreetType(KazPostDTO.Type type) {
+        Optional<StreetType> streetTypeOptional = streetTypeRepository.findById(type.getId());
+        if (streetTypeOptional.isPresent()) {
+            return streetTypeOptional.get().getId();
+        } else {
+            return StreetType.builder()
+                    .id(type.getId())
+                    .multiLang(fillMultiLang(type))
+                    .build().getId();
+        }
+    }
+
     private Street saveStreet(KazPostDTO.Parts streetData, District district) {
         Street street = new Street();
         street.setMultiLang(fillMultiLang(streetData.getType()));
         street.setKazPostId(streetData.getId());
         street.setDistrict(district);
+        street.setStreetTypeId(saveStreetType(streetData.getType()));
         return streetRepository.saveAndFlush(street);
     }
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(Constants.APPLICATIONS_REST_ENDPOINT)
 public class KazPostResource {
 
-    KazPostService kazPostService;
+    private final KazPostService kazPostService;
 
     @PostMapping
     public ResponseEntity<Boolean> checkIsProcessingData(@RequestParam String jsonString) {
