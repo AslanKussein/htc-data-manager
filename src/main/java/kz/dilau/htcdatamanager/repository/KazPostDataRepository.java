@@ -5,10 +5,8 @@ import kz.dilau.htcdatamanager.domain.enums.KazPostDataStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface KazPostDataRepository extends JpaRepository<KazPostData, Long> {
-
-    KazPostData findByIdAndStatus(String id, KazPostDataStatus status);
-
-    List<KazPostData> findAllByStatus(KazPostDataStatus status);
+    Optional<KazPostData> findByIdAndStatus(String id, KazPostDataStatus status);
 }

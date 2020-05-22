@@ -23,7 +23,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Log
 @RequiredArgsConstructor
@@ -37,79 +36,72 @@ public class KazPostServiceImpl implements KazPostService {
     private final KazPostMapperProperties kazPostMapperProperties;
     private final StreetTypeRepository streetTypeRepository;
 
-    private void setErrorStatus(KazPostData data) {
-        data.setStatus(KazPostDataStatus.ERROR);
-        kazPostDataRepository.save(data);
-        throw BadRequestException.createRequiredIsEmpty(data.getId());
+    @Override
+    public KazPostData processingData(KazPostDTO dto) {
+        return kazPostDataRepository.findByIdAndStatus(dto.getPostcode(), KazPostDataStatus.FINISHED)
+                .orElse(createKazPostData(dto));
     }
 
-    @Override
-    public KazPostData processingData(String jsonString) {
-        Gson g = new Gson();
-        KazPostDTO dto = g.fromJson(jsonString, KazPostDTO.class);
-        KazPostData kazPostData = kazPostDataRepository.findByIdAndStatus(dto.getPostcode(), KazPostDataStatus.FINISHED);
-        if (kazPostData == null) {
-            kazPostData = new KazPostData();
-            kazPostData.setStatus(KazPostDataStatus.PROCESSING);
-            kazPostData.setValue(jsonString);
-            kazPostData = kazPostDataRepository.saveAndFlush(kazPostData);
-            fillData(kazPostData, dto.getParts());
-            kazPostData.setStatus(KazPostDataStatus.FINISHED);
-            kazPostDataRepository.save(kazPostData);
-        }
-        return kazPostData;
+    private KazPostData createKazPostData(KazPostDTO dto) {
+        KazPostData kazPostData = new KazPostData();
+        kazPostData.setId(dto.getPostcode());
+        kazPostData.setStatus(KazPostDataStatus.PROCESSING);
+        kazPostData.setValue(new Gson().toJson(dto));
+        kazPostData = kazPostDataRepository.saveAndFlush(kazPostData);
+
+        fillData(kazPostData, dto.getParts());
+
+        kazPostData.setStatus(KazPostDataStatus.FINISHED);
+        return kazPostDataRepository.save(kazPostData);
     }
 
     private void fillData(KazPostData kazPostData, List<KazPostDTO.Parts> parts) {
         KazPostDTO.Parts cityData = parts.get(kazPostMapperProperties.getCity());
-        City city = getCity(cityData);
-        if (city == null) {
-            setErrorStatus(kazPostData);
-        }
         KazPostDTO.Parts districtData = parts.get(kazPostMapperProperties.getDistrict());
-        District district = getDistrict(districtData, city);
-        if (district == null) {
-            setErrorStatus(kazPostData);
-        }
         KazPostDTO.Parts streetData = parts.get(kazPostMapperProperties.getStreet());
+
+        City city = getCity(cityData);
+        isPresentObjectIfNotSetError(city, kazPostData);
+
+        District district = getDistrict(districtData, city);
+        isPresentObjectIfNotSetError(district, kazPostData);
+
         Street street = getStreet(streetData, district);
-        if (street == null) {
-            setErrorStatus(kazPostData);
+        isPresentObjectIfNotSetError(street, kazPostData);
+    }
+
+    private <X> void isPresentObjectIfNotSetError(X object, KazPostData data) {
+        if (object == null) {
+            data.setStatus(KazPostDataStatus.ERROR);
+            kazPostDataRepository.save(data);
+            throw BadRequestException.createRequiredIsEmpty(data.getId());
         }
     }
 
     private City getCity(KazPostDTO.Parts cityData) {
-        Optional<City> optionalCity = cityRepository.findByKazPostId(cityData.getId());
-        if (!optionalCity.isPresent()) {
-            optionalCity = cityRepository.findOne(getMultiLangLikeSpecification(cityData.getType()));
-        }
-        return optionalCity.orElseGet(() -> saveCity(cityData));
+        return cityRepository.findByKazPostId(cityData.getId())
+                .orElse(cityRepository.findOne(getMultiLangLikeSpecification(cityData.getType()))
+                        .orElse(saveCity(cityData)));
     }
 
     private District getDistrict(KazPostDTO.Parts parts, City city) {
-        Optional<District> optionalDistrict = districtRepository.findByKazPostId(parts.getId());
-        if (!optionalDistrict.isPresent()) {
-            optionalDistrict = districtRepository.findOne(getMultiLangLikeSpecification(parts.getType()));
-        }
-        return optionalDistrict.orElseGet(() -> saveDistrict(parts, city));
+        return districtRepository.findByKazPostId(parts.getId())
+                .orElse(districtRepository.findOne(getMultiLangLikeSpecification(parts.getType()))
+                        .orElse(saveDistrict(parts, city)));
     }
 
     private Street getStreet(KazPostDTO.Parts streetData, District district) {
-        Optional<Street> optionalStreet = streetRepository.findByKazPostId(streetData.getId());
-        if (!optionalStreet.isPresent()) {
-            optionalStreet = streetRepository.findOne(getMultiLangLikeSpecification(streetData.getType()));
-        }
-        return optionalStreet.orElseGet(() -> saveStreet(streetData, district));
+        return streetRepository.findByKazPostId(streetData.getId())
+                .orElse(streetRepository.findOne(getMultiLangLikeSpecification(streetData.getType()))
+                        .orElse(saveStreet(streetData, district)));
     }
 
     private <T> Specification<T> getMultiLangLikeSpecification(KazPostDTO.Type type) {
-        Specification<T> where;
-        where = (root, criteriaQuery, cb) -> cb.or(
+        return (root, criteriaQuery, cb) -> cb.or(
                 cb.like(cb.lower(root.get("name_ru")), "%" + type.getNameRus().trim().toLowerCase() + "%"),
                 cb.like(cb.lower(root.get("name_kz")), "%" + type.getNameKaz().trim().toLowerCase() + "%"),
                 cb.like(cb.lower(root.get("name_en")), "%" + type.getNameLat().trim().toLowerCase() + "%")
         );
-        return where;
     }
 
     private District saveDistrict(KazPostDTO.Parts parts, City city) {
@@ -121,15 +113,16 @@ public class KazPostServiceImpl implements KazPostService {
     }
 
     private String saveStreetType(KazPostDTO.Type type) {
-        Optional<StreetType> streetTypeOptional = streetTypeRepository.findById(type.getId());
-        if (streetTypeOptional.isPresent()) {
-            return streetTypeOptional.get().getId();
-        } else {
-            return StreetType.builder()
-                    .id(type.getId())
-                    .multiLang(fillMultiLang(type))
-                    .build().getId();
-        }
+        return streetTypeRepository.findById(type.getId())
+                .orElse(buildStreetType(type))
+                .getId();
+    }
+
+    private StreetType buildStreetType(KazPostDTO.Type type) {
+        return StreetType.builder()
+                .id(type.getId())
+                .multiLang(fillMultiLang(type))
+                .build();
     }
 
     private Street saveStreet(KazPostDTO.Parts streetData, District district) {
