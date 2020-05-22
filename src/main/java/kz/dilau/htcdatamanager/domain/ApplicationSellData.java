@@ -3,7 +3,6 @@ package kz.dilau.htcdatamanager.domain;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -18,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -34,7 +32,7 @@ public class ApplicationSellData extends AApplicationData {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "real_property_id")
     @ToString.Exclude
     private RealProperty realProperty;
@@ -56,7 +54,7 @@ public class ApplicationSellData extends AApplicationData {
     @Column(name = "possible_reasons_for_bidding", columnDefinition = "jsonb")
     private Set<IdItem> possibleReasonsForBidding = new HashSet<>();
 
-    public ApplicationSellData(ApplicationSellDataDto dataDto, RealPropertyDto realPropertyDto, Building building, RealPropertyMetadata metadata) {
+    public ApplicationSellData(ApplicationSellDataDto dataDto) {
         this.id = dataDto.getId();
         this.objectPrice = dataDto.getObjectPrice();
         this.encumbrance = dataDto.getEncumbrance();
@@ -80,9 +78,11 @@ public class ApplicationSellData extends AApplicationData {
         if (!CollectionUtils.isEmpty(dataDto.getVirtualTourImageIdList())) {
             getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(dataDto.getVirtualTourImageIdList()));
         }
-        if (nonNull(realPropertyDto)) {
-            this.realProperty = new RealProperty(realPropertyDto, building, metadata);
-        }
+    }
+
+    public ApplicationSellData(Application application, String note) {
+        this.application = application;
+        this.note = note;
     }
 
     public Map<RealPropertyFileType, Set<String>> getFilesMap() {
@@ -97,9 +97,5 @@ public class ApplicationSellData extends AApplicationData {
             possibleReasonsForBidding = new HashSet<>();
         }
         return possibleReasonsForBidding;
-    }
-
-    public ApplicationSellData(String note) {
-        this.note = note;
     }
 }

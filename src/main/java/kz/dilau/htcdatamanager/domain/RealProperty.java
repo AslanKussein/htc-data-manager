@@ -7,8 +7,10 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Builder
@@ -29,14 +31,18 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @Column(name = "cadastral_number")
     private String cadastralNumber;
 
-    @OneToMany(mappedBy = "realProperty")
+    @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private List<RealPropertyMetadata> metadataList;
+
+    @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
+    private List<ApplicationSellData> sellDataList;
 
     public RealProperty(RealPropertyDto realPropertyDto, Building building, RealPropertyMetadata metadata) {
         this.id = realPropertyDto.getId();
         this.building = building;
         this.apartmentNumber = realPropertyDto.getApartmentNumber();
         this.cadastralNumber = realPropertyDto.getCadastralNumber();
+        metadata.setRealProperty(this);
         getMetadataList().add(metadata);
     }
 
@@ -47,8 +53,37 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
         return metadataList;
     }
 
+    public List<ApplicationSellData> getSellDataList() {
+        if (isNull(sellDataList)) {
+            sellDataList = new ArrayList<>();
+        }
+        return sellDataList;
+    }
+
+    @Transient
+    public List<ApplicationSellData> getActualSellDataList() {
+        return getSellDataList().stream().filter(item -> !item.getApplication().getIsRemoved()).collect(Collectors.toList());
+    }
+
     @Transient
     public RealPropertyMetadata getMetadataByStatus(Long statusId) {
-        return getMetadataList().stream().filter(data -> data.getMetadataStatusId().equals(statusId)).findFirst().orElse(null);
+        List<RealPropertyMetadata> metadataListByStatus = getMetadataListByStatus(statusId);
+        if (nonNull(metadataListByStatus) && !metadataListByStatus.isEmpty()) {
+            return metadataListByStatus.get(0);
+        }
+        return null;
+    }
+
+    @Transient
+    public List<RealPropertyMetadata> getMetadataListByStatus(Long statusId) {
+        return getMetadataList().stream().filter(data -> data.getMetadataStatusId().equals(statusId)).collect(Collectors.toList());
+    }
+
+    @Transient
+    public RealPropertyMetadata getMetadataByStatusAndApplication(Long statusId, Long applicationId) {
+        return getMetadataList()
+                .stream()
+                .filter(data -> data.getMetadataStatusId().equals(statusId) && nonNull(data.getApplication()) && data.getApplication().getId().equals(applicationId))
+                .findFirst().orElse(null);
     }
 }

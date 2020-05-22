@@ -1,37 +1,55 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
+import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
+import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
+import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
+import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.util.EntityMappingTool;
+import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
     private final BuildingService buildingService;
+    private final RealPropertyRepository realPropertyRepository;
+    private final DataProperties dataProperties;
+    private final EntityMappingTool entityMappingTool;
+    private final KeycloakService keycloakService;
+    private final RealPropertyMetadataRepository metadataRepository;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -146,12 +164,21 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Long saveLightApplication(ApplicationLightDto dto) {
         String agent = getAppointmentAgent(dto.getAgent());
+        OperationType operationType = entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId());
         Application application = Application.builder()
-                .operationType(entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId()))
-                .applicationSellData(new ApplicationSellData(dto.getNote()))
+                .operationType(operationType)
+                .objectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()))
                 .applicationStatus(applicationStatusRepository.getOne(ApplicationStatus.FIRST_CONTACT))
                 .currentAgent(agent)
+                .clientLogin(dto.getClientLogin())
                 .build();
+        if (operationType.getCode().equals(OperationType.BUY)) {
+            ApplicationPurchaseData data = new ApplicationPurchaseData(application, dto.getNote());
+            application.setApplicationPurchaseData(data);
+        } else if (operationType.getCode().equals(OperationType.SELL)) {
+            ApplicationSellData data = new ApplicationSellData(application, dto.getNote());
+            application.setApplicationSellData(data);
+        }
         Assignment assignment = Assignment.builder()
                 .application(application)
                 .agent(agent)
@@ -202,44 +229,77 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .application(application)
                     .applicationStatus(status)
                     .build());
+
+            application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
-        application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseDataDto())) {
-            PurchaseInfoDto infoDto = dto.getPurchaseInfoDto();
-            ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
-            ApplicationPurchaseData data = new ApplicationPurchaseData(dataDto, dto.getPurchaseInfoDto(),
-                    entityService.mapRequiredEntity(City.class, dataDto.getCityId()), entityService.mapEntity(District.class, dataDto.getDistrictId()),
-                    nonNull(infoDto) && nonNull(infoDto.getMaterialOfConstructionId()) ? entityService.mapRequiredEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()) : null,
-                    nonNull(infoDto) && nonNull(infoDto.getYardTypeId()) ? entityService.mapRequiredEntity(YardType.class, infoDto.getYardTypeId()) : null);
+            ApplicationPurchaseData data = entityMappingTool.convertApplicationPurchaseData(dto);
             data.setApplication(application);
+            if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData())) {
+                data.setId(application.getApplicationPurchaseData().getId());
+                if (nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+                    data.getPurchaseInfo().setId(application.getApplicationPurchaseData().getPurchaseInfo().getId());
+                }
+            }
             application.setApplicationPurchaseData(data);
+            application = applicationRepository.save(application);
         } else if (operationType.getCode().equals(OperationType.SELL)) {
             if (nonNull(dto.getSellDataDto())) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
-                Building building = null;
-                if (nonNull(dto.getRealPropertyDto()) && nonNull(dto.getRealPropertyDto().getBuildingDto())) {
-                    building = buildingService.getByPostcode(dto.getRealPropertyDto().getBuildingDto().getPostcode());
-                    if (isNull(building)) {
-                        BuildingDto buildingDto = dto.getRealPropertyDto().getBuildingDto();
-                        building = new Building(buildingDto,
-                                entityService.mapRequiredEntity(City.class, buildingDto.getCityId()),
-                                entityService.mapRequiredEntity(District.class, buildingDto.getDistrictId()),
-                                entityService.mapRequiredEntity(Street.class, buildingDto.getStreetId()));
-                    }
-                }
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
-                RealPropertyMetadata metadata = new RealPropertyMetadata(realPropertyDto,
-                        entityService.mapEntity(Sewerage.class, realPropertyDto.getSewerageId()),
-                        entityService.mapEntity(HeatingSystem.class, realPropertyDto.getHeatingSystemId()),
-                        entityService.mapEntity(MetadataStatus.class, realPropertyDto.getMetadataId()),
-                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
-                        nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null);
-                ApplicationSellData sellData = new ApplicationSellData(dataDto, dto.getRealPropertyDto(), building, metadata);
+                RealProperty realProperty = null;
+                RealPropertyMetadata metadata;
+                if (nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
+                    Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
+                    metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
+                    if (nonNull(building)) {
+                        realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
+                    } else {
+                        building = entityMappingTool.convertBuilding(realPropertyDto.getBuildingDto());
+                    }
+                    if (isNull(realProperty)) {
+                        realProperty = new RealProperty(realPropertyDto, building, metadata);
+                    }
+                    if (nonNull(realProperty.getId())) {
+                        List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
+                        if (actualSellDataList.size() > dataProperties.getMaxApplicationCountForOneRealProperty()) {
+                            throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                        }
+                        RealPropertyMetadata metadataByStatus = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
+                        if (realPropertyDto.getEdited()) {
+                            if (nonNull(application.getId()) && actualSellDataList.size() == 1 && actualSellDataList.get(0).getApplication().getId().equals(application.getId())) {
+                                if (nonNull(metadataByStatus)) {
+                                    metadata.setId(metadataByStatus.getId());
+                                    metadata.setMetadataStatus(metadataByStatus.getMetadataStatus());
+                                }
+                            } else {
+                                metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.NOT_APPROVED));
+                            }
+                        } else {
+                            metadata = metadataByStatus;
+                        }
+                    } else {
+                        metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED));
+                    }
+                    metadata.setRealProperty(realProperty);
+                    if (!metadata.getMetadataStatus().getId().equals(MetadataStatus.APPROVED)) {
+                        metadata.setApplication(application);
+                    } else {
+                        metadata.setApplication(null);
+                    }
+                    realProperty.getMetadataList().add(metadata);
+                }
+                ApplicationSellData sellData = new ApplicationSellData(dataDto);
+                sellData.setRealProperty(realProperty);
                 sellData.setApplication(application);
+                if (nonNull(application.getId()) && nonNull(application.getApplicationSellData())) {
+                    sellData.setId(application.getApplicationSellData().getId());
+                }
                 application.setApplicationSellData(sellData);
+                application = applicationRepository.save(application);
             }
         }
-        return applicationRepository.save(application).getId();
+        return application.getId();
     }
 
     @Override
@@ -265,6 +325,90 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             throw NotFoundException.createApplicationById(id);
         }
+    }
+
+    @Override
+    public MetadataWithApplicationsDto getApartmentByNumberAndPostcode(String apartmentNumber, String postcode) {
+        RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndPostcode(apartmentNumber, postcode);
+        if (nonNull(realProperty)) {
+            List<ApplicationSellData> sellDataList = realProperty.getActualSellDataList();
+            List<ApplicationByRealPropertyDto> applicationByRealPropertyDtoList = new ArrayList<>();
+            if (!sellDataList.isEmpty()) {
+                Set<String> agents = sellDataList.stream().map(item -> item.getApplication().getCurrentAgent()).collect(Collectors.toSet());
+                Map<String, UserInfoDto> userInfoDtoMap = keycloakService.mapUserInfos(new ArrayList<>(agents));
+                for (val item : realProperty.getActualSellDataList()) {
+                    UserInfoDto userInfoDto = userInfoDtoMap.get(item.getApplication().getCurrentAgent());
+                    applicationByRealPropertyDtoList.add(ApplicationByRealPropertyDto.builder()
+                            .id(item.getApplication().getId())
+                            .creationDate(item.getApplication().getCreatedDate())
+                            .agent(nonNull(userInfoDto) ? userInfoDto.getFullname() : null)
+                            .objectPrice(item.getObjectPrice())
+                            .build());
+                }
+            }
+            return MetadataWithApplicationsDto.builder()
+                    .realPropertyDto(new RealPropertyDto(realProperty))
+                    .applicationByRealPropertyDtoList(applicationByRealPropertyDtoList)
+                    .build();
+        } else {
+            throw NotFoundException.createApartmentByNumberAndPostcode(apartmentNumber, postcode);
+        }
+    }
+
+    @Override
+    public Page<ApplicationDto> getNotApprovedMetadata(PageableDto pageableDto) {
+        Page<Application> applications = applicationRepository.findAllByMetadataStatus(MetadataStatus.NOT_APPROVED, PageableUtils.createPageRequest(pageableDto));
+        if (nonNull(applications) && !applications.isEmpty()) {
+            return applications.map(this::mapMetadataToAppicationDto);
+        } else {
+            return null;
+        }
+
+    }
+
+    @Override
+    public Long approveMetadata(Long applicationId, Long statusId) {
+        Application application = getApplicationById(applicationId);
+        if (nonNull(application.getApplicationSellData()) && nonNull(application.getApplicationSellData().getRealProperty())) {
+            RealPropertyMetadata metadata = application.getApplicationSellData().getRealProperty().getMetadataByStatusAndApplication(MetadataStatus.NOT_APPROVED, applicationId);
+            if (statusId.equals(MetadataStatus.APPROVED)) {
+                List<RealPropertyMetadata> approvedMetadataList = application.getApplicationSellData().getRealProperty().getMetadataListByStatus(MetadataStatus.APPROVED);
+                if (nonNull(metadata)) {
+                    metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED));
+                    metadataRepository.save(metadata);
+                    for (val data : approvedMetadataList) {
+                        data.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.ARCHIVE));
+                        metadataRepository.save(data);
+                    }
+                } else {
+                    throw NotFoundException.createEntityNotFoundById("RealPropertyMetadata", statusId);
+                }
+            } else if (statusId.equals(MetadataStatus.REJECTED)) {
+                metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.REJECTED));
+                metadataRepository.save(metadata);
+            }
+        } else {
+            throw NotFoundException.createEntityNotFoundById("RealPropertyMetadata", statusId);
+        }
+        return applicationId;
+    }
+
+    private ApplicationDto mapMetadataToAppicationDto(Application application) {
+        ApplicationDto applicationDto = ApplicationDto.builder()
+                .id(application.getId())
+                .operationTypeId(application.getOperationTypeId())
+                .objectTypeId(application.getObjectTypeId())
+                .agent(application.getCurrentAgent())
+                .clientLogin(application.getClientLogin())
+                .build();
+        ApplicationSellData sellData = application.getApplicationSellData();
+        ApplicationSellDataDto sellDataDto = new ApplicationSellDataDto(sellData);
+        applicationDto.setSellDataDto(sellDataDto);
+        if (nonNull(sellData.getRealProperty())) {
+            RealPropertyDto realPropertyDto = new RealPropertyDto(sellData.getRealProperty(), application.getId());
+            applicationDto.setRealPropertyDto(realPropertyDto);
+        }
+        return applicationDto;
     }
 
     @Override

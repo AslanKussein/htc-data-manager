@@ -44,7 +44,7 @@ public class ApplicationPurchaseData extends AApplicationData {
     @Column(name = "district_id", insertable = false, updatable = false)
     private Long districtId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "purchase_info_id")
     private PurchaseInfo purchaseInfo;
     @Column(name = "purchase_info_id", insertable = false, updatable = false)
@@ -70,6 +70,11 @@ public class ApplicationPurchaseData extends AApplicationData {
         if (nonNull(infoDto)) {
             this.purchaseInfo = new PurchaseInfo(infoDto, dataDto.getObjectPricePeriod(), materialOfConstruction, yardType);
         }
+    }
+
+    public ApplicationPurchaseData(Application application, String note) {
+        this.application = application;
+        this.note = note;
     }
 
     public Set<IdItem> getPossibleReasonsForBidding() {

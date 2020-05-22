@@ -1,11 +1,11 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.old.OldNotes;
-import kz.dilau.htcdatamanager.domain.old.OldRealProperty;
+import kz.dilau.htcdatamanager.domain.Notes;
+import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.NotesRepository;
-import kz.dilau.htcdatamanager.repository.OldRealPropertyRepository;
+import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.NotesService;
 import kz.dilau.htcdatamanager.web.dto.NotesDto;
 import lombok.RequiredArgsConstructor;
@@ -19,17 +19,17 @@ import java.util.Optional;
 @Service
 public class NotesServiceImpl implements NotesService {
     private final NotesRepository notesRepository;
-    private final OldRealPropertyRepository realPropertyRepository;
+    private final RealPropertyRepository realPropertyRepository;
 
     @Override
     public NotesDto createNote(String login, NotesDto notesDto) {
 
-        Optional<OldRealProperty> realProperty = realPropertyRepository.findById(notesDto.getRealPropertyId());
+        Optional<RealProperty> realProperty = realPropertyRepository.findById(notesDto.getRealPropertyId());
         if (!realProperty.isPresent()) {
             throw NotFoundException.createRealPropertyNotFoundById(notesDto.getRealPropertyId());
         }
 
-        OldNotes notes = new OldNotes();
+        Notes notes = new Notes();
         notes.setText(notesDto.getText());
         notes.setRealProperty(realProperty.get());
 
@@ -49,15 +49,15 @@ public class NotesServiceImpl implements NotesService {
         if (notesDto.getId() == null) {
             throw BadRequestException.idMustNotBeNull();
         }
-        OldNotes notes = getNotesById(notesDto.getId());
+        Notes notes = getNotesById(notesDto.getId());
         notes.setText(notesDto.getText());
         notes = notesRepository.save(notes);
 
         return new NotesDto(notes);
     }
 
-    private OldNotes getNotesById(Long id) {
-        Optional<OldNotes> notesOptional = notesRepository.findByIdAndIsRemovedFalse(id);
+    private Notes getNotesById(Long id) {
+        Optional<Notes> notesOptional = notesRepository.findByIdAndIsRemovedFalse(id);
         if (!notesOptional.isPresent()) {
             throw NotFoundException.createNotesById(id);
         }
@@ -69,8 +69,8 @@ public class NotesServiceImpl implements NotesService {
         if (notesDto.getId() == null) {
             throw BadRequestException.idMustNotBeNull();
         }
-        OldNotes notes = getNotesById(notesDto.getId());
-        notes.setIsRemoved(Boolean.TRUE);
+        Notes notes = getNotesById(notesDto.getId());
+//        notes.setIsRemoved(Boolean.TRUE);
         notes = notesRepository.save(notes);
 
         return new NotesDto(notes);

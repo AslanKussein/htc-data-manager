@@ -2,14 +2,15 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
-import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
-import kz.dilau.htcdatamanager.web.dto.ChangeStatusDto;
+import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -63,5 +64,22 @@ public class ApplicationResource {
     public ResponseEntity<Long> changeStatus(@RequestBody ChangeStatusDto dto) {
         Long result = applicationService.changeStatus(dto);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getApartmentByNumberAndPostcode/{apartmentNumber}/{postcode}")
+    public ResponseEntity<MetadataWithApplicationsDto> getApartmentByNumberAndPostcode(@PathVariable("apartmentNumber") String apartmentNumber,
+                                                                                              @PathVariable("postcode") String postcode) {
+        return ResponseEntity.ok(applicationService.getApartmentByNumberAndPostcode(apartmentNumber, postcode));
+    }
+
+    @PostMapping("/getNotApprovedMetadata")
+    public ResponseEntity<Page<ApplicationDto>> getNotApprovedMetadata(PageableDto pageableDto) {
+        return ResponseEntity.ok(applicationService.getNotApprovedMetadata(pageableDto));
+    }
+
+    @GetMapping("/approveMetadata/{applicationId}/{statusId}")
+    public ResponseEntity<Long> approveMetadata(@PathVariable("applicationId") Long applicationId,
+                                                @PathVariable("statusId") Long statusId) {
+        return ResponseEntity.ok(applicationService.approveMetadata(applicationId, statusId));
     }
 }

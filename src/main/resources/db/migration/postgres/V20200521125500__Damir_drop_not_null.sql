@@ -1,0 +1,1 @@
+alter table htc_dm_real_property_metadata alter column application_id drop not null;

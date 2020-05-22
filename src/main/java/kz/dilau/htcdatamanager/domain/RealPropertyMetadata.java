@@ -18,9 +18,11 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "real_property_metadata")
 public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "application_id")
     private Application application;
@@ -43,7 +45,7 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Boolean atelier;//студия
     @Column(name = "separate_bathroom")
     private Boolean separateBathroom;
-//    @ManyToOne(fetch = FetchType.LAZY)
+    //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "residential_complex_id")
 //    private ResidentialComplex residentialComplex;
 //    @Column(name = "residential_complex_id", insertable = false, updatable = false)
@@ -72,8 +74,9 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Long metadataStatusId;
 
     public RealPropertyMetadata(RealPropertyDto dto, Sewerage sewerage,
-                                HeatingSystem heatingSystem, MetadataStatus metadataStatus,
-                                PropertyDeveloper propertyDeveloper, HouseCondition houseCondition) {
+                                HeatingSystem heatingSystem,
+                                PropertyDeveloper propertyDeveloper, HouseCondition houseCondition,
+                                MaterialOfConstruction materialOfConstruction, YardType yardType) {
         this.id = dto.getMetadataId();
         this.floor = dto.getFloor();
         this.numberOfRooms = dto.getNumberOfRooms();
@@ -87,8 +90,8 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
         this.sewerage = sewerage;
         this.heatingSystem = heatingSystem;
         this.landArea = dto.getLandArea();
-        this.metadataStatus = metadataStatus;
-        this.generalCharacteristics = new GeneralCharacteristics(dto.getGeneralCharacteristicsDto(), propertyDeveloper, houseCondition);
+        this.generalCharacteristics = new GeneralCharacteristics(dto.getGeneralCharacteristicsDto(),
+                propertyDeveloper, houseCondition, materialOfConstruction, yardType);
     }
 }
 

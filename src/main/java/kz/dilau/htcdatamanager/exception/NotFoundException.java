@@ -47,4 +47,8 @@ public class NotFoundException extends DetailedException {
     public static NotFoundException createNotesById(Long id) {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.notes.not.found", id));
     }
+
+    public static NotFoundException createApartmentByNumberAndPostcode(String apartmentNumber, String postcode) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.apartment.not.found", apartmentNumber, postcode));
+    }
 }
