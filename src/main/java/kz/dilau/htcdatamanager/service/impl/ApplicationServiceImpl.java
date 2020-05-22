@@ -248,18 +248,17 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
                 RealProperty realProperty = null;
-                Building building = null;
                 RealPropertyMetadata metadata;
-                if (nonNull(realPropertyDto)) {
+                if (nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
+                    Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
                     metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
-                    if (nonNull(realPropertyDto.getBuildingDto())) {
-                        building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
-                        if (isNull(building)) {
-                            building = entityMappingTool.convertBuilding(realPropertyDto.getBuildingDto());
-                            realProperty = new RealProperty(realPropertyDto, building, metadata);
-                        } else {
-                            realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
-                        }
+                    if (nonNull(building)) {
+                        realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
+                    } else {
+                        building = entityMappingTool.convertBuilding(realPropertyDto.getBuildingDto());
+                    }
+                    if (isNull(realProperty)) {
+                        realProperty = new RealProperty(realPropertyDto, building, metadata);
                     }
                     if (nonNull(realProperty.getId())) {
                         List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
