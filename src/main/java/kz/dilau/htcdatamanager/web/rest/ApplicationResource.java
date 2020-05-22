@@ -10,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
-
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
@@ -68,7 +66,7 @@ public class ApplicationResource {
 
     @GetMapping("/getApartmentByNumberAndPostcode/{apartmentNumber}/{postcode}")
     public ResponseEntity<MetadataWithApplicationsDto> getApartmentByNumberAndPostcode(@PathVariable("apartmentNumber") String apartmentNumber,
-                                                                                              @PathVariable("postcode") String postcode) {
+                                                                                       @PathVariable("postcode") String postcode) {
         return ResponseEntity.ok(applicationService.getApartmentByNumberAndPostcode(apartmentNumber, postcode));
     }
 
@@ -81,5 +79,11 @@ public class ApplicationResource {
     public ResponseEntity<Long> approveMetadata(@PathVariable("applicationId") Long applicationId,
                                                 @PathVariable("statusId") Long statusId) {
         return ResponseEntity.ok(applicationService.approveMetadata(applicationId, statusId));
+    }
+
+    @GetMapping("/approveFiles/{applicationId}/{statusId}")
+    public ResponseEntity<Long> approveFiles(@PathVariable("applicationId") Long applicationId,
+                                             @PathVariable("statusId") Long statusId) {
+        return ResponseEntity.ok(applicationService.approveFiles(applicationId, statusId));
     }
 }

@@ -6,7 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface RealPropertyMetadataRepository extends PagingAndSortingRepository<RealPropertyMetadata, Long> {
 
     @Query(value = "select m from RealPropertyMetadata m " +
