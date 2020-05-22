@@ -1,5 +1,7 @@
 package kz.dilau.htcdatamanager.service;
 
+import kz.dilau.htcdatamanager.domain.KazPostData;
+
 public interface KazPostService {
-    Boolean processingData(String jsonString);
+    KazPostData processingData(String jsonString);
 }

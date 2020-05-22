@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface KazPostDataRepository extends JpaRepository<KazPostData, Long> {
 
-    Boolean existsByIdAndStatus(String id, KazPostDataStatus status);
+    KazPostData findByIdAndStatus(String id, KazPostDataStatus status);
 
     List<KazPostData> findAllByStatus(KazPostDataStatus status);
 }

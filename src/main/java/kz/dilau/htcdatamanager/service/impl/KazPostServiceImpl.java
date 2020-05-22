@@ -44,20 +44,20 @@ public class KazPostServiceImpl implements KazPostService {
     }
 
     @Override
-    public Boolean processingData(String jsonString) {
+    public KazPostData processingData(String jsonString) {
         Gson g = new Gson();
         KazPostDTO dto = g.fromJson(jsonString, KazPostDTO.class);
-        boolean result = kazPostDataRepository.existsByIdAndStatus(dto.getPostcode(), KazPostDataStatus.FINISHED);
-        if (!result) {
-            KazPostData data = new KazPostData();
-            data.setStatus(KazPostDataStatus.PROCESSING);
-            data.setValue(jsonString);
-            data = kazPostDataRepository.saveAndFlush(data);
-            fillData(data, dto.getParts());
-            data.setStatus(KazPostDataStatus.FINISHED);
-            kazPostDataRepository.save(data);
+        KazPostData kazPostData = kazPostDataRepository.findByIdAndStatus(dto.getPostcode(), KazPostDataStatus.FINISHED);
+        if (kazPostData == null) {
+            kazPostData = new KazPostData();
+            kazPostData.setStatus(KazPostDataStatus.PROCESSING);
+            kazPostData.setValue(jsonString);
+            kazPostData = kazPostDataRepository.saveAndFlush(kazPostData);
+            fillData(kazPostData, dto.getParts());
+            kazPostData.setStatus(KazPostDataStatus.FINISHED);
+            kazPostDataRepository.save(kazPostData);
         }
-        return result;
+        return kazPostData;
     }
 
     private void fillData(KazPostData kazPostData, List<KazPostDTO.Parts> parts) {
