@@ -28,5 +28,7 @@ public interface ApplicationService {
 
     Page<ApplicationDto> getNotApprovedMetadata(PageableDto pageableDto);
 
+    Page<ApplicationDto> getNotApprovedFiles(PageableDto pageableDto);
+
     Long approveMetadata(Long applicationId, Long statusId);
 }

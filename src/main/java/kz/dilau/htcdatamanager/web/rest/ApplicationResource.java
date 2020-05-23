@@ -75,6 +75,11 @@ public class ApplicationResource {
         return ResponseEntity.ok(applicationService.getNotApprovedMetadata(pageableDto));
     }
 
+    @PostMapping("/getNotApprovedMetadata")
+    public ResponseEntity<Page<ApplicationDto>> getNotApprovedFiles(PageableDto pageableDto) {
+        return ResponseEntity.ok(applicationService.getNotApprovedFiles(pageableDto));
+    }
+
     @GetMapping("/approveMetadata/{applicationId}/{statusId}")
     public ResponseEntity<Long> approveMetadata(@PathVariable("applicationId") Long applicationId,
                                                 @PathVariable("statusId") Long statusId) {
