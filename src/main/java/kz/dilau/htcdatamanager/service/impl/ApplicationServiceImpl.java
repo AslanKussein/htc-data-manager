@@ -380,6 +380,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public Page<ApplicationDto> getNotApprovedFiles(PageableDto pageableDto) {
+        Page<Application> applications = applicationRepository.findAllFileByMetadataStatus(MetadataStatus.NOT_APPROVED, PageableUtils.createPageRequest(pageableDto));
+        if (nonNull(applications) && !applications.isEmpty()) {
+            return applications.map(this::mapMetadataToAppicationDto);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public Long approveMetadata(Long applicationId, Long statusId) {
         Application application = getApplicationById(applicationId);
         if (nonNull(application.getApplicationSellData()) && nonNull(application.getApplicationSellData().getRealProperty())) {
