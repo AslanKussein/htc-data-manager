@@ -9,10 +9,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
-import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
-import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
-import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
+import kz.dilau.htcdatamanager.repository.*;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
@@ -50,6 +47,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final EntityMappingTool entityMappingTool;
     private final KeycloakService keycloakService;
     private final RealPropertyMetadataRepository metadataRepository;
+    private final RealPropertyFileRepository fileRepository;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -248,10 +246,12 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
                 RealProperty realProperty = null;
-                RealPropertyMetadata metadata;
                 if (nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
+                    RealPropertyMetadata metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
                     Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
-                    metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
+                    RealPropertyFile realPropertyFile = new RealPropertyFile(realPropertyDto);
+                    MetadataStatus notApproved = entityService.mapEntity(MetadataStatus.class, MetadataStatus.NOT_APPROVED);
+                    MetadataStatus approved = entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED);
                     if (nonNull(building)) {
                         realProperty = realPropertyRepository.findByApartmentNumberAndBuildingId(realPropertyDto.getApartmentNumber(), building.getId());
                     } else {
@@ -273,21 +273,34 @@ public class ApplicationServiceImpl implements ApplicationService {
                                     metadata.setMetadataStatus(metadataByStatus.getMetadataStatus());
                                 }
                             } else {
-                                metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.NOT_APPROVED));
+                                metadata.setMetadataStatus(notApproved);
                             }
                         } else {
                             metadata = metadataByStatus;
                         }
+                        RealPropertyFile filesByStatus = realProperty.getFileByStatus(MetadataStatus.APPROVED);
+                        if (realPropertyDto.getFilesEdited()) {
+                            if (nonNull(application.getId()) && actualSellDataList.size() == 1 && actualSellDataList.get(0).getApplication().getId().equals(application.getId())) {
+                                if (nonNull(filesByStatus)) {
+                                    realPropertyFile.setId(filesByStatus.getId());
+                                    realPropertyFile.setMetadataStatus(filesByStatus.getMetadataStatus());
+                                } else {
+                                    realPropertyFile.setMetadataStatus(notApproved);
+                                }
+                            }
+                        } else {
+                            realPropertyFile = filesByStatus;
+                        }
                     } else {
-                        metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED));
+                        metadata.setMetadataStatus(approved);
+                        realPropertyFile.setMetadataStatus(approved);
                     }
                     metadata.setRealProperty(realProperty);
-                    if (!metadata.getMetadataStatus().getId().equals(MetadataStatus.APPROVED)) {
-                        metadata.setApplication(application);
-                    } else {
-                        metadata.setApplication(null);
-                    }
+                    metadata.setApplication(application);
+                    realPropertyFile.setRealProperty(realProperty);
+                    realPropertyFile.setApplication(application);
                     realProperty.getMetadataList().add(metadata);
+                    realProperty.getFileList().add(realPropertyFile);
                 }
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 sellData.setRealProperty(realProperty);
@@ -315,6 +328,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
+    @Override
     public Application getApplicationById(Long id) {
         Optional<Application> optionalApplication = applicationRepository.findById(id);
         if (optionalApplication.isPresent()) {
@@ -363,7 +377,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             return null;
         }
-
     }
 
     @Override
@@ -376,8 +389,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 if (nonNull(metadata)) {
                     metadata.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED));
                     metadataRepository.save(metadata);
+                    MetadataStatus archive = entityService.mapEntity(MetadataStatus.class, MetadataStatus.ARCHIVE);
                     for (val data : approvedMetadataList) {
-                        data.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.ARCHIVE));
+                        data.setMetadataStatus(archive);
                         metadataRepository.save(data);
                     }
                 } else {
@@ -389,6 +403,34 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         } else {
             throw NotFoundException.createEntityNotFoundById("RealPropertyMetadata", statusId);
+        }
+        return applicationId;
+    }
+
+    @Override
+    public Long approveFiles(Long applicationId, Long statusId) {
+        Application application = getApplicationById(applicationId);
+        if (nonNull(application.getApplicationSellData()) && nonNull(application.getApplicationSellData().getRealProperty())) {
+            RealPropertyFile realPropertyFile = application.getApplicationSellData().getRealProperty().getFileByStatusAndApplication(MetadataStatus.NOT_APPROVED, applicationId);
+            if (statusId.equals(MetadataStatus.APPROVED)) {
+                List<RealPropertyFile> approvedFiles = application.getApplicationSellData().getRealProperty().getFilesByStatus(MetadataStatus.APPROVED);
+                if (nonNull(realPropertyFile)) {
+                    realPropertyFile.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED));
+                    fileRepository.save(realPropertyFile);
+                    MetadataStatus archive = entityService.mapEntity(MetadataStatus.class, MetadataStatus.ARCHIVE);
+                    for (val data : approvedFiles) {
+                        data.setMetadataStatus(archive);
+                        fileRepository.save(data);
+                    }
+                } else {
+                    throw NotFoundException.createEntityNotFoundById("RealPropertyFile", statusId);
+                }
+            } else if (statusId.equals(MetadataStatus.REJECTED)) {
+                realPropertyFile.setMetadataStatus(entityService.mapEntity(MetadataStatus.class, MetadataStatus.REJECTED));
+                fileRepository.save(realPropertyFile);
+            }
+        } else {
+            throw NotFoundException.createEntityNotFoundById("RealPropertyFile", statusId);
         }
         return applicationId;
     }

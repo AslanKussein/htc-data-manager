@@ -18,6 +18,8 @@ public interface ApplicationService {
 
     Long reassignApplication(AssignmentDto dto);
 
+    Long approveFiles(Long applicationId, Long statusId);
+
     Long changeStatus(ChangeStatusDto dto);
 
     Application getApplicationById(Long id);

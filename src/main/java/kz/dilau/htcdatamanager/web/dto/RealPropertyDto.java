@@ -2,13 +2,16 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.RealProperty;
+import kz.dilau.htcdatamanager.domain.RealPropertyFile;
 import kz.dilau.htcdatamanager.domain.RealPropertyMetadata;
 import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
+import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.util.Objects.nonNull;
 
@@ -60,6 +63,15 @@ public class RealPropertyDto extends AIdentifierDto {
     @ApiModelProperty(value = "Характеристики недвижимости")
     private GeneralCharacteristicsDto generalCharacteristicsDto;
 
+    @ApiModelProperty(value = "Признак редактирования фотографий")
+    protected Boolean filesEdited = false;
+    @ApiModelProperty(name = "photoIdList", value = "Список ID фотографии")
+    private List<String> photoIdList;
+    @ApiModelProperty(name = "housingPlanImageIdList", value = "Список ID фотографии")
+    private List<String> housingPlanImageIdList;
+    @ApiModelProperty(name = "virtualTourImageIdList", value = "Список ID фотографии")
+    private List<String> virtualTourImageIdList;
+
     public RealPropertyDto(RealProperty realProperty) {
         this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
@@ -81,6 +93,12 @@ public class RealPropertyDto extends AIdentifierDto {
             this.atelier = metadata.getAtelier();
             this.separateBathroom = metadata.getSeparateBathroom();
             this.generalCharacteristicsDto = new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics());
+        }
+        RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
+        if (nonNull(realPropertyFile)) {
+            this.photoIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO));
+            this.housingPlanImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
+            this.virtualTourImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
         }
     }
 
@@ -105,6 +123,12 @@ public class RealPropertyDto extends AIdentifierDto {
             this.atelier = metadata.getAtelier();
             this.separateBathroom = metadata.getSeparateBathroom();
             this.generalCharacteristicsDto = new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics());
+        }
+        RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
+        if (nonNull(realPropertyFile)) {
+            this.photoIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO));
+            this.housingPlanImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
+            this.virtualTourImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
         }
     }
 }

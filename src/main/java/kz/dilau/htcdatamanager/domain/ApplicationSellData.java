@@ -1,18 +1,14 @@
 package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,9 +42,6 @@ public class ApplicationSellData extends AApplicationData {
     private Boolean exchange;//обмен
     @Column(name = "description")
     private String description;
-    @Type(type = "jsonb")
-    @Column(name = "files_map", columnDefinition = "jsonb")
-    private Map<RealPropertyFileType, Set<String>> filesMap = new HashMap<>();
 
     @Type(type = "jsonb")
     @Column(name = "possible_reasons_for_bidding", columnDefinition = "jsonb")
@@ -69,27 +62,11 @@ public class ApplicationSellData extends AApplicationData {
         this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
         this.theSizeOfTrades = dataDto.getTheSizeOfTrades();
         this.note = dataDto.getNote();
-        if (!CollectionUtils.isEmpty(dataDto.getHousingPlanImageIdList())) {
-            getFilesMap().put(RealPropertyFileType.HOUSING_PLAN, new HashSet<>(dataDto.getHousingPlanImageIdList()));
-        }
-        if (!CollectionUtils.isEmpty(dataDto.getPhotoIdList())) {
-            getFilesMap().put(RealPropertyFileType.PHOTO, new HashSet<>(dataDto.getPhotoIdList()));
-        }
-        if (!CollectionUtils.isEmpty(dataDto.getVirtualTourImageIdList())) {
-            getFilesMap().put(RealPropertyFileType.VIRTUAL_TOUR, new HashSet<>(dataDto.getVirtualTourImageIdList()));
-        }
     }
 
     public ApplicationSellData(Application application, String note) {
         this.application = application;
         this.note = note;
-    }
-
-    public Map<RealPropertyFileType, Set<String>> getFilesMap() {
-        if (filesMap == null) {
-            filesMap = new HashMap<>();
-        }
-        return filesMap;
     }
 
     public Set<IdItem> getPossibleReasonsForBidding() {

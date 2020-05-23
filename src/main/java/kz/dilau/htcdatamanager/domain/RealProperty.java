@@ -34,6 +34,9 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL)
     private List<RealPropertyMetadata> metadataList;
 
+    @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL)
+    private List<RealPropertyFile> fileList;
+
     @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
     private List<ApplicationSellData> sellDataList;
 
@@ -51,6 +54,13 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
             metadataList = new ArrayList<>();
         }
         return metadataList;
+    }
+
+    public List<RealPropertyFile> getFileList() {
+        if (isNull(fileList)) {
+            fileList = new ArrayList<>();
+        }
+        return fileList;
     }
 
     public List<ApplicationSellData> getSellDataList() {
@@ -80,8 +90,30 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     }
 
     @Transient
+    public List<RealPropertyFile> getFilesByStatus(Long statusId) {
+        return getFileList().stream().filter(data -> data.getMetadataStatusId().equals(statusId)).collect(Collectors.toList());
+    }
+
+    @Transient
+    public RealPropertyFile getFileByStatus(Long statusId) {
+        List<RealPropertyFile> filesByStatus = getFilesByStatus(statusId);
+        if (nonNull(filesByStatus) && !filesByStatus.isEmpty()) {
+            return filesByStatus.get(0);
+        }
+        return null;
+    }
+
+    @Transient
     public RealPropertyMetadata getMetadataByStatusAndApplication(Long statusId, Long applicationId) {
         return getMetadataList()
+                .stream()
+                .filter(data -> data.getMetadataStatusId().equals(statusId) && nonNull(data.getApplication()) && data.getApplication().getId().equals(applicationId))
+                .findFirst().orElse(null);
+    }
+
+    @Transient
+    public RealPropertyFile getFileByStatusAndApplication(Long statusId, Long applicationId) {
+        return getFileList()
                 .stream()
                 .filter(data -> data.getMetadataStatusId().equals(statusId) && nonNull(data.getApplication()) && data.getApplication().getId().equals(applicationId))
                 .findFirst().orElse(null);
