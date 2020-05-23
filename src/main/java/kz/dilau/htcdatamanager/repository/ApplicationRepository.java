@@ -16,4 +16,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             "where a.isRemoved = false and m.metadataStatusId = :metadataStatusId")
     Page<Application> findAllByMetadataStatus(@Param("metadataStatusId") Long metadataStatusId,
                                               Pageable pageable);
+
+    @Query(value = "select a from Application a " +
+            "join RealPropertyFile f on f.application.id = a.id " +
+            "where a.isRemoved = false and f.metadataStatusId = :metadataStatusId")
+    Page<Application> findAllFileByMetadataStatus(@Param("metadataStatusId") Long metadataStatusId,
+                                                  Pageable pageable);
 }
