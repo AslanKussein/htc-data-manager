@@ -51,4 +51,8 @@ public class NotFoundException extends DetailedException {
     public static NotFoundException createApartmentByNumberAndPostcode(String apartmentNumber, String postcode) {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.apartment.not.found", apartmentNumber, postcode));
     }
+
+    public static NotFoundException createCreditProgrammById(Long id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.creditprogramm.not.found", id));
+    }
 }
