@@ -21,4 +21,7 @@ public class Street extends BaseCustomDictionary {
 
     @Column(name = "district_id", insertable = false, updatable = false)
     private Long parentId;
+
+    private String kazPostId;
+    private String streetTypeId;
 }
