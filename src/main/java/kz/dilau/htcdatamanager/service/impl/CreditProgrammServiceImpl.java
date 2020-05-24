@@ -52,14 +52,6 @@ public class CreditProgrammServiceImpl implements CreditProgrammService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public PageDto<CreditProgrammDto> getAllPageable(PageableDto dto) {
-        List<CreditProgrammDto> creditProgrammDtoList = new ArrayList<>();
-        Page<CreditProgramm> creditProgrammPage = creditProgrammRepository.findPageByRemovedFalse(PageableUtils.createPageRequest(dto));
-        creditProgrammPage.forEach(item -> creditProgrammDtoList.add(new CreditProgrammDto(item)));
-        return new PageDto(creditProgrammPage, creditProgrammDtoList);
-    }
-
     @Transactional
     @Override
     public CreditProgrammDto save(String token, CreditProgrammDto dto) {

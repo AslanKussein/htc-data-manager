@@ -13,8 +13,6 @@ public interface CreditProgrammService {
 
     List<CreditProgrammDto> getAll();
 
-    PageDto<CreditProgrammDto> getAllPageable(PageableDto dto);
-
     CreditProgrammDto save(String token, CreditProgrammDto dto);
 
     CreditProgrammDto update(String token, Long id, CreditProgrammDto input);
