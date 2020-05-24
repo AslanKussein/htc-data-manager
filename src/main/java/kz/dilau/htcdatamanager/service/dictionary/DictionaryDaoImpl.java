@@ -19,7 +19,6 @@ public class DictionaryDaoImpl implements DictionaryDao {
     private final NamedParameterJdbcTemplate npJdbcTemplate;
     private final EntityManager entityManager;
     final String SELECT_ONE_QUERY = "select * from %s where id = :id";
-    final String SELECT_ONE_QUERY_POST_ID = "select * from %s where kaz_post_id = :kazPostId";
     final String SELECT_ALL_QUERY = "select * from %s";
     final String INSERT_CUSTOM_QUERY = "insert into %s (name_kz, name_en, name_ru) values (:nameKz, :nameEn, :nameRu)";
     final String INSERT_SYSTEM_QUERY = "insert into %s (name_kz, name_en, name_ru, code) values (:nameKz, :nameEn, :nameRu, :code)";
@@ -115,13 +114,5 @@ public class DictionaryDaoImpl implements DictionaryDao {
         System.out.println("query: " + query);
         int updated = npJdbcTemplate.update(query, params);
         return updated;
-    }
-
-    @Override
-    public DictionaryDto<Long> getKazPostIdFromTable(String id, String tableName) {
-        SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("kazPostId", id);
-        return npJdbcTemplate
-                .queryForObject(String.format(SELECT_ONE_QUERY_POST_ID, tableName), params, new DictionaryRowMapper());
     }
 }
