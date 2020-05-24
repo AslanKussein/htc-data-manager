@@ -16,9 +16,7 @@ import kz.dilau.htcdatamanager.repository.dictionary.DistrictRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetTypeRepository;
 import kz.dilau.htcdatamanager.service.KazPostService;
-import kz.dilau.htcdatamanager.service.dictionary.Dictionary;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryService;
 import kz.dilau.htcdatamanager.web.dto.KazPostDTO;
 import kz.dilau.htcdatamanager.web.dto.KazPostReturnDTO;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +38,16 @@ public class KazPostServiceImpl implements KazPostService {
     private final CityRepository cityRepository;
     private final KazPostMapperProperties kazPostMapperProperties;
     private final StreetTypeRepository streetTypeRepository;
-    private final DictionaryService dictionaryService;
+
+    @Override
+    public String getPostData(String postCode) {
+        Optional<KazPostData> optional = kazPostDataRepository.findByIdAndStatus(postCode, KazPostDataStatus.FINISHED);
+        if (optional.isPresent()) {
+            KazPostDTO gson = new Gson().fromJson(optional.get().getValue(), KazPostDTO.class);
+            return gson.getAddressRus();
+        }
+        return null;
+    }
 
     @Override
     public KazPostReturnDTO processingData(KazPostDTO dto) {

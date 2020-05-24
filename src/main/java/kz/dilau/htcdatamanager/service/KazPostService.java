@@ -5,4 +5,6 @@ import kz.dilau.htcdatamanager.web.dto.KazPostReturnDTO;
 
 public interface KazPostService {
     KazPostReturnDTO processingData(KazPostDTO dto);
+
+    String getPostData(String postCode);
 }
