@@ -119,10 +119,10 @@ public class KazPostServiceImpl implements KazPostService {
     }
 
     private StreetType buildStreetType(KazPostDTO.Type type) {
-        return StreetType.builder()
+        return streetTypeRepository.save(StreetType.builder()
                 .id(type.getId())
                 .multiLang(fillMultiLang(type))
-                .build();
+                .build());
     }
 
     private Street saveStreet(KazPostDTO.Parts streetData, District district) {
