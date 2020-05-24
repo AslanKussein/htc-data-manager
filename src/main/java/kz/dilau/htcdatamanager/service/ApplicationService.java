@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ApplicationService {
     ApplicationDto getById(final String token, Long id);
@@ -26,9 +27,9 @@ public interface ApplicationService {
 
     MetadataWithApplicationsDto getApartmentByNumberAndPostcode(String apartmentNumber, String postcode);
 
-    Page<ApplicationDto> getNotApprovedMetadata(PageableDto pageableDto);
+    Page<ApplicationDto> getNotApprovedMetadata(Pageable pageable);
 
-    Page<ApplicationDto> getNotApprovedFiles(PageableDto pageableDto);
+    Page<ApplicationDto> getNotApprovedFiles(Pageable pageable);
 
     Long approveMetadata(Long applicationId, Long statusId);
 }
