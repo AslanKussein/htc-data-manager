@@ -1,8 +1,8 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.domain.KazPostData;
 import kz.dilau.htcdatamanager.web.dto.KazPostDTO;
+import kz.dilau.htcdatamanager.web.dto.KazPostReturnDTO;
 
 public interface KazPostService {
-    KazPostData processingData(KazPostDTO dto);
+    KazPostReturnDTO processingData(KazPostDTO dto);
 }

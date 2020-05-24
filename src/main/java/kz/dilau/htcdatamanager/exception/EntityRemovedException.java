@@ -35,4 +35,8 @@ public class EntityRemovedException extends DetailedException {
     public static EntityRemovedException createApplicationRemoved(Long id) {
         return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.application.removed", id));
     }
+
+    public static EntityRemovedException createCreditProgrammRemoved(Long id) {
+        return new EntityRemovedException(BundleMessageUtil.getLocaledValue("error.creditprogramm.removed", id));
+    }
 }

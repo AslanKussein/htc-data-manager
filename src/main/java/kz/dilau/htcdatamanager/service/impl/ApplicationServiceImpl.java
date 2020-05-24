@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -370,8 +371,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDto> getNotApprovedMetadata(PageableDto pageableDto) {
-        Page<Application> applications = applicationRepository.findAllByMetadataStatus(MetadataStatus.NOT_APPROVED, PageableUtils.createPageRequest(pageableDto));
+    public Page<ApplicationDto> getNotApprovedMetadata(Pageable pageable) {
+        Page<Application> applications = applicationRepository.findAllByMetadataStatus(MetadataStatus.NOT_APPROVED, pageable);
         if (nonNull(applications) && !applications.isEmpty()) {
             return applications.map(this::mapMetadataToAppicationDto);
         } else {
@@ -380,8 +381,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Page<ApplicationDto> getNotApprovedFiles(PageableDto pageableDto) {
-        Page<Application> applications = applicationRepository.findAllFileByMetadataStatus(MetadataStatus.NOT_APPROVED, PageableUtils.createPageRequest(pageableDto));
+    public Page<ApplicationDto> getNotApprovedFiles(Pageable pageable) {
+        Page<Application> applications = applicationRepository.findAllFileByMetadataStatus(MetadataStatus.NOT_APPROVED, pageable);
         if (nonNull(applications) && !applications.isEmpty()) {
             return applications.map(this::mapMetadataToAppicationDto);
         } else {

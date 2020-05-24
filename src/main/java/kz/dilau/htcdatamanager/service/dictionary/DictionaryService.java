@@ -12,4 +12,6 @@ public interface DictionaryService {
     void update(String token, Dictionary dictionary, Long id, DictionaryDto<Long> input);
 
     void deleteById(String token, Dictionary dictionary, Long id);
+
+    DictionaryDto getByNameAndKazPostId(Dictionary dictionary, String id);
 }

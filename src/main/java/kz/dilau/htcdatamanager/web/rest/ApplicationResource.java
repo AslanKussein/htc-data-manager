@@ -1,11 +1,13 @@
 package kz.dilau.htcdatamanager.web.rest;
 
+import io.swagger.annotations.ApiParam;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -71,13 +73,13 @@ public class ApplicationResource {
     }
 
     @PostMapping("/getNotApprovedMetadata")
-    public ResponseEntity<Page<ApplicationDto>> getNotApprovedMetadata(PageableDto pageableDto) {
-        return ResponseEntity.ok(applicationService.getNotApprovedMetadata(pageableDto));
+    public ResponseEntity<Page<ApplicationDto>> getNotApprovedMetadata(@ApiParam Pageable pageable) {
+        return ResponseEntity.ok(applicationService.getNotApprovedMetadata(pageable));
     }
 
-    @PostMapping("/getNotApprovedMetadata")
-    public ResponseEntity<Page<ApplicationDto>> getNotApprovedFiles(PageableDto pageableDto) {
-        return ResponseEntity.ok(applicationService.getNotApprovedFiles(pageableDto));
+    @PostMapping("/getNotApprovedFiles")
+    public ResponseEntity<Page<ApplicationDto>> getNotApprovedFiles(@ApiParam Pageable pageable) {
+        return ResponseEntity.ok(applicationService.getNotApprovedFiles(pageable));
     }
 
     @GetMapping("/approveMetadata/{applicationId}/{statusId}")

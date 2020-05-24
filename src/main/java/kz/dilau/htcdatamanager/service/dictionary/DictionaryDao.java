@@ -16,4 +16,6 @@ public interface DictionaryDao {
     Integer deleteByIdFromTable(Long id, String tableName);
 
     Integer update(Dictionary dictionary, Long id, DictionaryDto<Long> input);
+
+    DictionaryDto<Long> getKazPostIdFromTable(String id, String tableName);
 }

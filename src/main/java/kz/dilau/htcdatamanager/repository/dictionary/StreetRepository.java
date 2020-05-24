@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface StreetRepository extends JpaRepository<Street, Long>, JpaSpecificationExecutor<Street> {
     List<Street> findAllByParentIdAndIsRemovedFalse(Long parentId);
 
-    Optional<Street> findByKazPostId(String kazPostId);
+    Optional<Street> findByKazPostIdAndStreetType_Id(String kazPostId, String streetTypeId);
 }
