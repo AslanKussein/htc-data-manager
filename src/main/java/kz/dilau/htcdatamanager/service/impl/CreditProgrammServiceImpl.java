@@ -5,16 +5,11 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.dictionary.CreditProgrammRepository;
 import kz.dilau.htcdatamanager.service.CreditProgrammService;
-import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.CreditProgrammDto;
-import kz.dilau.htcdatamanager.web.dto.common.PageDto;
-import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -81,6 +76,7 @@ public class CreditProgrammServiceImpl implements CreditProgrammService {
         creditProgramm.setMinCreditPeriod(dto.getMinCreditPeriod());
         creditProgramm.setMaxDownPayment(dto.getMaxDownPayment());
         creditProgramm.setMinDownPayment(dto.getMinDownPayment());
+        creditProgramm.setPercent(dto.getPercent());
 
         creditProgramm = creditProgrammRepository.save(creditProgramm);
         return new CreditProgrammDto(creditProgramm);
