@@ -25,9 +25,9 @@ public class CreditProgrammDto {
     @ApiModelProperty(value = "Наименование En")
     private String nameEn;
     @ApiModelProperty(value = "Минимальный первоначальный взнос")
-    private BigDecimal minDownPayment;
+    private Long minDownPayment;
     @ApiModelProperty(value = "Максимальный первоначальный взнос")
-    private BigDecimal maxDownPayment;
+    private Long maxDownPayment;
     @ApiModelProperty(value = "Минимальный срок (год)")
     private BigDecimal minCreditPeriod;
     @ApiModelProperty(value = "Максимальный срок (год)")

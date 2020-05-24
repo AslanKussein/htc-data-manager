@@ -21,8 +21,8 @@ public class CreditProgramm extends BaseEntity<Long> {
     private String nameRu;
     private String nameKz;
     private String nameEn;
-    private BigDecimal minDownPayment;
-    private BigDecimal maxDownPayment;
+    private Long minDownPayment;
+    private Long maxDownPayment;
     private BigDecimal minCreditPeriod;
     private BigDecimal maxCreditPeriod;
     private BigDecimal percent;
