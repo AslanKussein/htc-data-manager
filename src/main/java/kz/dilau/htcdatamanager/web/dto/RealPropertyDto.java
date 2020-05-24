@@ -10,8 +10,7 @@ import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import static java.util.Objects.nonNull;
 
@@ -66,11 +65,11 @@ public class RealPropertyDto extends AIdentifierDto {
     @ApiModelProperty(value = "Признак редактирования фотографий")
     protected Boolean filesEdited = false;
     @ApiModelProperty(name = "photoIdList", value = "Список ID фотографии")
-    private List<String> photoIdList;
+    private Set<String> photoIdList;
     @ApiModelProperty(name = "housingPlanImageIdList", value = "Список ID фотографии")
-    private List<String> housingPlanImageIdList;
+    private Set<String> housingPlanImageIdList;
     @ApiModelProperty(name = "virtualTourImageIdList", value = "Список ID фотографии")
-    private List<String> virtualTourImageIdList;
+    private Set<String> virtualTourImageIdList;
 
     public RealPropertyDto(RealProperty realProperty) {
         this.id = realProperty.getId();
@@ -96,9 +95,9 @@ public class RealPropertyDto extends AIdentifierDto {
         }
         RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
         if (nonNull(realPropertyFile)) {
-            this.photoIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO));
-            this.housingPlanImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
-            this.virtualTourImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
+            this.photoIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO);
+            this.housingPlanImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN);
+            this.virtualTourImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR);
         }
     }
 
@@ -126,9 +125,9 @@ public class RealPropertyDto extends AIdentifierDto {
         }
         RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
         if (nonNull(realPropertyFile)) {
-            this.photoIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO));
-            this.housingPlanImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
-            this.virtualTourImageIdList = new ArrayList<>(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
+            this.photoIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO);
+            this.housingPlanImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN);
+            this.virtualTourImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR);
         }
     }
 }
