@@ -3,8 +3,6 @@ package kz.dilau.htcdatamanager.web.rest;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.CreditProgrammService;
 import kz.dilau.htcdatamanager.web.dto.CreditProgrammDto;
-import kz.dilau.htcdatamanager.web.dto.common.PageDto;
-import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,13 +28,6 @@ public class CreditProgrammResource {
     public ResponseEntity<List<CreditProgrammDto>> getAll() {
         List<CreditProgrammDto> list = creditProgrammService.getAll();
         return ResponseEntity.ok(list);
-    }
-
-
-    @PostMapping("/getAllPageable")
-    public ResponseEntity<PageDto<CreditProgrammDto>> getAllPageable(PageableDto dto) {
-        PageDto<CreditProgrammDto> page = creditProgrammService.getAllPageable(dto);
-        return ResponseEntity.ok(page);
     }
 
     @PostMapping
