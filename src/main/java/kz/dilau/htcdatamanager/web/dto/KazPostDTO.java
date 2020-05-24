@@ -12,7 +12,7 @@ public class KazPostDTO implements Serializable {
     private String postcode;
     private List<Parts> parts;
     @Data
-    public class Type {
+    public static class Type {
         private String id;
         private String nameRus;
         private String nameKaz;
