@@ -133,7 +133,9 @@ public class KazPostServiceImpl implements KazPostService {
     private Street getStreet(KazPostDTO.Parts streetData, District district) {
         Optional<Street> streetOptional = streetRepository.findByKazPostIdAndStreetType_Id(district.getKazPostId(), streetData.getType().getId());
         if (!streetOptional.isPresent()) {
-            streetOptional = streetRepository.findByStreetType_Id(streetData.getType().getId(), getMultiLangLikeSpecification(streetData));
+            Specification<Street> specification = getMultiLangLikeSpecification(streetData);
+            specification.and((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("streetType"), streetData.getType().getId()));
+            streetOptional = streetRepository.findOne(specification);
             if (!streetOptional.isPresent()) {
                 return saveStreet(streetData, district);
             }
