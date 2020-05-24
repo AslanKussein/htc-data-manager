@@ -23,5 +23,7 @@ public class Street extends BaseCustomDictionary {
     private Long parentId;
 
     private String kazPostId;
-    private String streetTypeId;
+    @OneToOne
+    @JoinColumn(name = "street_type_id")
+    private StreetType streetType;
 }

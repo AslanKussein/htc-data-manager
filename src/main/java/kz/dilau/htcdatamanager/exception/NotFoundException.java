@@ -16,6 +16,10 @@ public class NotFoundException extends DetailedException {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.entity.not.found", name, id));
     }
 
+    public static NotFoundException createEntityNotFoundByKazPostId(String name, String id) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.entity.not.found.kazPostId", name, id));
+    }
+
     public static NotFoundException createMortgageById(Long id) {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.mortgage.not.found", id));
     }
