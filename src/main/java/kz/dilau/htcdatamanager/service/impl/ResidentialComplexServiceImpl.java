@@ -76,9 +76,9 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
         if (isNull(building)) {
             building = Building.builder()
                     .postcode(buildingDto.getPostcode())
-                    .city(entityService.mapEntity(City.class, buildingDto.getCityId()))
-                    .district(entityService.mapEntity(District.class, buildingDto.getDistrictId()))
-                    .street(entityService.mapEntity(Street.class, buildingDto.getStreetId()))
+                    .city(entityService.mapRequiredEntity(City.class, buildingDto.getCityId()))
+                    .district(entityService.mapRequiredEntity(District.class, buildingDto.getDistrictId()))
+                    .street(entityService.mapRequiredEntity(Street.class, buildingDto.getStreetId()))
                     .houseNumber(buildingDto.getHouseNumber())
                     .houseNumberFraction(buildingDto.getHouseNumberFraction())
                     .latitude(buildingDto.getLatitude())

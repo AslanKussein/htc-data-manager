@@ -219,7 +219,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
             application.getAssignmentList().add(assignment);
 
-            application.setClientLogin(getAuthorName());
+            application.setClientLogin(dto.getClientLogin());
             application.setOperationType(operationType);
 
             ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.FIRST_CONTACT);
