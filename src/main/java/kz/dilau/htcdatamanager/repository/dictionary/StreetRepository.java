@@ -11,4 +11,6 @@ public interface StreetRepository extends JpaRepository<Street, Long>, JpaSpecif
     List<Street> findAllByParentIdAndIsRemovedFalse(Long parentId);
 
     Optional<Street> findByKazPostIdAndStreetType_Id(String kazPostId, String streetTypeId);
+
+    Street findByKazPostId(String kazPostId);
 }

@@ -16,8 +16,7 @@ import kz.dilau.htcdatamanager.repository.dictionary.DistrictRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetTypeRepository;
 import kz.dilau.htcdatamanager.service.KazPostService;
-import kz.dilau.htcdatamanager.service.dictionary.Dictionary;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryService;
+import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
 import kz.dilau.htcdatamanager.web.dto.KazPostDTO;
 import kz.dilau.htcdatamanager.web.dto.KazPostReturnDTO;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +38,16 @@ public class KazPostServiceImpl implements KazPostService {
     private final CityRepository cityRepository;
     private final KazPostMapperProperties kazPostMapperProperties;
     private final StreetTypeRepository streetTypeRepository;
-    private final DictionaryService dictionaryService;
+
+    @Override
+    public String getPostData(String postCode) {
+        Optional<KazPostData> optional = kazPostDataRepository.findByIdAndStatus(postCode, KazPostDataStatus.FINISHED);
+        if (optional.isPresent()) {
+            KazPostDTO gson = new Gson().fromJson(optional.get().getValue(), KazPostDTO.class);
+            return gson.getAddressRus();
+        }
+        return null;
+    }
 
     @Override
     public KazPostReturnDTO processingData(KazPostDTO dto) {
@@ -51,10 +59,23 @@ public class KazPostServiceImpl implements KazPostService {
     }
 
     private KazPostReturnDTO getDictionaryValue(KazPostData data) {
+        Street street = streetRepository.findByKazPostId(data.getId());
+        City city = cityRepository.findByKazPostIdAndIsRemovedFalse(data.getId()).get();
+        District district = districtRepository.findByKazPostId(data.getId()).get();
+
         return KazPostReturnDTO.builder()
-                .streetList(dictionaryService.getByNameAndKazPostId(Dictionary.STREETS, data.getId()))
-                .cityList(dictionaryService.getByNameAndKazPostId(Dictionary.CITIES, data.getId()))
-                .districtList(dictionaryService.getByNameAndKazPostId(Dictionary.DISTRICTS, data.getId()))
+                .street(fillDictionaryDto(street.getId(), street.getMultiLang()))
+                .city(fillDictionaryDto(city.getId(), city.getMultiLang()))
+                .district(fillDictionaryDto(district.getId(), city.getMultiLang()))
+                .build();
+    }
+
+    private DictionaryDto fillDictionaryDto(Long id, MultiLang multiLang) {
+        return DictionaryDto.builder()
+                .id(id)
+                .nameEn(multiLang.getNameEn())
+                .nameKz(multiLang.getNameKz())
+                .nameRu(multiLang.getNameRu())
                 .build();
     }
 

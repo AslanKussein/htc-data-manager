@@ -57,13 +57,4 @@ public class DictionaryServiceImpl implements DictionaryService {
             throw NotFoundException.createEntityNotFoundById(dictionary.getTableName(), id);
         }
     }
-
-    @Override
-    public DictionaryDto<Long> getByNameAndKazPostId(Dictionary dictionary, String id) {
-        try {
-            return dictionaryDao.getKazPostIdFromTable(id, dictionary.getTableName());
-        } catch (Exception e) {
-            throw NotFoundException.createEntityNotFoundByKazPostId(dictionary.getTableName(), id);
-        }
-    }
 }
