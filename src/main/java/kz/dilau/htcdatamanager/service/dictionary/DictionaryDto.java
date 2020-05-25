@@ -1,9 +1,10 @@
 package kz.dilau.htcdatamanager.service.dictionary;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 public class DictionaryDto<ID> {
