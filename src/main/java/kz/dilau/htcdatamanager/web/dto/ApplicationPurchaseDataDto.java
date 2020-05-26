@@ -26,7 +26,6 @@ public class ApplicationPurchaseDataDto extends AApplicationDataDto {
     private Long districtId;
 
     public ApplicationPurchaseDataDto(ApplicationPurchaseData purchaseData) {
-        this.id = purchaseData.getId();
         if (nonNull(purchaseData.getPurchaseInfo())) {
             this.objectPricePeriod = new BigDecimalPeriod(purchaseData.getPurchaseInfo().getObjectPriceFrom(), purchaseData.getPurchaseInfo().getObjectPriceTo());
         }

@@ -41,7 +41,6 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     private List<ApplicationSellData> sellDataList;
 
     public RealProperty(RealPropertyDto realPropertyDto, Building building, RealPropertyMetadata metadata) {
-        this.id = realPropertyDto.getId();
         this.building = building;
         this.apartmentNumber = realPropertyDto.getApartmentNumber();
         this.cadastralNumber = realPropertyDto.getCadastralNumber();

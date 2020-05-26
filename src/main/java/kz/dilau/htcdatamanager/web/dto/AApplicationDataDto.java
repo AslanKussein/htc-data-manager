@@ -13,7 +13,7 @@ import static java.util.Objects.isNull;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class AApplicationDataDto extends AIdentifierDto {
+public abstract class AApplicationDataDto {
     @ApiModelProperty(value = "Ипотека")
     protected Boolean mortgage;//ипотека
     @ApiModelProperty(value = "Вероятность торга")

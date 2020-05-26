@@ -77,7 +77,6 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
                                 HeatingSystem heatingSystem,
                                 PropertyDeveloper propertyDeveloper, HouseCondition houseCondition,
                                 MaterialOfConstruction materialOfConstruction, YardType yardType) {
-        this.id = dto.getMetadataId();
         this.floor = dto.getFloor();
         this.numberOfRooms = dto.getNumberOfRooms();
         this.numberOfBedrooms = dto.getNumberOfBedrooms();

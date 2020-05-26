@@ -110,7 +110,6 @@ public class PurchaseInfo extends AGeneralCharacteristics {
             this.objectPriceTo = objectPrice.getTo();
         }
         if (nonNull(dto)) {
-            this.id = dto.getId();
             if (nonNull(dto.getFloorPeriod())) {
                 this.floorFrom = dto.getFloorPeriod().getFrom();
                 this.floorTo = dto.getFloorPeriod().getTo();

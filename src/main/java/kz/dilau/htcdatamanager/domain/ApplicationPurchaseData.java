@@ -56,7 +56,6 @@ public class ApplicationPurchaseData extends AApplicationData {
 
     public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, PurchaseInfoDto infoDto,
                                    City city, District district, MaterialOfConstruction materialOfConstruction, YardType yardType) {
-        this.id = dataDto.getId();
         this.city = city;
         this.district = district;
         this.mortgage = dataDto.getMortgage();
