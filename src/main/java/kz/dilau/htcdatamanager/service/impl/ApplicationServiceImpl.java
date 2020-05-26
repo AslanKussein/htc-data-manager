@@ -283,14 +283,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                             metadata = metadataByStatus;
                         }
                         RealPropertyFile filesByStatus = realProperty.getFileByStatus(MetadataStatus.APPROVED);
-                        if (realPropertyDto.getFilesEdited()) {
+                        if (realPropertyDto.getFilesEdited() && !realPropertyFile.getFilesMap().isEmpty()) {
                             if (nonNull(application.getId()) && actualSellDataList.size() == 1 && actualSellDataList.get(0).getApplication().getId().equals(application.getId())) {
                                 if (nonNull(filesByStatus)) {
                                     realPropertyFile.setId(filesByStatus.getId());
                                     realPropertyFile.setMetadataStatus(filesByStatus.getMetadataStatus());
-                                } else {
-                                    realPropertyFile.setMetadataStatus(notApproved);
                                 }
+                            } else {
+                                realPropertyFile.setMetadataStatus(notApproved);
                             }
                         } else {
                             realPropertyFile = filesByStatus;
