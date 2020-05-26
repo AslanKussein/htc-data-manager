@@ -66,7 +66,7 @@ public class KazPostServiceImpl implements KazPostService {
         return KazPostReturnDTO.builder()
                 .street(fillDictionaryDto(street.getId(), street.getMultiLang()))
                 .city(fillDictionaryDto(city.getId(), city.getMultiLang()))
-                .district(fillDictionaryDto(district.getId(), city.getMultiLang()))
+                .district(fillDictionaryDto(district.getId(), district.getMultiLang()))
                 .build();
     }
 
