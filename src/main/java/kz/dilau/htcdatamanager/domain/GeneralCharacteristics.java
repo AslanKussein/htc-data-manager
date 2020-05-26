@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -70,14 +71,18 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
         this.numberOfApartments = dto.getNumberOfApartments();
         this.apartmentsOnTheSite = dto.getApartmentsOnTheSite();
         this.ceilingHeight = dto.getCeilingHeight();
-        this.parkingTypes = dto.getParkingTypeIds()
-                .stream()
-                .map(IdItem::new)
-                .collect(Collectors.toSet());
-        this.typesOfElevator = dto.getTypeOfElevatorList()
-                .stream()
-                .map(IdItem::new)
-                .collect(Collectors.toSet());
+        if (nonNull(dto.getParkingTypeIds())) {
+            this.parkingTypes = dto.getParkingTypeIds()
+                    .stream()
+                    .map(IdItem::new)
+                    .collect(Collectors.toSet());
+        }
+        if (nonNull(dto.getTypeOfElevatorList())) {
+            this.typesOfElevator = dto.getTypeOfElevatorList()
+                    .stream()
+                    .map(IdItem::new)
+                    .collect(Collectors.toSet());
+        }
         this.materialOfConstruction = materialOfConstruction;
         this.concierge = dto.getConcierge();
         this.wheelchair = dto.getWheelchair();
