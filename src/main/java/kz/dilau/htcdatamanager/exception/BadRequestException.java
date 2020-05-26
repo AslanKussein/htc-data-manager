@@ -49,6 +49,6 @@ public class BadRequestException extends DetailedException {
     }
 
     public static BadRequestException createMaxApplicationCount(String apartmentNumber, String postcode) {
-        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.max.application.count", apartmentNumber, postcode));
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.max.application.count", postcode, apartmentNumber));
     }
 }

@@ -264,7 +264,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (nonNull(realProperty.getId())) {
                         List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
                         if (actualSellDataList.size() >= dataProperties.getMaxApplicationCountForOneRealProperty()) {
-                            throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                            if (isNull(application.getApplicationSellData()) || isNull(application.getApplicationSellData().getRealProperty())
+                                    || !application.getApplicationSellData().getRealProperty().getId().equals(realProperty.getId())) {
+                                throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                            }
                         }
                         RealPropertyMetadata metadataByStatus = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
                         if (realPropertyDto.getEdited()) {
