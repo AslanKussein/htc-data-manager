@@ -48,7 +48,6 @@ public class ApplicationSellData extends AApplicationData {
     private Set<IdItem> possibleReasonsForBidding = new HashSet<>();
 
     public ApplicationSellData(ApplicationSellDataDto dataDto) {
-        this.id = dataDto.getId();
         this.objectPrice = dataDto.getObjectPrice();
         this.encumbrance = dataDto.getEncumbrance();
         this.sharedOwnershipProperty = dataDto.getSharedOwnershipProperty();

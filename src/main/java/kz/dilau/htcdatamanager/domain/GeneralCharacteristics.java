@@ -62,7 +62,6 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
     public GeneralCharacteristics(GeneralCharacteristicsDto dto,
                                   PropertyDeveloper propertyDeveloper, HouseCondition houseCondition,
                                   MaterialOfConstruction materialOfConstruction, YardType yardType) {
-        this.id = dto.getId();
         this.propertyDeveloper = propertyDeveloper;
         this.houseCondition = houseCondition;
         this.housingClass = dto.getHousingClass();

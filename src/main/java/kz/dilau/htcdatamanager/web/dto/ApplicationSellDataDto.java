@@ -28,7 +28,6 @@ public class ApplicationSellDataDto extends AApplicationDataDto {
     private String description;
 
     public ApplicationSellDataDto(ApplicationSellData sellData) {
-        this.id = sellData.getId();
         this.objectPrice = sellData.getObjectPrice();
         this.encumbrance = sellData.getEncumbrance();
         this.sharedOwnershipProperty = sellData.getSharedOwnershipProperty();

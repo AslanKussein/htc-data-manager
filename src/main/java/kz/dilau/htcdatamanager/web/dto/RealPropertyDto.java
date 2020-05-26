@@ -20,7 +20,7 @@ import static java.util.Objects.nonNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(value = "RealPropertyDto", description = "Модель сущности недвижимости")
-public class RealPropertyDto extends AIdentifierDto {
+public class RealPropertyDto {
     @ApiModelProperty(value = "")
     private BuildingDto buildingDto;
     @ApiModelProperty(value = "Кадастровый номер")
@@ -72,7 +72,6 @@ public class RealPropertyDto extends AIdentifierDto {
     private Set<String> virtualTourImageIdList;
 
     public RealPropertyDto(RealProperty realProperty) {
-        this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
         this.cadastralNumber = realProperty.getCadastralNumber();
         this.apartmentNumber = realProperty.getApartmentNumber();
@@ -102,7 +101,6 @@ public class RealPropertyDto extends AIdentifierDto {
     }
 
     public RealPropertyDto(RealProperty realProperty, Long applicationId) {
-        this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
         this.cadastralNumber = realProperty.getCadastralNumber();
         this.apartmentNumber = realProperty.getApartmentNumber();

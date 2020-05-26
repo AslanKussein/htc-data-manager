@@ -43,7 +43,6 @@ public class PurchaseInfoDto extends AGeneralCharacteristicsDto {
     private IntegerPeriod apartmentsOnTheSitePeriod;
 
     public PurchaseInfoDto(PurchaseInfo info) {
-        this.id = info.getId();
         this.numberOfFloorsPeriod = new IntegerPeriod(info.getNumberOfFloorsFrom(), info.getNumberOfFloorsTo());
         this.floorPeriod = new IntegerPeriod(info.getFloorFrom(), info.getFloorTo());
         this.numberOfRoomsPeriod = new IntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo());

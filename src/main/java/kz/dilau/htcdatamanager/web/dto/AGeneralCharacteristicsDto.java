@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class AGeneralCharacteristicsDto extends AIdentifierDto {
+public abstract class AGeneralCharacteristicsDto {
     @ApiModelProperty(value = "Материал постройки")
     protected Long materialOfConstructionId;
     @ApiModelProperty(value = "Консьерж")

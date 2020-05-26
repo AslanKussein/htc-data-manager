@@ -37,7 +37,6 @@ public class GeneralCharacteristicsDto extends AGeneralCharacteristicsDto {
     private Long houseConditionId;
 
     public GeneralCharacteristicsDto(GeneralCharacteristics generalCharacteristics) {
-        this.id = generalCharacteristics.getId();
         this.propertyDeveloperId = generalCharacteristics.getPropertyDeveloperId();
         this.housingClass = generalCharacteristics.getHousingClass();
         this.yearOfConstruction = generalCharacteristics.getYearOfConstruction();
