@@ -346,6 +346,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     public MetadataWithApplicationsDto getApartmentByNumberAndPostcode(String apartmentNumber, String postcode) {
         RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndPostcode(apartmentNumber, postcode);
         if (nonNull(realProperty)) {
+            if (realProperty.getActualSellDataList().size() >= dataProperties.getMaxApplicationCountForOneRealProperty()) {
+                throw BadRequestException.createMaxApplicationCount(apartmentNumber, postcode);
+            }
             List<ApplicationSellData> sellDataList = realProperty.getActualSellDataList();
             List<ApplicationByRealPropertyDto> applicationByRealPropertyDtoList = new ArrayList<>();
             if (!sellDataList.isEmpty()) {
