@@ -39,8 +39,8 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
-    private static final String VIEW = "VIEW";
-    private static final String UPDATE = "UPDATE";
+    private static final String VIEW = "VIEW_";
+    private static final String UPDATE = "UPDATE_";
 
     private static final String APPLICATION_GROUP = "APPLICATION_GROUP";
     private static final String SALE_DEAL_INFO = "SALE_DEAL_INFO";
