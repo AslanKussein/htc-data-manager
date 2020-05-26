@@ -264,7 +264,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (nonNull(realProperty.getId())) {
                         List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
                         if (actualSellDataList.size() >= dataProperties.getMaxApplicationCountForOneRealProperty()) {
-                            throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                            if (isNull(application.getApplicationSellData()) || isNull(application.getApplicationSellData().getRealProperty())
+                                    || !application.getApplicationSellData().getRealProperty().getId().equals(realProperty.getId())) {
+                                throw BadRequestException.createMaxApplicationCount(realPropertyDto.getApartmentNumber(), building.getPostcode());
+                            }
                         }
                         RealPropertyMetadata metadataByStatus = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
                         if (realPropertyDto.getEdited()) {
@@ -280,14 +283,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                             metadata = metadataByStatus;
                         }
                         RealPropertyFile filesByStatus = realProperty.getFileByStatus(MetadataStatus.APPROVED);
-                        if (realPropertyDto.getFilesEdited()) {
+                        if (realPropertyDto.getFilesEdited() && !realPropertyFile.getFilesMap().isEmpty()) {
                             if (nonNull(application.getId()) && actualSellDataList.size() == 1 && actualSellDataList.get(0).getApplication().getId().equals(application.getId())) {
                                 if (nonNull(filesByStatus)) {
                                     realPropertyFile.setId(filesByStatus.getId());
                                     realPropertyFile.setMetadataStatus(filesByStatus.getMetadataStatus());
-                                } else {
-                                    realPropertyFile.setMetadataStatus(notApproved);
                                 }
+                            } else {
+                                realPropertyFile.setMetadataStatus(notApproved);
                             }
                         } else {
                             realPropertyFile = filesByStatus;
