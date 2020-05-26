@@ -6,6 +6,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
+import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
@@ -16,9 +17,8 @@ import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
-import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.*;
-import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,6 +39,23 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Service
 public class ApplicationServiceImpl implements ApplicationService {
+    private static final String VIEW = "VIEW";
+    private static final String UPDATE = "UPDATE";
+
+    private static final String APPLICATION_GROUP = "APPLICATION_GROUP";
+    private static final String SALE_DEAL_INFO = "SALE_DEAL_INFO";
+    private static final String PURCHASE_DEAL_INFO = "PURCHASE_DEAL_INFO";
+    private static final String DEAL_DATA = "DEAL_DATA";
+
+    private static final String REAL_PROPERTY_GROUP = "REAL_PROPERTY_GROUP";
+    private static final String SALE_OBJECT_INFO = "SALE_OBJECT_INFO";
+    private static final String PURCHASE_OBJECT_INFO = "PURCHASE_OBJECT_INFO";
+    private static final String SALE_OBJECT_DATA = "SALE_OBJECT_DATA";
+
+    private static final String CLIENT_GROUP = "CLIENT_GROUP";
+    private static final String CLIENT_INFO = "CLIENT_INFO";
+    private static final String CLIENT_DATA = "CLIENT_DATA";
+
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final ApplicationStatusRepository applicationStatusRepository;
@@ -66,81 +83,117 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationDto getById(final String token, Long id) {
         Application application = getApplicationById(id);
-        return mapToApplicationDto(application);
+        ListResponse<CheckOperationGroupDto> operationList = keycloakService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
+        return mapToApplicationDto(application, operationList);
 //        ApplicationDto dto = new ApplicationDto();
-//        ListResponse<CheckOperationGroupDto> checkOperationList = dataAccessService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
-//        checkOperationList
-//                .getData()
-//                .stream()
-//                .filter(e -> "APPLICATION_GROUP".equals(e.getCode()))
-//                .findFirst()
-//                .ifPresent(e -> {
-//                    List<String> operations = e.getOperations();
-//                    for (String oper : operations) {
-//                        switch (oper) {
-//                            case "VIEW_SALE_DEAL_INFO":
-//                                dto.setId(application.getId());
-//                                dto.setOperationTypeId(application.getOperationType().getId());
-////                                dto.setObjectTypeId(application.getObjectType().getId());
-////                                dto.setObjectPrice(application.getObjectPrice());
-//                                dto.setMortgage(application.getMortgage());
-//                                dto.setEncumbrance(application.getEncumbrance());
-//                                dto.setSharedOwnershipProperty(application.getSharedOwnershipProperty());
-//                                dto.setExchange(application.getExchange());
-//                                dto.setProbabilityOfBidding(application.getProbabilityOfBidding());
-////                                dto.setPossibleReasonForBiddingId(application.getPossibleReasonForBidding().getId());//todo
-//                                dto.setTheSizeOfTrades(application.getTheSizeOfTrades());
-//                                break;
-//                            case "NOT_ACCESS_ VIEW_SALE_DEAL_INFO":
-//                                break;
-//                            case "VIEW_PURCHASE_DEAL_INFO":
-//                                dto.setOperationTypeId(application.getOperationType().getId());
-////                                dto.setObjectTypeId(application.getObjectType().getId());
-////                                dto.setObjectPriceFrom(application.getObjectPriceFrom());
-////                                dto.setObjectPriceTo(application.getObjectPriceTo());
-//                                dto.setMortgage(application.getMortgage());
-//                                dto.setProbabilityOfBidding(application.getProbabilityOfBidding());
-////                                dto.setPossibleReasonForBiddingId(application.getPossibleReasonForBidding().getId());//todo
-//                                break;
-//                            case "NOT_ACCESS_ VIEW_PURCHASE_DEAL_INFO":
-//                                break;
-//                            case "VIEW_DEAL_DATA":
-//                                dto.setContractPeriod(application.getContractPeriod());
-////                                dto.setAmount(application.getAmount());//todo
-//                                dto.setCommissionIncludedInThePrice(application.isCommissionIncludedInThePrice());
-//                                break;
-//                        }
-//                    }
-//                });
-//        return mapToApplicationDto(application);
+
     }
 
-    private ApplicationDto mapToApplicationDto(Application application) {
-        ApplicationDto applicationDto = ApplicationDto.builder()
-                .id(application.getId())
-                .operationTypeId(application.getOperationTypeId())
-                .objectTypeId(application.getObjectTypeId())
-                .agent(application.getCurrentAgent())
-                .clientLogin(application.getClientLogin())
-                .build();
-        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())) {
-            ApplicationSellData sellData = application.getApplicationSellData();
-            ApplicationSellDataDto sellDataDto = new ApplicationSellDataDto(sellData);
-            applicationDto.setSellDataDto(sellDataDto);
-            if (nonNull(sellData.getRealProperty())) {
-                RealPropertyDto realPropertyDto = new RealPropertyDto(sellData.getRealProperty());
-                applicationDto.setRealPropertyDto(realPropertyDto);
-            }
-        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())) {
-            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
-            ApplicationPurchaseDataDto purchaseDataDto = new ApplicationPurchaseDataDto(purchaseData);
-            applicationDto.setPurchaseDataDto(purchaseDataDto);
-            if (nonNull(purchaseData.getPurchaseInfo())) {
-                PurchaseInfoDto infoDto = new PurchaseInfoDto(purchaseData.getPurchaseInfo());
-                applicationDto.setPurchaseInfoDto(infoDto);
+    private ApplicationDto mapToApplicationDto(Application application, ListResponse<CheckOperationGroupDto> operationList) {
+        ApplicationDto dto = new ApplicationDto();
+        dto.setAgent(application.getCurrentAgent());
+        List<String> operations;
+        for (val checkOperationGroupDto : operationList.getData()) {
+            operations = checkOperationGroupDto.getOperations();
+            switch (checkOperationGroupDto.getCode()) {
+                case APPLICATION_GROUP:
+                    for (String oper : operations) {
+                        dto.setOperationTypeId(application.getOperationTypeId());
+                        dto.setObjectTypeId(application.getObjectTypeId());
+                        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())) {
+                            if ((VIEW + SALE_DEAL_INFO).equals(oper)) {
+                                dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
+                            }
+                        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())) {
+                            if ((VIEW + PURCHASE_DEAL_INFO).equals(oper)) {
+                                dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
+                            }
+                        }
+                        if ((VIEW + DEAL_DATA).equals(oper)) {
+                            //todo contract info
+                        }
+                    }
+                    break;
+                case REAL_PROPERTY_GROUP:
+                    RealPropertyDto realPropertyDto = new RealPropertyDto();
+                    for (String oper : operations) {
+                        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())
+                                && nonNull(application.getApplicationSellData().getRealProperty())) {
+                            RealProperty realProperty = application.getApplicationSellData().getRealProperty();
+                            if ((VIEW + SALE_OBJECT_INFO).equals(oper)) {
+                                realPropertyDto.setBuildingDto(new BuildingDto(realProperty.getBuilding()));
+                                RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
+                                if (nonNull(metadata)) {
+                                    realPropertyDto.setMetadataId(metadata.getId());
+                                    realPropertyDto.setFloor(metadata.getFloor());
+                                    realPropertyDto.setNumberOfRooms(metadata.getNumberOfRooms());
+                                    realPropertyDto.setNumberOfBedrooms(metadata.getNumberOfBedrooms());
+                                    realPropertyDto.setTotalArea(metadata.getTotalArea());
+                                    realPropertyDto.setLivingArea(metadata.getLivingArea());
+                                    realPropertyDto.setKitchenArea(metadata.getKitchenArea());
+                                    realPropertyDto.setBalconyArea(metadata.getBalconyArea());
+                                    realPropertyDto.setSewerageId(metadata.getSewerageId());
+                                    realPropertyDto.setHeatingSystemId(metadata.getHeatingSystemId());
+                                    realPropertyDto.setLandArea(metadata.getLandArea());
+                                    realPropertyDto.setAtelier(metadata.getAtelier());
+                                    realPropertyDto.setSeparateBathroom(metadata.getSeparateBathroom());
+                                    realPropertyDto.setGeneralCharacteristicsDto(new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics()));
+                                }
+                                RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
+                                if (nonNull(realPropertyFile)) {
+                                    realPropertyDto.setPhotoIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO));
+                                    realPropertyDto.setHousingPlanImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
+                                    realPropertyDto.setVirtualTourImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
+                                }
+                            } else if ((VIEW + SALE_OBJECT_DATA).equals(oper)) {
+                                realPropertyDto.setCadastralNumber(realProperty.getCadastralNumber());
+                                realPropertyDto.setApartmentNumber(realProperty.getApartmentNumber());
+                            }
+                        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())
+                                && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+                            if ((VIEW + PURCHASE_OBJECT_INFO).equals(oper)) {
+                                dto.setPurchaseInfoDto(new PurchaseInfoDto(application.getApplicationPurchaseData().getPurchaseInfo()));
+                            }
+                        }
+                    }
+                    dto.setRealPropertyDto(realPropertyDto);
+                    break;
+                case CLIENT_GROUP:
+                    for (String oper : operations) {
+                        switch (oper) {
+                            case VIEW + CLIENT_INFO:
+                            case VIEW + CLIENT_DATA:
+                                dto.setClientLogin(application.getClientLogin());
+                        }
+                    }
+                    break;
             }
         }
-        return applicationDto;
+//        applicationDto = ApplicationDto.builder()
+//                .id(application.getId())
+//                .operationTypeId(application.getOperationTypeId())
+//                .objectTypeId(application.getObjectTypeId())
+//                .agent(application.getCurrentAgent())
+//                .clientLogin(application.getClientLogin())
+//                .build();
+//        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())) {
+//            ApplicationSellData sellData = application.getApplicationSellData();
+//            ApplicationSellDataDto sellDataDto = new ApplicationSellDataDto(sellData);
+//            applicationDto.setSellDataDto(sellDataDto);
+//            if (nonNull(sellData.getRealProperty())) {
+//                RealPropertyDto realPropertyDto = new RealPropertyDto(sellData.getRealProperty());
+//                applicationDto.setRealPropertyDto(realPropertyDto);
+//            }
+//        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())) {
+//            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+//            ApplicationPurchaseDataDto purchaseDataDto = new ApplicationPurchaseDataDto(purchaseData);
+//            applicationDto.setPurchaseDataDto(purchaseDataDto);
+//            if (nonNull(purchaseData.getPurchaseInfo())) {
+//                PurchaseInfoDto infoDto = new PurchaseInfoDto(purchaseData.getPurchaseInfo());
+//                applicationDto.setPurchaseInfoDto(infoDto);
+//            }
+//        }
+        return dto;
     }
 
     private List<ApplicationStatusHistoryDto> mapStatusHistoryList(Application application) {

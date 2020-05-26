@@ -5,6 +5,7 @@ import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.exception.DetailedException;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.web.dto.AgentDto;
+import kz.dilau.htcdatamanager.web.dto.CheckOperationGroupDto;
 import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String TOKEN_ENDPOINT = "token";
     private static final String AGENT_REST_ENDPOINT = "/api/agents";
     private static final String USER_REST_ENDPOINT = "/api/users";
+    private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
     private static final String USERS_INFO = "/infos";
 
     private final RestTemplate restTemplate;
@@ -167,6 +169,26 @@ public class KeycloakServiceImpl implements KeycloakService {
                 }
         );
 
+        return response.getBody();
+    }
+
+    @Override
+    public ListResponse<CheckOperationGroupDto> getCheckOperationList(String token, List<String> groupCodes) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, token);
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        String url = dataProperties.getKeycloakRoleManagerUrl() + OPERATIONS_REST_ENDPOINT;
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        for (String groupCode : groupCodes) {
+            uriBuilder.queryParam("groupCodes", groupCode);
+        }
+        ResponseEntity<ListResponse<CheckOperationGroupDto>> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<ListResponse<CheckOperationGroupDto>>() {
+                }
+        );
         return response.getBody();
     }
 
