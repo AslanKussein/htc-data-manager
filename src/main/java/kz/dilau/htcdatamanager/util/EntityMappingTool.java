@@ -8,7 +8,6 @@ import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
@@ -18,19 +17,26 @@ public class EntityMappingTool {
     private final BuildingService buildingService;
 
     public ApplicationPurchaseData convertApplicationPurchaseData(ApplicationDto dto) {
-        PurchaseInfoDto infoDto = dto.getPurchaseInfoDto();
         ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
-        return new ApplicationPurchaseData(dataDto, dto.getPurchaseInfoDto(),
-                entityService.mapRequiredEntity(City.class, dataDto.getCityId()), entityService.mapEntity(District.class, dataDto.getDistrictId()),
-                nonNull(infoDto) && nonNull(infoDto.getMaterialOfConstructionId()) ? entityService.mapRequiredEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()) : null,
-                nonNull(infoDto) && nonNull(infoDto.getYardTypeId()) ? entityService.mapRequiredEntity(YardType.class, infoDto.getYardTypeId()) : null);
+        return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()),
+                entityService.mapEntity(District.class, dataDto.getDistrictId()));
+    }
+
+    public PurchaseInfo convertPurchaseInfo(ApplicationDto dto) {
+        if (nonNull(dto) && nonNull(dto.getPurchaseDataDto()) && nonNull(dto.getPurchaseInfoDto())) {
+            PurchaseInfoDto infoDto = dto.getPurchaseInfoDto();
+            return new PurchaseInfo(infoDto, dto.getPurchaseDataDto().getObjectPricePeriod(),
+                    entityService.mapEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()),
+                    entityService.mapEntity(YardType.class, infoDto.getYardTypeId()));
+        }
+        return null;
     }
 
     public Building convertBuilding(BuildingDto buildingDto) {
         return new Building(buildingDto,
-                        entityService.mapRequiredEntity(City.class, buildingDto.getCityId()),
-                        entityService.mapRequiredEntity(District.class, buildingDto.getDistrictId()),
-                        entityService.mapRequiredEntity(Street.class, buildingDto.getStreetId()));
+                entityService.mapRequiredEntity(City.class, buildingDto.getCityId()),
+                entityService.mapRequiredEntity(District.class, buildingDto.getDistrictId()),
+                entityService.mapRequiredEntity(Street.class, buildingDto.getStreetId()));
     }
 
     public RealPropertyMetadata convertRealPropertyMetadata(RealPropertyDto realPropertyDto) {

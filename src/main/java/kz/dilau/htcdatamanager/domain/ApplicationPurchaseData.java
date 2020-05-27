@@ -71,6 +71,19 @@ public class ApplicationPurchaseData extends AApplicationData {
         }
     }
 
+    public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, City city, District district) {
+        this.city = city;
+        this.district = district;
+        this.mortgage = dataDto.getMortgage();
+        this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
+        this.theSizeOfTrades = dataDto.getTheSizeOfTrades();
+        this.note = dataDto.getNote();
+        this.possibleReasonsForBidding = dataDto.getPossibleReasonForBiddingIdList()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
+    }
+
     public ApplicationPurchaseData(Application application, String note) {
         this.application = application;
         this.note = note;
