@@ -22,6 +22,8 @@ public abstract class AApplicationDataDto {
     protected Integer theSizeOfTrades;//размер торга
     @ApiModelProperty(value = "ID возможных причин торга")
     protected List<Long> possibleReasonForBiddingIdList;
+    @ApiModelProperty(value = "ID признаков заявки")
+    protected List<Long> applicationFlagIdList;
     @ApiModelProperty(value = "Примечание")
     protected String note;
 
@@ -30,5 +32,12 @@ public abstract class AApplicationDataDto {
             possibleReasonForBiddingIdList = new ArrayList<>();
         }
         return possibleReasonForBiddingIdList;
+    }
+
+    public List<Long> getApplicationFlagIdList() {
+        if (isNull(applicationFlagIdList)) {
+            applicationFlagIdList = new ArrayList<>();
+        }
+        return applicationFlagIdList;
     }
 }

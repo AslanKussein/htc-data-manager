@@ -43,5 +43,11 @@ public class ApplicationSellDataDto extends AApplicationDataDto {
                     .map(IdItem::getId)
                     .collect(Collectors.toList());
         }
+        if (!sellData.getApplicationFlags().isEmpty()) {
+            this.applicationFlagIdList = sellData.getApplicationFlags()
+                    .stream()
+                    .map(IdItem::getId)
+                    .collect(Collectors.toList());
+        }
     }
 }
