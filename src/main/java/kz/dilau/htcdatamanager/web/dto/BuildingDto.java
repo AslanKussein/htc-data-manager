@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+import static java.util.Objects.nonNull;
+
 @Getter
 @Setter
 @Builder
@@ -20,6 +22,8 @@ public class BuildingDto {
     private Long districtId;
     @ApiModelProperty(value = "ID улицы", required = true)
     private Long streetId;
+    @ApiModelProperty(value = "ID ЖК")
+    private Long residentialComplexId;
     @ApiModelProperty(value = "Номер дома", required = true)
     private Integer houseNumber;
     @ApiModelProperty(value = "Дробь")
@@ -40,5 +44,8 @@ public class BuildingDto {
         this.postcode = building.getPostcode();
         this.latitude = building.getLatitude();
         this.longitude = building.getLongitude();
+        if (nonNull(building.getResidentialComplex())) {
+            this.residentialComplexId = building.getResidentialComplex().getId();
+        }
     }
 }
