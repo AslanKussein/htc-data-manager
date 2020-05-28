@@ -74,6 +74,7 @@ public class RealPropertyDto {
     private Set<String> virtualTourImageIdList;
 
     public RealPropertyDto(RealProperty realProperty) {
+        this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
         this.cadastralNumber = realProperty.getCadastralNumber();
         this.apartmentNumber = realProperty.getApartmentNumber();
