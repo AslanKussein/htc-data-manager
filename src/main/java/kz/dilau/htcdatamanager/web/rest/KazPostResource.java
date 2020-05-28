@@ -24,7 +24,7 @@ public class KazPostResource {
         return ResponseEntity.ok(kazPostService.processingData(dto));
     }
 
-    @GetMapping
+    @GetMapping("{postCode}")
     public ResponseEntity<String> getPostData(@PathVariable String postCode) {
         return ResponseEntity.ok(kazPostService.getPostData(postCode));
     }
