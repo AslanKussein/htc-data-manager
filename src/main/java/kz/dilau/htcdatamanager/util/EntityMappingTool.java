@@ -19,7 +19,7 @@ public class EntityMappingTool {
     public ApplicationPurchaseData convertApplicationPurchaseData(ApplicationDto dto) {
         ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
         return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()),
-                entityService.mapEntity(District.class, dataDto.getDistrictId()));
+                entityService.mapRequiredEntity(District.class, dataDto.getDistrictId()));
     }
 
     public PurchaseInfo convertPurchaseInfo(ApplicationDto dto) {

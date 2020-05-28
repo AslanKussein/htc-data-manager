@@ -86,8 +86,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = getApplicationById(id);
         ListResponse<CheckOperationGroupDto> operationList = keycloakService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
         return mapToApplicationDto(application, operationList);
-//        ApplicationDto dto = new ApplicationDto();
-
     }
 
     private ApplicationDto mapToApplicationDto(Application application, ListResponse<CheckOperationGroupDto> operationList) {
@@ -170,30 +168,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                     break;
             }
         }
-//        applicationDto = ApplicationDto.builder()
-//                .id(application.getId())
-//                .operationTypeId(application.getOperationTypeId())
-//                .objectTypeId(application.getObjectTypeId())
-//                .agent(application.getCurrentAgent())
-//                .clientLogin(application.getClientLogin())
-//                .build();
-//        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())) {
-//            ApplicationSellData sellData = application.getApplicationSellData();
-//            ApplicationSellDataDto sellDataDto = new ApplicationSellDataDto(sellData);
-//            applicationDto.setSellDataDto(sellDataDto);
-//            if (nonNull(sellData.getRealProperty())) {
-//                RealPropertyDto realPropertyDto = new RealPropertyDto(sellData.getRealProperty());
-//                applicationDto.setRealPropertyDto(realPropertyDto);
-//            }
-//        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())) {
-//            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
-//            ApplicationPurchaseDataDto purchaseDataDto = new ApplicationPurchaseDataDto(purchaseData);
-//            applicationDto.setPurchaseDataDto(purchaseDataDto);
-//            if (nonNull(purchaseData.getPurchaseInfo())) {
-//                PurchaseInfoDto infoDto = new PurchaseInfoDto(purchaseData.getPurchaseInfo());
-//                applicationDto.setPurchaseInfoDto(infoDto);
-//            }
-//        }
         return dto;
     }
 
@@ -255,7 +229,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
-
     private Long saveApplication(String token, Application application, ApplicationDto dto) {
         ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
         String authorName = getAuthorName();
@@ -280,6 +253,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .build();
             application.getAssignmentList().add(assignment);
 
+            if (isNull(dto.getClientLogin()) || dto.getClientLogin().isEmpty()) {
+                throw BadRequestException.createRequiredIsEmpty("ClientLogin");
+            }
             application.setClientLogin(dto.getClientLogin());
             application.setOperationType(operationType);
 
@@ -311,6 +287,9 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else if (operationType.getCode().equals(OperationType.SELL)) {
             if (nonNull(dto.getSellDataDto()) && canEdit(operations, (UPDATE + SALE_DEAL_INFO), application, authorName)) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
+                if (isNull(dataDto.getObjectPrice())) {
+                    throw BadRequestException.createRequiredIsEmpty("ObjectPrice");
+                }
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
                 if (canEdit(operations, (UPDATE + SALE_OBJECT_DATA), application, authorName) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
