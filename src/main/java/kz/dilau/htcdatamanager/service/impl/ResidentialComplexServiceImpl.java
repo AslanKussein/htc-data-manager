@@ -84,6 +84,8 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
                     .latitude(buildingDto.getLatitude())
                     .longitude(buildingDto.getLongitude())
                     .build();
+        } else if (nonNull(building.getResidentialComplex()) && (isNull(residentialComplex.getId()) || !residentialComplex.getId().equals(building.getResidentialComplex().getId()))) {
+            throw BadRequestException.createResidentialComplexHasFounded();
         }
         GeneralCharacteristics generalCharacteristics = GeneralCharacteristics.builder()
                 .apartmentsOnTheSite(dto.getApartmentsOnTheSite())
@@ -109,9 +111,9 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
             if (nonNull(residentialComplex.getGeneralCharacteristics())) {
                 generalCharacteristics.setId(residentialComplex.getGeneralCharacteristics().getId());
             }
-            if (nonNull(residentialComplex.getBuilding())) {
-                building.setId(residentialComplex.getBuilding().getId());
-            }
+//            if (nonNull(residentialComplex.getBuilding())) {
+//                building.setId(residentialComplex.getBuilding().getId());
+//            }
         }
         residentialComplex.setHouseName(dto.getHouseName());
         residentialComplex.setNumberOfEntrances(dto.getNumberOfEntrances());
@@ -132,6 +134,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
     public ResidentialComplexDto deleteById(String token, Long id) {
         ResidentialComplex residentialComplex = getResidentialComplexById(id);
         residentialComplex.setIsRemoved(true);
+        residentialComplex.setBuilding(null);
         residentialComplex = residentialComplexRepository.save(residentialComplex);
         return new ResidentialComplexDto(residentialComplex);
     }

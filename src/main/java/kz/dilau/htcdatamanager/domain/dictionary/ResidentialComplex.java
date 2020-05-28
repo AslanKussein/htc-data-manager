@@ -21,7 +21,7 @@ public class ResidentialComplex extends BaseEntity<Long> {
     private String houseName;
     @Column(name = "number_of_entrances")
     private Integer numberOfEntrances;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "building_id")
     private Building building;
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
