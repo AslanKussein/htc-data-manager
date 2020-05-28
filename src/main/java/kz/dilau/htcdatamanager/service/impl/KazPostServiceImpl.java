@@ -40,11 +40,10 @@ public class KazPostServiceImpl implements KazPostService {
     private final StreetTypeRepository streetTypeRepository;
 
     @Override
-    public String getPostData(String postCode) {
+    public KazPostDTO getPostData(String postCode) {
         Optional<KazPostData> optional = kazPostDataRepository.findByIdAndStatus(postCode, KazPostDataStatus.FINISHED);
         if (optional.isPresent()) {
-            KazPostDTO gson = new Gson().fromJson(optional.get().getValue(), KazPostDTO.class);
-            return gson.getAddressRus();
+            return new Gson().fromJson(optional.get().getValue(), KazPostDTO.class);
         }
         return null;
     }
