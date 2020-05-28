@@ -21,6 +21,8 @@ import static java.util.Objects.nonNull;
 @AllArgsConstructor
 @ApiModel(value = "RealPropertyDto", description = "Модель сущности недвижимости")
 public class RealPropertyDto {
+    @ApiModelProperty(value = "ID")
+    private Long id;
     @ApiModelProperty(value = "")
     private BuildingDto buildingDto;
     @ApiModelProperty(value = "Кадастровый номер")
