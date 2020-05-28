@@ -20,8 +20,9 @@ public class RealPropertyClientViewResource {
     private final ApplicationService applicationService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationDto> getById(@PathVariable("id") Long id) {
-        ApplicationDto result = applicationService.getById(null, id);
+    public ResponseEntity<ApplicationDto> getById(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                  @PathVariable("id") Long id) {
+        ApplicationDto result = applicationService.getById(token, id);
         return ResponseEntity.ok(result);
     }
 
