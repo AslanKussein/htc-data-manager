@@ -368,10 +368,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                         metadata.setApplication(application);
                         realPropertyFile.setRealProperty(realProperty);
                         realPropertyFile.setApplication(application);
-                        metadataRepository.save(metadata);
-                        fileRepository.save(realPropertyFile);
-//                        realProperty.getMetadataList().add(metadata);
-//                        realProperty.getFileList().add(realPropertyFile);
+//                        metadataRepository.save(metadata);
+//                        fileRepository.save(realPropertyFile);
+                        realProperty.getMetadataList().add(metadata);
+                        realProperty.getFileList().add(realPropertyFile);
                     }
                     sellData.setRealProperty(realProperty);
                 }
@@ -431,7 +431,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             if (!sellDataList.isEmpty()) {
                 Set<String> agents = sellDataList.stream().map(item -> item.getApplication().getCurrentAgent()).collect(Collectors.toSet());
                 Map<String, UserInfoDto> userInfoDtoMap = keycloakService.mapUserInfos(new ArrayList<>(agents));
-                for (val item : realProperty.getActualSellDataList()) {
+                for (val item : sellDataList) {
                     UserInfoDto userInfoDto = userInfoDtoMap.get(item.getApplication().getCurrentAgent());
                     applicationByRealPropertyDtoList.add(ApplicationByRealPropertyDto.builder()
                             .id(item.getApplication().getId())

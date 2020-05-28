@@ -31,10 +31,10 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @Column(name = "cadastral_number")
     private String cadastralNumber;
 
-    @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RealPropertyMetadata> metadataList;
 
-    @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "realProperty", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RealPropertyFile> fileList;
 
     @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
