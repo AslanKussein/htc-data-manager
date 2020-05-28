@@ -25,7 +25,7 @@ public class BuildingDto {
     @ApiModelProperty(value = "ID ЖК")
     private Long residentialComplexId;
     @ApiModelProperty(value = "Номер дома", required = true)
-    private Integer houseNumber;
+    private String houseNumber;
     @ApiModelProperty(value = "Дробь")
     private String houseNumberFraction;
     @ApiModelProperty(value = "Уникальный код казпочты", required = true)

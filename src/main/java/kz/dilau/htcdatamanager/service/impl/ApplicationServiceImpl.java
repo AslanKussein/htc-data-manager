@@ -41,6 +41,8 @@ import static java.util.Objects.nonNull;
 public class ApplicationServiceImpl implements ApplicationService {
     private static final String VIEW = "VIEW_";
     private static final String UPDATE = "UPDATE_";
+    private static final Long AUTHOR = 2L;
+    private static final Long AGENT = 3L;
 
     private static final String APPLICATION_GROUP = "APPLICATION_GROUP";
     private static final String SALE_DEAL_INFO = "SALE_DEAL_INFO";
@@ -52,10 +54,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private static final String PURCHASE_OBJECT_INFO = "PURCHASE_OBJECT_INFO";
     private static final String SALE_OBJECT_DATA = "SALE_OBJECT_DATA";
 
-    private static final String CLIENT_GROUP = "CLIENT_GROUP";
-    private static final String CLIENT_INFO = "CLIENT_INFO";
-    private static final String CLIENT_DATA = "CLIENT_DATA";
-    private static final List<String> APP_OPERATIONS = Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP");
+    private static final List<String> APP_OPERATIONS = Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP");
 
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
@@ -81,16 +80,44 @@ public class ApplicationServiceImpl implements ApplicationService {
         return isNull(agent) || agent.equals("") ? getAuthorName() : agent;
     }
 
+    private List<String> getOperationList(String token, Application application) {
+        List<String> operations = new ArrayList<>();
+        ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
+        if (nonNull(checkOperationList) && nonNull(checkOperationList.getData())) {
+            checkOperationList
+                    .getData()
+                    .stream()
+                    .filter(operation -> nonNull(operation.getOperations()) && !operation.getOperations().isEmpty())
+                    .map(CheckOperationGroupDto::getOperations)
+                    .forEach(operations::addAll);
+        }
+        String authorName = getAuthorName();
+        if (nonNull(authorName) && authorName.equals(application.getCurrentAgent())) {
+            RoleDto roleDto = keycloakService.readRole(AUTHOR);
+            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
+                operations.addAll(roleDto.getOperations());
+            }
+        }
+        if (nonNull(authorName) && authorName.equals(application.getCreatedBy())) {
+            RoleDto roleDto = keycloakService.readRole(AGENT);
+            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
+                operations.addAll(roleDto.getOperations());
+            }
+        }
+        return operations;
+    }
+
     @Override
     public ApplicationDto getById(final String token, Long id) {
         Application application = getApplicationById(id);
-        ListResponse<CheckOperationGroupDto> operationList = keycloakService.getCheckOperationList(token, Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP", "CLIENT_GROUP"));
+        ListResponse<CheckOperationGroupDto> operationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
         return mapToApplicationDto(application, operationList);
     }
 
     private ApplicationDto mapToApplicationDto(Application application, ListResponse<CheckOperationGroupDto> operationList) {
         ApplicationDto dto = new ApplicationDto();
         dto.setAgent(application.getCurrentAgent());
+        dto.setClientLogin(application.getClientLogin());
         List<String> operations;
         for (val checkOperationGroupDto : operationList.getData()) {
             operations = checkOperationGroupDto.getOperations();
@@ -156,15 +183,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                         }
                     }
                     dto.setRealPropertyDto(realPropertyDto);
-                    break;
-                case CLIENT_GROUP:
-                    for (String oper : operations) {
-                        switch (oper) {
-                            case VIEW + CLIENT_INFO:
-                            case VIEW + CLIENT_DATA:
-                                dto.setClientLogin(application.getClientLogin());
-                        }
-                    }
                     break;
             }
         }
