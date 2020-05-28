@@ -21,6 +21,7 @@ public class KazPostDTO implements Serializable {
         private String rka;
         private Type type;
         private List<Parts> parts;
+        private String number;
     }
 
     @Data

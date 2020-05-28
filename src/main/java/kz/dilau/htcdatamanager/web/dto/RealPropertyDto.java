@@ -21,6 +21,8 @@ import static java.util.Objects.nonNull;
 @AllArgsConstructor
 @ApiModel(value = "RealPropertyDto", description = "Модель сущности недвижимости")
 public class RealPropertyDto {
+    @ApiModelProperty(value = "ID")
+    private Long id;
     @ApiModelProperty(value = "")
     private BuildingDto buildingDto;
     @ApiModelProperty(value = "Кадастровый номер")
@@ -72,6 +74,7 @@ public class RealPropertyDto {
     private Set<String> virtualTourImageIdList;
 
     public RealPropertyDto(RealProperty realProperty) {
+        this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
         this.cadastralNumber = realProperty.getCadastralNumber();
         this.apartmentNumber = realProperty.getApartmentNumber();

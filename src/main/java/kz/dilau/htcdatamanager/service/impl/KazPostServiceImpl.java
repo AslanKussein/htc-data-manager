@@ -40,11 +40,10 @@ public class KazPostServiceImpl implements KazPostService {
     private final StreetTypeRepository streetTypeRepository;
 
     @Override
-    public String getPostData(String postCode) {
+    public KazPostDTO getPostData(String postCode) {
         Optional<KazPostData> optional = kazPostDataRepository.findByIdAndStatus(postCode, KazPostDataStatus.FINISHED);
         if (optional.isPresent()) {
-            KazPostDTO gson = new Gson().fromJson(optional.get().getValue(), KazPostDTO.class);
-            return gson.getAddressRus();
+            return new Gson().fromJson(optional.get().getValue(), KazPostDTO.class);
         }
         return null;
     }
@@ -55,10 +54,11 @@ public class KazPostServiceImpl implements KazPostService {
         if (!optionalPost.isPresent()) {
             createKazPostData(dto);
         }
-        return getDictionaryValue(dto.getFullAddress().getParts());
+        return getDictionaryValue(dto);
     }
 
-    private KazPostReturnDTO getDictionaryValue(List<KazPostDTO.Parts> parts) {
+    private KazPostReturnDTO getDictionaryValue(KazPostDTO dto) {
+        List<KazPostDTO.Parts> parts = dto.getFullAddress().getParts();
         KazPostDTO.Parts cityData = parts.get(kazPostMapperProperties.getCity());
         KazPostDTO.Parts districtData = parts.get(kazPostMapperProperties.getDistrict());
         KazPostDTO.Parts streetData = parts.get(kazPostMapperProperties.getStreet());
@@ -71,6 +71,7 @@ public class KazPostServiceImpl implements KazPostService {
                 .street(fillDictionaryDto(street.getId(), street.getMultiLang()))
                 .city(fillDictionaryDto(city.getId(), city.getMultiLang()))
                 .district(fillDictionaryDto(district.getId(), district.getMultiLang()))
+                .houseNumber(dto.getFullAddress().getNumber())
                 .build();
     }
 
