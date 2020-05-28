@@ -54,6 +54,10 @@ public class ApplicationPurchaseData extends AApplicationData {
     @Column(name = "possible_reasons_for_bidding", columnDefinition = "jsonb")
     private Set<IdItem> possibleReasonsForBidding = new HashSet<>();
 
+    @Type(type = "jsonb")
+    @Column(name = "application_flags", columnDefinition = "jsonb")
+    private Set<IdItem> applicationFlags = new HashSet<>();
+
     public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, PurchaseInfoDto infoDto,
                                    City city, District district, MaterialOfConstruction materialOfConstruction, YardType yardType) {
         this.city = city;
@@ -66,9 +70,30 @@ public class ApplicationPurchaseData extends AApplicationData {
                 .stream()
                 .map(IdItem::new)
                 .collect(Collectors.toSet());
+        this.applicationFlags = dataDto.getApplicationFlagIdList()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
         if (nonNull(infoDto)) {
             this.purchaseInfo = new PurchaseInfo(infoDto, dataDto.getObjectPricePeriod(), materialOfConstruction, yardType);
         }
+    }
+
+    public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, City city, District district) {
+        this.city = city;
+        this.district = district;
+        this.mortgage = dataDto.getMortgage();
+        this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
+        this.theSizeOfTrades = dataDto.getTheSizeOfTrades();
+        this.note = dataDto.getNote();
+        this.possibleReasonsForBidding = dataDto.getPossibleReasonForBiddingIdList()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
+        this.applicationFlags = dataDto.getApplicationFlagIdList()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
     }
 
     public ApplicationPurchaseData(Application application, String note) {
@@ -81,5 +106,12 @@ public class ApplicationPurchaseData extends AApplicationData {
             possibleReasonsForBidding = new HashSet<>();
         }
         return possibleReasonsForBidding;
+    }
+
+    public Set<IdItem> getApplicationFlags() {
+        if (isNull(applicationFlags)) {
+            applicationFlags = new HashSet<>();
+        }
+        return applicationFlags;
     }
 }

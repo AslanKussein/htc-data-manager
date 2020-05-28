@@ -13,7 +13,7 @@ public interface ApplicationService {
 
     Long deleteById(String token, Long id);
 
-    Long save(ApplicationDto dto);
+    Long save(String token, ApplicationDto dto);
 
     Long saveLightApplication(ApplicationLightDto dto);
 

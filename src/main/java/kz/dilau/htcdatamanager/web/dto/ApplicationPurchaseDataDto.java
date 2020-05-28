@@ -32,10 +32,18 @@ public class ApplicationPurchaseDataDto extends AApplicationDataDto {
         this.mortgage = purchaseData.getMortgage();
         this.probabilityOfBidding = purchaseData.getProbabilityOfBidding();
         this.theSizeOfTrades = purchaseData.getTheSizeOfTrades();
-        this.possibleReasonForBiddingIdList = purchaseData.getPossibleReasonsForBidding()
-                .stream()
-                .map(IdItem::getId)
-                .collect(Collectors.toList());
+        if (!purchaseData.getPossibleReasonsForBidding().isEmpty()) {
+            this.possibleReasonForBiddingIdList = purchaseData.getPossibleReasonsForBidding()
+                    .stream()
+                    .map(IdItem::getId)
+                    .collect(Collectors.toList());
+        }
+        if (!purchaseData.getApplicationFlags().isEmpty()) {
+            this.applicationFlagIdList = purchaseData.getApplicationFlags()
+                    .stream()
+                    .map(IdItem::getId)
+                    .collect(Collectors.toList());
+        }
         this.note = purchaseData.getNote();
         this.cityId = purchaseData.getCityId();
         this.districtId = purchaseData.getDistrictId();

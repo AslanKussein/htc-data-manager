@@ -28,8 +28,9 @@ public class ApplicationResource {
     }
 
     @PostMapping
-    public ResponseEntity<Long> save(@RequestBody ApplicationDto dto) {
-        Long result = applicationService.save(dto);
+    public ResponseEntity<Long> save(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                     @RequestBody ApplicationDto dto) {
+        Long result = applicationService.save(token, dto);
         return ResponseEntity.ok(result);
     }
 

@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -47,6 +48,10 @@ public class ApplicationSellData extends AApplicationData {
     @Column(name = "possible_reasons_for_bidding", columnDefinition = "jsonb")
     private Set<IdItem> possibleReasonsForBidding = new HashSet<>();
 
+    @Type(type = "jsonb")
+    @Column(name = "application_flags", columnDefinition = "jsonb")
+    private Set<IdItem> applicationFlags = new HashSet<>();
+
     public ApplicationSellData(ApplicationSellDataDto dataDto) {
         this.objectPrice = dataDto.getObjectPrice();
         this.encumbrance = dataDto.getEncumbrance();
@@ -54,6 +59,10 @@ public class ApplicationSellData extends AApplicationData {
         this.exchange = dataDto.getExchange();
         this.description = dataDto.getDescription();
         this.possibleReasonsForBidding = dataDto.getPossibleReasonForBiddingIdList()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
+        this.applicationFlags= dataDto.getApplicationFlagIdList()
                 .stream()
                 .map(IdItem::new)
                 .collect(Collectors.toSet());
@@ -73,5 +82,12 @@ public class ApplicationSellData extends AApplicationData {
             possibleReasonsForBidding = new HashSet<>();
         }
         return possibleReasonsForBidding;
+    }
+
+    public Set<IdItem> getApplicationFlags() {
+        if (isNull(applicationFlags)) {
+            applicationFlags = new HashSet<>();
+        }
+        return applicationFlags;
     }
 }
