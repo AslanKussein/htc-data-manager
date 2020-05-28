@@ -1,2 +1,2 @@
 alter table htc_dm_building
-  alter column house_number type varchar(100);
+  alter column house_number type varchar(255);
