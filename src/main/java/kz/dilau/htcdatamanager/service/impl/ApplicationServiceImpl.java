@@ -201,7 +201,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    @Transactional
     public Long save(String token, ApplicationDto dto) {
         return saveApplication(token, new Application(), dto);
     }
@@ -247,7 +246,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
-    private Long saveApplication(String token, Application application, ApplicationDto dto) {
+    @Transactional
+    public Long saveApplication(String token, Application application, ApplicationDto dto) {
         ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
         String authorName = getAuthorName();
         List<String> operations = new ArrayList<>();
@@ -368,8 +368,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                         metadata.setApplication(application);
                         realPropertyFile.setRealProperty(realProperty);
                         realPropertyFile.setApplication(application);
-                        realProperty.getMetadataList().add(metadata);
-                        realProperty.getFileList().add(realPropertyFile);
+                        metadataRepository.save(metadata);
+                        fileRepository.save(realPropertyFile);
+//                        realProperty.getMetadataList().add(metadata);
+//                        realProperty.getFileList().add(realPropertyFile);
                     }
                     sellData.setRealProperty(realProperty);
                 }
