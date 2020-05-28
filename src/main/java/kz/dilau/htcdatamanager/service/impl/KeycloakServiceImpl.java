@@ -6,6 +6,7 @@ import kz.dilau.htcdatamanager.exception.DetailedException;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.web.dto.AgentDto;
 import kz.dilau.htcdatamanager.web.dto.CheckOperationGroupDto;
+import kz.dilau.htcdatamanager.web.dto.RoleDto;
 import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.Data;
@@ -45,6 +46,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String USER_REST_ENDPOINT = "/api/users";
     private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
     private static final String USERS_INFO = "/infos";
+    private static final String ROLE_REST_ENDPOINT = "/roles";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -166,6 +168,24 @@ public class KeycloakServiceImpl implements KeycloakService {
                 HttpMethod.GET,
                 request,
                 new ParameterizedTypeReference<ListResponse<AgentDto>>() {
+                }
+        );
+
+        return response.getBody();
+    }
+
+    @Override
+    public RoleDto readRole(Long id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getUserManagerToken());
+        HttpEntity<Object> request = new HttpEntity<>(id, headers);
+        String url = dataProperties.getKeycloakUserManagerUrl() + ROLE_REST_ENDPOINT;
+
+        ResponseEntity<RoleDto> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<RoleDto>() {
                 }
         );
 

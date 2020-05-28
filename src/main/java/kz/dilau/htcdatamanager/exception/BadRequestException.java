@@ -24,6 +24,10 @@ public class BadRequestException extends DetailedException {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.cadastral.number.exists", cadastralNumber));
     }
 
+    public static BadRequestException createResidentialComplexHasFounded() {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.residential.complex.building.exists"));
+    }
+
     public static BadRequestException createReassignToSameAgent() {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.reassign.to.same.agent"));
     }

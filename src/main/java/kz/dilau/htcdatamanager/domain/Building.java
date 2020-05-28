@@ -37,7 +37,7 @@ public class Building extends AuditableBaseEntity<String, Long> {
     @Column(name = "street_id", insertable = false, updatable = false)
     private Long streetId;
     @Column(name = "house_number")
-    private Integer houseNumber;
+    private String houseNumber;
     @Column(name = "house_number_fraction")
     private String houseNumberFraction;
     @Column(name = "postcode")
