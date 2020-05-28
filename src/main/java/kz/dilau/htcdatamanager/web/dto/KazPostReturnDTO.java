@@ -12,4 +12,5 @@ public class KazPostReturnDTO implements Serializable {
     private DictionaryDto street;
     private DictionaryDto city;
     private DictionaryDto district;
+    private Integer houseNumber;
 }
