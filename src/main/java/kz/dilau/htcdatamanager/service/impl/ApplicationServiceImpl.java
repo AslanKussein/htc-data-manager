@@ -248,6 +248,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Transactional
     public Long saveApplication(String token, Application application, ApplicationDto dto) {
+        log.info("applicationDto: " + dto.toString());
         ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
         String authorName = getAuthorName();
         List<String> operations = new ArrayList<>();
