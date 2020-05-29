@@ -93,13 +93,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         String authorName = getAuthorName();
         if (nonNull(authorName) && authorName.equals(application.getCurrentAgent())) {
-            RoleDto roleDto = keycloakService.readRole(AUTHOR);
+            RoleDto roleDto = keycloakService.readRole(AGENT);
             if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
                 operations.addAll(roleDto.getOperations());
             }
         }
-        if (nonNull(authorName) && authorName.equals(application.getCreatedBy())) {
-            RoleDto roleDto = keycloakService.readRole(AGENT);
+        if (nonNull(authorName) && authorName.equals(application.getCreatedBy()) || isNull(application.getId())) {
+            RoleDto roleDto = keycloakService.readRole(AUTHOR);
             if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
                 operations.addAll(roleDto.getOperations());
             }
@@ -248,10 +248,11 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Transactional
     public Long saveApplication(String token, Application application, ApplicationDto dto) {
-        log.info("applicationDto: " + dto.toString());
         ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
         String authorName = getAuthorName();
         List<String> operations = new ArrayList<>();
+        RealPropertyMetadata metadata = null;
+        RealPropertyFile realPropertyFile = null;
         if (nonNull(checkOperationList) && nonNull(checkOperationList.getData())) {
             checkOperationList.getData()
                     .forEach(item -> operations.addAll(item.getOperations()));
@@ -314,7 +315,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 if (canEdit(operations, (UPDATE + SALE_OBJECT_DATA), application, authorName) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
                     RealProperty realProperty = null;
                     Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
-                    RealPropertyFile realPropertyFile = new RealPropertyFile(realPropertyDto);
+                    realPropertyFile = new RealPropertyFile(realPropertyDto);
                     MetadataStatus notApproved = entityService.mapEntity(MetadataStatus.class, MetadataStatus.NOT_APPROVED);
                     MetadataStatus approved = entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED);
                     if (nonNull(building)) {
@@ -326,7 +327,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                         realProperty = new RealProperty(realPropertyDto, building);
                     }
                     if (canEdit(operations, (UPDATE + SALE_OBJECT_INFO), application, authorName)) {
-                        RealPropertyMetadata metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
+                        metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
                         if (nonNull(realProperty.getId())) {
                             List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
                             if (actualSellDataList.size() >= dataProperties.getMaxApplicationCountForOneRealProperty()) {
@@ -369,10 +370,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                         metadata.setApplication(application);
                         realPropertyFile.setRealProperty(realProperty);
                         realPropertyFile.setApplication(application);
-//                        metadataRepository.save(metadata);
-//                        fileRepository.save(realPropertyFile);
-                        realProperty.getMetadataList().add(metadata);
-                        realProperty.getFileList().add(realPropertyFile);
+//                        realProperty.getMetadataList().add(metadata);
+//                        realProperty.getFileList().add(realPropertyFile);
                     }
                     sellData.setRealProperty(realProperty);
                 }
@@ -384,6 +383,12 @@ public class ApplicationServiceImpl implements ApplicationService {
             }
         }
         application = applicationRepository.save(application);
+        if (nonNull(metadata)) {
+            metadataRepository.save(metadata);
+        }
+        if (nonNull(realPropertyFile)) {
+            fileRepository.save(realPropertyFile);
+        }
         return application.getId();
     }
 
