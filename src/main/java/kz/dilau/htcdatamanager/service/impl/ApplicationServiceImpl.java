@@ -110,84 +110,68 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationDto getById(final String token, Long id) {
         Application application = getApplicationById(id);
-        ListResponse<CheckOperationGroupDto> operationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
-        return mapToApplicationDto(application, operationList);
+        List<String> operations = getOperationList(token, application);
+        return mapToApplicationDto(application, operations);
     }
 
-    private ApplicationDto mapToApplicationDto(Application application, ListResponse<CheckOperationGroupDto> operationList) {
+    private ApplicationDto mapToApplicationDto(Application application, List<String> operations) {
         ApplicationDto dto = new ApplicationDto();
         dto.setAgent(application.getCurrentAgent());
         dto.setClientLogin(application.getClientLogin());
-        List<String> operations;
-        for (val checkOperationGroupDto : operationList.getData()) {
-            operations = checkOperationGroupDto.getOperations();
-            switch (checkOperationGroupDto.getCode()) {
-                case APPLICATION_GROUP:
-                    for (String oper : operations) {
-                        dto.setOperationTypeId(application.getOperationTypeId());
-                        dto.setObjectTypeId(application.getObjectTypeId());
-                        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())) {
-                            if ((VIEW + SALE_DEAL_INFO).equals(oper)) {
-                                dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
-                            }
-                        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())) {
-                            if ((VIEW + PURCHASE_DEAL_INFO).equals(oper)) {
-                                dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
-                            }
-                        }
-                        if ((VIEW + DEAL_DATA).equals(oper)) {
-                            //todo contract info
-                        }
-                    }
-                    break;
-                case REAL_PROPERTY_GROUP:
-                    RealPropertyDto realPropertyDto = new RealPropertyDto();
-                    for (String oper : operations) {
-                        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())
-                                && nonNull(application.getApplicationSellData().getRealProperty())) {
-                            RealProperty realProperty = application.getApplicationSellData().getRealProperty();
-                            if ((VIEW + SALE_OBJECT_INFO).equals(oper)) {
-                                realPropertyDto.setBuildingDto(new BuildingDto(realProperty.getBuilding()));
-                                RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
-                                if (nonNull(metadata)) {
-                                    realPropertyDto.setMetadataId(metadata.getId());
-                                    realPropertyDto.setFloor(metadata.getFloor());
-                                    realPropertyDto.setNumberOfRooms(metadata.getNumberOfRooms());
-                                    realPropertyDto.setNumberOfBedrooms(metadata.getNumberOfBedrooms());
-                                    realPropertyDto.setTotalArea(metadata.getTotalArea());
-                                    realPropertyDto.setLivingArea(metadata.getLivingArea());
-                                    realPropertyDto.setKitchenArea(metadata.getKitchenArea());
-                                    realPropertyDto.setBalconyArea(metadata.getBalconyArea());
-                                    realPropertyDto.setSewerageId(metadata.getSewerageId());
-                                    realPropertyDto.setHeatingSystemId(metadata.getHeatingSystemId());
-                                    realPropertyDto.setLandArea(metadata.getLandArea());
-                                    realPropertyDto.setAtelier(metadata.getAtelier());
-                                    realPropertyDto.setSeparateBathroom(metadata.getSeparateBathroom());
-                                    realPropertyDto.setGeneralCharacteristicsDto(new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics()));
-                                }
-                                RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
-                                if (nonNull(realPropertyFile)) {
-                                    realPropertyDto.setPhotoIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO));
-                                    realPropertyDto.setHousingPlanImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
-                                    realPropertyDto.setVirtualTourImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
-                                }
-                            } else if ((VIEW + SALE_OBJECT_DATA).equals(oper)) {
-                                realPropertyDto.setCadastralNumber(realProperty.getCadastralNumber());
-                                realPropertyDto.setApartmentNumber(realProperty.getApartmentNumber());
-                            }
-                        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())
-                                && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
-                            if ((VIEW + PURCHASE_OBJECT_INFO).equals(oper)) {
-                                dto.setPurchaseInfoDto(new PurchaseInfoDto(application.getApplicationPurchaseData().getPurchaseInfo()));
-                            }
-                        }
-                    }
-                    dto.setRealPropertyDto(realPropertyDto);
-                    break;
+        dto.setOperationTypeId(application.getOperationTypeId());
+        dto.setObjectTypeId(application.getObjectTypeId());
+        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData()) && operations.contains(VIEW + SALE_DEAL_INFO)) {
+            dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
+        }
+        if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
+            dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
+        }
+        if (operations.contains(VIEW + DEAL_DATA)) {
+            //todo contract info
+        }
+        RealPropertyDto realPropertyDto = new RealPropertyDto();
+        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())
+                && nonNull(application.getApplicationSellData().getRealProperty())) {
+            RealProperty realProperty = application.getApplicationSellData().getRealProperty();
+            if (operations.contains(VIEW + SALE_OBJECT_INFO)) {
+                realPropertyDto.setBuildingDto(new BuildingDto(realProperty.getBuilding()));
+                RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
+                if (nonNull(metadata)) {
+                    realPropertyDto.setMetadataId(metadata.getId());
+                    realPropertyDto.setFloor(metadata.getFloor());
+                    realPropertyDto.setNumberOfRooms(metadata.getNumberOfRooms());
+                    realPropertyDto.setNumberOfBedrooms(metadata.getNumberOfBedrooms());
+                    realPropertyDto.setTotalArea(metadata.getTotalArea());
+                    realPropertyDto.setLivingArea(metadata.getLivingArea());
+                    realPropertyDto.setKitchenArea(metadata.getKitchenArea());
+                    realPropertyDto.setBalconyArea(metadata.getBalconyArea());
+                    realPropertyDto.setSewerageId(metadata.getSewerageId());
+                    realPropertyDto.setHeatingSystemId(metadata.getHeatingSystemId());
+                    realPropertyDto.setLandArea(metadata.getLandArea());
+                    realPropertyDto.setAtelier(metadata.getAtelier());
+                    realPropertyDto.setSeparateBathroom(metadata.getSeparateBathroom());
+                    realPropertyDto.setGeneralCharacteristicsDto(new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics()));
+                }
+                RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
+                if (nonNull(realPropertyFile)) {
+                    realPropertyDto.setPhotoIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO));
+                    realPropertyDto.setHousingPlanImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN));
+                    realPropertyDto.setVirtualTourImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
+                }
+            }
+            if (operations.contains(VIEW + SALE_OBJECT_DATA)) {
+                realPropertyDto.setCadastralNumber(realProperty.getCadastralNumber());
+                realPropertyDto.setApartmentNumber(realProperty.getApartmentNumber());
+            }
+        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())
+                && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+            if (operations.contains(VIEW + PURCHASE_OBJECT_INFO)) {
+                dto.setPurchaseInfoDto(new PurchaseInfoDto(application.getApplicationPurchaseData().getPurchaseInfo()));
             }
         }
+        dto.setRealPropertyDto(realPropertyDto);
         return dto;
-    }
+}
 
     private List<ApplicationStatusHistoryDto> mapStatusHistoryList(Application application) {
         List<ApplicationStatusHistoryDto> statusHistoryList = new ArrayList<>();
@@ -248,15 +232,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Transactional
     public Long saveApplication(String token, Application application, ApplicationDto dto) {
-        ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
-        String authorName = getAuthorName();
-        List<String> operations = new ArrayList<>();
+        List<String> operations = getOperationList(token, application);
         RealPropertyMetadata metadata = null;
         RealPropertyFile realPropertyFile = null;
-        if (nonNull(checkOperationList) && nonNull(checkOperationList.getData())) {
-            checkOperationList.getData()
-                    .forEach(item -> operations.addAll(item.getOperations()));
-        }
         OperationType operationType;
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
@@ -289,9 +267,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
         if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseDataDto())) {
-            if (canEdit(operations, (UPDATE + PURCHASE_DEAL_INFO), application, authorName)) {
+            if (operations.contains(UPDATE + PURCHASE_DEAL_INFO)) {
                 ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationPurchaseData(dto);
-                if (canEdit(operations, (UPDATE + PURCHASE_OBJECT_INFO), application, authorName)) {
+                if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
                     PurchaseInfo info = entityMappingTool.convertPurchaseInfo(dto);
                     if (nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
                         info.setId(application.getApplicationPurchaseData().getPurchaseInfo().getId());
@@ -305,14 +283,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                 application.setApplicationPurchaseData(purchaseData);
             }
         } else if (operationType.getCode().equals(OperationType.SELL)) {
-            if (nonNull(dto.getSellDataDto()) && canEdit(operations, (UPDATE + SALE_DEAL_INFO), application, authorName)) {
+            if (nonNull(dto.getSellDataDto()) && operations.contains(UPDATE + SALE_DEAL_INFO)) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
                 if (isNull(dataDto.getObjectPrice())) {
                     throw BadRequestException.createRequiredIsEmpty("ObjectPrice");
                 }
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
-                if (canEdit(operations, (UPDATE + SALE_OBJECT_DATA), application, authorName) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
+                if (operations.contains(UPDATE + SALE_OBJECT_DATA) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
                     RealProperty realProperty = null;
                     Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
                     realPropertyFile = new RealPropertyFile(realPropertyDto);
@@ -326,7 +304,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (isNull(realProperty)) {
                         realProperty = new RealProperty(realPropertyDto, building);
                     }
-                    if (canEdit(operations, (UPDATE + SALE_OBJECT_INFO), application, authorName)) {
+                    if (operations.contains(UPDATE + SALE_OBJECT_INFO)) {
                         metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
                         if (nonNull(realProperty.getId())) {
                             List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
