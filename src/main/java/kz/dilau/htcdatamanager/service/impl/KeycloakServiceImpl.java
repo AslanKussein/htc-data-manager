@@ -62,6 +62,15 @@ public class KeycloakServiceImpl implements KeycloakService {
         );
     }
 
+    public String getRoleManagerToken() {
+        return getAccessToken(
+                dataProperties.getKeycloakRoleManagerClient(),
+                dataProperties.getKeycloakBaseUrl() + TOKEN_ENDPOINT,
+                dataProperties.getKeycloakRoleManagerLogin(),
+                dataProperties.getKeycloakRoleManagerPassword()
+        );
+    }
+
     private String getAccessToken(String clientId, String url, String username, String password) {
         TokenInfo tokenInfo = tokenMap.computeIfAbsent(clientId, key -> obtainToken(
                 clientId, url, username, password
@@ -177,9 +186,9 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Override
     public RoleDto readRole(Long id) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(getUserManagerToken());
+        headers.setBearerAuth(getRoleManagerToken());
         HttpEntity<Object> request = new HttpEntity<>(id, headers);
-        String url = dataProperties.getKeycloakUserManagerUrl() + ROLE_REST_ENDPOINT;
+        String url = dataProperties.getKeycloakRoleManagerUrl() + ROLE_REST_ENDPOINT;
 
         ResponseEntity<RoleDto> response = restTemplate.exchange(
                 url,
