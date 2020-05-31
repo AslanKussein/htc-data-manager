@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.util;
 
+import kz.dilau.htcdatamanager.domain.Building;
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
@@ -37,6 +38,19 @@ public class DictionaryMappingTool {
                 .nameEn(dictionary.getMultiLang().getNameEn())
                 .build();
     }
+
+    public static MultiLangText mapAddressToMultiLang(Building building, String apartmentNumber) {
+        if (isNull(building)) {
+            return MultiLangText.NULL_OBJECT;
+        }
+        MultiLangText result = concatMultiLangWithMultiLang(mapDictionaryToText(building.getCity()),
+                mapDictionaryToText(building.getDistrict()), ", ");
+        result = concatMultiLangWithMultiLang(result, mapDictionaryToText(building.getStreet()), ", ");
+        result = concatStringWithMultiLang(result,
+                building.getHouseNumber() + (nonNull(building.getHouseNumberFraction()) ? "/" + building.getHouseNumberFraction() : "") + " " + apartmentNumber, " ");
+        return result;
+    }
+
 
     public static MultiLangText mapAddressToMultiLang(OldGeneralCharacteristics generalCharacteristics, String apartmentNumber) {
         if (isNull(generalCharacteristics)) {
