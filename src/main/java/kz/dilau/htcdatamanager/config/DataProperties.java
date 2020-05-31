@@ -12,10 +12,7 @@ import org.springframework.stereotype.Component;
 public class DataProperties {
     private String keycloakBaseUrl;
     private String keycloakApiUrl;
-    private String keycloakRoleManagerClient;
     private String keycloakRoleManagerUrl;
-    private String keycloakRoleManagerLogin;
-    private String keycloakRoleManagerPassword;
     private String keycloakUserManagerClient;
     private String keycloakUserManagerUrl;
     private String keycloakUserManagerLogin;
