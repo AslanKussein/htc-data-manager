@@ -177,7 +177,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Override
     public RoleDto readRole(Long id) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(getUserManagerToken());
+        headers.set(HttpHeaders.AUTHORIZATION, getUserManagerToken());
         HttpEntity<Object> request = new HttpEntity<>(id, headers);
         String url = dataProperties.getKeycloakRoleManagerUrl() + ROLE_REST_ENDPOINT;
 
