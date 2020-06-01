@@ -1,0 +1,34 @@
+package kz.dilau.htcdatamanager.web.rest;
+
+import kz.dilau.htcdatamanager.config.Constants;
+import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.web.dto.RoleDto;
+import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
+import kz.dilau.htcdatamanager.web.rest.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(Constants.KEYCLOAK_REST_ENDPOINT)
+@RequiredArgsConstructor
+@Slf4j
+public class KeycloakResource {
+    private final KeycloakService keycloakService;
+
+    @GetMapping("/readUserInfos")
+    public ResponseEntity readUserInfos(@RequestParam(value = "loginList") List<String> logins) {
+        ListResponse<UserInfoDto> result = keycloakService.readUserInfos(logins);
+        return ApiResponse.OK(result);
+    }
+
+    @GetMapping("/readRole")
+    public ResponseEntity readRole(@PathVariable("id") Long id) {
+        RoleDto result = keycloakService.readRole(id);
+        return ApiResponse.OK(result);
+    }
+}
