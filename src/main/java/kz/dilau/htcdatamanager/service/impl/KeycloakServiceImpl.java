@@ -46,7 +46,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String USER_REST_ENDPOINT = "/api/users";
     private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
     private static final String USERS_INFO = "/infos";
-    private static final String ROLE_REST_ENDPOINT = "/roles";
+    private static final String ROLE_REST_ENDPOINT = "/roles/{id}";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
