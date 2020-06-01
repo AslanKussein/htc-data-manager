@@ -186,7 +186,7 @@ public class KeycloakServiceImpl implements KeycloakService {
                 url,
                 HttpMethod.GET,
                 request,
-                RoleDto.class,
+                new ParameterizedTypeReference<RoleDto>(){},
                 params
         );
 
