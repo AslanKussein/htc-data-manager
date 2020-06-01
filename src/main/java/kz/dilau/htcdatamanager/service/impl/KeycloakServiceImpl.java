@@ -46,7 +46,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String USER_REST_ENDPOINT = "/api/users";
     private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
     private static final String USERS_INFO = "/infos";
-    private static final String ROLE_REST_ENDPOINT = "/roles";
+    private static final String ROLE_REST_ENDPOINT = "/roles/{id}";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -178,15 +178,16 @@ public class KeycloakServiceImpl implements KeycloakService {
     public RoleDto readRole(Long id) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(getUserManagerToken());
-        HttpEntity<Object> request = new HttpEntity<>(id, headers);
-        String url = dataProperties.getKeycloakUserManagerUrl() + ROLE_REST_ENDPOINT;
-
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        String url = dataProperties.getKeycloakRoleManagerUrl() + ROLE_REST_ENDPOINT;
+        Map<String, Long> params = new HashMap<>();
+        params.put("id", id);
         ResponseEntity<RoleDto> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 request,
-                new ParameterizedTypeReference<RoleDto>() {
-                }
+                new ParameterizedTypeReference<RoleDto>(){},
+                params
         );
 
         return response.getBody();
