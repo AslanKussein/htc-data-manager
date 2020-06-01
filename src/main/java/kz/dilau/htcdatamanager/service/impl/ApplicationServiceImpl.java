@@ -91,19 +91,19 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .map(CheckOperationGroupDto::getOperations)
                     .forEach(operations::addAll);
         }
-//        String authorName = getAuthorName();
-//        if (nonNull(authorName) && authorName.equals(application.getCurrentAgent())) {
-//            RoleDto roleDto = keycloakService.readRole(AGENT);
-//            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
-//                operations.addAll(roleDto.getOperations());
-//            }
-//        }
-//        if (nonNull(authorName) && authorName.equals(application.getCreatedBy()) || isNull(application.getId())) {
-//            RoleDto roleDto = keycloakService.readRole(AUTHOR);
-//            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
-//                operations.addAll(roleDto.getOperations());
-//            }
-//        }
+        String authorName = getAuthorName();
+        if (nonNull(authorName) && authorName.equals(application.getCurrentAgent())) {
+            RoleDto roleDto = keycloakService.readRole(AGENT);
+            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
+                operations.addAll(roleDto.getOperations());
+            }
+        }
+        if (nonNull(authorName) && authorName.equals(application.getCreatedBy()) || isNull(application.getId())) {
+            RoleDto roleDto = keycloakService.readRole(AUTHOR);
+            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
+                operations.addAll(roleDto.getOperations());
+            }
+        }
         return operations;
     }
 
@@ -114,21 +114,16 @@ public class ApplicationServiceImpl implements ApplicationService {
         return mapToApplicationDto(application, operations);
     }
 
-    private boolean isAuthor(Application application, String authorName) {
-        return nonNull(application) && (application.getCurrentAgent().equals(authorName) || application.getClientLogin().equals(authorName));
-    }
-
     private ApplicationDto mapToApplicationDto(Application application, List<String> operations) {
-        boolean isAuthor = isAuthor(application, getAuthorName());
         ApplicationDto dto = new ApplicationDto();
         dto.setAgent(application.getCurrentAgent());
         dto.setClientLogin(application.getClientLogin());
         dto.setOperationTypeId(application.getOperationTypeId());
         dto.setObjectTypeId(application.getObjectTypeId());
-        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData()) && (operations.contains(VIEW + SALE_DEAL_INFO) || isAuthor)) {
+        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData()) && operations.contains(VIEW + SALE_DEAL_INFO)) {
             dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
         }
-        if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData()) && (operations.contains(VIEW + PURCHASE_DEAL_INFO) || isAuthor)) {
+        if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
             dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
         }
         if (operations.contains(VIEW + DEAL_DATA)) {
@@ -138,7 +133,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())
                 && nonNull(application.getApplicationSellData().getRealProperty())) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
-            if (operations.contains(VIEW + SALE_OBJECT_INFO) || isAuthor) {
+            if (operations.contains(VIEW + SALE_OBJECT_INFO)) {
                 realPropertyDto.setBuildingDto(new BuildingDto(realProperty.getBuilding()));
                 RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
                 if (nonNull(metadata)) {
@@ -164,13 +159,13 @@ public class ApplicationServiceImpl implements ApplicationService {
                     realPropertyDto.setVirtualTourImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
                 }
             }
-            if (operations.contains(VIEW + SALE_OBJECT_DATA) || isAuthor) {
+            if (operations.contains(VIEW + SALE_OBJECT_DATA)) {
                 realPropertyDto.setCadastralNumber(realProperty.getCadastralNumber());
                 realPropertyDto.setApartmentNumber(realProperty.getApartmentNumber());
             }
         } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())
                 && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
-            if (operations.contains(VIEW + PURCHASE_OBJECT_INFO) || isAuthor) {
+            if (operations.contains(VIEW + PURCHASE_OBJECT_INFO)) {
                 dto.setPurchaseInfoDto(new PurchaseInfoDto(application.getApplicationPurchaseData().getPurchaseInfo()));
             }
         }
@@ -237,7 +232,6 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Transactional
     public Long saveApplication(String token, Application application, ApplicationDto dto) {
-        boolean isAuthor = isAuthor(application, getAuthorName());
         List<String> operations = getOperationList(token, application);
         RealPropertyMetadata metadata = null;
         RealPropertyFile realPropertyFile = null;
@@ -273,9 +267,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
         if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseDataDto())) {
-            if (operations.contains(UPDATE + PURCHASE_DEAL_INFO) || isAuthor) {
+            if (operations.contains(UPDATE + PURCHASE_DEAL_INFO)) {
                 ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationPurchaseData(dto);
-                if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO) || isAuthor) {
+                if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
                     PurchaseInfo info = entityMappingTool.convertPurchaseInfo(dto);
                     if (nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
                         info.setId(application.getApplicationPurchaseData().getPurchaseInfo().getId());
@@ -289,14 +283,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                 application.setApplicationPurchaseData(purchaseData);
             }
         } else if (operationType.getCode().equals(OperationType.SELL)) {
-            if (nonNull(dto.getSellDataDto()) && (operations.contains(UPDATE + SALE_DEAL_INFO) || isAuthor)) {
+            if (nonNull(dto.getSellDataDto()) && operations.contains(UPDATE + SALE_DEAL_INFO)) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
                 if (isNull(dataDto.getObjectPrice())) {
                     throw BadRequestException.createRequiredIsEmpty("ObjectPrice");
                 }
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
-                if ((operations.contains(UPDATE + SALE_OBJECT_DATA) || isAuthor) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
+                if (operations.contains(UPDATE + SALE_OBJECT_DATA) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
                     RealProperty realProperty = null;
                     Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
                     realPropertyFile = new RealPropertyFile(realPropertyDto);
@@ -310,7 +304,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (isNull(realProperty)) {
                         realProperty = new RealProperty(realPropertyDto, building);
                     }
-                    if (operations.contains(UPDATE + SALE_OBJECT_INFO) || isAuthor) {
+                    if (operations.contains(UPDATE + SALE_OBJECT_INFO)) {
                         metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
                         if (nonNull(realProperty.getId())) {
                             List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
