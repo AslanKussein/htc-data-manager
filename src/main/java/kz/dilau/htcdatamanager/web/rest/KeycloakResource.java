@@ -26,7 +26,7 @@ public class KeycloakResource {
         return ApiResponse.OK(result);
     }
 
-    @GetMapping("/readRole")
+    @GetMapping("/readRole/{id}")
     public ResponseEntity readRole(@PathVariable("id") Long id) {
         RoleDto result = keycloakService.readRole(id);
         return ApiResponse.OK(result);
