@@ -177,11 +177,11 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Override
     public RoleDto readRole(Long id) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(getUserManagerToken());
+        headers.set(HttpHeaders.AUTHORIZATION, getUserManagerToken());
         HttpEntity<Object> request = new HttpEntity<>(headers);
         String url = dataProperties.getKeycloakRoleManagerUrl() + ROLE_REST_ENDPOINT;
-        Map<String, String> params = new HashMap<>();
-        params.put("id", id.toString());
+        Map<String, Long> params = new HashMap<>();
+        params.put("id", id);
         ResponseEntity<RoleDto> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
