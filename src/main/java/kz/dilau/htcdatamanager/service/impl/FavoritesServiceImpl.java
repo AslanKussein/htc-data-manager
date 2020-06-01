@@ -3,10 +3,14 @@ package kz.dilau.htcdatamanager.service.impl;
 import kz.dilau.htcdatamanager.domain.Favorites;
 import kz.dilau.htcdatamanager.repository.FavoritesRepository;
 import kz.dilau.htcdatamanager.service.FavoritesService;
+import kz.dilau.htcdatamanager.util.PageableUtils;
+import kz.dilau.htcdatamanager.web.dto.FavoritesDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,10 +25,19 @@ public class FavoritesServiceImpl implements FavoritesService {
     }
 
     @Override
-    public List<Favorites> getByClientLogin(String clientLogin) {
-        return favoritesRepository
-                .findAllByClientLogin(clientLogin);
+    public List<FavoritesDto> getByClientLogin(String clientLogin,
+                                               PageableDto pageableDto) {
+        List<Favorites> list = favoritesRepository
+                .findAllByClientLogin(clientLogin, PageableUtils.createPageRequest(pageableDto));
+
+        List<FavoritesDto> favoritesDtoList = new ArrayList<>();
+
+        list.stream().forEach(favorites -> favoritesDtoList.add(new FavoritesDto(favorites)));
+
+
+        return favoritesDtoList;
     }
+
 
     @Override
     public Favorites save(String clientLogin, Long realPropertyId) {
