@@ -27,8 +27,9 @@ public class FavoritesResource {
     }
 
     @GetMapping
-    public ResponseEntity<List<Favorites>> getAll(String clientLogin) {
-        List<Favorites> list = favoritesService.getByClientLogin(clientLogin);
+    public ResponseEntity<List<Favorites>> getAll(
+            @ApiIgnore @AuthenticationPrincipal final Principal principal) {
+        List<Favorites> list = favoritesService.getByClientLogin(principal.getName());
         return ResponseEntity.ok(list);
     }
 
