@@ -180,14 +180,15 @@ public class KeycloakServiceImpl implements KeycloakService {
         headers.setBearerAuth(getUserManagerToken());
         HttpEntity<Object> request = new HttpEntity<>(headers);
         String url = dataProperties.getKeycloakRoleManagerUrl() + ROLE_REST_ENDPOINT;
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
-        uriBuilder.queryParam("id", id);
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id.toString());
         ResponseEntity<RoleDto> response = restTemplate.exchange(
-                uriBuilder.toUriString(),
+                url,
                 HttpMethod.GET,
                 request,
                 new ParameterizedTypeReference<RoleDto>() {
-                }
+                },
+                params
         );
 
         return response.getBody();
