@@ -7,6 +7,8 @@ import kz.dilau.htcdatamanager.domain.RealPropertyFile;
 import kz.dilau.htcdatamanager.domain.RealPropertyMetadata;
 import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -73,6 +75,9 @@ public class RealPropertyDto {
     @ApiModelProperty(name = "virtualTourImageIdList", value = "Список ID фотографии")
     private Set<String> virtualTourImageIdList;
 
+    @ApiModelProperty(value = "Адрес")
+    private MultiLangText address;
+
     public RealPropertyDto(RealProperty realProperty) {
         this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
@@ -94,6 +99,9 @@ public class RealPropertyDto {
             this.atelier = metadata.getAtelier();
             this.separateBathroom = metadata.getSeparateBathroom();
             this.generalCharacteristicsDto = new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics());
+        }
+        if (nonNull(realProperty.getBuilding())) {
+            this.address = DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber());
         }
         RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
         if (nonNull(realPropertyFile)) {
