@@ -320,6 +320,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                                     if (nonNull(metadataByStatus)) {
                                         metadata.setId(metadataByStatus.getId());
                                         metadata.setMetadataStatus(metadataByStatus.getMetadataStatus());
+                                    } else {
+                                        metadata.setMetadataStatus(approved);
                                     }
                                 } else {
                                     metadata.setMetadataStatus(notApproved);
@@ -333,6 +335,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                                     if (nonNull(filesByStatus)) {
                                         realPropertyFile.setId(filesByStatus.getId());
                                         realPropertyFile.setMetadataStatus(filesByStatus.getMetadataStatus());
+                                    } else {
+                                        realPropertyFile.setMetadataStatus(approved);
                                     }
                                 } else {
                                     realPropertyFile.setMetadataStatus(notApproved);
