@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import kz.dilau.htcdatamanager.domain.base.BaseEntity;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
@@ -23,6 +20,8 @@ public class Favorites extends BaseEntity<Long> {
 
     private String clientLogin;
 
+
+    @Column(name = "real_property_id")
     private Long realPropertyId;
 
     @ToString.Exclude
