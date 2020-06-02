@@ -9,7 +9,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
-@ApiModel(description = "Модель для Ипотека за 3 дня")
+@ApiModel(description = "Модель для Избранных")
 @Getter
 @Setter
 @NoArgsConstructor

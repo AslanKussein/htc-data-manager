@@ -4,7 +4,6 @@ import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.domain.Favorites;
 import kz.dilau.htcdatamanager.service.FavoritesService;
 import kz.dilau.htcdatamanager.web.dto.FavoritesDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
