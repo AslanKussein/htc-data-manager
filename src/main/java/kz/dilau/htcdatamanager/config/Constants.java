@@ -24,6 +24,7 @@ public final class Constants {
     public static final String CREDIT_PROGRAMM_OPEN_REST_ENDPOINT = "/open-api/credit-programm";
     public static final String KEYCLOAK_REST_ENDPOINT = "/api/keycloak";
     public static final String FAVORITES_REST_ENDPOINT = "/api/favorites";
+    public static final String KEYCLOAK_REST_ENDPOINT = "/api/keycloak";
 
     private Constants() {
     }
