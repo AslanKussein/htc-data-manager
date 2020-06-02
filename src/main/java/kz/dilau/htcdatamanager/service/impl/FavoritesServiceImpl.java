@@ -26,8 +26,12 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public FavoritesDto getByRealPropertyId(String clientLogin, Long realPropertyId) {
-        Favorites favorites = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
-        return new FavoritesDto(favorites);
+        Optional<Favorites> favorites = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
+        if (!favorites.isPresent()) {
+            throw NotFoundException.createFavoritesNotFoundByRealPropertyId(realPropertyId);
+        }
+
+        return new FavoritesDto(favorites.get());
     }
 
     @Override
@@ -48,9 +52,12 @@ public class FavoritesServiceImpl implements FavoritesService {
     @Override
     public FavoritesDto save(String clientLogin, Long realPropertyId) {
 
-        Favorites favorites = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
-        if (favorites != null) {
-            return new FavoritesDto(favorites);
+        Favorites favorites;
+        Optional<Favorites> favoritesOptional = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
+        if (favoritesOptional.isPresent()) {
+            return new FavoritesDto(favoritesOptional.get());
+        } else {
+            favorites = new Favorites();
         }
 
         Optional<RealProperty> realProperty = realPropertyRepository.findById(realPropertyId);
@@ -58,7 +65,6 @@ public class FavoritesServiceImpl implements FavoritesService {
             throw NotFoundException.createRealPropertyNotFoundById(realPropertyId);
         }
 
-        favorites = new Favorites();
         favorites.setClientLogin(clientLogin);
         favorites.setRealProperty(realProperty.get());
         favorites.setCreateDate(new Timestamp(new Date().getTime()));
@@ -68,8 +74,11 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public void deleteByRealPropertyId(String clientLogin, Long realPropertyId) {
-        Favorites favorites = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
-        favoritesRepository.delete(favorites);
+        Optional<Favorites> favorites = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
+        if (!favorites.isPresent()) {
+            throw NotFoundException.createFavoritesNotFoundByRealPropertyId(realPropertyId);
+        }
+        favoritesRepository.delete(favorites.get());
     }
 
 

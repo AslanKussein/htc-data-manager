@@ -59,4 +59,8 @@ public class NotFoundException extends DetailedException {
     public static NotFoundException createCreditProgrammById(Long id) {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.creditprogramm.not.found", id));
     }
+
+    public static NotFoundException createFavoritesNotFoundByRealPropertyId(Long realPropertyId) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.favorite.not.found", realPropertyId));
+    }
 }
