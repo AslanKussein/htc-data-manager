@@ -93,12 +93,12 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
 
     @Transient
     public List<RealPropertyMetadata> getMetadataListByStatus(Long statusId) {
-        return getMetadataList().stream().filter(data -> data.getMetadataStatusId().equals(statusId)).collect(Collectors.toList());
+        return getMetadataList().stream().filter(data -> nonNull(data.getMetadataStatusId()) && data.getMetadataStatusId().equals(statusId)).collect(Collectors.toList());
     }
 
     @Transient
     public List<RealPropertyFile> getFilesByStatus(Long statusId) {
-        return getFileList().stream().filter(data -> data.getMetadataStatusId().equals(statusId)).collect(Collectors.toList());
+        return getFileList().stream().filter(data -> nonNull(data.getMetadataStatusId()) && data.getMetadataStatusId().equals(statusId)).collect(Collectors.toList());
     }
 
     @Transient
