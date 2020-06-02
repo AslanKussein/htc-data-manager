@@ -39,7 +39,7 @@ public class FavoritesResource {
     @PostMapping
     public ResponseEntity<Favorites> save(
             @ApiIgnore @AuthenticationPrincipal final Principal principal,
-            Long realPropertyId) {
+            @RequestBody Long realPropertyId) {
         Favorites result = favoritesService.save(principal.getName(), realPropertyId);
         return ResponseEntity.ok(result);
     }
