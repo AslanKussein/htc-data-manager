@@ -41,7 +41,13 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public Favorites save(String clientLogin, Long realPropertyId) {
-        Favorites favorites = new Favorites();
+
+        Favorites favorites = favoritesRepository.findByRealPropertyIdAndClientLogin(realPropertyId, clientLogin);
+        if (favorites != null) {
+            return favorites;
+        }
+
+        favorites = new Favorites();
         favorites.setClientLogin(clientLogin);
         favorites.setRealPropertyId(realPropertyId);
         favorites.setCreateDate(new Timestamp(new Date().getTime()));
