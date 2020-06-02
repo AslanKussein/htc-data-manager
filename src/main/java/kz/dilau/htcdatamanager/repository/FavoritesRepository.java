@@ -12,5 +12,5 @@ public interface FavoritesRepository extends PagingAndSortingRepository<Favorite
 
     List<Favorites> findAllByClientLogin(String clientLogin, Pageable page);
 
-    Favorites findByRealPropertyIdAndClientLogin(Long realPropertyId, String clientLogin);
+    Favorites findByRealProperty_IdAndClientLogin(Long realPropertyId, String clientLogin);
 }

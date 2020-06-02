@@ -20,13 +20,9 @@ public class Favorites extends BaseEntity<Long> {
 
     private String clientLogin;
 
-
-    @Column(name = "real_property_id")
-    private Long realPropertyId;
-
     @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "real_property_id" , updatable = false, insertable = false)
+    @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")

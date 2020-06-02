@@ -21,10 +21,10 @@ public class FavoritesResource {
     private final FavoritesService favoritesService;
 
     @GetMapping("/{realPropertyId}")
-    public ResponseEntity<Favorites> getByRealPropertyId(
+    public ResponseEntity<FavoritesDto> getByRealPropertyId(
             @ApiIgnore @AuthenticationPrincipal final Principal principal,
             @PathVariable("realPropertyId") Long realPropertyId) {
-        Favorites favorites = favoritesService.getByRealPropertyId(principal.getName(), realPropertyId);
+        FavoritesDto favorites = favoritesService.getByRealPropertyId(principal.getName(), realPropertyId);
         return ResponseEntity.ok(favorites);
     }
 
@@ -37,10 +37,10 @@ public class FavoritesResource {
     }
 
     @PostMapping
-    public ResponseEntity<Favorites> save(
+    public ResponseEntity<FavoritesDto> save(
             @ApiIgnore @AuthenticationPrincipal final Principal principal,
             @RequestBody Long realPropertyId) {
-        Favorites result = favoritesService.save(principal.getName(), realPropertyId);
+        FavoritesDto result = favoritesService.save(principal.getName(), realPropertyId);
         return ResponseEntity.ok(result);
     }
 
