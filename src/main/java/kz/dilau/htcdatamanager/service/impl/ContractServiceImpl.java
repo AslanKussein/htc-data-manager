@@ -56,9 +56,9 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateReport() {
+    public String generateReport(String path) {
         try {
-            JasperReport jasperReport = JasperCompileManager.compileReport("report.jrxml");
+            JasperReport jasperReport = JasperCompileManager.compileReport(path);
 
             JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(empList);
 
