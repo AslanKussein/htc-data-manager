@@ -10,10 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +30,7 @@ import static java.util.Objects.nonNull;
 public class ContractServiceImpl implements ContractService {
     private final ApplicationContractRepository contractRepository;
     private final ApplicationService applicationService;
+    private final ResourceLoader resourceLoader;
 
     private List<Employee> empList = Arrays.asList(
             new Employee(1, "Sandeep", "Data Matrix", "Front-end Developer", 20000),
@@ -58,7 +62,12 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public String generateReport(String path) {
         try {
-            JasperReport jasperReport = JasperCompileManager.compileReport(path);
+
+            Resource resource = resourceLoader.getResource(path);
+
+            InputStream input = resource.getInputStream();
+
+            JasperReport jasperReport = JasperCompileManager.compileReport(input);
 
             JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(empList);
 
