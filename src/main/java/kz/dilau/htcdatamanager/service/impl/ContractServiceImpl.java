@@ -16,7 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.sql.Connection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,11 +36,11 @@ public class ContractServiceImpl implements ContractService {
     private final ApplicationService applicationService;
     private final ResourceLoader resourceLoader;
 
-    private List<Employee> empList = Arrays.asList(
-            new Employee(1, "Sandeep", "Data Matrix", "Front-end Developer", 20000),
-            new Employee(2, "Prince", "Genpact", "Consultant", 40000),
-            new Employee(3, "Gaurav", "Silver Touch ", "Sr. Java Engineer", 47000),
-            new Employee(4, "Abhinav", "Akal Info Sys", "CTO", 700000));
+//    private List<Employee> empList = Arrays.asList(
+//            new Employee(1, "Sandeep", "Data Matrix", "Front-end Developer", 20000),
+//            new Employee(2, "Prince", "Genpact", "Consultant", 40000),
+//            new Employee(3, "Gaurav", "Silver Touch ", "Sr. Java Engineer", 47000),
+//            new Employee(4, "Abhinav", "Akal Info Sys", "CTO", 700000));
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -69,14 +73,13 @@ public class ContractServiceImpl implements ContractService {
 
             JasperReport jasperReport = JasperCompileManager.compileReport(input);
 
-            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(empList);
+//            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(empList);
 
             // Add parameters
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("createdBy", "vitrina");
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters,
-                    jrBeanCollectionDataSource);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
 
             byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
             String base64String = Base64.encodeBase64String(bytes);
@@ -88,5 +91,74 @@ public class ContractServiceImpl implements ContractService {
             e.printStackTrace();
             return e.getMessage();
         }
+    }
+
+//    public byte[] createLotAppToTheReport(VLotReportData vLot, BigDecimal winnerId) throws Exception {
+//        parametersMap = new HashMap<>();
+//
+//        try (Connection conn = dt.getConnection()) {
+//
+//
+//            parametersMap.put("lot_id", vLot.getLotId());
+//            parametersMap.put("winner_id", winnerId);
+//            parametersMap.put("DEALS_DATETIME", dateTimeToString(vLot.getDealsDatetime(), DEF_DT_VAL_SS_SXX));
+//
+//            if (vLot.getWinnerId() != null) {
+//                UserEcp winnerEcp = userEcpRepository.findByUserId_id(vLot.getWinnerId());
+//                parametersMap.put("WINNER_BID", nvl(vLot.getWinnerOrg(), ""));
+//                parametersMap.put("WINNER_SIGN", nvl(vLot.getWinnerFio(), ""));
+//                parametersMap.put("WINNER_SIGN_INFO", "Подписано цифровой подписью: "
+//                        + dnReplace(winnerEcp.getDn()));
+//                parametersMap.put("WINNER_SIGN_DATE", "Дата: " + nvl(dateTimeToString(vLot.getWinnerSignDate(), DEF_DT_VAL_SS_SXX), "") + " +06'00'");
+//            } else {
+//                parametersMap.put("WINNER_BID", "Не выявлен");
+//                parametersMap.put("WINNER_SIGN", "");
+//                parametersMap.put("WINNER_SIGN_INFO", "");
+//                parametersMap.put("WINNER_SIGN_DATE", "");
+//            }
+//
+//
+//            setQRCodesByWinnerId(vLot.getLotId(), vLot.getWinnerId(), 2);
+//
+//            JasperTemplateEntity templEntity = jasperTemplateRepository.findByCode("appToTheReport");
+//
+//
+//            try (InputStream jrXmlStream = new ByteArrayInputStream(templEntity.getJrxml().getBytes(StandardCharsets.UTF_8))) {
+//
+//                JDocumentParameter jdp = new JDocumentParameter();
+//                jdp.setParametersMap(parametersMap);
+//                // jdp.setBeanColDataSource(itemsJRBean);
+//                byte[] pdf = getPdfByJrxmlByte(jrXmlStream, parametersMap, conn);
+//                return pdf;
+//            } catch (Exception e) {
+//                clearParametersMap();
+//                throw e;
+//            } finally {
+//                clearParametersMap();
+//            }
+//        }
+//    }
+
+    public static byte[] getPdfByJrxmlByte(InputStream input, HashMap<String, Object> parametersMap, Connection conn) {
+        try {
+            JasperReport jasperReport = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrint;
+
+            if (conn != null) {
+                jasperPrint = JasperFillManager.fillReport(jasperReport, parametersMap, conn);
+            } else{
+                jasperPrint = JasperFillManager.fillReport(jasperReport, parametersMap);
+            }
+
+            try (ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+                JasperExportManager.exportReportToPdfStream(jasperPrint, os);
+                return os.toByteArray();
+            } finally {
+                input.close();
+            }
+        } catch (JRException | IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
