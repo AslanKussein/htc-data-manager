@@ -23,6 +23,9 @@ public class ApplicationContract extends AuditableBaseEntity<String, Long> {
     @JoinColumn(name = "application_id")
     private Application application;
 
+    @Column(name = "application_id", insertable = false, updatable = false)
+    private Long applicationId;
+
     @Column(name = "contract_number")
     private String contractNumber;
 
@@ -42,8 +45,8 @@ public class ApplicationContract extends AuditableBaseEntity<String, Long> {
     @JoinColumn(name = "status_id")
     private ContractStatus contractStatus;
 
-    @Column(name = "contract_date")
-    private ZonedDateTime contractDate;
+    @Column(name = "print_date")
+    private ZonedDateTime printDate;
 
     @Column(name = "guid")
     private String guid;
