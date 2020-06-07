@@ -1,6 +1,9 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.dictionary.City;
+import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
@@ -19,13 +22,11 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.sql.Connection;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
@@ -36,11 +37,11 @@ public class ContractServiceImpl implements ContractService {
     private final ApplicationService applicationService;
     private final ResourceLoader resourceLoader;
 
-//    private List<Employee> empList = Arrays.asList(
-//            new Employee(1, "Sandeep", "Data Matrix", "Front-end Developer", 20000),
-//            new Employee(2, "Prince", "Genpact", "Consultant", 40000),
-//            new Employee(3, "Gaurav", "Silver Touch ", "Sr. Java Engineer", 47000),
-//            new Employee(4, "Abhinav", "Akal Info Sys", "CTO", 700000));
+    private List<Employee> empList = Arrays.asList(
+            new Employee(1, "Sandeep", "Data Matrix", "Front-end Developer", 20000),
+            new Employee(2, "Prince", "Genpact", "Consultant", 40000),
+            new Employee(3, "Gaurav", "Silver Touch ", "Sr. Java Engineer", 47000),
+            new Employee(4, "Abhinav", "Akal Info Sys", "CTO", 700000));
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -64,10 +65,14 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateReport(String path) {
+    public String generateContract(ContractFormDto dto) {
+        Application application = applicationService.getApplicationById(dto.getApplicationId());
         try {
-
-            Resource resource = resourceLoader.getResource(path);
+            if (application.getOperationType().getCode().equals(OperationType.SELL) || isNull(application.getApplicationPurchaseData())) {
+                throw BadRequestException.idMustNotBeNull();
+            }
+            City city = application.getApplicationPurchaseData().getCity();
+            Resource resource = resourceLoader.getResource("classpath:jasper/Vitrina_Ex.jrxml");
 
             InputStream input = resource.getInputStream();
 
@@ -77,7 +82,10 @@ public class ContractServiceImpl implements ContractService {
 
             // Add parameters
             Map<String, Object> parameters = new HashMap<>();
-            parameters.put("createdBy", "vitrina");
+            parameters.put("contractNumber", dto.getContractNumber());
+            parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            parameters.put("printDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+            parameters.put("clientFullname", application.getClientLogin());
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
 

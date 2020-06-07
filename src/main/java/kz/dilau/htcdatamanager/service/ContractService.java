@@ -5,5 +5,5 @@ import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
 public interface ContractService {
     ContractFormDto getContractForm(String token, Long applicationId);
 
-    String generateReport(String path);
+    String generateContract(ContractFormDto dto);
 }
