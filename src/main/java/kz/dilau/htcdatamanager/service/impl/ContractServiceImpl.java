@@ -72,13 +72,13 @@ public class ContractServiceImpl implements ContractService {
                 throw BadRequestException.idMustNotBeNull();
             }
             City city = application.getApplicationPurchaseData().getCity();
-            Resource resource = resourceLoader.getResource("classpath:jasper/Vitrina_Ex.jrxml");
+            Resource resource = resourceLoader.getResource("classpath:jasper/" + dto.getGuid());
 
             InputStream input = resource.getInputStream();
 
             JasperReport jasperReport = JasperCompileManager.compileReport(input);
 
-//            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(empList);
+            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(empList);
 
             // Add parameters
             Map<String, Object> parameters = new HashMap<>();
@@ -86,8 +86,9 @@ public class ContractServiceImpl implements ContractService {
             parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
             parameters.put("printDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
             parameters.put("clientFullname", application.getClientLogin());
+            parameters.put("createdBy", "vitrina");
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, jrBeanCollectionDataSource);
 
             byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
             String base64String = Base64.encodeBase64String(bytes);
