@@ -75,6 +75,9 @@ public class RealPropertyDto {
     @ApiModelProperty(name = "virtualTourImageIdList", value = "Список ID фотографии")
     private Set<String> virtualTourImageIdList;
 
+    @ApiModelProperty(value = "Количество комментариев")
+    protected Integer notesCount;
+
     @ApiModelProperty(value = "Адрес")
     private MultiLangText address;
 

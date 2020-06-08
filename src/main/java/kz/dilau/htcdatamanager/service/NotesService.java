@@ -15,4 +15,7 @@ public interface NotesService {
     NotesDto updateNote(NotesDto notesDto);
 
     NotesDto deleteNote(NotesDto notesDto);
+
+    Integer getCountByRealPropertyId(Long id);
+
 }
