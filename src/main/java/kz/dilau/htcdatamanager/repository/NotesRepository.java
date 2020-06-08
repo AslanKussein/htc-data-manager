@@ -12,4 +12,7 @@ public interface NotesRepository extends JpaRepository<Notes, Long> {
     Page<Notes> findAllByRealProperty_IdAndIsRemovedFalse(Long id, Pageable pageable);
 
     Optional<Notes> findByIdAndIsRemovedFalse(Long id);
+
+    Integer countByRealProperty_IdAndIsRemovedFalse(Long id);
+
 }
