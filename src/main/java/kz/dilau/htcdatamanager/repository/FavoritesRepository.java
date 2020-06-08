@@ -17,17 +17,17 @@ public interface FavoritesRepository extends PagingAndSortingRepository<Favorite
             "join ApplicationSellData s on s.realProperty.id = f.realProperty.id  " +
             "join Application a on a.id = s.application.id " +
             "where a.isRemoved = false and f.clientLogin = :clientLogin")
-    List<Favorites> findAllByClientLogin(@Param("clientLogin")String clientLogin, Pageable page);
+    List<Favorites> findAllByClientLogin(@Param("clientLogin") String clientLogin, Pageable page);
 
     @Query(value = "select distinct f from Favorites f " +
             "join ApplicationSellData s on s.realProperty.id = f.realProperty.id  " +
             "join Application a on a.id = s.application.id " +
             "where a.isRemoved = false and f.clientLogin = :clientLogin")
-    List<Favorites> findAllByClientLogin(@Param("clientLogin") String clientLogin );
+    List<Favorites> findAllByClientLogin(@Param("clientLogin") String clientLogin);
 
     @Query(value = "select distinct f from Favorites f " +
             "join ApplicationSellData s on s.realProperty.id = f.realProperty.id  " +
             "join Application a on a.id = s.application.id " +
             "where a.isRemoved = false and f.realProperty.id = :realPropertyId and f.clientLogin = :clientLogin")
-    Optional<Favorites> findByRealProperty_IdAndClientLogin(@Param("realPropertyId")Long realPropertyId, @Param("clientLogin")String clientLogin);
+    Optional<Favorites> findByRealProperty_IdAndClientLogin(@Param("realPropertyId") Long realPropertyId, @Param("clientLogin") String clientLogin);
 }
