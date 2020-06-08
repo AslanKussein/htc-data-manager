@@ -36,7 +36,7 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public List<FavoritesDto> getAllPageableByClientLogin(String clientLogin,
-                                               PageableDto pageableDto) {
+                                                          PageableDto pageableDto) {
         List<Favorites> list = favoritesRepository
                 .findAllByClientLogin(clientLogin, PageableUtils.createPageRequest(pageableDto));
 
@@ -83,16 +83,15 @@ public class FavoritesServiceImpl implements FavoritesService {
 
 
     @Override
-    public List<FavoritesDto> getAllByClientLogin(String clientLogin ) {
-        List<Favorites> list = favoritesRepository
-                .findAllByClientLogin(clientLogin );
+    public List<Long> getAllByClientLogin(String clientLogin) {
+        List<Favorites> list = favoritesRepository.findAllByClientLogin(clientLogin);
 
-        List<FavoritesDto> favoritesDtoList = new ArrayList<>();
+        List<Long> realPropertyIdList = new ArrayList<>();
 
-        list.stream().forEach(favorites -> favoritesDtoList.add(new FavoritesDto(favorites)));
+        list.stream().forEach(favorites -> realPropertyIdList.add(favorites.getRealProperty().getId()));
 
 
-        return favoritesDtoList;
+        return realPropertyIdList;
     }
 
 }

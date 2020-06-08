@@ -17,6 +17,6 @@ public interface FavoritesService {
 
     void deleteByRealPropertyId(String clientLogin, Long realPropertyId);
 
-    List<FavoritesDto> getAllByClientLogin(String clientLogin);
+    List<Long> getAllByClientLogin(String clientLogin);
 
 }

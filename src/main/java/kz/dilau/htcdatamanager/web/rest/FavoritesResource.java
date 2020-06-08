@@ -37,9 +37,9 @@ public class FavoritesResource {
     }
 
     @PostMapping("/getAll")
-    public ResponseEntity<List<FavoritesDto>> getAll(
+    public ResponseEntity<List<Long>> getAll(
             @ApiIgnore @AuthenticationPrincipal final Principal principal) {
-        List<FavoritesDto> list = favoritesService.getAllByClientLogin(principal.getName());
+        List<Long> list = favoritesService.getAllByClientLogin(principal.getName());
         return ResponseEntity.ok(list);
     }
 
