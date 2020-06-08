@@ -28,11 +28,18 @@ public class FavoritesResource {
         return ResponseEntity.ok(favorites);
     }
 
-    @PostMapping("/getAll")
-    public ResponseEntity<List<FavoritesDto>> getAll(
+    @PostMapping("/getAllPageable")
+    public ResponseEntity<List<FavoritesDto>> getAllPageable(
             @ApiIgnore @AuthenticationPrincipal final Principal principal,
             PageableDto pageableDto) {
-        List<FavoritesDto> list = favoritesService.getByClientLogin(principal.getName(), pageableDto);
+        List<FavoritesDto> list = favoritesService.getAllPageableByClientLogin(principal.getName(), pageableDto);
+        return ResponseEntity.ok(list);
+    }
+
+    @PostMapping("/getAll")
+    public ResponseEntity<List<FavoritesDto>> getAll(
+            @ApiIgnore @AuthenticationPrincipal final Principal principal) {
+        List<FavoritesDto> list = favoritesService.getAllByClientLogin(principal.getName());
         return ResponseEntity.ok(list);
     }
 

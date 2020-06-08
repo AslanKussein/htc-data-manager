@@ -12,11 +12,13 @@ public interface FavoritesService {
 
     Favorites getByRealPropertyId(String clientLogin, Long realPropertyId);
 
-    List<FavoritesDto> getByClientLogin(String clientLogin,
+    List<FavoritesDto> getAllPageableByClientLogin(String clientLogin,
                                         PageableDto pageableDto);
 
     Favorites save(String clientLogin, Long realPropertyId);
 
     void deleteByRealPropertyId(String clientLogin, Long realPropertyId);
+
+    List<FavoritesDto> getAllByClientLogin(String clientLogin);
 
 }
