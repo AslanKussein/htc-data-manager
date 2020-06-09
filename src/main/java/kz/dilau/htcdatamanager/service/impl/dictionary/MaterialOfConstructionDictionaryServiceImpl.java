@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.service.impl.dictionary;
 
 import kz.dilau.htcdatamanager.domain.base.MultiLang;
 import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
+import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.repository.dictionary.MaterialOfConstructionRepository;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.LinearDictionaryService;
@@ -37,10 +38,11 @@ public class MaterialOfConstructionDictionaryServiceImpl implements LinearDictio
 
     @Override
     public List childList(Long parentId) {
-        return null;
+        return repository.findAllByParentIdAndIsRemovedFalse(parentId);
     }
 
     private MaterialOfConstruction saveDict(MaterialOfConstruction dict, DictionaryItemRequestDto itemDto) {
+        dict.setObjectType(cacheService.getById(ObjectType.class, itemDto.getParentId()));
         dict.setMultiLang(new MultiLang(itemDto));
         return dict;
     }
