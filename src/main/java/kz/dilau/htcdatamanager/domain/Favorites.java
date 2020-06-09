@@ -21,7 +21,7 @@ public class Favorites extends BaseEntity<Long> {
     private String clientLogin;
 
     @ToString.Exclude
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
 
