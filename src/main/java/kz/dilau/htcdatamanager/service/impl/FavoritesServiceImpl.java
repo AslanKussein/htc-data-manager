@@ -29,7 +29,11 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public FavoritesDto getByRealPropertyId(String clientLogin, Long realPropertyId) {
+        Favorites favorites = getFavoritesByClientLoginAndRealPropertyId(clientLogin, realPropertyId);
+        return new FavoritesDto(favorites);
+    }
 
+    private Favorites getFavoritesByClientLoginAndRealPropertyId(String clientLogin, Long realPropertyId) {
         Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
                 .and(FavoriteSpecifications.clientLoginEquals(clientLogin))
                 .and(FavoriteSpecifications.realPropertyIdEquals(realPropertyId));
@@ -38,10 +42,8 @@ public class FavoritesServiceImpl implements FavoritesService {
         if (!favoritesOptional.isPresent()) {
             throw NotFoundException.createFavoritesNotFoundByRealPropertyId(realPropertyId);
         }
-
-        return new FavoritesDto(favoritesOptional.get());
+        return favoritesOptional.get();
     }
-
 
     private FavoritesDto mapFavoritesToFavoritesDto(Favorites favorites) {
         return new FavoritesDto(favorites);
@@ -62,17 +64,12 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public FavoritesDto save(String clientLogin, Long realPropertyId) {
-
         Favorites favorites;
 
-        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
-                .and(FavoriteSpecifications.clientLoginEquals(clientLogin))
-                .and(FavoriteSpecifications.realPropertyIdEquals(realPropertyId));
-
-        Optional<Favorites> favoritesOptional = favoritesRepository.findOne(specification);
-        if (favoritesOptional.isPresent()) {
-            return new FavoritesDto(favoritesOptional.get());
-        } else {
+        try {
+            favorites = getFavoritesByClientLoginAndRealPropertyId(clientLogin, realPropertyId);
+            return new FavoritesDto(favorites);
+        }catch (NotFoundException e){
             favorites = new Favorites();
         }
 
@@ -90,15 +87,9 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public void deleteByRealPropertyId(String clientLogin, Long realPropertyId) {
-        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
-                .and(FavoriteSpecifications.clientLoginEquals(clientLogin))
-                .and(FavoriteSpecifications.realPropertyIdEquals(realPropertyId));
+        Favorites favorites = getFavoritesByClientLoginAndRealPropertyId(clientLogin, realPropertyId);
 
-        Optional<Favorites> favoritesOptional = favoritesRepository.findOne(specification);
-        if (!favoritesOptional.isPresent()) {
-            throw NotFoundException.createFavoritesNotFoundByRealPropertyId(realPropertyId);
-        }
-        favoritesRepository.delete(favoritesOptional.get());
+        favoritesRepository.delete(favorites);
     }
 
 
