@@ -434,7 +434,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .applicationByRealPropertyDtoList(applicationByRealPropertyDtoList)
                     .build();
         } else {
-            throw NotFoundException.createApartmentByNumberAndPostcode(apartmentNumber, postcode);
+            return null;
         }
     }
 
