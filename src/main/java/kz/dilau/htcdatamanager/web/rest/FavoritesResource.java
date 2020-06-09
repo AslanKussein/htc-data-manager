@@ -6,6 +6,7 @@ import kz.dilau.htcdatamanager.service.FavoritesService;
 import kz.dilau.htcdatamanager.web.dto.FavoritesDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,10 @@ public class FavoritesResource {
     }
 
     @PostMapping("/getAllPageable")
-    public ResponseEntity<List<FavoritesDto>> getAllPageable(
+    public ResponseEntity<Page<FavoritesDto>> getAllPageable(
             @ApiIgnore @AuthenticationPrincipal final Principal principal,
             PageableDto pageableDto) {
-        List<FavoritesDto> list = favoritesService.getAllPageableByClientLogin(principal.getName(), pageableDto);
+        Page<FavoritesDto> list = favoritesService.getAllPageableByClientLogin(principal.getName(), pageableDto);
         return ResponseEntity.ok(list);
     }
 

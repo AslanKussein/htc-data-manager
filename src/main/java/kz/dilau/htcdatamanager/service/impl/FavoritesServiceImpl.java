@@ -1,5 +1,7 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.ApplicationSellData;
 import kz.dilau.htcdatamanager.domain.Favorites;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
@@ -7,9 +9,13 @@ import kz.dilau.htcdatamanager.repository.FavoritesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.FavoritesService;
 import kz.dilau.htcdatamanager.util.PageableUtils;
+import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
 import kz.dilau.htcdatamanager.web.dto.FavoritesDto;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -17,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
@@ -34,18 +42,18 @@ public class FavoritesServiceImpl implements FavoritesService {
         return new FavoritesDto(favorites.get());
     }
 
+
+
+    private FavoritesDto mapFavoritesToFavoritesDto(Favorites favorites) {
+        return new FavoritesDto(favorites);
+    }
+
     @Override
-    public List<FavoritesDto> getAllPageableByClientLogin(String clientLogin,
+    public Page<FavoritesDto> getAllPageableByClientLogin(String clientLogin,
                                                           PageableDto pageableDto) {
-        List<Favorites> list = favoritesRepository
+        Page<Favorites> favorites = favoritesRepository
                 .findAllByClientLogin(clientLogin, PageableUtils.createPageRequest(pageableDto));
-
-        List<FavoritesDto> favoritesDtoList = new ArrayList<>();
-
-        list.stream().forEach(favorites -> favoritesDtoList.add(new FavoritesDto(favorites)));
-
-
-        return favoritesDtoList;
+        return favorites.map(this::mapFavoritesToFavoritesDto);
     }
 
 
@@ -84,14 +92,7 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public List<Long> getAllByClientLogin(String clientLogin) {
-        List<Favorites> list = favoritesRepository.findAllByClientLogin(clientLogin);
-
-        List<Long> realPropertyIdList = new ArrayList<>();
-
-        list.stream().forEach(favorites -> realPropertyIdList.add(favorites.getRealProperty().getId()));
-
-
-        return realPropertyIdList;
+        return favoritesRepository.findAllByClientLogin(clientLogin);
     }
 
 }

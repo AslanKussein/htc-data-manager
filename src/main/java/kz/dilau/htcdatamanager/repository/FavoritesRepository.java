@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.repository;
 
 import kz.dilau.htcdatamanager.domain.Favorites;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,13 +18,13 @@ public interface FavoritesRepository extends PagingAndSortingRepository<Favorite
             "join ApplicationSellData s on s.realProperty.id = f.realProperty.id  " +
             "join Application a on a.id = s.application.id " +
             "where a.isRemoved = false and f.clientLogin = :clientLogin")
-    List<Favorites> findAllByClientLogin(@Param("clientLogin") String clientLogin, Pageable page);
+    Page<Favorites> findAllByClientLogin(@Param("clientLogin") String clientLogin, Pageable page);
 
-    @Query(value = "select distinct f from Favorites f " +
+    @Query(value = "select distinct f.realProperty.id from Favorites f " +
             "join ApplicationSellData s on s.realProperty.id = f.realProperty.id  " +
             "join Application a on a.id = s.application.id " +
             "where a.isRemoved = false and f.clientLogin = :clientLogin")
-    List<Favorites> findAllByClientLogin(@Param("clientLogin") String clientLogin);
+    List<Long> findAllByClientLogin(@Param("clientLogin") String clientLogin);
 
     @Query(value = "select distinct f from Favorites f " +
             "join ApplicationSellData s on s.realProperty.id = f.realProperty.id  " +
