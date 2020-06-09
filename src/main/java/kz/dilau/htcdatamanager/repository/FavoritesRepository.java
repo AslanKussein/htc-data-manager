@@ -2,9 +2,7 @@ package kz.dilau.htcdatamanager.repository;
 
 import kz.dilau.htcdatamanager.domain.Favorites;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface FavoritesRepository extends PagingAndSortingRepository<Favorites, Long>, JpaSpecificationExecutor<Favorites> {
+public interface FavoritesRepository extends PagingAndSortingRepository<Favorites, Long> {
 
     @Query(value = "select distinct f from Favorites f " +
             "join ApplicationSellData s on s.realProperty.id = f.realProperty.id  " +
