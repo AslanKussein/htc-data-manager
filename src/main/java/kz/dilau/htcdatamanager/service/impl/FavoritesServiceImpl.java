@@ -101,7 +101,7 @@ public class FavoritesServiceImpl implements FavoritesService {
         List<Favorites> favoritesList = favoritesRepository.findAll(specification);
 
 
-        return favoritesList.stream().map(item -> item.getRealProperty().getId()).collect(Collectors.toList());
+        return favoritesList.stream().map(item -> item.getRealPropertyId()).collect(Collectors.toList());
     }
 
 }

@@ -25,6 +25,9 @@ public class Favorites extends BaseEntity<Long> {
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
 
+    @Column(name = "real_property_id", updatable = false, insertable = false)
+    private Long realPropertyId;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Timestamp createDate;
 
