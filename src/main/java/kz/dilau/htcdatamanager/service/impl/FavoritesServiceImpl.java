@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.FavoritesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
+import kz.dilau.htcdatamanager.repository.filter.FavoriteSpecifications;
 import kz.dilau.htcdatamanager.service.FavoritesService;
 import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
@@ -16,6 +17,7 @@ import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -34,14 +36,18 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public FavoritesDto getByRealPropertyId(String clientLogin, Long realPropertyId) {
-        Optional<Favorites> favorites = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
-        if (!favorites.isPresent()) {
+
+        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
+                .and(FavoriteSpecifications.clientLoginEquals(clientLogin))
+                .and(FavoriteSpecifications.realPropertyIdEquals(realPropertyId));
+
+        Optional<Favorites> favoritesOptional = favoritesRepository.findOne(specification);
+        if (!favoritesOptional.isPresent()) {
             throw NotFoundException.createFavoritesNotFoundByRealPropertyId(realPropertyId);
         }
 
-        return new FavoritesDto(favorites.get());
+        return new FavoritesDto(favoritesOptional.get());
     }
-
 
 
     private FavoritesDto mapFavoritesToFavoritesDto(Favorites favorites) {
@@ -51,8 +57,12 @@ public class FavoritesServiceImpl implements FavoritesService {
     @Override
     public Page<FavoritesDto> getAllPageableByClientLogin(String clientLogin,
                                                           PageableDto pageableDto) {
-        Page<Favorites> favorites = favoritesRepository
-                .findAllByClientLogin(clientLogin, PageableUtils.createPageRequest(pageableDto));
+
+        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
+                .and(FavoriteSpecifications.clientLoginEquals(clientLogin));
+
+        Page<Favorites> favorites = favoritesRepository.findAll(specification, PageableUtils.createPageRequest(pageableDto));
+
         return favorites.map(this::mapFavoritesToFavoritesDto);
     }
 
@@ -61,7 +71,12 @@ public class FavoritesServiceImpl implements FavoritesService {
     public FavoritesDto save(String clientLogin, Long realPropertyId) {
 
         Favorites favorites;
-        Optional<Favorites> favoritesOptional = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
+
+        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
+                .and(FavoriteSpecifications.clientLoginEquals(clientLogin))
+                .and(FavoriteSpecifications.realPropertyIdEquals(realPropertyId));
+
+        Optional<Favorites> favoritesOptional = favoritesRepository.findOne(specification);
         if (favoritesOptional.isPresent()) {
             return new FavoritesDto(favoritesOptional.get());
         } else {
@@ -82,17 +97,25 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public void deleteByRealPropertyId(String clientLogin, Long realPropertyId) {
-        Optional<Favorites> favorites = favoritesRepository.findByRealProperty_IdAndClientLogin(realPropertyId, clientLogin);
-        if (!favorites.isPresent()) {
+        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
+                .and(FavoriteSpecifications.clientLoginEquals(clientLogin))
+                .and(FavoriteSpecifications.realPropertyIdEquals(realPropertyId));
+
+        Optional<Favorites> favoritesOptional = favoritesRepository.findOne(specification);
+        if (!favoritesOptional.isPresent()) {
             throw NotFoundException.createFavoritesNotFoundByRealPropertyId(realPropertyId);
         }
-        favoritesRepository.delete(favorites.get());
+        favoritesRepository.delete(favoritesOptional.get());
     }
 
 
     @Override
     public List<Long> getAllByClientLogin(String clientLogin) {
-        return favoritesRepository.findAllByClientLogin(clientLogin);
+        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
+                .and(FavoriteSpecifications.clientLoginEquals(clientLogin)) ;
+
+
+        return favoritesRepository.findAllFavorites_realProperty_id(specification);
     }
 
 }
