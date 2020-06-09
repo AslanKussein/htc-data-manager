@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Vitrina_Ex" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9baa352e-37e8-448f-bf6e-a4e1c648d492">
-    <style name="Base" isDefault="true" fontSize="8" pdfFontName="Courier" pdfEncoding="UTF-8" isPdfEmbedded="false"/>
-    <parameter name="contractNumber" class="java.lang.String"/>
+	<parameter name="contractNumber" class="java.lang.String"/>
 	<parameter name="city" class="java.lang.String"/>
 	<parameter name="printDate" class="java.lang.String"/>
 	<parameter name="clientFullname" class="java.lang.String"/>
@@ -13,31 +12,46 @@
 		<band height="79" splitType="Stretch">
 			<staticText>
 				<reportElement x="100" y="10" width="360" height="30" uuid="fd4f2478-0dc2-419e-90da-2ed0bd2e5786"/>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
 				<text><![CDATA[ДОГОВОР № ____________________
 об оказании риэлтерских услуг Покупателю объекта недвижимости
 ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="260" y="10" width="129" height="20" uuid="acce380e-460e-453c-9cce-ba61675ad859"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{contractNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="10" y="50" width="30" height="20" uuid="fa55c3aa-7f81-44c1-a4d9-252aab4d119f"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
 				<text><![CDATA[г. ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="514" y="50" width="30" height="20" uuid="8d6695f3-b577-481d-bde0-55407c6eb0f3"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
 				<text><![CDATA[г. ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="20" y="50" width="100" height="20" uuid="a14c3e36-0965-4af0-bc9e-d2a94e49dbbf"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{city}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="430" y="50" width="100" height="20" uuid="c1aec100-0adb-4414-a875-17436e7ababf"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{printDate}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -47,14 +61,16 @@
 			<staticText>
 				<reportElement x="10" y="0" width="533" height="80" uuid="1ea89a60-b2db-4d62-9560-ca5c04cfbfef"/>
 				<textElement textAlignment="Justified">
-					<font isBold="false"/>
+					<font fontName="DejaVu Sans" isBold="false"/>
 				</textElement>
 				<text><![CDATA[	Товарищество с ограниченной ответственностью «Казахстанско-Канадская компания «Витрина недвижимости», в лице Генерального директора Нургазина Д.М., именуемое в дальнейшем «Исполнитель», с одной стороны, и гр. ________________________________________________________________________, именуемый(-ая) в дальнейшем «Заказчик», с другой стороны, вместе в дальнейшем именуемые «Стороны», заключили настоящий договор (далее – Договор) о нижеследующем:
 ]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="140" y="21" width="400" height="20" uuid="f091d921-ee03-49a3-9d28-6ade8ce1f6e1"/>
-				<textElement textAlignment="Center"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{clientFullname}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -64,14 +80,16 @@
 			<staticText>
 				<reportElement x="220" y="0" width="120" height="20" uuid="bb484de5-2869-40f9-a460-d969c5147ea4"/>
 				<textElement textAlignment="Center">
-					<font isBold="true"/>
+					<font fontName="DejaVu Sans" isBold="true"/>
 				</textElement>
 				<text><![CDATA[1.Предмет Договора
 ]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="10" y="11" width="529" height="28" uuid="91137527-49d3-42b8-99c6-dd0ff60550dd"/>
-				<textElement textAlignment="Justified"/>
+				<textElement textAlignment="Justified">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
 				<text><![CDATA[
                     1.1. Заказчик поручает, а Исполнитель обязуется за вознаграждение осуществить поиск (подбор) объекта недвижимого имущества, отвечающего следующим ориентировочным требованиям Принципала: ]]></text>
 			</staticText>
