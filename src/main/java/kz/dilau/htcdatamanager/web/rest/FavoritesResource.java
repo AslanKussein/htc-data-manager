@@ -33,8 +33,8 @@ public class FavoritesResource {
     public ResponseEntity<Page<FavoritesDto>> getAllPageable(
             @ApiIgnore @AuthenticationPrincipal final Principal principal,
             PageableDto pageableDto) {
-        Page<FavoritesDto> list = favoritesService.getAllPageableByClientLogin(principal.getName(), pageableDto);
-        return ResponseEntity.ok(list);
+        Page<FavoritesDto> page = favoritesService.getAllPageableByClientLogin(principal.getName(), pageableDto);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping("/getAll")
