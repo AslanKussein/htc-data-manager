@@ -46,6 +46,7 @@ pipeline {
                                     --env consul_host=consul \
                                     --env logstash_url=logstash-log:5044 \
                                     --env log_level=INFO \
+                                    --env ES_JAVA_OPTS=-Djava.awt.headless=true \
                                     --name ${SERVICE_NAME} \
                                     --label traefik.frontend.rule="Host:dm-htc.dilau.kz" \
                                     --label traefik.enable=true \

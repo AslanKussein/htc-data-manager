@@ -52,6 +52,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Assignment> assignmentList;
 
+    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private ApplicationContract contract;
+
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {
             statusHistoryList = new ArrayList<>();

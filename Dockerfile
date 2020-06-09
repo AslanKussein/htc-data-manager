@@ -1,5 +1,7 @@
 FROM openjdk:8-alpine
 
+RUN apk add ttf-dejavu
+
 ARG DEPENDENCY=./target/htc-data-manager
 
 COPY ${DEPENDENCY}/BOOT-INF/lib /usr/app/BOOT-INF/lib

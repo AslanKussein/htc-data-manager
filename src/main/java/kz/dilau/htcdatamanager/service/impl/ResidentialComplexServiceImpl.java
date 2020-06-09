@@ -145,7 +145,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
         if (nonNull(building) && nonNull(building.getResidentialComplex())) {
             return new ResidentialComplexDto(building.getResidentialComplex());
         } else {
-            throw NotFoundException.createResidentialComplexByPostcode(postcode);
+            return null;
         }
     }
 
