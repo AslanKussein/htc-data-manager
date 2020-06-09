@@ -1,7 +1,5 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.ApplicationSellData;
 import kz.dilau.htcdatamanager.domain.Favorites;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
@@ -10,10 +8,7 @@ import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.filter.FavoriteSpecifications;
 import kz.dilau.htcdatamanager.service.FavoritesService;
 import kz.dilau.htcdatamanager.util.PageableUtils;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
 import kz.dilau.htcdatamanager.web.dto.FavoritesDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,12 +16,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Objects.nonNull;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -114,8 +107,10 @@ public class FavoritesServiceImpl implements FavoritesService {
         Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false)
                 .and(FavoriteSpecifications.clientLoginEquals(clientLogin)) ;
 
+        List<Favorites> favoritesList = favoritesRepository.findAll(specification);
 
-        return favoritesRepository.findAllFavorites_realProperty_id(specification);
+
+        return favoritesList.stream().map(item -> item.getRealProperty().getId()).collect(Collectors.toList());
     }
 
 }

@@ -10,5 +10,4 @@ import java.util.List;
 public interface FavoritesRepository extends PagingAndSortingRepository<Favorites, Long>, JpaSpecificationExecutor<Favorites> {
 
 
-    List<Long> findAllFavorites_realProperty_id(Specification<Favorites> specification);
-}
+ }
