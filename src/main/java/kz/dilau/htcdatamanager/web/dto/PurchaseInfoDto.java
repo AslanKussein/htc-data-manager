@@ -41,6 +41,10 @@ public class PurchaseInfoDto extends AGeneralCharacteristicsDto {
     private IntegerPeriod yearOfConstructionPeriod;
     @ApiModelProperty(value = "Количество квартир на площадке от и до")
     private IntegerPeriod apartmentsOnTheSitePeriod;
+    @ApiModelProperty(value = "Студия")
+    protected Boolean atelier;
+    @ApiModelProperty(value = "Санузел раздельный")
+    protected Boolean separateBathroom;
 
     public PurchaseInfoDto(PurchaseInfo info) {
         this.numberOfFloorsPeriod = new IntegerPeriod(info.getNumberOfFloorsFrom(), info.getNumberOfFloorsTo());
@@ -60,6 +64,8 @@ public class PurchaseInfoDto extends AGeneralCharacteristicsDto {
         this.wheelchair = info.getWheelchair();
         this.yardTypeId = info.getYardTypeId();
         this.playground = info.getPlayground();
+        this.atelier = info.getAtelier();
+        this.separateBathroom = info.getSeparateBathroom();
         this.typeOfElevatorList = info.getTypesOfElevator()
                 .stream()
                 .map(IdItem::getId)

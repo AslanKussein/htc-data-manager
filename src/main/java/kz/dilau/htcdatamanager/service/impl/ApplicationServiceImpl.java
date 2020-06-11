@@ -271,7 +271,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationPurchaseData(dto);
                 if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
                     PurchaseInfo info = entityMappingTool.convertPurchaseInfo(dto);
-                    if (nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+                    if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData()) &&
+                            nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
                         info.setId(application.getApplicationPurchaseData().getPurchaseInfo().getId());
                     }
                     purchaseData.setPurchaseInfo(info);

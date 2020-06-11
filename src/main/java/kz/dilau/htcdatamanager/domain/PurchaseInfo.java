@@ -83,6 +83,10 @@ public class PurchaseInfo extends AGeneralCharacteristics {
     private Integer apartmentsOnTheSiteFrom;
     @Column(name = "apartments_on_the_site_to")
     private Integer apartmentsOnTheSiteTo;
+    @Column(name = "atelier")
+    private Boolean atelier;//студия
+    @Column(name = "separate_bathroom")
+    private Boolean separateBathroom;
 
     @Type(type = "jsonb")
     @Column(name = "parking_types", columnDefinition = "jsonb")
@@ -174,6 +178,8 @@ public class PurchaseInfo extends AGeneralCharacteristics {
             this.concierge = dto.getConcierge();
             this.playground = dto.getPlayground();
             this.wheelchair = dto.getWheelchair();
+            this.atelier = dto.getAtelier();
+            this.separateBathroom = dto.getSeparateBathroom();
         }
         this.materialOfConstruction = materialOfConstruction;
         this.yardType = yardType;
