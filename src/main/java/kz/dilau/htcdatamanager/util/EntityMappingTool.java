@@ -5,6 +5,8 @@ import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
+import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +16,14 @@ import static java.util.Objects.nonNull;
 @Service
 public class EntityMappingTool {
     private final EntityService entityService;
-    private final BuildingService buildingService;
 
     public ApplicationPurchaseData convertApplicationPurchaseData(ApplicationDto dto) {
+        ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
+        return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()),
+                entityService.mapRequiredEntity(District.class, dataDto.getDistrictId()));
+    }
+
+    public ApplicationPurchaseData convertApplicationClientPurchaseData(ApplicationClientDTO dto) {
         ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
         return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()),
                 entityService.mapRequiredEntity(District.class, dataDto.getDistrictId()));
@@ -28,6 +35,14 @@ public class EntityMappingTool {
             return new PurchaseInfo(infoDto, dto.getPurchaseDataDto().getObjectPricePeriod(),
                     entityService.mapEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()),
                     entityService.mapEntity(YardType.class, infoDto.getYardTypeId()));
+        }
+        return null;
+    }
+
+    public PurchaseInfo convertClientPurchaseInfo(ApplicationClientDTO dto) {
+        if (nonNull(dto) && nonNull(dto.getPurchaseDataDto()) && nonNull(dto.getPurchaseInfoDto())) {
+            PurchaseInfoClientDto infoDto = dto.getPurchaseInfoDto();
+            return new PurchaseInfo(infoDto, dto.getPurchaseDataDto().getObjectPricePeriod());
         }
         return null;
     }

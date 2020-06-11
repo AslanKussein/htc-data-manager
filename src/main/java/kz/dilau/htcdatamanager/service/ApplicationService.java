@@ -6,6 +6,8 @@ import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface ApplicationService {
     ApplicationDto getById(final String token, Long id);
 
@@ -32,4 +34,8 @@ public interface ApplicationService {
     Page<ApplicationDto> getNotApprovedFiles(Pageable pageable);
 
     Long approveMetadata(Long applicationId, Long statusId);
+
+    List<String> getOperationList(String token, Application application);
+
+    String getAppointmentAgent(String agent);
 }

@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.web.dto.client;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.*;
@@ -19,4 +20,12 @@ public class PurchaseInfoClientDto {
     private BigDecimalPeriod totalAreaPeriod;
     @ApiModelProperty(name = "floorPeriod", value = "Этаж от и до")
     private IntegerPeriod floorPeriod;
+
+
+    public PurchaseInfoClientDto(PurchaseInfo info) {
+        this.floorPeriod = new IntegerPeriod(info.getFloorFrom(), info.getFloorTo());
+        this.totalAreaPeriod = new BigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo());
+        this.objectPricePeriod = new BigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo());
+
+    }
 }

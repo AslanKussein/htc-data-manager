@@ -3,11 +3,12 @@ package kz.dilau.htcdatamanager.service;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
 
 public interface ApplicationClientService {
-    ApplicationClientDTO getById(Long id);
+    ApplicationClientDTO getById(final String token, Long id);
 
-    Long create(String login, ApplicationClientDTO dto);
+    Long update(String token, Long id, ApplicationClientDTO input);
 
-    Long update(Long id, ApplicationClientDTO dto);
+    Long deleteById(String token, Long id);
 
-    Long deleteById(Long id);
+    Long save(String token, ApplicationClientDTO dto);
 }
+

@@ -3,6 +3,7 @@ package kz.dilau.htcdatamanager.domain;
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
+import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -91,6 +92,15 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
         this.landArea = dto.getLandArea();
         this.generalCharacteristics = new GeneralCharacteristics(dto.getGeneralCharacteristicsDto(),
                 propertyDeveloper, houseCondition, materialOfConstruction, yardType);
+    }
+
+    public RealPropertyMetadata(RealPropertyClientDto dto) {
+        this.floor = dto.getFloor();
+        this.numberOfRooms = dto.getNumberOfRooms();
+        this.totalArea = dto.getTotalArea();
+        this.livingArea = dto.getLivingArea();
+        this.atelier = dto.getAtelier();
+        this.separateBathroom = dto.getSeparateBathroom();
     }
 }
 
