@@ -17,8 +17,8 @@ public class ContractResource {
     private final ContractService contractService;
 
     @GetMapping("/{applicationId}")
-    public ResponseEntity<ContractFormDto> generateContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
-                                                            @PathVariable("applicationId") Long applicationId) {
+    public ResponseEntity<ContractFormDto> getContractForm(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                           @PathVariable("applicationId") Long applicationId) {
         ContractFormDto result = contractService.getContractForm(token, applicationId);
         return ResponseEntity.ok(result);
     }

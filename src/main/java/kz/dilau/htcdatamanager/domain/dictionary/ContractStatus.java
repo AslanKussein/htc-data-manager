@@ -11,4 +11,6 @@ import static kz.dilau.htcdatamanager.config.Constants.DICTIONARY_TABLE_NAME_PRE
 @Entity
 @Table(name = DICTIONARY_TABLE_NAME_PREFIX + "contract_status")
 public class ContractStatus extends BaseSystemDictionary {
+    public static final Long GENERATED = 1L;
+    public static final Long MISSING = 2L;
 }

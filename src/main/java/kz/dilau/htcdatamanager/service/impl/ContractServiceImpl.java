@@ -1,10 +1,13 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.ApplicationContract;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
+import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
+import kz.dilau.htcdatamanager.repository.dictionary.ContractStatusRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
@@ -34,6 +37,7 @@ public class ContractServiceImpl implements ContractService {
     private final ApplicationContractRepository contractRepository;
     private final ApplicationService applicationService;
     private final ResourceLoader resourceLoader;
+    private final ContractStatusRepository contractStatusRepository;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -85,6 +89,18 @@ public class ContractServiceImpl implements ContractService {
 
             log.info("Done");
 
+            ApplicationContract contract = application.getContract();
+            if (isNull(contract)) {
+                contract = ApplicationContract.builder()
+                        .application(application)
+                        .build();
+            }
+            contract.setCommission(dto.getCommission());
+            contract.setContractSum(dto.getContractSum());
+            contract.setContractPeriod(dto.getContractPeriod());
+            contract.setContractNumber(dto.getContractNumber());
+            contract.setContractStatus(contractStatusRepository.getOne(ContractStatus.GENERATED));
+            contractRepository.save(contract);
             return base64String;
         } catch (Exception e) {
             e.printStackTrace();
