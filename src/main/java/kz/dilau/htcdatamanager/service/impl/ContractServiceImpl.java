@@ -89,22 +89,34 @@ public class ContractServiceImpl implements ContractService {
 
             log.info("Done");
 
-            ApplicationContract contract = application.getContract();
-            if (isNull(contract)) {
-                contract = ApplicationContract.builder()
-                        .application(application)
-                        .build();
-            }
-            contract.setCommission(dto.getCommission());
-            contract.setContractSum(dto.getContractSum());
-            contract.setContractPeriod(dto.getContractPeriod());
-            contract.setContractNumber(dto.getContractNumber());
-            contract.setContractStatus(contractStatusRepository.getOne(ContractStatus.GENERATED));
-            contractRepository.save(contract);
+            saveContract(dto, application, contractStatusRepository.getOne(ContractStatus.GENERATED));
             return base64String;
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
         }
+    }
+
+    @Override
+    public Long missContract(ContractFormDto dto) {
+        Application application = applicationService.getApplicationById(dto.getApplicationId());
+        ApplicationContract contract = saveContract(dto, application, contractStatusRepository.getOne(ContractStatus.MISSING));
+        return contract.getId();
+    }
+
+    private ApplicationContract saveContract(ContractFormDto dto, Application application, ContractStatus status) {
+        ApplicationContract contract = application.getContract();
+        if (isNull(contract)) {
+            contract = ApplicationContract.builder()
+                    .application(application)
+                    .build();
+        }
+        contract.setCommission(dto.getCommission());
+        contract.setContractSum(dto.getContractSum());
+        contract.setContractPeriod(dto.getContractPeriod());
+        contract.setContractNumber(dto.getContractNumber());
+        contract.setContractStatus(status);
+        contract = contractRepository.save(contract);
+        return contract;
     }
 }
