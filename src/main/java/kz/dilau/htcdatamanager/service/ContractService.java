@@ -6,4 +6,6 @@ public interface ContractService {
     ContractFormDto getContractForm(String token, Long applicationId);
 
     String generateContract(ContractFormDto dto);
+
+    Long missContract(ContractFormDto dto);
 }
