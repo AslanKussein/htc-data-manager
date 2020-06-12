@@ -256,20 +256,13 @@ public class ContractServiceImpl implements ContractService {
             JasperReport jasperReportPrice = JasperCompileManager.compileReport(inputPrice);
             JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, null, new JREmptyDataSource());
 
+            //------------------------
 
-            Resource resourceDetail = resourceLoader.getResource("classpath:jasper/buy/detail.jrxml");
+            Resource resourceValid = resourceLoader.getResource("classpath:jasper/sale/exclusive/valid.jrxml");
 
-            Map<String, Object> detailPar = new HashMap<>();
-            List<JasperBasicDto> detailItems = new ArrayList<>();
-
-            detailItems.add(new JasperBasicDto("-", "-"));
-            JRBeanCollectionDataSource detailDs = new JRBeanCollectionDataSource(detailItems);
-            detailPar.put("CollectionBeanParam", detailDs);
-
-
-            InputStream inputDetail = resourceDetail.getInputStream();
-            JasperReport jasperReportDatail = JasperCompileManager.compileReport(inputDetail);
-            JasperPrint jasperPrintDetail= JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
+            InputStream inputValid = resourceValid.getInputStream();
+            JasperReport jasperReportValid = JasperCompileManager.compileReport(inputValid);
+            JasperPrint jasperPrintValid= JasperFillManager.fillReport(jasperReportValid, null, new JREmptyDataSource());
             //----------------------
             Resource resourceAct = resourceLoader.getResource("classpath:jasper/buy/act.jrxml");
 
@@ -296,8 +289,8 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintBasic);
             jasperPrintList.add(jasperPrintDuties);
             jasperPrintList.add(jasperPrintPrice);
+            jasperPrintList.add(jasperPrintValid);
             jasperPrintList.add(jasperPrintResp);
-            jasperPrintList.add(jasperPrintDetail);
             jasperPrintList.add(jasperPrintAct);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
