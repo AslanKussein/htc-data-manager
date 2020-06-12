@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import com.itextpdf.text.ListItem;
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
@@ -8,9 +9,16 @@ import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
+import kz.dilau.htcdatamanager.web.dto.jasper.JasperActDto;
+import kz.dilau.htcdatamanager.web.dto.jasper.JasperBasicDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -18,11 +26,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -59,29 +68,250 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public String generateContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
+
+        if (dto.getGuid().equals("buy")) {
+            return generateContractBuy(application,dto);
+        }
+
+        if (dto.getGuid().equals("sale")) {
+            return generateContractSaleExclusive(application, dto);
+        }
+
+        if (dto.getGuid().equals("sale_exclusive")) {
+            return generateContractSaleExclusive(application,dto);
+        }
+        return "empty";
+    }
+
+
+    public String generateContractBuy(Application application, ContractFormDto dto) {
+
         try {
-            if (application.getOperationType().getCode().equals(OperationType.SELL) || isNull(application.getApplicationPurchaseData())) {
-                throw BadRequestException.idMustNotBeNull();
+
+            if (application.getOperationType().getCode().equals(OperationType.SELL)/* || isNull(application.getApplicationPurchaseData())*/) {
+                //throw BadRequestException.idMustNotBeNull();
             }
-            City city = application.getApplicationPurchaseData().getCity();
-            Resource resource = resourceLoader.getResource("classpath:jasper/" + dto.getGuid());
+            City city = null;//application.getApplicationPurchaseData().getCity();
+            Resource resource = resourceLoader.getResource("classpath:jasper/buy/main.jrxml");
 
             InputStream input = resource.getInputStream();
 
-            JasperReport jasperReport = JasperCompileManager.compileReport(input);
-
             // Add parameters
             Map<String, Object> parameters = new HashMap<>();
+            InputStream image  = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
+            parameters.put("logoImage", image);
+
             parameters.put("contractNumber", dto.getContractNumber());
-            parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            parameters.put("contractDate", dto.getContractNumber());
+            parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "TestCity");
             parameters.put("printDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
             parameters.put("clientFullname", application.getClientLogin());
-            parameters.put("createdBy", "vitrina");
 
-            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters);
+            parameters.put("objectRegion", application.getClientLogin());
+            parameters.put("objectType", application.getClientLogin());
+            parameters.put("objectRoomCount", application.getClientLogin());
+            parameters.put("objectArea", application.getClientLogin());
+            parameters.put("objectFloor", application.getClientLogin());
 
-            byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
-            String base64String = Base64.encodeBase64String(bytes);
+            JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, parameters, new JREmptyDataSource());
+            //----------------------
+
+            Resource resourceDuties = resourceLoader.getResource("classpath:jasper/buy/duties.jrxml");
+
+            InputStream inputDuties = resourceDuties.getInputStream();
+            JasperReport jasperReportDuties = JasperCompileManager.compileReport(inputDuties);
+            JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, null, new JREmptyDataSource());
+
+
+
+            //--------------------
+            Resource resourcePrice = resourceLoader.getResource("classpath:jasper/buy/price.jrxml");
+
+            InputStream inputPrice = resourcePrice.getInputStream();
+            JasperReport jasperReportPrice = JasperCompileManager.compileReport(inputPrice);
+            JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, null, new JREmptyDataSource());
+
+            //----------------------
+            Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/duties.jrxml");
+            InputStream inputResp = resourceResp.getInputStream();
+            JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
+            JasperPrint jasperPrintResp= JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
+
+            //----------------------
+            Resource resourceDetail = resourceLoader.getResource("classpath:jasper/buy/detail.jrxml");
+
+            Map<String, Object> detailPar = new HashMap<>();
+            List<JasperBasicDto> detailItems = new ArrayList<>();
+
+            detailItems.add(new JasperBasicDto("-", "-"));
+            JRBeanCollectionDataSource detailDs = new JRBeanCollectionDataSource(detailItems);
+            detailPar.put("CollectionBeanParam", detailDs);
+
+
+            InputStream inputDetail = resourceDetail.getInputStream();
+            JasperReport jasperReportDatail = JasperCompileManager.compileReport(inputDetail);
+            JasperPrint jasperPrintDetail= JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
+            //----------------------
+            Resource resourceAct = resourceLoader.getResource("classpath:jasper/buy/act.jrxml");
+
+            Map<String, Object> actPar = new HashMap<>();
+            List<JasperActDto> actItems = new ArrayList<>();
+
+            actItems.add(new JasperActDto("-", "-", "-", "-"));
+            actItems.add(new JasperActDto("*", "*", "*", "*"));
+            actItems.add(new JasperActDto("#", "#", "#", "#"));
+            JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
+            actPar.put("CollectionBeanParam", actDs);
+            actPar.put("docNumb", "123456");
+            actPar.put("customerIIN", "123123123123");
+            actPar.put("docDate", "12.12.2020");
+            actPar.put("agentFullname", "Agent Agentovich");
+
+
+            InputStream inputAct = resourceAct.getInputStream();
+            JasperReport jasperReportAct = JasperCompileManager.compileReport(inputAct);
+            JasperPrint jasperPrintAct= JasperFillManager.fillReport(jasperReportAct, actPar, new JREmptyDataSource());
+            //----------------------
+
+            List<JasperPrint> jasperPrintList = new ArrayList<>();
+            jasperPrintList.add(jasperPrintBasic);
+            jasperPrintList.add(jasperPrintDuties);
+            jasperPrintList.add(jasperPrintPrice);
+            jasperPrintList.add(jasperPrintResp);
+            jasperPrintList.add(jasperPrintDetail);
+            jasperPrintList.add(jasperPrintAct);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JRPdfExporter exporter = new JRPdfExporter();
+            //Add the list as a Parameter
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
+            //this will make a bookmark in the exported PDF for each of the reports
+            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+            exporter.exportReport();
+
+
+            //byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
+            String base64String = Base64.encodeBase64String(baos.toByteArray());
+
+            log.info("Done");
+
+            return base64String;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+    public String generateContractSaleExclusive(Application application, ContractFormDto dto) {
+
+        try {
+
+            if (application.getOperationType().getCode().equals(OperationType.SELL)/* || isNull(application.getApplicationPurchaseData())*/) {
+                //throw BadRequestException.idMustNotBeNull();
+            }
+            City city = null;//application.getApplicationPurchaseData().getCity();
+            Resource resource = resourceLoader.getResource("classpath:jasper/sale/exclusive/main.jrxml");
+
+            InputStream input = resource.getInputStream();
+
+            // Add parameters
+            Map<String, Object> mainPar = new HashMap<>();
+            InputStream image  = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
+            mainPar.put("logoImage", image);
+
+            mainPar.put("contractNumber", dto.getContractNumber());
+            mainPar.put("contractDate", dto.getContractNumber());
+            mainPar.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "TestCity");
+            mainPar.put("printDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+            mainPar.put("clientFullname", application.getClientLogin());
+
+            mainPar.put("objectFullAddress", "Streat Undefined, Block X, Undefined");
+            mainPar.put("objectType", application.getClientLogin());
+            mainPar.put("objectPrice", "100 000 000 $");
+
+            JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, mainPar, new JREmptyDataSource());
+            //----------------------
+
+            Resource resourceDuties = resourceLoader.getResource("classpath:jasper/sale/exclusive/duties.jrxml");
+
+            InputStream inputDuties = resourceDuties.getInputStream();
+            JasperReport jasperReportDuties = JasperCompileManager.compileReport(inputDuties);
+            JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, null, new JREmptyDataSource());
+
+
+            //----------------------
+            Resource resourceResp = resourceLoader.getResource("classpath:jasper/sale/exclusive/duties.jrxml");
+            InputStream inputResp = resourceResp.getInputStream();
+            JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
+            JasperPrint jasperPrintResp= JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
+
+            //----------------------
+
+            //--------------------
+            Resource resourcePrice = resourceLoader.getResource("classpath:jasper/sale/exclusive/price.jrxml");
+
+            InputStream inputPrice = resourcePrice.getInputStream();
+            JasperReport jasperReportPrice = JasperCompileManager.compileReport(inputPrice);
+            JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, null, new JREmptyDataSource());
+
+
+            Resource resourceDetail = resourceLoader.getResource("classpath:jasper/buy/detail.jrxml");
+
+            Map<String, Object> detailPar = new HashMap<>();
+            List<JasperBasicDto> detailItems = new ArrayList<>();
+
+            detailItems.add(new JasperBasicDto("-", "-"));
+            JRBeanCollectionDataSource detailDs = new JRBeanCollectionDataSource(detailItems);
+            detailPar.put("CollectionBeanParam", detailDs);
+
+
+            InputStream inputDetail = resourceDetail.getInputStream();
+            JasperReport jasperReportDatail = JasperCompileManager.compileReport(inputDetail);
+            JasperPrint jasperPrintDetail= JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
+            //----------------------
+            Resource resourceAct = resourceLoader.getResource("classpath:jasper/buy/act.jrxml");
+
+            Map<String, Object> actPar = new HashMap<>();
+            List<JasperActDto> actItems = new ArrayList<>();
+
+            actItems.add(new JasperActDto("-", "-", "-", "-"));
+            actItems.add(new JasperActDto("*", "*", "*", "*"));
+            actItems.add(new JasperActDto("#", "#", "#", "#"));
+            JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
+            actPar.put("CollectionBeanParam", actDs);
+            actPar.put("docNumb", "123456");
+            actPar.put("customerIIN", "123123123123");
+            actPar.put("docDate", "12.12.2020");
+            actPar.put("agentFullname", "Agent Agentovich");
+
+
+            InputStream inputAct = resourceAct.getInputStream();
+            JasperReport jasperReportAct = JasperCompileManager.compileReport(inputAct);
+            JasperPrint jasperPrintAct= JasperFillManager.fillReport(jasperReportAct, actPar, new JREmptyDataSource());
+            //----------------------
+
+            List<JasperPrint> jasperPrintList = new ArrayList<>();
+            jasperPrintList.add(jasperPrintBasic);
+            jasperPrintList.add(jasperPrintDuties);
+            jasperPrintList.add(jasperPrintPrice);
+            jasperPrintList.add(jasperPrintResp);
+            jasperPrintList.add(jasperPrintDetail);
+            jasperPrintList.add(jasperPrintAct);
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            JRPdfExporter exporter = new JRPdfExporter();
+            //Add the list as a Parameter
+            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
+            //this will make a bookmark in the exported PDF for each of the reports
+            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
+            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+            exporter.exportReport();
+
+
+            //byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
+            String base64String = Base64.encodeBase64String(baos.toByteArray());
 
             log.info("Done");
 

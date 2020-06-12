@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resposibillityjrxml" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9b701922-4102-49e7-bf0b-f6553fdd8b0a">
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="150" y="0" width="290" height="30" uuid="9159ccb9-7f52-402e-9ae3-e7f0ed31f257"/>
+                <textElement markup="html">
+                    <font fontName="DejaVu Serif" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>4.Ответственность Сторон</b>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="30" width="551" height="230" uuid="7e100113-d7aa-4bf9-8672-3b1d64e56d73"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>4.1.</b>В случае совершения Сделки Заказчиком спотенциальным продавцом Объекта (предоставленным Исполнителем) безучастия Исполнителя Заказчик оплачивает неустойку (штраф) вразмере 4% (четырехпроцентов) от общей суммы Сделки. <br/><b>4.2.</b>В случае отказа Заказчика от приобретения Объекта, предложенного Исполнителем, послезаключения Соглашения о задатке, предварительного договора Заказчик обязуется произвести полный расчет с Исполнителем согласно условиям настоящего Договора.<br/><b>4.3.</b>Уплата неустойки (штрафа) неосвобождает Заказчика от исполнения обязательств, предусмотренных Разделом 3 настоящего Договора. <br/><b>4.4.</b>С момента Заключения Сторонами настоящего Договора, Заказчик со своей стороны обязуется непрепятствовать работе Исполнителя."]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="150" y="260" width="300" height="30" uuid="a6c520fa-6477-4a7d-9c62-2bcf51818879"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[5. Порядок расторжения Договора]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="4" y="291" width="547" height="179" uuid="672cd226-c1fd-47f8-8c03-d495ad1c8b97"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>5.1.</b>Договор расторгается Исполнителем в одностороннем порядке в случае нарушения условий Договора со стороны Заказчика, с обязательством  Заказчика оплатить вознаграждение, штрафы и иные понесенные Исполнителем расходы и убытки, связанные с исполнением настоящего Договора.<br/><b>5.2.</b>Договор может быть изменен или расторгнут только по письменному соглашению сторон. <br><b>5.3.</b>Заказчик не вправе досрочно расторгнуть настоящий Договор в случае заключения Сделки Заказчиком с владельцем Объекта (предоставленным Исполнителем) без участия Исполнителя."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="150" y="470" width="300" height="30" uuid="322dee5c-949d-47d7-ae46-003d6de7444d"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["6. Заключительные положения"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="500" width="551" height="250" uuid="00b38534-da23-4da8-a85b-b1ed1487c6e8"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="DejaVu Serif" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>6.1.</b>Настоящий Договор составлен в двух экземплярах, на русском языке, по одному- для каждой из Сторон.<br/><b>6.2.</b>Все споры и разногласия разрешаются путем переговоров, либо в судебном порядке по месту нахождения Исполнителя. <br/><b>6.3.</b>Любые изменения и дополнения к настоящему Договору совершаются по обоюдному согласию Сторон, исключительно в письменной форме, и являются неотъемлемой его частью."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="760" width="208" height="30" uuid="5fea4557-dba0-4680-8664-b1ca55b3002e"/>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Подпись Заказчика:</b>"]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>
