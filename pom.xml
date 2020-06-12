@@ -117,11 +117,30 @@
             <version>6.0.0</version>
         </dependency>
 
-        <dependency>
+        <!--dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
+        </dependency-->
+        <dependency>
+            <groupId>kz.dilau</groupId>
+            <artifactId>jasperFonts</artifactId>
+            <scope>system</scope>
+            <systemPath>${basedir}/dependencies/jasperFonts-1.0.jar</systemPath>
+            <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>kz.dilau</groupId>
+            <artifactId>TNSfont</artifactId>
+            <scope>system</scope>
+            <systemPath>${basedir}/dependencies/TNSfont-1.0.jar</systemPath>
+            <version>1.0</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>my.TNSfont</groupId>
+            <artifactId>TNSfont</artifactId>
+            <version>1.0</version>
+        </dependency>-->
     </dependencies>
 
     <dependencyManagement>

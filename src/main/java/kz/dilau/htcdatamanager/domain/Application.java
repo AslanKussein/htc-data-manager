@@ -21,11 +21,14 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "application")
 public class Application extends AuditableBaseEntity<String, Long> {
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "operation_type_id", nullable = false)
     private OperationType operationType;
+
     @Column(name = "operation_type_id", insertable = false, updatable = false)
     private Long operationTypeId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "object_type_id")
     private ObjectType objectType;
