@@ -4,6 +4,7 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
 import kz.dilau.htcdatamanager.domain.dictionary.YardType;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
+import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -82,6 +83,10 @@ public class PurchaseInfo extends AGeneralCharacteristics {
     private Integer apartmentsOnTheSiteFrom;
     @Column(name = "apartments_on_the_site_to")
     private Integer apartmentsOnTheSiteTo;
+    @Column(name = "atelier")
+    private Boolean atelier;//студия
+    @Column(name = "separate_bathroom")
+    private Boolean separateBathroom;
 
     @Type(type = "jsonb")
     @Column(name = "parking_types", columnDefinition = "jsonb")
@@ -173,8 +178,33 @@ public class PurchaseInfo extends AGeneralCharacteristics {
             this.concierge = dto.getConcierge();
             this.playground = dto.getPlayground();
             this.wheelchair = dto.getWheelchair();
+            this.atelier = dto.getAtelier();
+            this.separateBathroom = dto.getSeparateBathroom();
         }
         this.materialOfConstruction = materialOfConstruction;
         this.yardType = yardType;
+    }
+
+
+    public PurchaseInfo(PurchaseInfoClientDto dto, BigDecimalPeriod objectPrice) {
+        if (nonNull(objectPrice)) {
+            this.objectPriceFrom = objectPrice.getFrom();
+            this.objectPriceTo = objectPrice.getTo();
+        }
+        if (nonNull(dto)) {
+            if (nonNull(dto.getFloorPeriod())) {
+                this.floorFrom = dto.getFloorPeriod().getFrom();
+                this.floorTo = dto.getFloorPeriod().getTo();
+            }
+            if (nonNull(dto.getFloorPeriod())) {
+                this.numberOfFloorsFrom = dto.getFloorPeriod().getFrom();
+                this.numberOfFloorsTo = dto.getFloorPeriod().getTo();
+            }
+
+            if (nonNull(dto.getTotalAreaPeriod())) {
+                this.totalAreaFrom = dto.getTotalAreaPeriod().getFrom();
+                this.totalAreaTo = dto.getTotalAreaPeriod().getTo();
+            }
+        }
     }
 }

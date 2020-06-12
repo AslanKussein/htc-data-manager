@@ -17,15 +17,21 @@ public class ContractResource {
     private final ContractService contractService;
 
     @GetMapping("/{applicationId}")
-    public ResponseEntity<ContractFormDto> generateContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
-                                                            @PathVariable("applicationId") Long applicationId) {
+    public ResponseEntity<ContractFormDto> getContractForm(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                           @PathVariable("applicationId") Long applicationId) {
         ContractFormDto result = contractService.getContractForm(token, applicationId);
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping
+    @PostMapping("/generateContract")
     public ResponseEntity<String> generateContract(@RequestBody ContractFormDto dto) {
         String result = contractService.generateContract(dto);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/missContract")
+    public ResponseEntity<Long> missContract(@RequestBody ContractFormDto dto) {
+        Long result = contractService.missContract(dto);
         return ResponseEntity.ok(result);
     }
 }

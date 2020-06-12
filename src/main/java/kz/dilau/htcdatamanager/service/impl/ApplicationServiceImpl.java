@@ -76,11 +76,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
 
-    private String getAppointmentAgent(String agent) {
+    public String getAppointmentAgent(String agent) {
         return isNull(agent) || agent.equals("") ? getAuthorName() : agent;
     }
 
-    private List<String> getOperationList(String token, Application application) {
+    public List<String> getOperationList(String token, Application application) {
         List<String> operations = new ArrayList<>();
         ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
         if (nonNull(checkOperationList) && nonNull(checkOperationList.getData())) {
@@ -271,7 +271,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                 ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationPurchaseData(dto);
                 if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
                     PurchaseInfo info = entityMappingTool.convertPurchaseInfo(dto);
-                    if (nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+                    if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData()) &&
+                            nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
                         info.setId(application.getApplicationPurchaseData().getPurchaseInfo().getId());
                     }
                     purchaseData.setPurchaseInfo(info);

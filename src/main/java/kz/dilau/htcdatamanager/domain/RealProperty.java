@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
+import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -54,6 +55,11 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
         this.building = building;
         this.apartmentNumber = realPropertyDto.getApartmentNumber();
         this.cadastralNumber = realPropertyDto.getCadastralNumber();
+    }
+
+    public RealProperty(RealPropertyClientDto realPropertyClientDto, Building building) {
+        this.building = building;
+        this.apartmentNumber = realPropertyClientDto.getApartmentNumber();
     }
 
     public List<RealPropertyMetadata> getMetadataList() {

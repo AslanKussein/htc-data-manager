@@ -2,10 +2,11 @@ package kz.dilau.htcdatamanager.web.dto.client;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.web.dto.ApplicationPurchaseDataDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -19,19 +20,26 @@ public class ApplicationClientDTO {
     @ApiModelProperty(value = "ID вида операции", required = true)
     @NotNull(message = "Operation type must not be null")
     private Long operationTypeId;
-    @ApiModelProperty(name = "objectPrice", value = "Цена объекта(млн тг)")
-    private BigDecimal objectPrice;
-    @ApiModelProperty(name = "probabilityOfBidding", value = "Вероятность торга")
-    private Boolean probabilityOfBidding;//вероятность торга
-    @ApiModelProperty(name = "exchange", value = "Обмен")
-    private Boolean exchange;//обмен
-    @ApiModelProperty(name = "mortgage", value = "Ипотека")
-    private Boolean mortgage;//Продажа через ипотеку
+
+    @ApiModelProperty(value = "ID типа объекта", required = true)
+    private Long objectTypeId;
+
     @ApiModelProperty(value = "Данные по невижимости", required = true)
     @NotNull(message = "Real property must not be null")
-    private RealPropertyClientDto realPropertyClientDto;
-    @ApiModelProperty(name = "note", value = "Примечание")
-    private String note;
+    private RealPropertyClientDto realPropertyDto;
+
     @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
     private String clientLogin;
+
+    @ApiModelProperty(name = "sellDataDto", value = "Общая информация о сделке продажи объекта")
+    private ApplicationSellDataDto sellDataDto;
+
+    @ApiModelProperty(value = "Общая информация о сделке покупки объекта")
+    private ApplicationPurchaseDataDto purchaseDataDto;
+
+    @ApiModelProperty(name = "purchaseInfoClientDto", value = "Модель параметров по операции Покупка ")
+    private PurchaseInfoClientDto purchaseInfoDto;
+
+    @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
+    private String agent;
 }
