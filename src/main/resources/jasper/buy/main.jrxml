@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="03167432-9c50-4e53-9261-4820e15af58b">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <subDataset name="MyDataSet" uuid="a7a1906f-0a78-4f88-87fa-9a250b0cfd10">
+        <field name="fName" class="java.lang.String"/>
+        <field name="fVal" class="java.lang.String"/>
+    </subDataset>
+    <parameter name="contractNumber" class="java.lang.String"/>
+    <parameter name="city" class="java.lang.String"/>
+    <parameter name="printDate" class="java.lang.String"/>
+    <parameter name="clientFullname" class="java.lang.String"/>
+    <parameter name="contractDate" class="java.lang.String"/>
+    <parameter name="CollectionBeanParam" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+    <parameter name="logoImage" class="java.io.InputStream"/>
+    <parameter name="maxPrice" class="java.lang.String"/>
+    <parameter name="objectRegion" class="java.lang.String"/>
+    <parameter name="objectType" class="java.lang.String"/>
+    <parameter name="objectRoomCount" class="java.lang.String"/>
+    <parameter name="objectArea" class="java.lang.String"/>
+    <parameter name="objectFloor" class="java.lang.String"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="190" y="80" width="120" height="30" uuid="1d5fdc16-90f2-4a58-aff4-4e33d4da06fc"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["ДОГОВОР №"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="80" width="160" height="30" uuid="bdffaa5f-902f-4aac-a4b7-dd51ac934178"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractNumber}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="178" width="550" height="72" uuid="abe81552-2193-46a3-8308-a73fb1d3c2e2"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["&nbsp;&nbsp;<b>Товарищество с ограниченной ответственностью «Казахстанско-Канадская компания «Витринанедвижимости»</b>, в лице Генерального директора <b>Нургазина Д. М.</b>, именуемое в дальнейшем <b>«Исполнитель»</b>, с одной стороны, и <b>гр.</b>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="270" width="550" height="20" uuid="c0c5db5e-7fc6-4b9d-ad41-5e0777e3afa2"/>
+                <textElement>
+                    <font fontName="DejaVu Sans"/>
+                </textElement>
+                <textFieldExpression><![CDATA["_________________________________________________________________________________________________"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="37" y="150" width="470" height="20" uuid="71a9a697-8904-4d91-a853-add85318558f"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["об оказании риэлтерских услуг Покупателю объекта недвижимости"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="250" width="160" height="30" uuid="38d7a582-09a5-43f2-8621-af0455882e47"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{clientFullname}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="290" width="551" height="50" uuid="ec1b2126-0e1c-40a9-8247-39c74ca7cd55"/>
+                <textElement textAlignment="Left" markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>«Заказчик»</b>, с другой стороны, вместе в дальнейшем именуемые «Стороны», заключили настоящий договор (далее – Договор) о нижеследующем:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="180" y="340" width="171" height="20" uuid="3730421c-067b-41ab-9458-0608a2508e4e"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["1.Предмет Договора"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="359" width="551" height="71" uuid="cc67c3c0-7017-4d14-8099-08e60d038102"/>
+                <textElement textAlignment="Left" markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>1.1.</b> Заказчик поручает, а Исполнитель обязуется за вознаграждение осуществить поиск (подбор) объекта недвижимого имущества, отвечающего следующим ориентировочным требованиям Принципала:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="449" y="110" width="126" height="30" uuid="c0e0b14b-abc7-4109-8f62-c6dac8a49615"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractDate}+" г."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="449" y="0" width="101" height="30" uuid="33a34115-e86e-4ece-a7d4-f623be4ff735"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{printDate}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="1" y="110" width="100" height="30" uuid="1cf968e5-a817-450d-857a-bfe7ad12be98"/>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["г. " + $P{city}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="1" y="710" width="548" height="40" uuid="4d5207cc-8870-4224-90e9-6c7bd3c4a85d"/>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>1.2.Ориентировочная стоимость объекта недвижимости должна быть не более:_____________________________________ [Цена объекта «до»] _________________________________</b>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="760" width="200" height="30" uuid="8ec59479-9af1-4a5a-95d6-5c4fa06f5fd7"/>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Подпись Заказчика:</b>"]]></textFieldExpression>
+            </textField>
+            <image>
+                <reportElement x="180" y="0" width="180" height="80" uuid="8f5d0e9f-a93c-4be7-8486-21c68d7d19de"/>
+                <imageExpression><![CDATA[$P{logoImage}]]></imageExpression>
+            </image>
+            <textField>
+                <reportElement x="0" y="426" width="280" height="56" uuid="d46a140e-9e47-40d9-b1b1-c4069edac584"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Район месторасположения объекта недвижимости Название жилого комплекса <i>(при наличии)</i>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="482" width="280" height="56" uuid="c3db824c-3731-4135-8aa5-0f9fb027f893"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Вид объекта недвижимости: </b>(квартира, жилойдом <i>(необходимое отметить)</i>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="538" width="280" height="56" uuid="9f0543bb-a061-488b-ae9a-e0bb645ed643"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Количество комнат в квартире:</b>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="594" width="280" height="56" uuid="70c0ab88-b40a-425c-9c1a-96466848ddd4"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Приблизительная общая площадь, (м2, соток):</b>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="650" width="280" height="56" uuid="90c7030b-6216-491b-b3a8-b1f0dfa66faa"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Этаж(этажность):</b>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="650" width="260" height="56" uuid="19e4ade2-fe63-481a-a0a2-ba219acac9f6"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{objectFloor}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="594" width="260" height="56" uuid="ec81eb1d-194f-4d14-85dc-5ddd89438402"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{objectArea}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="538" width="260" height="56" uuid="2f71eb90-50e1-472c-8c8e-127bd928cd82"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{objectRoomCount}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="482" width="260" height="56" uuid="01c51ee0-cdd2-448f-a0df-eaf17f8370e3"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{objectType}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="426" width="260" height="56" uuid="09fc33d0-efa7-4cea-8b49-08aa7ff04683"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement>
+                    <font fontName="DejaVu Sans" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{objectRegion}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>
