@@ -117,7 +117,7 @@ public class ContractServiceImpl implements ContractService {
             parameters.put("logoImage", image);
 
             parameters.put("contractNumber", dto.getContractNumber());
-            parameters.put("contractDate", sdfDate.format(dto.getContractPeriod()));
+            parameters.put("contractDate", sdfDate.format(new Date()));
             parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
             parameters.put("printDate", sdfDate.format(new Date()));
             parameters.put("clientFullname", clientDto.getFullname());
