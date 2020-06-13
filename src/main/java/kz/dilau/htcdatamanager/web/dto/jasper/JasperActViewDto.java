@@ -11,7 +11,11 @@ public class JasperActViewDto {
 
     private String fCustomersign;
 
-    public JasperActViewDto(String fNum, String fDate,  String fFullname, String fIIN, String fCustomersign){
+    /*public JasperActViewDto () {
+
+    }*/
+
+    public JasperActViewDto(String fNum, String fDate,  String fFullname, String fIIN, String fCustomersign) {
         this.fNum = fNum;
         this.fDate = fDate;
         this.fFullname = fFullname;

@@ -19,7 +19,7 @@
             <textField>
                 <reportElement x="0" y="770" width="200" height="22" uuid="fdbfde86-f42a-4768-be51-5fbed222a9bb"/>
                 <textElement markup="html">
-                    <font fontName="DejaVu Sans"/>
+                    <font fontName="Times New Roman" size="14" isBold="false"/>
                 </textElement>
                 <textFieldExpression><![CDATA["<b>Подпись Заказчика:</b>"]]></textFieldExpression>
             </textField>

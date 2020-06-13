@@ -77,7 +77,7 @@
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Arial" size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<b><u>Исполнитель:<u/>ТОО «Казахстанско-Канадская компания «Витрина недвижимости»</b> <br/>БИН 131040026814 <br/>IBAN KZ786017111000008669 АО Народный банк Казахстана <br/>БИК HSBKKZKX <br/>Юр.адрес:г.Нур-Султан, район Есиль, ул.Достык, дом13, ВП-19 <br/>тел.: 8   (7172) 999-696 <br/>e-mail: info@ivitrina.kz <br/>Генеральный директор______________НургазинД.М.<br/>МП"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["<b><u>Исполнитель:<u/>ТОО «Казахстанско-Канадская компания «Витрина недвижимости»</b> <br/>БИН 131040026814 <br/>IBAN KZ786017111000008669 АО Народный банк Казахстана <br/>БИК HSBKKZKX <br/>Юр.адрес:г.Нур-Султан, район Есиль, ул.Достык, дом13, ВП-19 <br/>тел.: 8   (7172) 999-696 <br/>e-mail: info@ivitrina.kz <br/>Генеральный директор______________Нургазин Д.М.<br/>МП"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

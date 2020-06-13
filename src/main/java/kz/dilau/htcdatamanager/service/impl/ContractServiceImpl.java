@@ -1,12 +1,10 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import com.itextpdf.text.ListItem;
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.ApplicationContract;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
-import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ContractStatusRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
@@ -14,15 +12,14 @@ import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
+import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewStandartDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperBasicDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -30,8 +27,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -305,6 +300,32 @@ public class ContractServiceImpl implements ContractService {
             InputStream inputActView = resourceActView.getInputStream();
             JasperReport jasperReportActView = JasperCompileManager.compileReport(inputActView);
             JasperPrint jasperPrintActView= JasperFillManager.fillReport(jasperReportActView, actPar, new JREmptyDataSource());
+
+            //------------------------
+            Resource resourceRecv = resourceLoader.getResource("classpath:jasper/sale/exclusive/recvisit.jrxml");
+
+            Map<String, Object> recvPar = new HashMap<>();
+
+            recvPar.put("docNumb", "12356");
+            recvPar.put("docDate", "123456");
+            recvPar.put("actDate", "123123123123");
+            recvPar.put("clientFullname", "Client Clientovich");
+            recvPar.put("clientBirthdate", "Agent Agentovich");
+            recvPar.put("clientPassportDealDate", "12.12.2008");
+            recvPar.put("clientPassportnumber", "123456");
+            recvPar.put("clientPassportserial", "DF1234");
+            recvPar.put("clientPassportDealer", "DF1234");
+            recvPar.put("clientAddress", "DF1234");
+            recvPar.put("clientIIN", "4444333344443333");
+            recvPar.put("clientMobilePhone", "7 777 77777 77");
+            recvPar.put("agentFullname", "Agent Agentovich");
+            recvPar.put("confidantFullname", "Confidant Confidant");
+
+
+
+            InputStream inputRecv = resourceRecv.getInputStream();
+            JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
+            JasperPrint jasperPrintRecv= JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
             //----------------------
 
             Map<String, Object> propPar = new HashMap<>();
@@ -371,6 +392,7 @@ public class ContractServiceImpl implements ContractService {
             //jasperPrintList.add(jasperPrintResp);
             jasperPrintList.add(jasperPrintFinal);
             jasperPrintList.add(jasperPrintActView);
+            jasperPrintList.add(jasperPrintRecv);
             jasperPrintList.add(jasperPrintProp);
             jasperPrintList.add(jasperPrintActWork);
 
@@ -440,6 +462,31 @@ public class ContractServiceImpl implements ContractService {
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
             JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
+            //------------------------
+            Resource resourceRecv = resourceLoader.getResource("classpath:jasper/sale/standart/recvisit.jrxml");
+
+            Map<String, Object> recvPar = new HashMap<>();
+
+            recvPar.put("docNumb", "12356");
+            recvPar.put("docDate", "123456");
+            recvPar.put("actDate", "123123123123");
+            recvPar.put("clientFullname", "Client Clientovich");
+            recvPar.put("clientBirthdate", "Agent Agentovich");
+            recvPar.put("clientPassportDealDate", "12.12.2008");
+            recvPar.put("clientPassportnumber", "123456");
+            recvPar.put("clientPassportserial", "DF1234");
+            recvPar.put("clientPassportDealer", "DF1234");
+            recvPar.put("clientAddress", "DF1234");
+            recvPar.put("clientIIN", "4444333344443333");
+            recvPar.put("clientMobilePhone", "7 777 77777 77");
+            recvPar.put("agentFullname", "Agent Agentovich");
+            recvPar.put("confidantFullname", "Confidant Confidant");
+
+
+
+            InputStream inputRecv = resourceRecv.getInputStream();
+            JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
+            JasperPrint jasperPrintRecv= JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
 
             //------------------------
 
@@ -456,14 +503,14 @@ public class ContractServiceImpl implements ContractService {
             JasperPrint jasperPrintFinal= JasperFillManager.fillReport(jasperReportFinal, null, new JREmptyDataSource());
 
             //------------------------
-            Resource resourceActView = resourceLoader.getResource("classpath:jasper/sale/exclusive/actView.jrxml");
+            /*Resource resourceActView = resourceLoader.getResource("classpath:jasper/standart/standart/actView.jrxml");
 
             Map<String, Object> actPar = new HashMap<>();
             List<JasperActViewDto> actItems = new ArrayList<>();
 
-            actItems.add(new JasperActViewDto("1","-", "-", "-", "-s"));
-            actItems.add(new JasperActViewDto("2","*", "*", "*", "*s"));
-            actItems.add(new JasperActViewDto("3","#", "#", "#", "#s"));
+            actItems.add(new JasperActViewStandartDto("1","-", "-", "-", "-s", "#1"));
+            actItems.add(new JasperActViewStandartDto("2","-", "-", "-", "-s", "#2"));
+            actItems.add(new JasperActViewStandartDto("2","-", "-", "-", "-s", "#3"));
             JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
             actPar.put("CollectionBeanParam", actDs);
             actPar.put("docNumb", "123456");
@@ -473,7 +520,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputActView = resourceActView.getInputStream();
             JasperReport jasperReportActView = JasperCompileManager.compileReport(inputActView);
-            JasperPrint jasperPrintActView= JasperFillManager.fillReport(jasperReportActView, actPar, new JREmptyDataSource());
+            JasperPrint jasperPrintActView= JasperFillManager.fillReport(jasperReportActView, actPar, new JREmptyDataSource());*/
             //----------------------
 
             Map<String, Object> propPar = new HashMap<>();
@@ -536,10 +583,13 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintBasic);
             jasperPrintList.add(jasperPrintDuties);
             jasperPrintList.add(jasperPrintResp);
-            jasperPrintList.add(jasperPrintValid);
+
+            //jasperPrintList.add(jasperPrintValid);
             //jasperPrintList.add(jasperPrintResp);
+            jasperPrintList.add(jasperPrintRecv);
+            //jasperPrintList.add(jasperPrintActView);
             jasperPrintList.add(jasperPrintFinal);
-            jasperPrintList.add(jasperPrintActView);
+
             jasperPrintList.add(jasperPrintProp);
             jasperPrintList.add(jasperPrintActWork);
 
