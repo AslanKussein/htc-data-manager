@@ -67,15 +67,15 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         dto.setClientLogin(application.getClientLogin());
         dto.setOperationTypeId(application.getOperationTypeId());
         dto.setObjectTypeId(application.getObjectTypeId());
-        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData()) && operations.contains(VIEW + SALE_DEAL_INFO)) {
+        if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData()) && operations.contains(VIEW + SALE_DEAL_INFO)) {
             dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
         }
-        if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
+        if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
             dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
         }
 
         RealPropertyClientDto realPropertyDto = new RealPropertyClientDto();
-        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())
+        if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())
                 && nonNull(application.getApplicationSellData().getRealProperty())) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
             if (operations.contains(VIEW + SALE_OBJECT_INFO)) {
@@ -93,7 +93,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
             if (operations.contains(VIEW + SALE_OBJECT_DATA)) {
                 realPropertyDto.setApartmentNumber(realProperty.getApartmentNumber());
             }
-        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())
+        } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())
                 && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
             if (operations.contains(VIEW + PURCHASE_OBJECT_INFO)) {
                 dto.setPurchaseInfoDto(new PurchaseInfoClientDto(application.getApplicationPurchaseData().getPurchaseInfo()));
@@ -155,7 +155,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
             application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
-        if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseInfoDto())) {
+        if (operationType.isBuy() && nonNull(dto.getPurchaseInfoDto())) {
             if (operations.contains(UPDATE + PURCHASE_DEAL_INFO)) {
                 ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationClientPurchaseData(dto);
                 if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
@@ -171,7 +171,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 purchaseData.setApplication(application);
                 application.setApplicationPurchaseData(purchaseData);
             }
-        } else if (operationType.getCode().equals(OperationType.SELL)) {
+        } else if (operationType.isSell()) {
             if (nonNull(dto.getSellDataDto()) && operations.contains(UPDATE + SALE_DEAL_INFO)) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
                 if (isNull(dataDto.getObjectPrice())) {
