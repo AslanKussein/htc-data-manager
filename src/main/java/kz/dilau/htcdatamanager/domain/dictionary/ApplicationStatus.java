@@ -5,6 +5,7 @@ import kz.dilau.htcdatamanager.domain.base.BaseSystemDictionary;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,4 +26,9 @@ public class ApplicationStatus extends BaseSystemDictionary {
     public static final Long FINISHED = 9L;
 
     public static final List<Long> ALL_STATUSES = Arrays.asList(FIRST_CONTACT, MEETING, CONTRACT, ADS, PHOTO_SHOOT, DEMO, CLOSE_TRANSACTION, SUCCESS, FINISHED);
+
+    @Transient
+    public boolean isContract() {
+        return CONTRACT.equals(this.id);
+    }
 }

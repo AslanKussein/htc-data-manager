@@ -28,7 +28,7 @@ public class ApplicationDto {
     private ApplicationPurchaseDataDto purchaseDataDto;
 
     @ApiModelProperty(value = "Идентификационные данные сделки")
-    private ContractDto contractDto;
+    private ContractFormDto contractDto;
 
     @ApiModelProperty(value = "Общая информация об объекте продажи")
     private RealPropertyDto realPropertyDto;

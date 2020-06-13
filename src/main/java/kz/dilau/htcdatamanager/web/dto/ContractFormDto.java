@@ -8,6 +8,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+import static java.util.Objects.nonNull;
+
 @Getter
 @Setter
 @Builder
@@ -31,12 +33,14 @@ public class ContractFormDto {
     private String guid;
 
     public ContractFormDto(ApplicationContract contract) {
-        this.applicationId = contract.getApplicationId();
-        this.contractPeriod = contract.getContractPeriod();
-        this.contractNumber = contract.getContractNumber();
-        this.contractSum = contract.getContractSum();
-        this.commission = contract.getCommission();
-        this.isExclusive = contract.getIsExclusive();
-        this.guid = contract.getGuid();
+        if (nonNull(contract)) {
+            this.applicationId = contract.getApplicationId();
+            this.contractPeriod = contract.getContractPeriod();
+            this.contractNumber = contract.getContractNumber();
+            this.contractSum = contract.getContractSum();
+            this.commission = contract.getCommission();
+            this.isExclusive = contract.getIsExclusive();
+            this.guid = contract.getGuid();
+        }
     }
 }

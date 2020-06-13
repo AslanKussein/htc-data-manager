@@ -120,17 +120,17 @@ public class ApplicationServiceImpl implements ApplicationService {
         dto.setClientLogin(application.getClientLogin());
         dto.setOperationTypeId(application.getOperationTypeId());
         dto.setObjectTypeId(application.getObjectTypeId());
-        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData()) && operations.contains(VIEW + SALE_DEAL_INFO)) {
+        if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData()) && operations.contains(VIEW + SALE_DEAL_INFO)) {
             dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
         }
-        if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
+        if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
             dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
         }
         if (operations.contains(VIEW + DEAL_DATA)) {
-            //todo contract info
+            dto.setContractDto(new ContractFormDto(application.getContract()));
         }
         RealPropertyDto realPropertyDto = new RealPropertyDto();
-        if (application.getOperationType().getCode().equals(OperationType.SELL) && nonNull(application.getApplicationSellData())
+        if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())
                 && nonNull(application.getApplicationSellData().getRealProperty())) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
             if (operations.contains(VIEW + SALE_OBJECT_INFO)) {
@@ -163,7 +163,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 realPropertyDto.setCadastralNumber(realProperty.getCadastralNumber());
                 realPropertyDto.setApartmentNumber(realProperty.getApartmentNumber());
             }
-        } else if (application.getOperationType().getCode().equals(OperationType.BUY) && nonNull(application.getApplicationPurchaseData())
+        } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())
                 && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
             if (operations.contains(VIEW + PURCHASE_OBJECT_INFO)) {
                 dto.setPurchaseInfoDto(new PurchaseInfoDto(application.getApplicationPurchaseData().getPurchaseInfo()));
@@ -200,10 +200,10 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .currentAgent(agent)
                 .clientLogin(dto.getClientLogin())
                 .build();
-        if (operationType.getCode().equals(OperationType.BUY)) {
+        if (operationType.isBuy()) {
             ApplicationPurchaseData data = new ApplicationPurchaseData(application, dto.getNote());
             application.setApplicationPurchaseData(data);
-        } else if (operationType.getCode().equals(OperationType.SELL)) {
+        } else if (operationType.isSell()) {
             ApplicationSellData data = new ApplicationSellData(application, dto.getNote());
             application.setApplicationSellData(data);
         }
@@ -266,7 +266,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
             application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
-        if (operationType.getCode().equals(OperationType.BUY) && nonNull(dto.getPurchaseDataDto())) {
+        if (operationType.isBuy() && nonNull(dto.getPurchaseDataDto())) {
             if (operations.contains(UPDATE + PURCHASE_DEAL_INFO)) {
                 ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationPurchaseData(dto);
                 if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
@@ -283,7 +283,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 purchaseData.setApplication(application);
                 application.setApplicationPurchaseData(purchaseData);
             }
-        } else if (operationType.getCode().equals(OperationType.SELL)) {
+        } else if (operationType.isSell()) {
             if (nonNull(dto.getSellDataDto()) && operations.contains(UPDATE + SALE_DEAL_INFO)) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
                 if (isNull(dataDto.getObjectPrice())) {
@@ -538,7 +538,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = getApplicationById(dto.getApplicationId());
         ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId());
         if (dto.getStatusId().equals(ApplicationStatus.DEMO) || dto.getStatusId().equals(ApplicationStatus.PHOTO_SHOOT) || dto.getStatusId().equals(ApplicationStatus.ADS)) {
-            if (application.getApplicationStatus().getId().equals(ApplicationStatus.CONTRACT) || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS)) {
+            if (application.getApplicationStatus().isContract() || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS)) {
                 application.setApplicationStatus(entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId()));
                 return applicationRepository.save(application).getId();
             } else {
