@@ -127,7 +127,7 @@ public class ApplicationServiceImpl implements ApplicationService {
             dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
         }
         if (operations.contains(VIEW + DEAL_DATA)) {
-            //todo contract info
+            dto.setContractDto(new ContractFormDto(application.getContract()));
         }
         RealPropertyDto realPropertyDto = new RealPropertyDto();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())
