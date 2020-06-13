@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.exception.DetailedException;
 import kz.dilau.htcdatamanager.service.KeycloakService;
-import kz.dilau.htcdatamanager.web.dto.AgentDto;
-import kz.dilau.htcdatamanager.web.dto.CheckOperationGroupDto;
-import kz.dilau.htcdatamanager.web.dto.RoleDto;
-import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +44,8 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
     private static final String USERS_INFO = "/infos";
     private static final String ROLE_REST_ENDPOINT = "/roles/{id}";
+    private static final String PROFILE_CLIENT_REST_ENDPOINT = "/api/profile-client";
+    private static final String CLIENTS_BY_LOGINS = "/getList";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -210,6 +209,26 @@ public class KeycloakServiceImpl implements KeycloakService {
                 new ParameterizedTypeReference<ListResponse<CheckOperationGroupDto>>() {
                 }
         );
+        return response.getBody();
+    }
+
+    @Override
+    public List<ProfileClientDto> readClientInfoByLogins(List<String> logins) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getUserManagerToken());
+        HttpEntity<Object> request = new HttpEntity<>(logins, headers);
+        String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_REST_ENDPOINT + CLIENTS_BY_LOGINS;
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        uriBuilder.queryParam("loginList", logins);
+        ResponseEntity<List<ProfileClientDto>> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<List<ProfileClientDto>>() {
+                }
+        );
+
         return response.getBody();
     }
 

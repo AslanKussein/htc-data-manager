@@ -12,6 +12,10 @@ public class BadRequestException extends DetailedException {
         log.error(description.toString());
     }
 
+    public static BadRequestException createTemplateException(String name) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue(name));
+    }
+
     public static BadRequestException createRequiredIsEmpty(String name) {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.required.parameter.is.empty", name));
     }

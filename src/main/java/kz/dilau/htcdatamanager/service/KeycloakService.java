@@ -1,9 +1,6 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.web.dto.AgentDto;
-import kz.dilau.htcdatamanager.web.dto.CheckOperationGroupDto;
-import kz.dilau.htcdatamanager.web.dto.RoleDto;
-import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 
 import java.util.List;
@@ -19,4 +16,6 @@ public interface KeycloakService {
     RoleDto readRole(Long id);
 
     ListResponse<CheckOperationGroupDto> getCheckOperationList(String token, List<String> groupCodes);
+
+    List<ProfileClientDto> readClientInfoByLogins(List<String> logins);
 }

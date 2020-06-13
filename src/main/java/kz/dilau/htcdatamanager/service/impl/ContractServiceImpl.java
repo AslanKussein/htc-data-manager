@@ -2,13 +2,19 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.ApplicationContract;
+import kz.dilau.htcdatamanager.domain.ApplicationPurchaseData;
+import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.District;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ContractStatusRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
+import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
+import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperBasicDto;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +42,13 @@ import static java.util.Objects.nonNull;
 @Slf4j
 @Service
 public class ContractServiceImpl implements ContractService {
+    private static final SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
+
     private final ApplicationContractRepository contractRepository;
     private final ApplicationService applicationService;
     private final ResourceLoader resourceLoader;
     private final ContractStatusRepository contractStatusRepository;
+    private final KeycloakService keycloakService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -65,27 +74,41 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public String generateContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
+        String result;
         if (dto.getIsExclusive()) {
-            return generateContractSaleExclusive(application, dto);
-        }
-        if (application.getOperationType().isBuy()) {
-            return generateContractBuy(application, dto);
+            result = generateContractSaleExclusive(application, dto);
+        } else if (application.getOperationType().isBuy()) {
+            result = generateContractBuy(application, dto);
         } else {
-            return generateContractSaleExclusive(application, dto);
+            result = generateContractSaleExclusive(application, dto);
+        }
+        if (nonNull(result)) {
+            saveContract(dto, application, contractStatusRepository.getOne(ContractStatus.GENERATED));
+            return result;
+        } else {
+            return null;
         }
     }
 
 
-    public String generateContractBuy(Application application, ContractFormDto dto) {
-
+    private String generateContractBuy(Application application, ContractFormDto dto) {
         try {
 
-            if (application.getOperationType().isSell()/* || isNull(application.getApplicationPurchaseData())*/) {
-                //throw BadRequestException.idMustNotBeNull();
+            if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
+                throw BadRequestException.createTemplateException("error.application.contract");
             }
-            City city = null;//application.getApplicationPurchaseData().getCity();
+            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+            PurchaseInfo purchaseInfo = purchaseData.getPurchaseInfo();
+            City city = purchaseData.getCity();
+            District district = purchaseData.getDistrict();
             Resource resource = resourceLoader.getResource("classpath:jasper/buy/main.jrxml");
-
+            List<String> userLogin = new ArrayList<>();
+            userLogin.add(application.getClientLogin());
+            List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
+            if (profileClientDtoList.isEmpty()) {
+                throw BadRequestException.createTemplateException("error.application.contract");
+            }
+            ProfileClientDto clientDto = profileClientDtoList.get(0);
             InputStream input = resource.getInputStream();
 
             // Add parameters
@@ -94,16 +117,16 @@ public class ContractServiceImpl implements ContractService {
             parameters.put("logoImage", image);
 
             parameters.put("contractNumber", dto.getContractNumber());
-            parameters.put("contractDate", dto.getContractNumber());
-            parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "TestCity");
-            parameters.put("printDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-            parameters.put("clientFullname", application.getClientLogin());
+            parameters.put("contractDate", sdfDate.format(dto.getContractPeriod()));
+            parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            parameters.put("printDate", sdfDate.format(new Date()));
+            parameters.put("clientFullname", clientDto.getFullname());
 
-            parameters.put("objectRegion", application.getClientLogin());
-            parameters.put("objectType", application.getClientLogin());
-            parameters.put("objectRoomCount", application.getClientLogin());
-            parameters.put("objectArea", application.getClientLogin());
-            parameters.put("objectFloor", application.getClientLogin());
+            parameters.put("objectRegion", nonNull(district) ? district.getMultiLang().getNameRu() : "");
+            parameters.put("objectType", application.getObjectType().getMultiLang().getNameRu());
+            parameters.put("objectRoomCount", nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
+            parameters.put("objectArea", nonNull(purchaseInfo) ? purchaseInfo.getTotalAreaFrom() + " - " + purchaseInfo.getTotalAreaTo() : "");
+            parameters.put("objectFloor", nonNull(purchaseInfo) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
 
             JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
             JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, parameters, new JREmptyDataSource());
@@ -307,7 +330,6 @@ public class ContractServiceImpl implements ContractService {
 
             log.info("Done");
 
-            saveContract(dto, application, contractStatusRepository.getOne(ContractStatus.GENERATED));
             return base64String;
         } catch (Exception e) {
             e.printStackTrace();
