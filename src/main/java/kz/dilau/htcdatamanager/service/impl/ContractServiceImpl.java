@@ -1,12 +1,9 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import com.itextpdf.text.ListItem;
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.ApplicationContract;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
-import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.ContractStatusRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
@@ -18,10 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -29,8 +24,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -72,19 +65,14 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public String generateContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-
-        if (dto.getGuid().equals("buy")) {
-            return generateContractBuy(application,dto);
-        }
-
-        if (dto.getGuid().equals("sale")) {
+        if (dto.getIsExclusive()) {
             return generateContractSaleExclusive(application, dto);
         }
-
-        if (dto.getGuid().equals("sale_exclusive")) {
-            return generateContractSaleExclusive(application,dto);
+        if (application.getOperationType().isBuy()) {
+            return generateContractBuy(application, dto);
+        } else {
+            return generateContractSaleExclusive(application, dto);
         }
-        return "empty";
     }
 
 
@@ -92,7 +80,7 @@ public class ContractServiceImpl implements ContractService {
 
         try {
 
-            if (application.getOperationType().getCode().equals(OperationType.SELL)/* || isNull(application.getApplicationPurchaseData())*/) {
+            if (application.getOperationType().isSell()/* || isNull(application.getApplicationPurchaseData())*/) {
                 //throw BadRequestException.idMustNotBeNull();
             }
             City city = null;//application.getApplicationPurchaseData().getCity();
@@ -102,7 +90,7 @@ public class ContractServiceImpl implements ContractService {
 
             // Add parameters
             Map<String, Object> parameters = new HashMap<>();
-            InputStream image  = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
+            InputStream image = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
             parameters.put("logoImage", image);
 
             parameters.put("contractNumber", dto.getContractNumber());
@@ -128,7 +116,6 @@ public class ContractServiceImpl implements ContractService {
             JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, null, new JREmptyDataSource());
 
 
-
             //--------------------
             Resource resourcePrice = resourceLoader.getResource("classpath:jasper/buy/price.jrxml");
 
@@ -140,7 +127,7 @@ public class ContractServiceImpl implements ContractService {
             Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/duties.jrxml");
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
-            JasperPrint jasperPrintResp= JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
+            JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
 
             //----------------------
             Resource resourceDetail = resourceLoader.getResource("classpath:jasper/buy/detail.jrxml");
@@ -155,7 +142,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputDetail = resourceDetail.getInputStream();
             JasperReport jasperReportDatail = JasperCompileManager.compileReport(inputDetail);
-            JasperPrint jasperPrintDetail= JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
+            JasperPrint jasperPrintDetail = JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
             //----------------------
             Resource resourceAct = resourceLoader.getResource("classpath:jasper/buy/act.jrxml");
 
@@ -175,7 +162,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputAct = resourceAct.getInputStream();
             JasperReport jasperReportAct = JasperCompileManager.compileReport(inputAct);
-            JasperPrint jasperPrintAct= JasperFillManager.fillReport(jasperReportAct, actPar, new JREmptyDataSource());
+            JasperPrint jasperPrintAct = JasperFillManager.fillReport(jasperReportAct, actPar, new JREmptyDataSource());
             //----------------------
 
             List<JasperPrint> jasperPrintList = new ArrayList<>();
@@ -207,11 +194,12 @@ public class ContractServiceImpl implements ContractService {
             return e.getMessage();
         }
     }
+
     public String generateContractSaleExclusive(Application application, ContractFormDto dto) {
 
         try {
 
-            if (application.getOperationType().getCode().equals(OperationType.SELL)/* || isNull(application.getApplicationPurchaseData())*/) {
+            if (application.getOperationType().isSell()/* || isNull(application.getApplicationPurchaseData())*/) {
                 //throw BadRequestException.idMustNotBeNull();
             }
             City city = null;//application.getApplicationPurchaseData().getCity();
@@ -221,7 +209,7 @@ public class ContractServiceImpl implements ContractService {
 
             // Add parameters
             Map<String, Object> mainPar = new HashMap<>();
-            InputStream image  = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
+            InputStream image = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
             mainPar.put("logoImage", image);
 
             mainPar.put("contractNumber", dto.getContractNumber());
@@ -249,7 +237,7 @@ public class ContractServiceImpl implements ContractService {
             Resource resourceResp = resourceLoader.getResource("classpath:jasper/sale/exclusive/duties.jrxml");
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
-            JasperPrint jasperPrintResp= JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
+            JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
 
             //----------------------
 
@@ -273,7 +261,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputDetail = resourceDetail.getInputStream();
             JasperReport jasperReportDatail = JasperCompileManager.compileReport(inputDetail);
-            JasperPrint jasperPrintDetail= JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
+            JasperPrint jasperPrintDetail = JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
             //----------------------
             Resource resourceAct = resourceLoader.getResource("classpath:jasper/buy/act.jrxml");
 
@@ -293,7 +281,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputAct = resourceAct.getInputStream();
             JasperReport jasperReportAct = JasperCompileManager.compileReport(inputAct);
-            JasperPrint jasperPrintAct= JasperFillManager.fillReport(jasperReportAct, actPar, new JREmptyDataSource());
+            JasperPrint jasperPrintAct = JasperFillManager.fillReport(jasperReportAct, actPar, new JREmptyDataSource());
             //----------------------
 
             List<JasperPrint> jasperPrintList = new ArrayList<>();

@@ -11,5 +11,5 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public class BaseSystemDictionary extends BaseCustomDictionary {
     @Column(name = "code", unique = true, nullable = false)
-    private String code;
+    protected String code;
 }
