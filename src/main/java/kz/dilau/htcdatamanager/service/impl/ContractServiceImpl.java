@@ -1,17 +1,16 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.ApplicationContract;
-import kz.dilau.htcdatamanager.domain.ApplicationPurchaseData;
-import kz.dilau.htcdatamanager.domain.PurchaseInfo;
+import kz.dilau.htcdatamanager.domain.*;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.City;
 import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.ContractStatusRepository;
+import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
+import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
@@ -19,6 +18,7 @@ import kz.dilau.htcdatamanager.web.dto.jasper.JasperActDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperBasicDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
@@ -45,9 +45,10 @@ public class ContractServiceImpl implements ContractService {
     private static final SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
 
     private final ApplicationContractRepository contractRepository;
+    private final ApplicationRepository applicationRepository;
+    private final EntityService entityService;
     private final ApplicationService applicationService;
     private final ResourceLoader resourceLoader;
-    private final ContractStatusRepository contractStatusRepository;
     private final KeycloakService keycloakService;
 
     private String getAuthorName() {
@@ -83,7 +84,7 @@ public class ContractServiceImpl implements ContractService {
             result = generateContractSaleExclusive(application, dto);
         }
         if (nonNull(result)) {
-            saveContract(dto, application, contractStatusRepository.getOne(ContractStatus.GENERATED));
+            saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
             return result;
         } else {
             return null;
@@ -340,7 +341,7 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Long missContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        ApplicationContract contract = saveContract(dto, application, contractStatusRepository.getOne(ContractStatus.MISSING));
+        ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.MISSING));
         return contract.getId();
     }
 
@@ -356,7 +357,25 @@ public class ContractServiceImpl implements ContractService {
         contract.setContractPeriod(dto.getContractPeriod());
         contract.setContractNumber(dto.getContractNumber());
         contract.setContractStatus(status);
-        contract = contractRepository.save(contract);
+        boolean hasStatus = false;
+        for (val history : application.getStatusHistoryList()) {
+            if (history.getApplicationStatus().isContract()) {
+                hasStatus = true;
+                break;
+            }
+        }
+        if (hasStatus) {
+            contract = contractRepository.save(contract);
+        } else {
+            ApplicationStatus applicationStatus = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.CONTRACT);
+            application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
+                    .application(application)
+                    .applicationStatus(applicationStatus)
+                    .build());
+            application.setApplicationStatus(applicationStatus);
+            application.setContract(contract);
+            applicationRepository.save(application);
+        }
         return contract;
     }
 }
