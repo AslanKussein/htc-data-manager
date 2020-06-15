@@ -88,7 +88,7 @@ public class ContractServiceImpl implements ContractService {
             result = generateContractSale(application, dto);
         }
 
-        if (dto.getGuid().equals("perspective_sale")) {
+        if (dto.getGuid().equals("perspective_buy")) {
             result = generateContractBuyPerspective(application, dto);
         }
 
