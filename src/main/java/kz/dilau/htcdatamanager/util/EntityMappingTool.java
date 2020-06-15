@@ -23,11 +23,11 @@ public class EntityMappingTool {
                 entityService.mapRequiredEntity(District.class, dataDto.getDistrictId()));
     }
 
-    public ApplicationPurchaseData convertApplicationClientPurchaseData(ApplicationClientDTO dto) {
-        ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
+   /* public ApplicationPurchaseData convertApplicationClientPurchaseData(ApplicationClientDTO dto) {
+        ApplicationPurchaseDataDto dataDto = dto.get();
         return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()),
                 entityService.mapRequiredEntity(District.class, dataDto.getDistrictId()));
-    }
+    }*/
 
     public PurchaseInfo convertPurchaseInfo(ApplicationDto dto) {
         if (nonNull(dto) && nonNull(dto.getPurchaseDataDto()) && nonNull(dto.getPurchaseInfoDto())) {
@@ -40,9 +40,9 @@ public class EntityMappingTool {
     }
 
     public PurchaseInfo convertClientPurchaseInfo(ApplicationClientDTO dto) {
-        if (nonNull(dto) && nonNull(dto.getPurchaseDataDto()) && nonNull(dto.getPurchaseInfoDto())) {
+        if (nonNull(dto) && nonNull(dto.getPurchaseInfoDto()) && nonNull(dto.getPurchaseInfoDto())) {
             PurchaseInfoClientDto infoDto = dto.getPurchaseInfoDto();
-            return new PurchaseInfo(infoDto, dto.getPurchaseDataDto().getObjectPricePeriod());
+            return new PurchaseInfo(infoDto, dto.getPurchaseInfoDto().getObjectPricePeriod());
         }
         return null;
     }

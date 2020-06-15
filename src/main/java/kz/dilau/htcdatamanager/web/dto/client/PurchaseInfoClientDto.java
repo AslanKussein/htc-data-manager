@@ -16,6 +16,8 @@ import lombok.*;
 public class PurchaseInfoClientDto {
     @ApiModelProperty(name = "objectPricePeriod", value = "Цена объекта от и до(млн тг)")
     private BigDecimalPeriod objectPricePeriod;
+    @ApiModelProperty(value = "Количество комнат от и до")
+    private IntegerPeriod numberOfRoomsPeriod;
     @ApiModelProperty(name = "totalAreaPeriod", value = "Общая площадь от и до")
     private BigDecimalPeriod totalAreaPeriod;
     @ApiModelProperty(name = "floorPeriod", value = "Этаж от и до")

@@ -30,8 +30,6 @@ public class RealPropertyClientDto {
     private Integer yearOfConstruction;
     @ApiModelProperty(name = "floor", value = "Этаж")
     private Integer floor;
-    @ApiModelProperty(value = "Параметры при Покупке")
-    private PurchaseInfoClientDto purchaseInfoClientDto;
     @ApiModelProperty(name = "livingArea", value = "Жилая площадь")
     private BigDecimal livingArea;
     @ApiModelProperty(name = "atelier", value = "Студия")

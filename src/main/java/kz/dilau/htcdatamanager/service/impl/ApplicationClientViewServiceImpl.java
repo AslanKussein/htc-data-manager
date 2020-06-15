@@ -28,6 +28,7 @@ public class ApplicationClientViewServiceImpl implements ApplicationClientViewSe
 
         dto.setObjectTypeId(application.getObjectTypeId());
         dto.setClientLogin(application.getClientLogin());
+        dto.setId(application.getId());
         if (application.getApplicationSellData() != null) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
             RealPropertyDto realPropertyDto = new RealPropertyDto(realProperty);
