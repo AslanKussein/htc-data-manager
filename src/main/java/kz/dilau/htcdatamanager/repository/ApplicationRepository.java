@@ -2,12 +2,13 @@ package kz.dilau.htcdatamanager.repository;
 
 import kz.dilau.htcdatamanager.domain.Application;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
@@ -22,4 +23,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
             "where a.isRemoved = false and f.metadataStatusId = :metadataStatusId")
     Page<Application> findAllFileByMetadataStatus(@Param("metadataStatusId") Long metadataStatusId,
                                                   Pageable pageable);
+
+    List<Application> findAllByOperationType_idAndClientLoginAndIsRemovedFalse(Long operationTypeId, String clientLogin);
 }

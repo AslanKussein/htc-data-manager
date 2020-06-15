@@ -31,11 +31,11 @@ public class ApplicationClientDTO {
     @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
     private String clientLogin;
 
+    @ApiModelProperty(name = "separateBathroom", value = "Санузел раздельный")
+    private Boolean mortgage;
+
     @ApiModelProperty(name = "sellDataDto", value = "Общая информация о сделке продажи объекта")
     private ApplicationSellDataDto sellDataDto;
-
-    @ApiModelProperty(value = "Общая информация о сделке покупки объекта")
-    private ApplicationPurchaseDataDto purchaseDataDto;
 
     @ApiModelProperty(name = "purchaseInfoClientDto", value = "Модель параметров по операции Покупка ")
     private PurchaseInfoClientDto purchaseInfoDto;
