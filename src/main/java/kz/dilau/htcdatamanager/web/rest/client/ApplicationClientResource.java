@@ -6,8 +6,12 @@ import kz.dilau.htcdatamanager.service.ApplicationClientService;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.security.Principal;
+import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -24,6 +28,14 @@ public class ApplicationClientResource {
                                                         @PathVariable("id") Long id) {
         ApplicationClientDTO result = applicationClientService.getById(token, id);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getAllMyAppByOperationTypeId/{operationTypeId}")
+    public ResponseEntity<List<ApplicationClientDTO>> getAllMyAppByOperationTypeId(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                                                                   @ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                                                   @PathVariable("operationTypeId") Long operationTypeId) {
+
+        return ResponseEntity.ok(applicationClientService.getAllMyAppByOperationTypeId("7753983520",token, operationTypeId));
     }
 
     @PostMapping

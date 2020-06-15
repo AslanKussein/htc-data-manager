@@ -16,7 +16,6 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
-import kz.dilau.htcdatamanager.web.dto.ApplicationPurchaseDataDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
 import kz.dilau.htcdatamanager.web.dto.BuildingDto;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
@@ -25,6 +24,7 @@ import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -70,9 +70,9 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData()) && operations.contains(VIEW + SALE_DEAL_INFO)) {
             dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
         }
-        if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
+        /*if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData()) && operations.contains(VIEW + PURCHASE_DEAL_INFO)) {
             dto.setPurchaseDataDto(new ApplicationPurchaseDataDto(application.getApplicationPurchaseData()));
-        }
+        }*/
 
         RealPropertyClientDto realPropertyDto = new RealPropertyClientDto();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())
@@ -105,9 +105,8 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public Long update(String token, Long id, ApplicationClientDTO input) {
-        /*Application application = getApplicationById(id);
-        return saveApplication(token, application, input);*/
-        return null;
+        Application application = applicationService.getApplicationById(id);
+        return saveApplication(token, application, input);
     }
 
     @Override
@@ -122,6 +121,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
         return saveApplication(token, new Application(), dto);
     }
+
 
     public Long saveApplication(String token, Application application, ApplicationClientDTO dto) {
         List<String> operations = applicationService.getOperationList(token, application);
@@ -157,7 +157,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         }
         if (operationType.isBuy() && nonNull(dto.getPurchaseInfoDto())) {
             if (operations.contains(UPDATE + PURCHASE_DEAL_INFO)) {
-                ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationClientPurchaseData(dto);
+               /* ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationClientPurchaseData(dto);
                 if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
                     PurchaseInfo info = entityMappingTool.convertClientPurchaseInfo(dto);
                     if (nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
@@ -169,7 +169,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                     purchaseData.setId(application.getApplicationPurchaseData().getId());
                 }
                 purchaseData.setApplication(application);
-                application.setApplicationPurchaseData(purchaseData);
+                application.setApplicationPurchaseData(purchaseData);*/
             }
         } else if (operationType.isSell()) {
             if (nonNull(dto.getSellDataDto()) && operations.contains(UPDATE + SALE_DEAL_INFO)) {
@@ -225,5 +225,18 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         return application.getId();
     }
 
+
+    @Override
+    public List<ApplicationClientDTO> getAllMyAppByOperationTypeId(String clientLogin, String token, Long operationTypeId) {
+
+        List<Application> list = applicationRepository.findAllByOperationType_idAndClientLoginAndIsRemovedFalse(operationTypeId, clientLogin);
+        List<ApplicationClientDTO> result = new ArrayList<>();
+        for (Application application : list) {
+            List<String> operations = applicationService.getOperationList(token, application);
+            result.add(mapToApplicationClientDTO(application, operations));
+        }
+
+        return result;
+    }
 
 }
