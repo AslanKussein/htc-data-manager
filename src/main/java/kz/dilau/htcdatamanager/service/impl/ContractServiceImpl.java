@@ -358,7 +358,7 @@ public class ContractServiceImpl implements ContractService {
         } else {
             Float amount;
             for (val commission : dataProperties.getCommissionRangeList()) {
-                if (commission.getFrom() <= sum && commission.getTo() > sum) {
+                if (commission.getFrom() < sum && commission.getTo() >= sum) {
                     amount = commission.getAmount().floatValue();
                     if (amount < 100) {
                         result = getPercentFromSum(sum, amount);
