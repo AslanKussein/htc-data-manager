@@ -1,10 +1,8 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.City;
-import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.District;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
@@ -50,6 +48,7 @@ public class ContractServiceImpl implements ContractService {
     private final ApplicationService applicationService;
     private final ResourceLoader resourceLoader;
     private final KeycloakService keycloakService;
+    private final DataProperties dataProperties;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -63,18 +62,22 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractFormDto getContractForm(String token, Long applicationId) {
         Application application = applicationService.getApplicationById(applicationId);
-        String authorName = getAuthorName();
-        if (nonNull(authorName) && (authorName.equalsIgnoreCase(application.getCreatedBy()) ||
-                authorName.equalsIgnoreCase(application.getCurrentAgent())) && nonNull(application.getContract())) {
-            return new ContractFormDto(application.getContract());
-        } else {
-            return null;
+        if (!hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
         }
+        return new ContractFormDto(application.getContract());
+    }
+
+    private boolean hasPermission(String authorName, Application application) {
+        return nonNull(authorName) && nonNull(application) && (authorName.equalsIgnoreCase(application.getCreatedBy()) || authorName.equalsIgnoreCase(application.getCurrentAgent()));
     }
 
     @Override
     public String generateContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
+        if (!hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
         String result;
         if (dto.getIsExclusive()) {
             result = generateContractSaleExclusive(application, dto);
@@ -94,7 +97,6 @@ public class ContractServiceImpl implements ContractService {
 
     private String generateContractBuy(Application application, ContractFormDto dto) {
         try {
-
             if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
                 throw BadRequestException.createTemplateException("error.application.contract");
             }
@@ -341,8 +343,37 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Long missContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
+        if (!hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
         ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.MISSING));
         return contract.getId();
+    }
+
+    @Override
+    public Integer getCommission(Integer sum, Long objectTypeId) {
+        Integer result = 0;
+        if (objectTypeId.equals(ObjectType.HOUSE)) {
+            result = getPercentFromSum(sum, dataProperties.getCommissionForHouse().floatValue());
+        } else {
+            Float amount;
+            for (val commission : dataProperties.getCommissionRangeList()) {
+                if (commission.getFrom() <= sum && commission.getTo() > sum) {
+                    amount = commission.getAmount().floatValue();
+                    if (amount < 100) {
+                        result = getPercentFromSum(sum, amount);
+                    } else {
+                        result = amount.intValue();
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private Integer getPercentFromSum(Integer sum, Float percent) {
+        Float result = sum * percent / 100;
+        return result.intValue();
     }
 
     private ApplicationContract saveContract(ContractFormDto dto, Application application, ContractStatus status) {
