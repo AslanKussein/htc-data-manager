@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class CommissionRange {
-    private int from;
-    private int to;
+    private long from;
+    private long to;
     private BigDecimal amount;
 }
