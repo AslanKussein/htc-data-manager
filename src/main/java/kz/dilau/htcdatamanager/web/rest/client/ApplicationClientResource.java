@@ -35,7 +35,7 @@ public class ApplicationClientResource {
                                                                                    @ApiIgnore @RequestHeader(AUTHORIZATION) String token,
                                                                                    @PathVariable("operationTypeId") Long operationTypeId) {
 
-        return ResponseEntity.ok(applicationClientService.getAllMyAppByOperationTypeId("7753983520",token, operationTypeId));
+        return ResponseEntity.ok(applicationClientService.getAllMyAppByOperationTypeId(principal.getName(), token, operationTypeId));
     }
 
     @PostMapping
