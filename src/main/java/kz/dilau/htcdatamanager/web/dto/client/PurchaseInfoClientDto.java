@@ -53,6 +53,7 @@ public class PurchaseInfoClientDto {
                 this.objectPricePeriod = new BigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo());
                 this.atelier = info.getAtelier();
                 this.separateBathroom = info.getSeparateBathroom();
+                this.numberOfRoomsPeriod = new IntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo());
             }
             this.probabilityOfBidding = data.getProbabilityOfBidding();
             this.cityId = data.getCityId();
