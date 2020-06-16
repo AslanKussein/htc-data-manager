@@ -40,7 +40,6 @@ public class ApplicationClientDTO {
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     protected ZonedDateTime createdDate;
 
     public ApplicationClientDTO(Application application) {
@@ -49,6 +48,7 @@ public class ApplicationClientDTO {
         this.setClientLogin(application.getClientLogin());
         this.setOperationTypeId(application.getOperationTypeId());
         this.setObjectTypeId(application.getObjectTypeId());
+        this.setCreatedDate(application.getCreatedDate());
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
             this.setSellDataClientDto(new ApplicationSellDataClientDto(application.getApplicationSellData()));
         } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())
