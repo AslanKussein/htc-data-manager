@@ -1,10 +1,8 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.City;
-import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.District;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
@@ -53,6 +51,7 @@ public class ContractServiceImpl implements ContractService {
     private final ApplicationService applicationService;
     private final ResourceLoader resourceLoader;
     private final KeycloakService keycloakService;
+    private final DataProperties dataProperties;
     private final ContractStatusRepository contractStatusRepository;
 
     private String getAuthorName() {
@@ -67,24 +66,28 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ContractFormDto getContractForm(String token, Long applicationId) {
         Application application = applicationService.getApplicationById(applicationId);
-        String authorName = getAuthorName();
-        if (nonNull(authorName) && (authorName.equalsIgnoreCase(application.getCreatedBy()) ||
-                authorName.equalsIgnoreCase(application.getCurrentAgent())) && nonNull(application.getContract())) {
-            return new ContractFormDto(application.getContract());
-        } else {
-            return null;
+        if (!hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
         }
+        return new ContractFormDto(application.getContract());
+    }
+
+    private boolean hasPermission(String authorName, Application application) {
+        return nonNull(authorName) && nonNull(application) && (authorName.equalsIgnoreCase(application.getCreatedBy()) || authorName.equalsIgnoreCase(application.getCurrentAgent()));
     }
 
     @Override
     public String generateContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        String result;
+        if (!hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
+        String result = null;
         if (dto.getIsExclusive()) {
             result = generateContractSaleExclusive(application, dto);
         } else if (application.getOperationType().isBuy()) {
             result = generateContractBuy(application, dto);
-        } else {
+        } else if (application.getOperationType().isSell()) {
             result = generateContractSale(application, dto);
         }
 
@@ -93,17 +96,13 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (nonNull(result)) {
-            //saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
-            return result;
-        } else {
-            return null;
+            saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         }
+        return result;
     }
-
 
     private String generateContractBuy(Application application, ContractFormDto dto) {
         try {
-
             if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
                 throw BadRequestException.createTemplateException("error.application.contract");
             }
@@ -213,7 +212,7 @@ public class ContractServiceImpl implements ContractService {
             actWorkPar.put("agentFullname", "Agent Agentovich");
             InputStream inputActWork = resourceActWork.getInputStream();
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
-            JasperPrint jasperPrintActWork= JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
+            JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
             //--------------------------
 
             List<JasperPrint> jasperPrintList = new ArrayList<>();
@@ -298,13 +297,13 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputValid = resourceValid.getInputStream();
             JasperReport jasperReportValid = JasperCompileManager.compileReport(inputValid);
-            JasperPrint jasperPrintValid= JasperFillManager.fillReport(jasperReportValid, null, new JREmptyDataSource());
+            JasperPrint jasperPrintValid = JasperFillManager.fillReport(jasperReportValid, null, new JREmptyDataSource());
             //------------------------
             Resource resourceFinal = resourceLoader.getResource("classpath:jasper/sale/exclusive/final.jrxml");
 
             InputStream inputFinal = resourceFinal.getInputStream();
             JasperReport jasperReportFinal = JasperCompileManager.compileReport(inputFinal);
-            JasperPrint jasperPrintFinal= JasperFillManager.fillReport(jasperReportFinal, null, new JREmptyDataSource());
+            JasperPrint jasperPrintFinal = JasperFillManager.fillReport(jasperReportFinal, null, new JREmptyDataSource());
 
             //------------------------
             Resource resourceActView = resourceLoader.getResource("classpath:jasper/sale/exclusive/actView.jrxml");
@@ -312,9 +311,9 @@ public class ContractServiceImpl implements ContractService {
             Map<String, Object> actPar = new HashMap<>();
             List<JasperActViewDto> actItems = new ArrayList<>();
 
-            actItems.add(new JasperActViewDto("1","-", "-", "-", "-s"));
-            actItems.add(new JasperActViewDto("2","*", "*", "*", "*s"));
-            actItems.add(new JasperActViewDto("3","#", "#", "#", "#s"));
+            actItems.add(new JasperActViewDto("1", "-", "-", "-", "-s"));
+            actItems.add(new JasperActViewDto("2", "*", "*", "*", "*s"));
+            actItems.add(new JasperActViewDto("3", "#", "#", "#", "#s"));
             JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
             actPar.put("CollectionBeanParam", actDs);
             actPar.put("docNumb", "123456");
@@ -324,7 +323,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputActView = resourceActView.getInputStream();
             JasperReport jasperReportActView = JasperCompileManager.compileReport(inputActView);
-            JasperPrint jasperPrintActView= JasperFillManager.fillReport(jasperReportActView, actPar, new JREmptyDataSource());
+            JasperPrint jasperPrintActView = JasperFillManager.fillReport(jasperReportActView, actPar, new JREmptyDataSource());
 
             //------------------------
             Resource resourceRecv = resourceLoader.getResource("classpath:jasper/sale/exclusive/recvisit.jrxml");
@@ -347,10 +346,9 @@ public class ContractServiceImpl implements ContractService {
             recvPar.put("confidantFullname", "Confidant Confidant");
 
 
-
             InputStream inputRecv = resourceRecv.getInputStream();
             JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
-            JasperPrint jasperPrintRecv= JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
+            JasperPrint jasperPrintRecv = JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
             //----------------------
 
             Map<String, Object> propPar = new HashMap<>();
@@ -384,7 +382,7 @@ public class ContractServiceImpl implements ContractService {
             Resource resourceProp = resourceLoader.getResource("classpath:jasper/sale/exclusive/properties.jrxml");
             InputStream inputProp = resourceProp.getInputStream();
             JasperReport jasperReportProp = JasperCompileManager.compileReport(inputProp);
-            JasperPrint jasperPrintProp= JasperFillManager.fillReport(jasperReportProp, propPar, new JREmptyDataSource());
+            JasperPrint jasperPrintProp = JasperFillManager.fillReport(jasperReportProp, propPar, new JREmptyDataSource());
             //------------------------
             Resource resourceActWork = resourceLoader.getResource("classpath:jasper/sale/exclusive/actWork.jrxml");
 
@@ -405,7 +403,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputActWork = resourceActWork.getInputStream();
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
-            JasperPrint jasperPrintActWork= JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
+            JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
 
             //----------------------
 
@@ -436,13 +434,13 @@ public class ContractServiceImpl implements ContractService {
 
             log.info("Done");
 
-            saveContract(dto, application, contractStatusRepository.getOne(ContractStatus.GENERATED));
             return base64String;
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
         }
     }
+
     public String generateContractSale(Application application, ContractFormDto dto) {
 
         try {
@@ -457,7 +455,7 @@ public class ContractServiceImpl implements ContractService {
 
             // Add parameters
             Map<String, Object> mainPar = new HashMap<>();
-            InputStream image  = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
+            InputStream image = getClass().getResourceAsStream("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
             mainPar.put("logoImage", image);
 
             mainPar.put("contractNumber", dto.getContractNumber());
@@ -508,10 +506,9 @@ public class ContractServiceImpl implements ContractService {
             recvPar.put("confidantFullname", "Confidant Confidant");
 
 
-
             InputStream inputRecv = resourceRecv.getInputStream();
             JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
-            JasperPrint jasperPrintRecv= JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
+            JasperPrint jasperPrintRecv = JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
 
             //------------------------
 
@@ -519,13 +516,13 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputValid = resourceValid.getInputStream();
             JasperReport jasperReportValid = JasperCompileManager.compileReport(inputValid);
-            JasperPrint jasperPrintValid= JasperFillManager.fillReport(jasperReportValid, null, new JREmptyDataSource());
+            JasperPrint jasperPrintValid = JasperFillManager.fillReport(jasperReportValid, null, new JREmptyDataSource());
             //------------------------
             Resource resourceFinal = resourceLoader.getResource("classpath:jasper/sale/standart/final.jrxml");
 
             InputStream inputFinal = resourceFinal.getInputStream();
             JasperReport jasperReportFinal = JasperCompileManager.compileReport(inputFinal);
-            JasperPrint jasperPrintFinal= JasperFillManager.fillReport(jasperReportFinal, null, new JREmptyDataSource());
+            JasperPrint jasperPrintFinal = JasperFillManager.fillReport(jasperReportFinal, null, new JREmptyDataSource());
 
             //------------------------
             /*Resource resourceActView = resourceLoader.getResource("classpath:jasper/standart/standart/actView.jrxml");
@@ -579,7 +576,7 @@ public class ContractServiceImpl implements ContractService {
             Resource resourceProp = resourceLoader.getResource("classpath:jasper/sale/exclusive/properties.jrxml");
             InputStream inputProp = resourceProp.getInputStream();
             JasperReport jasperReportProp = JasperCompileManager.compileReport(inputProp);
-            JasperPrint jasperPrintProp= JasperFillManager.fillReport(jasperReportProp, propPar, new JREmptyDataSource());
+            JasperPrint jasperPrintProp = JasperFillManager.fillReport(jasperReportProp, propPar, new JREmptyDataSource());
             //------------------------
             Resource resourceActWork = resourceLoader.getResource("classpath:jasper/sale/exclusive/actWork.jrxml");
 
@@ -600,7 +597,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputActWork = resourceActWork.getInputStream();
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
-            JasperPrint jasperPrintActWork= JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
+            JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
 
             //----------------------
 
@@ -731,9 +728,9 @@ public class ContractServiceImpl implements ContractService {
             Map<String, Object> actViewPar = new HashMap<>();
             List<JasperPerspectivaActViewDto> actItems = new ArrayList<>();
 
-            actItems.add(new JasperPerspectivaActViewDto("1","FIO/Address", "10.10.2019"));
-            actItems.add(new JasperPerspectivaActViewDto("2","FIO/Address", "*"));
-            actItems.add(new JasperPerspectivaActViewDto("3","FIO/Address", "#"));
+            actItems.add(new JasperPerspectivaActViewDto("1", "FIO/Address", "10.10.2019"));
+            actItems.add(new JasperPerspectivaActViewDto("2", "FIO/Address", "*"));
+            actItems.add(new JasperPerspectivaActViewDto("3", "FIO/Address", "#"));
             JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
             actViewPar.put("CollectionPerspectivaBuyActView", actDs);
             actViewPar.put("docNumb", "123456");
@@ -744,7 +741,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputActView = resourceActView.getInputStream();
             JasperReport jasperReportActView = JasperCompileManager.compileReport(inputActView);
-            JasperPrint jasperPrintActView= JasperFillManager.fillReport(jasperReportActView, actViewPar, new JREmptyDataSource());
+            JasperPrint jasperPrintActView = JasperFillManager.fillReport(jasperReportActView, actViewPar, new JREmptyDataSource());
 
             //---------------------
             Resource resourceActWork = resourceLoader.getResource("classpath:jasper/perspectiva/buy/actWork.jrxml");
@@ -764,7 +761,7 @@ public class ContractServiceImpl implements ContractService {
             actViewPar.put("footerImage", footerImage);
             InputStream inputActWork = resourceActWork.getInputStream();
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
-            JasperPrint jasperPrintActWork= JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
+            JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
             //---------------------
             List<JasperPrint> jasperPrintList = new ArrayList<>();
             jasperPrintList.add(jasperPrintBasic);
@@ -796,8 +793,37 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public Long missContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
+        if (!hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
         ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.MISSING));
         return contract.getId();
+    }
+
+    @Override
+    public Integer getCommission(Integer sum, Long objectTypeId) {
+        Integer result = 0;
+        if (objectTypeId.equals(ObjectType.HOUSE)) {
+            result = getPercentFromSum(sum, dataProperties.getCommissionForHouse().floatValue());
+        } else {
+            Float amount;
+            for (val commission : dataProperties.getCommissionRangeList()) {
+                if (commission.getFrom() < sum && commission.getTo() >= sum) {
+                    amount = commission.getAmount().floatValue();
+                    if (amount < 100) {
+                        result = getPercentFromSum(sum, amount);
+                    } else {
+                        result = amount.intValue();
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    private Integer getPercentFromSum(Integer sum, Float percent) {
+        Float result = sum * percent / 100;
+        return result.intValue();
     }
 
     private ApplicationContract saveContract(ContractFormDto dto, Application application, ContractStatus status) {

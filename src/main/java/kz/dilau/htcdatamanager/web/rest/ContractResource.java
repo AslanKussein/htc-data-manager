@@ -34,4 +34,10 @@ public class ContractResource {
         Long result = contractService.missContract(dto);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/getCommission")
+    public ResponseEntity<Integer> getCommission(@RequestParam("sum") Integer sum,
+                                                 @RequestParam("objectTypeId") Long objectTypeId) {
+        return ResponseEntity.ok(contractService.getCommission(sum, objectTypeId));
+    }
 }
