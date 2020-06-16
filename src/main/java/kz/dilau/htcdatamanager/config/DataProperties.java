@@ -5,6 +5,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @RefreshScope
 @Component
 @ConfigurationProperties(prefix = "data")
@@ -18,4 +21,6 @@ public class DataProperties {
     private String keycloakUserManagerLogin;
     private String keycloakUserManagerPassword;
     private int maxApplicationCountForOneRealProperty;
+    private BigDecimal commissionForHouse;
+    private List<CommissionRange> commissionRangeList;
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sale_standart_responsibilities" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="25d672aa-ecad-4bb4-8386-219b05de50b4">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="550" height="290" uuid="46e2f99c-a247-41fd-9b33-49aefc165a06"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>3.2.</b> Расчеты по настоящему договору осуществляются путем внесения наличных денежных средств в полном объеме, в кассу Исполнителя, в день заключения Основного договора с Покупателем и/или в безналичном порядке в течение 3-х банковских дней на расчетный счет Исполнителя. <br/><b>3.3.</b> В день заключения соглашения о задатке либо предварительного договора на сумму более 200 000 (двести тысяч) тенге Заказчик оплачивает 50% (пятьдесят) от суммы вознаграждения. Оставшиеся 50% от вознаграждения подлежат оплате в день заключения Основного договора с Покупателем.  <br/><b>3.4.</b> В день заключения соглашения о задатке либо предварительного договора на сумму более 3% от стоимости отчуждаемого Объекта, Заказчик оплачивает сумму вознаграждения в полном объеме. <br/><b>3.5.</b> В случае заключения между Заказчиком и Потенциальным покупателем Договора Мены Заказчик оплачивает Исполнителю вознаграждение в размере 1,5% (полтора процента) от суммы проводимой сделки. <br/><b>3.6.</b> В случае привлечения ипотечного займа и/или Государственных программ по ипотечному кредитованию в рамках исполнения настоящего договора Заказчик выплачивает Исполнителю вознаграждение в полном объеме в день заключения основного договора купли-продажи и/или поступления денежных средств на счет Продавца. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="112" y="300" width="330" height="20" uuid="f297c803-cffd-43ad-b4df-d5d7af2245ed"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["4. Ответственность Сторон и разрешение споров "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="320" width="550" height="140" uuid="1c7a2902-2364-4c23-a3bb-a5ee442c1be2"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>4.1.</b> В случае невыполнения или ненадлежащего выполнения требований по оплате вознаграждения указанных в Разделе 3 настоящего договора, Заказчик обязуется выплатить Исполнителю штраф в размере 50% от стоимости вознаграждения и пеню в размере 0.1 % за каждый день просрочки от неуплаченной (несвоевременно уплаченной) Заказчиком суммы вознаграждения.<br/><b>4.2.</b> В случае расторжения/отказа от Сделки (по соглашению о задатке, предварительному договору), Заказчик оплачивает услуги Исполнителю в полном Объеме. <br/><b>4.3.</b> В случае нарушения пункта 2.3.5. Договора Заказчик оплачивает штраф, в размере суммы вознаграждения. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="112" y="460" width="388" height="20" uuid="38a38a7c-17a5-4d39-a2d9-2501b3a56695"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["5. Срок действия и порядок расторжения Договора "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="480" width="550" height="290" uuid="0b8c9274-cc89-40fa-a7d5-3406ce4832ee"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>5.1.</b> Настоящий договор вступает в силу с момента его заключения Сторонами и действует до «____» ___________ 20___ г. включительно, а в части расчетов между сторонами –  до полного исполнения всех обязательств. <br/><b>5.2.</b> Заказчик вправе расторгнуть Договор путем предоставления Исполнителю заявления за 15 (пятнадцать) дней до истечения срока действия Договора и справки формы-2 о зарегистрированных правах (обременениях) на недвижимое имущество на день расторжения договора.  <br/><b>5.3.</b> Договор может быть изменен или расторгнут только по письменному соглашению сторон. <br/><b>5.4.</b> Договор может быть расторгнут Исполнителем в одностороннем порядке в случае нарушения условий Договора со стороны Заказчика, при этом Заказчик обязуется компенсировать вознаграждение, штрафы и иные понесенные Исполнителем расходы и убытки, связанные с исполнением настоящего Договора. <br/><b>5.5.</b> В случае не предоставления Заказчиком правоустанавливающих документов на Объект, Исполнитель вправе не рекламировать Объект недвижимости и расторгнуть договор в одностороннем порядке. <br/><b>5.6.</b> Если ни одна из Сторон не заявит о своем намерении прекратить действие договора, то настоящий договор считается возобновленным на тех же условиях и на тот же срок. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="772" width="208" height="30" uuid="c2aefc44-390f-42a4-9d45-e4db45ccb758"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Подпись Заказчика:</b>"]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

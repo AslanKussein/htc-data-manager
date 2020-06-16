@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="validity" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f26da815-b275-4721-9e8b-23bfbf5b06bb">
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="550" height="70" uuid="04c379c8-fc57-4953-8ff9-842a09747250"/>
+                <textElement markup="html">
+                    <font fontName="Arial" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>4.2.</b> В случае расторжения/отказа от Сделки (по соглашению о задатке, предварительному договору), Заказчик оплачивает услуги Исполнителю в полном Объеме.<br/><b>4.3.</b>В случае нарушения пункта  2.3.6. Договора Заказчик оплачивает штраф, в размере суммы вознаграждения."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="80" y="80" width="420" height="20" uuid="28a3bac1-2f11-46a3-9468-eb720c778fbd"/>
+                <textElement>
+                    <font fontName="Arial" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["5. Срок действия и порядок расторжения Договора"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="100" width="550" height="310" uuid="4dc3daae-adca-4e8c-9fc4-3315897dcc0d"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Arial" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>5.1.</b> Настоящий договор вступает в силу с момента его заключения Сторонами и действует до «____» ___________ 20___ г. включительно, а в части расчетов между сторонами –  до полного исполнения всех обязательств. " + "<br/><b>5.2.</b> Заказчик вправе расторгнуть Договор путем предоставления Исполнителю заявления за 15 (пятнадцать) дней до истечения срока действия Договора и справки формы-2 о зарегистрированных правах (обременениях) на недвижимое имущество на день расторжения договора."+"<br/><b>5.3.</b> Договор может быть изменен или расторгнут только по письменному соглашению сторон."+"<br/><b>5.4.</b> Договор может быть расторгнут Исполнителем в одностороннем порядке в случае нарушения условий Договора со стороны Заказчика, при этом Заказчик обязуется компенсировать вознаграждение, штрафы и иные понесенные Исполнителем расходы и убытки, связанные с исполнением настоящего Договора."+"<br/><b>5.5.</b> В случае не предоставления Заказчиком правоустанавливающих документов на Объект, Исполнитель вправе не рекламировать Объект недвижимости и расторгнуть договор в одностороннем порядке."+"<br/><b>5.6.</b> Если ни одна из Сторон не заявит о своем намерении прекратить действие договора, то настоящий договор считается возобновленным на тех же условиях и на тот же срок."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="80" y="410" width="360" height="20" uuid="10769178-dc6b-41c9-b9c2-811b64cbff08"/>
+                <textElement>
+                    <font fontName="Arial" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["6. Заключительные положения"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="2" y="431" width="548" height="329" uuid="524b7e8f-fd20-412b-aa91-87feeb5295f3"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Arial" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["6.1 Все споры, возникающие при выполнении настоящего договора, решаются сторонами путем переговоров, направления и вручения письменных претензий, а при не достижении согласия – в судебном порядке, по месту нахождения Исполнителя."+"<br/><b>6.2</b> Вознаграждение, оплаченное Заказчиком полностью и/или частично, возврату не подлежит."+"<br/><b>6.3</b> Заказчик дает согласие на получение от Исполнителя рекламной и иной информации, необходимой для осуществления деятельности Исполнителя, путем направления сообщений смс на телефон, электронных писем на электронную почту, указанных Заказчиком в настоящем Договоре."+"<br/><b>6.4</b>Заказчик принимает условия, что смс сообщения всех мобильных операторов, сообщения WhatsApp, Telegram, и аудио-видео фиксация, является неоспоримым доказательством переговоров с Заказчиком, в том числе проделанной работы Исполнителя."+"<br/><b>6.5</b> Настоящим пунктом Заказчик выражает свое письменное заявление о согласии на обработку и использование Исполнителем своих персональных данных, содержащихся в настоящем Договоре и в представленных (подготовленных) документах на срок, необходимый для исполнения настоящего Договора."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="770" width="200" height="22" uuid="f8b5ccae-ba22-4db0-a898-a7f0e931614d"/>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Подпись Заказчика:</b>"]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>
