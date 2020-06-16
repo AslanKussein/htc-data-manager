@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="final" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="51fa9af9-4d51-4097-8c20-24459ec0678b">
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="550" height="300" uuid="08505cd6-66c4-441e-b8c9-133190e0690f"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Arial" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>6.6.</b> Стороны обязуются соблюдать конфиденциальность перед другими лицами по документации и информации, полученной ими в ходе исполнения настоящего Договора, за исключением информации и документации, которую необходимо использовать с целью выполнения своих обязательств по настоящему Договору."+"<br/><b>6.7.</b> Представители Сторон гарантируют, что имеют все необходимые полномочия для осуществления действий по подписанию Договора от имени и в интересах Сторон, в противном случае виновная сторона обязуется возместить другой Стороне все расходы убытки, связанные с исполнением Договора."+"<br/><b>6.8.</b> Настоящим пунктом Заказчик подтверждает понимание и значение условий настоящего Договора, также выражает свое согласие, что Договор заключен не под влиянием заблуждения, обмана, в результате злонамеренного соглашения сторон, и не является фиктивным или предполагаемым."+"<br/><b>6.9.</b> После подписания между Заказчиком и Третьим лицом основного Договора по покупке/продаже Объекта, Заказчик не вправе заявлять претензии к Исполнителю."+"<br/><b>6.10.</b> Договор составлен в двух экземплярах, на русском языке, по одному - для каждой из Сторон."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="770" width="200" height="22" uuid="fdbfde86-f42a-4768-be51-5fbed222a9bb"/>
+                <textElement markup="html">
+                    <font fontName="DejaVu Sans"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Подпись Заказчика:</b>"]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

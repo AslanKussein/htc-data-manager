@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="persp_buy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9b009afb-6efd-49d5-8a14-1726669dde29">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <parameter name="contractNumber" class="java.lang.String"/>
+    <parameter name="cityKZ" class="java.lang.String"/>
+    <parameter name="cityRU" class="java.lang.String"/>
+    <parameter name="contractDate" class="java.lang.String"/>
+    <parameter name="clientFullname" class="java.lang.String"/>
+    <parameter name="objectRegion" class="java.lang.String"/>
+    <parameter name="objectType" class="java.lang.String"/>
+    <parameter name="objectRoomCount" class="java.lang.String"/>
+    <parameter name="objectArea" class="java.lang.String"/>
+    <parameter name="objectFloor" class="java.lang.String"/>
+    <parameter name="objectMaxPrice" class="java.lang.String"/>
+    <parameter name="comment" class="java.lang.String"/>
+    <parameter name="objectRCName" class="java.lang.String"/>
+    <parameter name="payTypeRU" class="java.lang.String"/>
+    <parameter name="payTypeKZ" class="java.lang.String"/>
+    <parameter name="logoImage" class="java.io.InputStream"/>
+    <parameter name="footerImage" class="java.io.InputStream"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <line>
+                <reportElement x="280" y="50" width="1" height="730" uuid="d4636043-3c36-4022-872b-e28be817c915"/>
+            </line>
+            <textField>
+                <reportElement x="0" y="50" width="271" height="50" uuid="4db27993-ba3d-4a0b-a08c-0b131c218b0d"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["№ "+ $P{contractNumber} +" жылжымайтын мүлік объектісін сатыпалушыға риэлтерлік қызмет көрсету ШАРТЫ"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="285" y="50" width="271" height="50" uuid="1dbb41e0-5272-4de0-a699-c585e41faf4d"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["ДОГОВОР № "+$P{contractNumber}+" на оказание риэлтерских услуг Покупателю объекта недвижимости"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="2" y="104" width="138" height="16" uuid="ab1731cf-c8e1-4de9-a430-93c1792c330e"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{cityKZ} + " қ."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="285" y="104" width="130" height="16" uuid="e8584a6a-a359-4085-8876-d994764c2c4a"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{cityRU} + " г."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="456" y="104" width="100" height="16" uuid="a77561a9-bc02-48df-a57d-5c7b98aba779"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractDate}+ " г."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="170" y="104" width="100" height="16" uuid="8f2b29cd-0640-41ed-8158-c3fcdf948ec0"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractDate} + " ж."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="120" width="271" height="120" uuid="47f100b5-5dd5-4738-9403-4a564a990165"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{clientFullname}+"</u>   (бұдан әрі- Тапсырыс беруші)  - бір жағынан және <b>«Перспектива24-Астана» жауапкершілігі шектеулі серіктестігі</b> атынан Жарғы негізінде әрекет ететін Бас директор Д.М. Нургазин (Бұдан әрі   - Орындаушы деп аталады), (бірлесіп- Тараптар деп аталады және бөлек- Тарап) осы келісімді (бұдан әрі  - Келісім) жасады:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="120" width="272" height="120" uuid="1a8c7d9f-20f0-44d7-b512-18b0733a3c4a"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{clientFullname} +" (далее- Заказчик)- с одной стороны, и <b/>Товарищество с ограниченной ответственностью «Перспектива24-Астана»</b>, в лицегенерального директора Нургазина Д.М. (далее- Исполнитель), - (совместно именуются - Стороны, а по отдельности - Сторона), заключили настоящий договор (далее - Договор) о нижеследующем:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="230" width="271" height="80" uuid="6461ff7c-8158-4d0b-ac90-9852bcd87aa8"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>1. Шарттың мәні</b><br/>1.1. Тапсырыс беруші тапсырады, ал Орындаушы сыйақы үшінТапсырыс берушінің мынадай талаптарына жауап беретін жылжымайтын мүлік объектісін іздестіруді (іріктеуді) жүзеге асыруға міндеттенеді:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="230" width="272" height="80" uuid="685c0d0f-2318-4b95-a177-4d71fd7ca783"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>1. Предмет договора</b><br/>1.1 Заказчик поручает, а Исполнитель обязуется за вознаграждение осуществить поиск (подбор) объекта недвижимости, отвечающее следующим требованиям Заказчика:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="305" width="141" height="70" uuid="bfe2b78c-d049-45c5-834e-608be4de49e5"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Left">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Жылжымайтын мүлік объектісінің орналасқан жері Тұрғын үй кешенінің атауы (бар болса)"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="141" y="305" width="130" height="70" uuid="7dc09006-8e2f-4e5d-9c86-772dfabf1ca8"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>" +$P{objectRegion} +"<br/>"+$P{objectRCName}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="375" width="141" height="51" uuid="cd520da2-b86b-4fe7-b61a-6b17c09d7986"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Жылжымайтын мүлік объектісінің түрі: (пәтер, тұрғын үй) <i>қажеттісін белгілеу</i>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="141" y="375" width="130" height="51" uuid="61078913-9f20-498b-a5c6-05fc951cdb46"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectType}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="305" width="141" height="70" uuid="5c15df7c-fb65-4821-982b-4d9b7ecb4c2d"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Left" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Район местоположения объекта недвижимости Название жилого комплекса <i>(при его наличии)</i>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="375" width="141" height="60" uuid="e157037c-19d3-47fb-bc71-4e7e2dce40c0"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Вид объекта недвижимости: (квартира, жилой дом) <i>необходимое отметить</i>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="425" y="305" width="130" height="70" uuid="423950ee-65b7-402b-a624-f980098d3a9a"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>" +$P{objectRegion} +"<br/>"+$P{objectRCName}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="425" y="375" width="130" height="60" uuid="422d5359-3d1f-4a6e-a884-c6048b4ea625"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectType}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="426" width="141" height="20" uuid="9bde5661-da72-41eb-b7f8-ec786d28b911"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Бөлмелер саны"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="141" y="426" width="130" height="20" uuid="571c1222-d65e-4ead-9386-599505afd30d"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectRoomCount}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="446" width="141" height="29" uuid="8d427a6c-7e5e-457c-b5e9-f541b3a767a3"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Шамамен жалпы ауданы (ш.м.)"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="141" y="446" width="130" height="29" uuid="15761fe2-6f8a-44da-b652-0d5fc91196cc"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectArea}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="475" width="141" height="19" uuid="75b17041-0634-4a55-ad09-7a7c0c97ad0b"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Қабат (қабаттылығы)"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="141" y="475" width="130" height="19" uuid="e7fb83f6-c286-4b75-aec1-3f75b49eadbf"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectFloor}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="494" width="141" height="19" uuid="6cfa0658-6b66-426d-9666-955bd135b8aa"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Қосымша сұраулар"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="141" y="494" width="130" height="19" uuid="4c506ff9-4366-4e8c-b270-ffe307c594ce"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{comment}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="435" width="141" height="20" uuid="977a72f5-023f-4264-80d0-d13c2775a71c"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Количество комнат"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="425" y="435" width="130" height="20" uuid="c11951c0-8f15-4bbf-b0b9-f65a6a9a5a81"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectRoomCount}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="455" width="141" height="29" uuid="2fc20a62-e24d-4ab1-8cfc-c67778adfc52"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Приблизительная общая площадь (м2,соток)"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="425" y="455" width="130" height="29" uuid="5cac089b-f203-4829-8f01-ce2bb361764f"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectArea}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="484" width="141" height="19" uuid="cb279f52-9754-45c2-b4bf-7401335fa8fe"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Этаж (этажность)"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="425" y="484" width="130" height="19" uuid="18bd4799-5ef7-4b77-a5ce-864a1771cf37"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{objectFloor}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="503" width="141" height="19" uuid="c698a44a-dccf-47be-a03f-d966a4fd0e3e"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Дополнительные запросы"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="425" y="503" width="130" height="19" uuid="73b10b06-0cf4-4a98-92ce-ba64dd0d77ad"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{comment}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="513" width="271" height="42" uuid="726439bf-ca88-4287-910a-775f48a1ef0f"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Жылжымайтын мүлік объектісінің шамамен алынған құны: <u>" + $P{objectMaxPrice} +"</u><br/>Төлем түрі: <u>"+$P{payTypeKZ}+"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="285" y="522" width="271" height="48" uuid="e41aa1b9-87b3-4682-8d18-7b8b528a6fc5"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Ориентировочная стоимость объекта недвижимости должна быть не более: <u>" + $P{objectMaxPrice} +"</u><br/>Видо платы: <u>" + $P{payTypeRU} +"</u>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="555" width="271" height="231" uuid="eb27db6a-b920-4d77-a98c-2595a7e2bd7d"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Тараптардың құқықтары мен міндеттері</b><br/><b>2.1 Орындаушы міндетті:</b><br/>2.1.1 Тапсырыс берушіге осы Шарттың талаптарына сәйкес тиісті түрде қызмет көрсету. <br/>2.1.2 Тапсырыс берушіге ұсынылатын объектілер туралы ақпарат беруге міндетті. <br/>2.1.3 Тапсырыс берушіге осы Шарттың ажырамас бөлігі болып табылатын, Орындаушы ұсынған қарау актісінде (№1 қосымша) бекітілген Объектілерді қарауды ұйымдастыруға міндетті. <br/>2.1.4 Тапсырыс беруші мен әлеуетті сатушы арасында келіссөздер жүргізу кезінде, сондай-ақ кепілпұл/аванс және/немесе мәміле туралы келісім жасасу кезінде қатысу. <br/>2.1.5 Тапсырыс берушінің жеке деректерінің құпиялылығын сақтау. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="780" width="270" height="21" uuid="490c7650-a224-43a4-93e8-26bdef7e29a9"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Подпись Заказчика:____________________"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="564" width="272" height="222" uuid="01fec551-cc40-4182-b644-7b20d193178a"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>2 Права и обязанности Сторон</b><br/><b>2.1 Исполнитель обязан:</b><br/>2.1.1 Оказать Заказчику услуги надлежащим образом в точном соответствии с условиями настоящего Договора. <br/>2.1.2 Предоставлять Заказчику информацию о предлагаемых объектах. <br/>2.1.3 Организовывать Заказчику просмотр Объектов, предложенных Исполнителем закрепленных в Акте осмотра (Приложение№1), являющееся неотъемлемой частью настоящего Договора. <br/>2.1.4 Присутствовать при проведении переговоров между Заказчиком и Потенциальным Продавцом, а также при заключении соглашения о задатке/авансе и/или Сделки."]]></textFieldExpression>
+            </textField>
+            <image>
+                <reportElement x="180" y="0" width="200" height="50" uuid="3a78673d-49be-4acc-ad19-4f040b7dc2d9"/>
+                <imageExpression><![CDATA[$P{logoImage}]]></imageExpression>
+            </image>
+            <image>
+                <reportElement x="449" y="780" width="115" height="22" uuid="9e67ffc6-db01-4713-a15c-6f5443f2f48c"/>
+                <imageExpression><![CDATA[$P{footerImage}]]></imageExpression>
+            </image>
+        </band>
+    </detail>
+</jasperReport>
