@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
+import kz.dilau.htcdatamanager.web.dto.client.ApplicationSellDataClientDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -13,7 +14,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -62,13 +62,20 @@ public class ApplicationSellData extends AApplicationData {
                 .stream()
                 .map(IdItem::new)
                 .collect(Collectors.toSet());
-        this.applicationFlags= dataDto.getApplicationFlagIdList()
+        this.applicationFlags = dataDto.getApplicationFlagIdList()
                 .stream()
                 .map(IdItem::new)
                 .collect(Collectors.toSet());
         this.mortgage = dataDto.getMortgage();
         this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
         this.theSizeOfTrades = dataDto.getTheSizeOfTrades();
+        this.note = dataDto.getNote();
+    }
+
+    public ApplicationSellData(ApplicationSellDataClientDto dataDto, Building building, RealPropertyMetadata metadata) {
+        this.objectPrice = dataDto.getObjectPrice();
+        this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
+        this.realProperty = new RealProperty(dataDto.getRealPropertyClientDto(), building, metadata);
         this.note = dataDto.getNote();
     }
 

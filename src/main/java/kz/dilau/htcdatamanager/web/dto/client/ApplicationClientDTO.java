@@ -2,11 +2,12 @@ package kz.dilau.htcdatamanager.web.dto.client;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.web.dto.ApplicationPurchaseDataDto;
-import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
+import kz.dilau.htcdatamanager.domain.Application;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+
+import static java.util.Objects.nonNull;
 
 @Getter
 @Setter
@@ -24,22 +25,30 @@ public class ApplicationClientDTO {
     @ApiModelProperty(value = "ID типа объекта", required = true)
     private Long objectTypeId;
 
-    @ApiModelProperty(value = "Данные по невижимости", required = true)
-    @NotNull(message = "Real property must not be null")
-    private RealPropertyClientDto realPropertyDto;
-
     @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
     private String clientLogin;
 
-    @ApiModelProperty(name = "separateBathroom", value = "Санузел раздельный")
-    private Boolean mortgage;
-
-    @ApiModelProperty(name = "sellDataDto", value = "Общая информация о сделке продажи объекта")
-    private ApplicationSellDataDto sellDataDto;
+    @ApiModelProperty(name = "sellDataClientDto", value = "Общая информация о сделке продажи объекта")
+    private ApplicationSellDataClientDto sellDataClientDto;
 
     @ApiModelProperty(name = "purchaseInfoClientDto", value = "Модель параметров по операции Покупка ")
-    private PurchaseInfoClientDto purchaseInfoDto;
+    private PurchaseInfoClientDto purchaseInfoClientDto;
 
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
+
+
+    public ApplicationClientDTO(Application application) {
+        this.setId(application.getId());
+        this.setAgent(application.getCurrentAgent());
+        this.setClientLogin(application.getClientLogin());
+        this.setOperationTypeId(application.getOperationTypeId());
+        this.setObjectTypeId(application.getObjectTypeId());
+        if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
+            this.setSellDataClientDto(new ApplicationSellDataClientDto(application.getApplicationSellData()));
+        } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())
+                && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+            this.setPurchaseInfoClientDto(new PurchaseInfoClientDto(application.getApplicationPurchaseData()));
+        }
+    }
 }
