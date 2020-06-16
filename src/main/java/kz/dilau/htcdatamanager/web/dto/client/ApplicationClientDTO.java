@@ -1,11 +1,14 @@
 package kz.dilau.htcdatamanager.web.dto.client;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.Application;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+
+import java.time.ZonedDateTime;
 
 import static java.util.Objects.nonNull;
 
@@ -37,6 +40,8 @@ public class ApplicationClientDTO {
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agent;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+    protected ZonedDateTime createdDate;
 
     public ApplicationClientDTO(Application application) {
         this.setId(application.getId());
