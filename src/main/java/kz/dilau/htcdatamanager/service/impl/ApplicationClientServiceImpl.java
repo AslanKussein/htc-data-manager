@@ -115,7 +115,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 info.setId(application.getApplicationPurchaseData().getPurchaseInfo().getId());
             }
             if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData())) {
-                purchaseData.setId(application.getApplicationPurchaseData().getId());
+                purchaseData.setDataId(application.getApplicationPurchaseData().getId());
             }
             application.setApplicationPurchaseData(new ApplicationPurchaseData(application, purchaseData, info,
                     entityService.mapRequiredEntity(City.class, purchaseData.getCityId()),
