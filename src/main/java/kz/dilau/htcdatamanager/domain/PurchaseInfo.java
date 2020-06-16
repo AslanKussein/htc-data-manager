@@ -192,6 +192,10 @@ public class PurchaseInfo extends AGeneralCharacteristics {
             this.objectPriceTo = objectPrice.getTo();
         }
         if (nonNull(dto)) {
+            if (nonNull(dto.getNumberOfRoomsPeriod())) {
+                this.numberOfRoomsFrom = dto.getNumberOfRoomsPeriod().getFrom();
+                this.numberOfRoomsTo = dto.getNumberOfRoomsPeriod().getTo();
+            }
             if (nonNull(dto.getFloorPeriod())) {
                 this.floorFrom = dto.getFloorPeriod().getFrom();
                 this.floorTo = dto.getFloorPeriod().getTo();

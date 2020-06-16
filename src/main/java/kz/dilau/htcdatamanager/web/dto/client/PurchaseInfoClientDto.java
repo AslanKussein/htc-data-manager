@@ -27,7 +27,7 @@ public class PurchaseInfoClientDto {
     protected Boolean probabilityOfBidding;
     @ApiModelProperty(value = "Комментарий")
     protected String note;
-    private Long id;
+    private Long dataId;
     @ApiModelProperty(value = "ID города", required = true)
     private Long cityId;
     @ApiModelProperty(value = "ID района")
@@ -45,7 +45,7 @@ public class PurchaseInfoClientDto {
 
     public PurchaseInfoClientDto(ApplicationPurchaseData data) {
         if (nonNull(data)) {
-            this.id = data.getId();
+            this.dataId = data.getId();
             PurchaseInfo info = data.getPurchaseInfo();
             if (nonNull(info)) {
                 this.floorPeriod = new IntegerPeriod(info.getFloorFrom(), info.getFloorTo());
@@ -53,6 +53,7 @@ public class PurchaseInfoClientDto {
                 this.objectPricePeriod = new BigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo());
                 this.atelier = info.getAtelier();
                 this.separateBathroom = info.getSeparateBathroom();
+                this.numberOfRoomsPeriod = new IntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo());
             }
             this.probabilityOfBidding = data.getProbabilityOfBidding();
             this.cityId = data.getCityId();
