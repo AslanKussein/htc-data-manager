@@ -80,7 +80,7 @@ public class ContractServiceImpl implements ContractService {
     public String generateContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (!hasPermission(getAuthorName(), application)) {
-            throw BadRequestException.createTemplateException("error.has.not.permission");
+            //throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         String result = null;
         if (dto.getIsExclusive()) {
@@ -99,8 +99,12 @@ public class ContractServiceImpl implements ContractService {
             result = generateContractSaleExclusivePerspective(application, dto);
         }
 
+        if (dto.getGuid().equals("perspective_sale_standart")) {
+            result = generateContractSaleStandartPerspective(application, dto);
+        }
+
         if (nonNull(result)) {
-            saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
+            //saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         }
         return result;
     }
@@ -1006,6 +1010,9 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
+    private String generateContractSaleStandartPerspective(Application application, ContractFormDto dto) {
+        return "empty";
+    }
     @Override
     public Long missContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
