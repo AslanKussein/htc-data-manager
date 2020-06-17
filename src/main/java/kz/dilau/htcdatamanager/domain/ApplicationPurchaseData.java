@@ -21,6 +21,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
+
 @Getter
 @Setter
 @Builder
@@ -106,6 +107,9 @@ public class ApplicationPurchaseData extends AApplicationData {
         this.note = dataDto.getNote();
         this.purchaseInfo = purchaseInfo;
         this.application = application;
+        if (nonNull(application) && nonNull(application.getApplicationPurchaseData())) {
+            this.id = application.getApplicationPurchaseData().getId();
+        }
     }
 
     public ApplicationPurchaseData(Application application, String note) {
