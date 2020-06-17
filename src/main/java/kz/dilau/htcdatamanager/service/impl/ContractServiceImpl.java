@@ -91,13 +91,13 @@ public class ContractServiceImpl implements ContractService {
             result = generateContractSale(application, dto);
         }
 
-        if (dto.getGuid().equals("perspective_buy")) {
-            result = generateContractBuyPerspective(application, dto);
-        }
-
-        if (dto.getGuid().equals("perspective_sale_excl")) {
-            result = generateContractSaleExclusivePerspective(application, dto);
-        }
+//        if (dto.getGuid().equals("perspective_buy")) {
+//            result = generateContractBuyPerspective(application, dto);
+//        }
+//
+//        if (dto.getGuid().equals("perspective_sale_excl")) {
+//            result = generateContractSaleExclusivePerspective(application, dto);
+//        }
 
         if (nonNull(result)) {
             saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
@@ -160,7 +160,7 @@ public class ContractServiceImpl implements ContractService {
             JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, null, new JREmptyDataSource());
 
             //----------------------
-            Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/responsibilities.jrxml");
+            Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/responsibility.jrxml");
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
             JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
