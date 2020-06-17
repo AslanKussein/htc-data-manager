@@ -1,10 +1,7 @@
 package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import kz.dilau.htcdatamanager.domain.dictionary.City;
-import kz.dilau.htcdatamanager.domain.dictionary.District;
-import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
-import kz.dilau.htcdatamanager.domain.dictionary.YardType;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.web.dto.ApplicationPurchaseDataDto;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
@@ -13,6 +10,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,6 +43,18 @@ public class ApplicationPurchaseData extends AApplicationData {
     private District district;
     @Column(name = "district_id", insertable = false, updatable = false)
     private Long districtId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pay_type_id")
+    private PayType payType;
+    @Column(name = "pay_type_id", insertable = false, updatable = false)
+    private Long payTypeId;
+    @Column(name = "payed_sum")
+    private BigDecimal payedSum;
+    @Column(name = "payed_client_login")
+    private String payedClientLogin;
+    @Column(name = "is_payed")
+    private Boolean isPayed;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "purchase_info_id")
@@ -99,7 +109,7 @@ public class ApplicationPurchaseData extends AApplicationData {
     }
 
 
-    public ApplicationPurchaseData(Application application, PurchaseInfoClientDto dataDto, PurchaseInfo purchaseInfo, City city, District district) {
+    public ApplicationPurchaseData(Application application, PurchaseInfoClientDto dataDto, PurchaseInfo purchaseInfo, City city, District district, PayType payType) {
         this.city = city;
         this.district = district;
         this.mortgage = dataDto.getMortgage();
@@ -107,6 +117,11 @@ public class ApplicationPurchaseData extends AApplicationData {
         this.note = dataDto.getNote();
         this.purchaseInfo = purchaseInfo;
         this.application = application;
+        this.payTypeId = dataDto.getPayTypeId();
+        this.payType = payType;
+        this.payedSum = dataDto.getPayedSum();
+        this.isPayed = dataDto.getIsPayed();
+        this.payedClientLogin = dataDto.getPayedClientLogin();
         if (nonNull(application) && nonNull(application.getApplicationPurchaseData())) {
             this.id = application.getApplicationPurchaseData().getId();
         }

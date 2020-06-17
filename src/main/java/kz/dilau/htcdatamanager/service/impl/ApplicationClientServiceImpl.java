@@ -108,7 +108,8 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
             }
             application.setApplicationPurchaseData(new ApplicationPurchaseData(application, purchaseData, info,
                     entityService.mapRequiredEntity(City.class, purchaseData.getCityId()),
-                    entityService.mapRequiredEntity(District.class, purchaseData.getDistrictId())));
+                    entityService.mapRequiredEntity(District.class, purchaseData.getDistrictId()),
+                    entityService.mapRequiredEntity(PayType.class, purchaseData.getPayTypeId())));
 
         } else if (operationType.isSell()) {
             if (nonNull(dto.getSellDataClientDto())) {
