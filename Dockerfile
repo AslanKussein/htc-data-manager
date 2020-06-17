@@ -1,6 +1,8 @@
 FROM openjdk:8-alpine
 
 RUN apk add ttf-dejavu
+RUN apk add --no-cache msttcorefonts-installer fontconfig
+RUN update-ms-fonts
 
 ARG DEPENDENCY=./target/htc-data-manager
 
