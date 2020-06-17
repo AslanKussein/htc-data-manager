@@ -156,7 +156,7 @@ public class ContractServiceImpl implements ContractService {
             JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, null, new JREmptyDataSource());
 
             //----------------------
-            Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/responsibilities.jrxml");
+            Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/responsibility.jrxml");
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
             JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
