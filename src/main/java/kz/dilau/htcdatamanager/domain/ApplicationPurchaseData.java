@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
 import kz.dilau.htcdatamanager.domain.dictionary.YardType;
 import kz.dilau.htcdatamanager.web.dto.ApplicationPurchaseDataDto;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
+import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -94,6 +95,17 @@ public class ApplicationPurchaseData extends AApplicationData {
                 .stream()
                 .map(IdItem::new)
                 .collect(Collectors.toSet());
+    }
+
+
+    public ApplicationPurchaseData(Application application, PurchaseInfoClientDto dataDto, PurchaseInfo purchaseInfo, City city, District district) {
+        this.city = city;
+        this.district = district;
+        this.mortgage = dataDto.getMortgage();
+        this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
+        this.note = dataDto.getNote();
+        this.purchaseInfo = purchaseInfo;
+        this.application = application;
     }
 
     public ApplicationPurchaseData(Application application, String note) {

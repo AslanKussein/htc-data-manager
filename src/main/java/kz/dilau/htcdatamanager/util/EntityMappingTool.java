@@ -2,7 +2,6 @@ package kz.dilau.htcdatamanager.util;
 
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
-import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
@@ -23,11 +22,6 @@ public class EntityMappingTool {
                 entityService.mapRequiredEntity(District.class, dataDto.getDistrictId()));
     }
 
-   /* public ApplicationPurchaseData convertApplicationClientPurchaseData(ApplicationClientDTO dto) {
-        ApplicationPurchaseDataDto dataDto = dto.get();
-        return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()),
-                entityService.mapRequiredEntity(District.class, dataDto.getDistrictId()));
-    }*/
 
     public PurchaseInfo convertPurchaseInfo(ApplicationDto dto) {
         if (nonNull(dto) && nonNull(dto.getPurchaseDataDto()) && nonNull(dto.getPurchaseInfoDto())) {
@@ -40,9 +34,9 @@ public class EntityMappingTool {
     }
 
     public PurchaseInfo convertClientPurchaseInfo(ApplicationClientDTO dto) {
-        if (nonNull(dto) && nonNull(dto.getPurchaseInfoDto()) && nonNull(dto.getPurchaseInfoDto())) {
-            PurchaseInfoClientDto infoDto = dto.getPurchaseInfoDto();
-            return new PurchaseInfo(infoDto, dto.getPurchaseInfoDto().getObjectPricePeriod());
+        if (nonNull(dto) && nonNull(dto.getPurchaseInfoClientDto())) {
+            PurchaseInfoClientDto infoDto = dto.getPurchaseInfoClientDto();
+            return new PurchaseInfo(infoDto, infoDto.getObjectPricePeriod());
         }
         return null;
     }

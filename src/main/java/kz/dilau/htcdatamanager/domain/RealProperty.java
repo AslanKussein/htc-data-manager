@@ -57,9 +57,13 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
         this.cadastralNumber = realPropertyDto.getCadastralNumber();
     }
 
-    public RealProperty(RealPropertyClientDto realPropertyClientDto, Building building) {
+    public RealProperty(RealPropertyClientDto realPropertyClientDto, Building building, RealPropertyMetadata metadata) {
         this.building = building;
         this.apartmentNumber = realPropertyClientDto.getApartmentNumber();
+        if (nonNull(metadata)) {
+            metadata.setRealProperty(this);
+            getMetadataList().add(metadata);
+        }
     }
 
     public List<RealPropertyMetadata> getMetadataList() {
