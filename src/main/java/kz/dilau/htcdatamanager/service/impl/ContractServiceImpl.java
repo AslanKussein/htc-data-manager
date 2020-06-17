@@ -95,6 +95,10 @@ public class ContractServiceImpl implements ContractService {
             result = generateContractBuyPerspective(application, dto);
         }
 
+        if (dto.getGuid().equals("perspective_sale_excl")) {
+            result = generateContractSaleExclusivePerspective(application, dto);
+        }
+
         if (nonNull(result)) {
             saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         }
@@ -661,10 +665,10 @@ public class ContractServiceImpl implements ContractService {
 
             // Add parameters
             Map<String, Object> parameters = new HashMap<>();
-            InputStream logoImage = getClass().getResourceAsStream("/jasper/logo_perspectiva.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
+            InputStream logoImage = getLogoPerspective(); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
             parameters.put("logoImage", logoImage);
 
-            InputStream footerImage = getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+            InputStream footerImage = getFooterImagePerspective();
             parameters.put("footerImage", footerImage);
             parameters.put("contractNumber", dto.getContractNumber());
             parameters.put("contractDate", sdfDate.format(new Date()));
@@ -686,7 +690,7 @@ public class ContractServiceImpl implements ContractService {
             InputStream inputDuties = resourceDuties.getInputStream();
             JasperReport jasperReportDuties = JasperCompileManager.compileReport(inputDuties);
             Map<String, Object> dutiesPar = new HashMap<>();
-            footerImage = getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+            footerImage = getFooterImagePerspective();
             dutiesPar.put("footerImage", footerImage);
             JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, dutiesPar, new JREmptyDataSource());
             //----------------------
@@ -694,7 +698,7 @@ public class ContractServiceImpl implements ContractService {
             InputStream inputPrice = resourcePrice.getInputStream();
             JasperReport jasperReportPrice = JasperCompileManager.compileReport(inputPrice);
             Map<String, Object> pricePar = new HashMap<>();
-            footerImage = getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+            footerImage = getFooterImagePerspective();
             pricePar.put("footerImage", footerImage);
             JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, pricePar, new JREmptyDataSource());
             //----------------------
@@ -702,7 +706,7 @@ public class ContractServiceImpl implements ContractService {
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
             Map<String, Object> respPar = new HashMap<>();
-            footerImage = getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+            footerImage = getFooterImagePerspective();
             respPar.put("footerImage", footerImage);
             JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, respPar, new JREmptyDataSource());
             //----------------------
@@ -710,7 +714,7 @@ public class ContractServiceImpl implements ContractService {
             InputStream inputRecv = resourceRecv.getInputStream();
             JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
             Map<String, Object> recvPar = new HashMap<>();
-            footerImage = getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+            footerImage = getFooterImagePerspective();
             recvPar.put("footerImage", footerImage);
             recvPar.put("clientFullname", "Client Clientovich");
             recvPar.put("clientBirthdate", "Agent Agentovich");
@@ -736,7 +740,7 @@ public class ContractServiceImpl implements ContractService {
             actViewPar.put("docNumb", "123456");
             actViewPar.put("docDate", "12.12.2020");
             actViewPar.put("agentFullname", "Agent Agentovich");
-            footerImage = getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+            footerImage = getFooterImagePerspective();
             actViewPar.put("footerImage", footerImage);
 
             InputStream inputActView = resourceActView.getInputStream();
@@ -757,7 +761,7 @@ public class ContractServiceImpl implements ContractService {
             actWorkPar.put("clientAddress", "DF1234");
             actWorkPar.put("agentFullname", "Agent Agentovich");
             actWorkPar.put("clientIIN", "00000000000000");
-            footerImage = getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+            footerImage = getFooterImagePerspective();
             actViewPar.put("footerImage", footerImage);
             InputStream inputActWork = resourceActWork.getInputStream();
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
@@ -772,18 +776,230 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintActView);
             jasperPrintList.add(jasperPrintActWork);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JRPdfExporter exporter = new JRPdfExporter();
-            //Add the list as a Parameter
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-            //this will make a bookmark in the exported PDF for each of the reports
-            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
-            exporter.exportReport();
+
+            return getPages(jasperPrintList);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+
+    private InputStream getLogoPerspective() {
+        return getClass().getResourceAsStream("/jasper/logo_perspectiva.png");
+    }
+
+    private InputStream getFooterImagePerspective(){
+        return getClass().getResourceAsStream("/jasper/logo_footer_perspectiva.png");
+    }
+
+    private String getPages (List<JasperPrint> jasperPrintList) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        JRPdfExporter exporter = new JRPdfExporter();
+        //Add the list as a Parameter
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
+        //this will make a bookmark in the exported PDF for each of the reports
+        exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+        exporter.exportReport();
+        return Base64.encodeBase64String(baos.toByteArray());
+    }
+
+    private String generateContractSaleExclusivePerspective(Application application, ContractFormDto dto) {
+        try {
+
+            if (isNull(application.getApplicationPurchaseData())) {
+                throw BadRequestException.createTemplateException("error.application.contract");
+            }
+            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+            PurchaseInfo purchaseInfo = purchaseData.getPurchaseInfo();
+            City city = purchaseData.getCity();
+            District district = purchaseData.getDistrict();
+            Resource resource = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/main.jrxml");
+            List<String> userLogin = new ArrayList<>();
+            userLogin.add(application.getClientLogin());
+
+            InputStream input = resource.getInputStream();
+            InputStream footerImage = getFooterImagePerspective();
+            InputStream logoImage = getLogoPerspective();
+
+            Map<String, Object> parameters = new HashMap<>();
 
 
-            String base64String = Base64.encodeBase64String(baos.toByteArray());
-            return base64String;
+            parameters.put("logoImage", logoImage);
+            parameters.put("footerImage", footerImage);
+            parameters.put("contractNumber", dto.getContractNumber());
+            parameters.put("contractDate", sdfDate.format(new Date()));
+            parameters.put("cityKZ", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            parameters.put("cityRU", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            parameters.put("printDate", sdfDate.format(new Date()));
+            parameters.put("clientFullname", "Client Undefined");
+
+            parameters.put("objectRegion", nonNull(district) ? district.getMultiLang().getNameRu() : "");
+            parameters.put("objectType", application.getObjectType().getMultiLang().getNameRu());
+            parameters.put("objectRoomCount", nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
+            parameters.put("objectArea", nonNull(purchaseInfo) ? purchaseInfo.getTotalAreaFrom() + " - " + purchaseInfo.getTotalAreaTo() : "");
+            parameters.put("objectFloor", nonNull(purchaseInfo) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
+
+            JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, parameters, new JREmptyDataSource());
+            //-----------------------
+            Resource resourceDuties = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/duties.jrxml");
+
+            Map<String, Object> dutiesPar = new HashMap<>();
+            footerImage = getFooterImagePerspective();
+            dutiesPar.put("footerImage", footerImage);
+            InputStream inputDuties = resourceDuties.getInputStream();
+            JasperReport jasperReportDuties = JasperCompileManager.compileReport(inputDuties);
+            JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, dutiesPar, new JREmptyDataSource());
+            //----------------------
+
+            Resource resourcePrice = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/price.jrxml");
+            InputStream inputPrice = resourcePrice.getInputStream();
+            JasperReport jasperReportPrice = JasperCompileManager.compileReport(inputPrice);
+            Map<String, Object> pricePar = new HashMap<>();
+            footerImage = getFooterImagePerspective();
+            pricePar.put("footerImage", footerImage);
+            JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, pricePar, new JREmptyDataSource());
+            //----------------------
+            Resource resourceResp = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/responsibilities.jrxml");
+            Map<String, Object> respPar = new HashMap<>();
+            footerImage = getFooterImagePerspective();
+            respPar.put("footerImage", footerImage);
+            InputStream inputResp = resourceResp.getInputStream();
+            JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
+            JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, respPar, new JREmptyDataSource());
+
+
+            //----------------------
+            Resource resourceFinal = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/final.jrxml");
+
+            Map<String, Object> finalPar = new HashMap<>();
+            footerImage = getFooterImagePerspective();
+            finalPar.put("footerImage", footerImage);
+            InputStream inputFinal = resourceFinal.getInputStream();
+            JasperReport jasperReportFinal = JasperCompileManager.compileReport(inputFinal);
+            JasperPrint jasperPrintFinal = JasperFillManager.fillReport(jasperReportFinal, finalPar, new JREmptyDataSource());
+
+            //------------------------
+            Resource resourceRecv = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/recvisit.jrxml");
+
+            Map<String, Object> recvPar = new HashMap<>();
+
+            footerImage = getFooterImagePerspective();
+            recvPar.put("footerImage", footerImage);
+            recvPar.put("docNumb", "12356");
+            recvPar.put("docDate", "123456");
+            recvPar.put("actDate", "123123123123");
+            recvPar.put("clientFullname", "Client Clientovich");
+            recvPar.put("clientBirthdate", "Agent Agentovich");
+            recvPar.put("clientPassportDealDate", "12.12.2008");
+            recvPar.put("clientPassportnumber", "123456");
+            recvPar.put("clientPassportserial", "DF1234");
+            recvPar.put("clientPassportDealer", "DF1234");
+            recvPar.put("clientAddress", "DF1234");
+            recvPar.put("clientIIN", "4444333344443333");
+            recvPar.put("clientMobilePhone", "7 777 77777 77");
+            recvPar.put("agentFullname", "Agent Agentovich");
+            recvPar.put("confidantFullname", "Confidant Confidant");
+
+
+            InputStream inputRecv = resourceRecv.getInputStream();
+            JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
+            JasperPrint jasperPrintRecv = JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
+            //------------------------
+            Resource resourceActView = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/actView.jrxml");
+
+            Map<String, Object> actViewPar = new HashMap<>();
+            List<JasperPerspectivaActViewDto> actItems = new ArrayList<>();
+
+            actItems.add(new JasperPerspectivaActViewDto("1", "FIO/Address", "10.10.2019"));
+            actItems.add(new JasperPerspectivaActViewDto("2", "FIO/Address", "*"));
+            actItems.add(new JasperPerspectivaActViewDto("3", "FIO/Address", "#"));
+            JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
+            actViewPar.put("CollectionPerspectivaBuyActView", actDs);
+            actViewPar.put("docNumb", "123456");
+            actViewPar.put("docDate", "12.12.2020");
+            actViewPar.put("agentFullname", "Agent Agentovich");
+            footerImage = getFooterImagePerspective();
+            actViewPar.put("footerImage", footerImage);
+
+            InputStream inputActView = resourceActView.getInputStream();
+            JasperReport jasperReportActView = JasperCompileManager.compileReport(inputActView);
+            JasperPrint jasperPrintActView = JasperFillManager.fillReport(jasperReportActView, actViewPar, new JREmptyDataSource());
+            //----------------------
+            Map<String, Object> propPar = new HashMap<>();
+
+            propPar.put("docNumb", dto.getContractNumber());
+            propPar.put("docDate", dto.getContractNumber());
+            propPar.put("objectFullAddress", application.getClientLogin());
+
+            propPar.put("objectRCName", "Manhattan");
+            propPar.put("objectType", application.getClientLogin());
+            propPar.put("objectFloorTotal", "100");
+
+            propPar.put("objectFloor", dto.getContractNumber());
+            propPar.put("objectRoomCount", dto.getContractNumber());
+            propPar.put("objectArea", "125");
+            propPar.put("objectLivingArea", "200");
+            propPar.put("objectKitchenArea", "10");
+            propPar.put("objectBathroomTypeRU", "Раздельный \\Совмещенный");
+            propPar.put("objectBathroomTypeKZ", "қазақша");
+
+            propPar.put("objectFurnitureRU", "list list");
+            propPar.put("objectFurnitureKZ", "list kz list kz");
+
+            propPar.put("objectCollaterial", application.getClientLogin());
+            propPar.put("contractSum", "50 000 000");
+            propPar.put("objectMaxPrice", "100 000 000");
+            //propPar.put("objectMinPrice", "10 000 000");
+            propPar.put("objectCadastralNumber", "10 000 000 aaa dddd 44444");
+            propPar.put("objectLandArea", "10 000");
+            propPar.put("objectDivisibleRU", "ДА");
+            propPar.put("objectDivisibleKZ", "ИӘ");
+            propPar.put("objectReadyYear", "10 000 000");
+            propPar.put("agentFullname", "Agent Agentovich");
+            footerImage = getFooterImagePerspective();
+            propPar.put("footerImage", footerImage);
+
+            Resource resourceProp = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/properties.jrxml");
+            InputStream inputProp = resourceProp.getInputStream();
+            JasperReport jasperReportProp = JasperCompileManager.compileReport(inputProp);
+            JasperPrint jasperPrintProp = JasperFillManager.fillReport(jasperReportProp, propPar, new JREmptyDataSource());
+            //---------------------
+            Resource resourceActWork = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/actWork.jrxml");
+            Map<String, Object> actWorkPar = new HashMap<>();
+            actWorkPar.put("docNumb", "12356");
+            actWorkPar.put("docDate", "123456");
+            actWorkPar.put("actDate", "123123123123");
+            actWorkPar.put("dirName", "Director Directorovich");
+            actWorkPar.put("clientFullname", "Client Clientovich");
+            actWorkPar.put("clientPassportDealDate", "12.12.2008");
+            actWorkPar.put("clientPassportnumber", "123456");
+            actWorkPar.put("clientPassportDealer", "DF1234");
+            actWorkPar.put("clientAddress", "DF1234");
+            actWorkPar.put("agentFullname", "Agent Agentovich");
+            actWorkPar.put("clientIIN", "00000000000000");
+            footerImage = getFooterImagePerspective();
+            actViewPar.put("footerImage", footerImage);
+            InputStream inputActWork = resourceActWork.getInputStream();
+            JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
+            JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
+            //------------------------
+
+            List<JasperPrint> jasperPrintList = new ArrayList<>();
+            jasperPrintList.add(jasperPrintBasic);
+            jasperPrintList.add(jasperPrintDuties);
+            jasperPrintList.add(jasperPrintPrice);
+            jasperPrintList.add(jasperPrintResp);
+            jasperPrintList.add(jasperPrintFinal);
+            jasperPrintList.add(jasperPrintRecv);
+            jasperPrintList.add(jasperPrintActView);
+            jasperPrintList.add(jasperPrintProp);
+            jasperPrintList.add(jasperPrintActWork);
+
+
+            return getPages(jasperPrintList);
+            //log.info("Perspective Sale Done");
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
