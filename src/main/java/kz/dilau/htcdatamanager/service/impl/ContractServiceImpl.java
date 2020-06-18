@@ -99,9 +99,9 @@ public class ContractServiceImpl implements ContractService {
 //            result = generateContractSaleExclusivePerspective(application, dto);
 //        }
 
-        if (dto.getGuid().equals("perspective_sale_standart")) {
+        /*if (dto.getGuid().equals("perspective_sale_standart")) {
             result = generateContractSaleStandartPerspective(application, dto);
-        }
+        }*/
 
         if (nonNull(result)) {
             saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
