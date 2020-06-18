@@ -19,14 +19,8 @@ public class ApplicationSpecifications {
         return (root, cq, cb) -> cb.equal(root.get("operationType").get("id"), value);
     }
 
-    public static Specification<Application> applicationStatusIdEquals(Long value) {
-        return (root, cq, cb) -> cb.equal(root.get("applicationStatus").get("id"), value);
-    }
-
-    public static Specification<Application> applicationStatusIdNotEquals(Long value) {
-        return (root, cq, cb) -> cb.not(cb.equal(root.get("applicationStatus").get("id"), value));
+    public static Specification<Application> applicationStatusCodeNotEquals(String value) {
+        return (root, cq, cb) -> cb.not(cb.equal(root.get("applicationStatus").get("code"), value));
     }
 
 }
-
-//findAllByOperationType_idAndClientLoginAndIsRemovedFalseAndApplicationStatus_id

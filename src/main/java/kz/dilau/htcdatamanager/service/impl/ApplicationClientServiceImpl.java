@@ -176,7 +176,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 .isRemovedEquals(false)
                 .and(ApplicationSpecifications.clientLoginEquals(clientLogin))
                 .and(ApplicationSpecifications.operationTypeIdEquals(operationTypeId))
-                .and(ApplicationSpecifications.applicationStatusIdNotEquals(new Long(10)));
+                .and(ApplicationSpecifications.applicationStatusCodeNotEquals("002010"));
 
         List<Application> list = applicationRepository.findAll(specification);
         return list.stream().map(ApplicationClientDTO::new).collect(Collectors.toList());
