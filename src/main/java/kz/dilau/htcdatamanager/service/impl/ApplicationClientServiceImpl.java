@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
+import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
 import kz.dilau.htcdatamanager.service.ApplicationClientService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
@@ -17,6 +18,7 @@ import kz.dilau.htcdatamanager.web.dto.client.ApplicationSellDataClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -169,7 +171,14 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public List<ApplicationClientDTO> getAllMyAppByOperationTypeId(String clientLogin, String token, Long operationTypeId) {
-        List<Application> list = applicationRepository.findAllByOperationType_idAndClientLoginAndIsRemovedFalse(operationTypeId, clientLogin);
+
+        Specification<Application> specification = ApplicationSpecifications
+                .isRemovedEquals(false)
+                .and(ApplicationSpecifications.clientLoginEquals(clientLogin))
+                .and(ApplicationSpecifications.operationTypeIdEquals(operationTypeId))
+                .and(ApplicationSpecifications.applicationStatusIdNotEquals(new Long(10)));
+
+        List<Application> list = applicationRepository.findAll(specification);
         return list.stream().map(ApplicationClientDTO::new).collect(Collectors.toList());
     }
 
