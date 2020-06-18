@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="persp_sale_excl_duties_2" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3f3c3582-2778-4e80-b39b-ce738812e5dd">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <parameter name="footerImage" class="java.io.InputStream"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <line>
+                <reportElement x="280" y="0" width="1" height="780" uuid="998c3775-80b2-4734-bd80-e3b27e874941"/>
+            </line>
+            <textField>
+                <reportElement x="290" y="0" width="271" height="330" uuid="e5252ef1-99dd-4aec-926b-be78b1fc230e"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["2.3.7. Подписать Акт выполненных работ (Приложение№ 3) в день заключения Основного договора с Покупателем.<br/>2.3.8. Незамедлительно информировать Исполнителя о возникших у него существенных проблемах, затрудняющих или препятствующих выполнению обязательств по настоящему Договору.<br/><b>2.4.Заказчик имеет право:</b><br/>2.4.1. Осуществлять права и исполнять обязанности по настоящему договору, как лично, так и через своего представителя  (по доверенности), в соответствии с действующим законодательством Республики Казахстан. <br/>2.4.2. Участвовать во всех действиях, связанных с исполнением настоящего договора,  проверять ход и качество работы, выполняемой Исполнителем, не вмешиваясь в его деятельность.  <br/>2.4.3. Самостоятельно определять условия заключения Сделки с потенциальным покупателем.<br/><b>3.Стоимость и условия оплаты услуг</b><br/>3.1.Стоимость услуг Исполнителя по настоящему Договору рассчитывается в зависимости от нижеуказанной стоимости Объекта:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="0" width="270" height="330" uuid="4942f348-612f-465a-8fda-8bae1b1a7ab7"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<br/>2.3.7. Сатып алушымен негізгі шарт жасалған күні Орындалған жұмыстар актісіне (№3 қосымша) қол қою. <br/>2.3.8. Осы Шарт бойынша міндеттемелерді орындау жөніндегі міндеттемелердің  қиындататын немесе кедергі келтіретін елеулі проблемалар туралы дереу хабардар етуге.<br/><b>2.4. Тапсырыс берушінің құқығы: </b><br/>2.4.1. Осы Шарт бойынша міндеттемелерін жеке өзі де, өз өкілі (сенімхатпен) арқылы да Қазақстан Республикасының қазіргі заңдылығына сәйкес іске асырады. <br/>2.4.2. Осы Шарттың орындалуымен байланысты барлық іс-әрекеттерге қатысады, оның қызметіне араласпай, Орындаушы атқаратын жұмыстың барысы мен сапасын тексереді. <br/>2.4.3. Әлеуетті сатып алушымен Мәміле жасаудың шарттарын дербес анықтайды.  <br/><b>3.Қызметтердің құны мен төлемақы шарттары </b><br/>3.1. Осы Шарт бойынша Орындаушының қызметінің құны Нысанның төменде көрсетілген бағасына байланысты есептеледі:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="330" width="140" height="30" backcolor="#EDE9E8" uuid="54da27a7-f977-4f44-bd8d-a5a420145669"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Жылжымайтын Нысанның бағасы"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="360" width="140" height="20" uuid="21047073-c36d-4f9c-9f1b-34d4d04435b3"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["20 000 000 теңгеге дейін"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="380" width="140" height="30" uuid="396fe937-2b4c-4e9e-a405-6de7693367f8"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["20 000 001 теңгеден 25 000 000 теңгеге дейін"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="440" width="140" height="30" uuid="35cd794e-c222-47fe-867e-e934c9cfd641"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["30 000 001 теңгеден 40 000 000 теңгеге дейін"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="410" width="140" height="30" uuid="bfee980e-b9df-45d7-ab94-fd1305a7a856"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["25 000 001 теңгеден 30 000 000 теңгеге дейін"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="470" width="140" height="30" uuid="e8e023aa-b884-41e4-bcd3-c489545d878f"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["40 000 000 теңгеден жоғары"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="500" width="140" height="100" uuid="eacedbb2-f13d-4a49-9ca6-62b43e5e1f86"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Егер Жылжымайтын мүлік объектісі осы объектілер болып табылған жағдайда: <br/>тұрғын үй/жер  учаскесі/<br/>жер  учаскесі және тұрғын үй/<br/>тұрғын емес"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="500" width="130" height="100" uuid="93af0e85-2b7e-4953-ab90-54a0da73087c"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Жылжымайтын мүлік құнының 2%"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="470" width="130" height="30" uuid="59807bfa-4088-4efc-9116-487be4584390"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Жылжымайтын мүлік құнының 1%"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="440" width="130" height="30" uuid="1764bcef-10af-475d-be4e-d7df6617812d"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["400 000 теңге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="410" width="130" height="30" uuid="1b7014e0-4461-4e1d-a277-2c3083142672"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["350 000 теңге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="380" width="130" height="30" uuid="c573aecc-79f5-4a51-acf9-c04a60bf2867"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA["300 000 теңге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="360" width="130" height="20" uuid="bddc72f0-4818-4e2f-9d42-29b4924c8033"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["250 000 теңге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="140" y="330" width="130" height="30" backcolor="#EDE9E8" uuid="d7d3966a-b165-479e-8e25-b7ef1f4731ed"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Агенттік сыйақының мөлшері"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="330" width="140" height="30" backcolor="#EDE9E8" uuid="9e61ad53-e40c-406d-b90e-502aef312f79"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Стоимость Объекта недвижимости"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="360" width="140" height="20" uuid="63192997-ca0c-4f99-a9d1-43e06f632eb5"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["до 20 000 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="380" width="140" height="30" uuid="90d77ec8-f2fd-4bfc-a576-15879da9553e"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["от 20 000 001 тенге до 25 000 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="440" width="140" height="30" uuid="20fefe9f-44d6-4b36-927c-67c9d0253aa3"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["30 000 001 тенге до 40 000 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="410" width="140" height="30" uuid="d9fa842d-7b0a-4882-837d-fdf9551a5fb5"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["25 000 001 тенге до 30 000 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="470" width="140" height="30" uuid="8b61281d-b1da-4a9e-875a-cffe58399f45"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["свыше 40 000 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="290" y="500" width="140" height="100" uuid="d207adce-a9fd-4f52-b016-707d23c9ebd1"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["В случае если Объектом недвижимости является: Частныйдом/ Земельный участок/ Земельный участок и частныйдом/ Не жилое помещение/ Коммерческое помещение/ Парковочное место"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="430" y="500" width="130" height="100" uuid="1f3fb7ae-68af-42a6-a2ea-957e2eb82778"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["2% от стоимости Объекта недвижимости"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="430" y="470" width="130" height="30" uuid="0d6c1733-ffe4-4ff2-84ad-b9e98ac07261"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["1% от стоимости Объекта недвижимости"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="430" y="440" width="130" height="30" uuid="8d398855-45ed-4fc2-8014-b07cf016b47c"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["400 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="430" y="410" width="130" height="30" uuid="f891e446-47fa-4b01-9a11-e980e46fd5fa"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["350 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="430" y="380" width="130" height="30" uuid="4ecfd242-329c-4c80-96f4-97f225cbce1e"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="false"/>
+                </textElement>
+                <textFieldExpression><![CDATA["300 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="430" y="360" width="130" height="20" uuid="dc509719-5dea-4812-baff-142199516a42"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["250 000 тенге"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="430" y="330" width="130" height="30" backcolor="#EDE9E8" uuid="11a64a25-8047-4f32-9787-91f201a8cb83"/>
+                <box>
+                    <topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                    <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+                </box>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Размер вознаграждения"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="600" width="270" height="180" uuid="de2f1176-b420-43e4-9b85-6dc295ffa8ff"/>
+                <textElement textAlignment="Justified">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["3.2. Осы Шарт бойынша Орындаушының қызметтері Тапсырыс беруші мен Сатып алушымен (Орындаушы ұсынған) арасында Нысанды сатып алу жөнінде Мәміле жасағаннан кейін толық ауқымда орындалды деп саналады. Бұл арада Тапсырыс беруші кейіннен Орындаушыға қандай да бір талаптар мен наразылықтар жүктеуге құқылы емес. <br/>3.3. Тапсырыс беруші қызмет ақысын Мәміле жасалған күнінен бастап 3(үш) банктік күн ішінде Орындаушының есеп шотына ақша аудару немесе Мәміле жасалған күні Орындаушының кассасына қолма-қол төлейді. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="780" width="270" height="21" uuid="3837a777-2e5e-4241-8218-0c8d96dcf9c7"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Подпись Заказчика:____________________"]]></textFieldExpression>
+            </textField>
+            <image>
+                <reportElement x="449" y="780" width="115" height="22" uuid="673b1688-748f-41d3-8b70-6cffe4b9a9a5"/>
+                <imageExpression><![CDATA[$P{footerImage}]]></imageExpression>
+            </image>
+            <textField>
+                <reportElement x="290" y="600" width="270" height="180" uuid="5eda0582-77e5-491e-8076-e9e70b012812"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["3.2. Услуги Исполнителя по настоящему договору считаются выполненными в полном объеме после заключения Сделки по приобретению объекта между Заказчиком и Покупателем (предоставленным Исполнителем). При этом, Заказчик не имеет право в последующем предъявлять Исполнителю какие-либо требования и претензии.<br/>3.3. Заказчик оплачивает услуги путем перечисления денежных средств на расчетный счет Исполнителя в течение 3 (трех) банковских дней со дня заключения Сделки или наличным платежом в кассу Исполнителя в день заключения сделки."]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

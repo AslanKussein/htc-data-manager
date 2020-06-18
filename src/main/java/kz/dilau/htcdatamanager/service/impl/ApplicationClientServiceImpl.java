@@ -5,9 +5,9 @@ import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.repository.ApplicationStatusRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
+import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
 import kz.dilau.htcdatamanager.service.ApplicationClientService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
@@ -18,6 +18,7 @@ import kz.dilau.htcdatamanager.web.dto.client.ApplicationSellDataClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,19 +30,10 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 @Service
 public class ApplicationClientServiceImpl implements ApplicationClientService {
-    private static final String VIEW = "VIEW_";
-    private static final String UPDATE = "UPDATE_";
 
-    private static final String SALE_DEAL_INFO = "SALE_DEAL_INFO";
-    private static final String PURCHASE_DEAL_INFO = "PURCHASE_DEAL_INFO";
-
-    private static final String SALE_OBJECT_INFO = "SALE_OBJECT_INFO";
-    private static final String PURCHASE_OBJECT_INFO = "PURCHASE_OBJECT_INFO";
-    private static final String SALE_OBJECT_DATA = "SALE_OBJECT_DATA";
 
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
-    private final ApplicationStatusRepository applicationStatusRepository;
     private final BuildingService buildingService;
     private final RealPropertyRepository realPropertyRepository;
     private final DataProperties dataProperties;
@@ -53,7 +45,6 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     @Override
     public ApplicationClientDTO getById(final String token, Long id) {
         Application application = applicationService.getApplicationById(id);
-        //List<String> operations = applicationService.getOperationList(token, application);
         return new ApplicationClientDTO(application);
     }
 
@@ -119,7 +110,8 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
             }
             application.setApplicationPurchaseData(new ApplicationPurchaseData(application, purchaseData, info,
                     entityService.mapRequiredEntity(City.class, purchaseData.getCityId()),
-                    entityService.mapRequiredEntity(District.class, purchaseData.getDistrictId())));
+                    entityService.mapRequiredEntity(District.class, purchaseData.getDistrictId()),
+                    entityService.mapEntity(PayType.class, purchaseData.getPayTypeId())));
 
         } else if (operationType.isSell()) {
             if (nonNull(dto.getSellDataClientDto())) {
@@ -179,7 +171,14 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public List<ApplicationClientDTO> getAllMyAppByOperationTypeId(String clientLogin, String token, Long operationTypeId) {
-        List<Application> list = applicationRepository.findAllByOperationType_idAndClientLoginAndIsRemovedFalse(operationTypeId, clientLogin);
+
+        Specification<Application> specification = ApplicationSpecifications
+                .isRemovedEquals(false)
+                .and(ApplicationSpecifications.clientLoginEquals(clientLogin))
+                .and(ApplicationSpecifications.operationTypeIdEquals(operationTypeId))
+                .and(ApplicationSpecifications.applicationStatusCodeNotEquals("002010"));
+
+        List<Application> list = applicationRepository.findAll(specification);
         return list.stream().map(ApplicationClientDTO::new).collect(Collectors.toList());
     }
 
