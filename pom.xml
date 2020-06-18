@@ -122,7 +122,7 @@
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
         </dependency-->
-        <dependency>
+        <!--<dependency>
             <groupId>kz.dilau</groupId>
             <artifactId>jasperFonts</artifactId>
             <scope>system</scope>
@@ -135,12 +135,17 @@
             <scope>system</scope>
             <systemPath>${basedir}/dependencies/TNSfont-1.0.jar</systemPath>
             <version>1.0</version>
+        </dependency>-->
+        <dependency>
+            <groupId>my.jasper.fonts</groupId>
+            <artifactId>jasperFonts</artifactId>
+            <version>1.0</version>
         </dependency>
-        <!--<dependency>
+        <dependency>
             <groupId>my.TNSfont</groupId>
             <artifactId>TNSfont</artifactId>
             <version>1.0</version>
-        </dependency>-->
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -169,6 +174,14 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <repositories>
+        <repository>
+            <id>in-project</id>
+            <name>In Project Repo</name>
+            <url>file://${basedir}/lib/repo</url>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>${project.artifactId}</finalName>
