@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="persp_buy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="9b009afb-6efd-49d5-8a14-1726669dde29">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <parameter name="contractNumber" class="java.lang.String"/>
+    <parameter name="cityKZ" class="java.lang.String"/>
+    <parameter name="cityRU" class="java.lang.String"/>
+    <parameter name="contractDate" class="java.lang.String"/>
+    <parameter name="clientFullname" class="java.lang.String"/>
+    <parameter name="objectRegion" class="java.lang.String"/>
+    <parameter name="objectType" class="java.lang.String"/>
+    <parameter name="objectRoomCount" class="java.lang.String"/>
+    <parameter name="objectArea" class="java.lang.String"/>
+    <parameter name="objectFloor" class="java.lang.String"/>
+    <parameter name="objectMaxPrice" class="java.lang.String"/>
+    <parameter name="comment" class="java.lang.String"/>
+    <parameter name="objectRCName" class="java.lang.String"/>
+    <parameter name="payTypeRU" class="java.lang.String"/>
+    <parameter name="payTypeKZ" class="java.lang.String"/>
+    <parameter name="logoImage" class="java.io.InputStream"/>
+    <parameter name="footerImage" class="java.io.InputStream"/>
+    <parameter name="objectFullAddressRU" class="java.lang.String"/>
+    <parameter name="contractSum" class="java.lang.String"/>
+    <parameter name="objectFullAddressKZ" class="java.lang.String"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <line>
+                <reportElement x="280" y="50" width="1" height="730" uuid="d4636043-3c36-4022-872b-e28be817c915"/>
+            </line>
+            <textField>
+                <reportElement x="0" y="50" width="271" height="50" uuid="4db27993-ba3d-4a0b-a08c-0b131c218b0d"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["№ "+ $P{contractNumber} +" мүлік сатып алушыларды іздестіру бойынша қызметтер көрсету үшін ШАРТ"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="285" y="50" width="271" height="50" uuid="1dbb41e0-5272-4de0-a699-c585e41faf4d"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["ДОГОВОР № "+$P{contractNumber}+" на оказание услуг по поиску покупателей на объект недвижимости"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="2" y="104" width="138" height="16" uuid="ab1731cf-c8e1-4de9-a430-93c1792c330e"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{cityKZ} + " қ."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="285" y="104" width="130" height="16" uuid="e8584a6a-a359-4085-8876-d994764c2c4a"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{cityRU} + " г."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="456" y="104" width="100" height="16" uuid="a77561a9-bc02-48df-a57d-5c7b98aba779"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractDate}+ " г."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="170" y="104" width="100" height="16" uuid="8f2b29cd-0640-41ed-8158-c3fcdf948ec0"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractDate} + " ж."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="120" width="271" height="660" uuid="47f100b5-5dd5-4738-9403-4a564a990165"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{clientFullname}+"</u>   (бұдан әрі- Тапсырыс беруші)  - бір жағынан және <b>«Перспектива24-Астана» жауапкершілігі шектеулі серіктестігі</b> атынан Жарғы негізінде әрекет ететін Бас директор Д.М. Нургазин (Бұдан әрі   - Орындаушы деп аталады), (бірлесіп- Тараптар деп аталады және бөлек- Тарап) осы келісімді (бұдан әрі  - Келісім) жасады:<br/><br/><b>1. Шарттың мәні </b><br/>1.1. Тапсырыс беруші – қызмет корсетуді тапсырады, ал Орындаушы қызмет көрсетуге міндеттенеді, атап айтқанда, Нысанды оны Тапсырыс берушінің сатып алуы мақсатында іздестіру мен таңдап алуды іске асыгуға, ал Тапсырыс беруші дұл қызметтерге осы Шарттың 3 тармағына сәйкес төлемақы жасауға міндеттенеді. <br/>Нысанның бастапқы мәліметтері (бұдан әрі - Нысан) <br/><u>" + $P{objectType} +"</u><br/>Мекенжайы (орналасқан жері): Қазақстан Республикасы, <u>"+$P{objectFullAddressKZ} +"</u><br/>Иеліктен шығарылған мүліктің болжамды құны – бұл: "+ $P{contractSum} +"<br/>Төлем түрі: "+ $P{payTypeRU} +"<br/>1.2. Тапсырыс беруші келісімшарт жасалғанға дейін жылжымайтын мүлік ешкімге иеліктен шығарылмағанына, кепілге берілмегеніне және уәде берілмегеніне кепілдік береді.<br/><br/><b>2. Тараптардың құқықтары мен міндеттері <br/>2.1. Орындаушы міндетті:</b><br/>2.1.1. Осы Келісімнің шарттарына сәйкес Тапсырыс берушіге тиісті түрде қызмет көрсету, атап айтқанда, барлық заңды әдістер мен құралдарды (бұқаралық ақпарат құралдарында, әлеуметтік желілердегі жарнамалар және т.б.) пайдалана отырып, иеліктен шығарылған мүлікті ықтимал сатып алушыны (заңды иеленушіні) іздеу (таңдау), келіссөздер жүргізу, Тапсырыс берушіні әлеуетті сатып алушылардың негізгі шартты жасасу туралы барлық ұсыныстарын хабардар етеді.<br/>2.1.2. Әлеуетті тұтынушыларға Нысанды карауды ұйымдастрады, карау фактісін растайтын тексеру Актісінде (№1 Қосымша)  жазба жасалады.<br/>2.1.3.Тапсырыс берушіге Нысанды шығаруды жеңілдетуге бағытталған заңдық және ақпараттық қызметтерді ұсыну."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="120" width="272" height="120" uuid="1a8c7d9f-20f0-44d7-b512-18b0733a3c4a"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{clientFullname} +" (далее- Заказчик)- с одной стороны, и <b/>Товарищество с ограниченной ответственностью «Перспектива24-Астана»</b>, в лицегенерального директора Нургазина Д.М. (далее- Исполнитель), - (совместно именуются - Стороны, а по отдельности - Сторона), заключили настоящий договор (далее - Договор) о нижеследующем:"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="284" y="230" width="272" height="556" uuid="685c0d0f-2318-4b95-a177-4d71fd7ca783"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="12"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>1. Предмет договора</b><br/>1.1 Исполнитель обязуется по заявке Заказчика оказать услуги, а именно, осуществить поиск покупателя Объекта, с целью приобретения его последним путем заключения Сделки, а Заказчик обязуется оплатить эти услуги на условиях, предусмотренных Разделом 3 настоящего Договор.<br/>Вид объекта недвижимости (далее-Объект) <u>"+$P{objectType} + "</u><br/>Адрес (месторасположение): Республика Казахстан, г. <u>"+$P{objectFullAddressRU} +"</u><br/>Ориентировочная стоимость отчуждаемого объекта недвижимости составляет: " + $P{contractSum}
++ "<br/>Вид оплаты: <u>"+ $P{payTypeRU}+"</u><br/>1.2 Заказчик гарантирует, что до заключения договора недвижимое имущество никому не отчуждено, не заложено, не обещано.<br/><br/><b>2 Права и обязанности Сторон<br/>2.1 Исполнитель обязан: </b><br/>2.1.1 Оказать Заказчику услуги надлежащим образом в точном соответствии с условиями настоящего Договора, а именно осуществить поиск (подбор) потенциального покупателя (правоприобретателя) отчуждаемого объекта недвижимости, используя все законные методы и инструменты (реклама в средствах массовой информации, в социальных сетях и т.п.), вести переговоры, информировать Заказчика обо всех поступивших от потенциальных Покупателей предложениях по заключению Основного договора. <br/>2.1.2 Осуществлять потенциальным покупателям показы Объекта с произведением записи  в Акте осмотра (Приложение №1), подтверждающий факт осмотра Объекта потенциальными покупателями.<br/>2.1.3 Предоставить Заказчику юридические и информационные услуги, направленные на содействие отчуждения Объекта.<br/>2.1.4 От имени Заказчика принимать участие в "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="780" width="270" height="21" uuid="490c7650-a224-43a4-93e8-26bdef7e29a9"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="12" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Подпись Заказчика:____________________"]]></textFieldExpression>
+            </textField>
+            <image>
+                <reportElement x="180" y="0" width="200" height="50" uuid="3a78673d-49be-4acc-ad19-4f040b7dc2d9"/>
+                <imageExpression><![CDATA[$P{logoImage}]]></imageExpression>
+            </image>
+            <image>
+                <reportElement x="449" y="780" width="115" height="22" uuid="9e67ffc6-db01-4713-a15c-6f5443f2f48c"/>
+                <imageExpression><![CDATA[$P{footerImage}]]></imageExpression>
+            </image>
+        </band>
+    </detail>
+</jasperReport>
