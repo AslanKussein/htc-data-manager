@@ -1,0 +1,20 @@
+FROM openjdk:8-alpine
+
+RUN echo -e "http://nl.alpinelinux.org/alpine/v3.9/main\nhttp://nl.alpinelinux.org/alpine/v3.9/community" > /etc/apk/repositories
+RUN apk add ttf-dejavu
+
+RUN apk add --no-cache msttcorefonts-installer fontconfig
+RUN update-ms-fonts
+#RUN apk --no-cache add msttcorefonts-installer fontconfig && \
+#    update-ms-fonts && \
+#    fc-cache -f
+
+ARG DEPENDENCY=./target/htc-data-manager
+
+COPY ${DEPENDENCY}/BOOT-INF/lib /usr/app/BOOT-INF/lib
+COPY ${DEPENDENCY}/org /usr/app/org
+COPY ${DEPENDENCY}/META-INF /usr/app/META-INF
+COPY ${DEPENDENCY}/BOOT-INF/classes /usr/app/BOOT-INF/classes
+
+WORKDIR /usr/app
+ENTRYPOINT ["java", "-cp", "./", "org.springframework.boot.loader.JarLauncher"]
