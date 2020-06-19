@@ -4,7 +4,7 @@ RUN echo -e "http://nl.alpinelinux.org/alpine/v3.9/main\nhttp://nl.alpinelinux.o
 RUN apk add ttf-dejavu
 
 RUN apk add --no-cache msttcorefonts-installer fontconfig
-RUN update-ms-fonts
+#RUN update-ms-fonts
 #RUN apk --no-cache add msttcorefonts-installer fontconfig && \
 #    update-ms-fonts && \
 #    fc-cache -f
