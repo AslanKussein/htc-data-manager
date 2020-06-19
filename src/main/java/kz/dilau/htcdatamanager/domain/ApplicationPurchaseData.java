@@ -117,7 +117,6 @@ public class ApplicationPurchaseData extends AApplicationData {
         this.note = dataDto.getNote();
         this.purchaseInfo = purchaseInfo;
         this.application = application;
-        this.payTypeId = dataDto.getPayTypeId();
         this.payType = payType;
         this.payedSum = dataDto.getPayedSum();
         this.isPayed = dataDto.getIsPayed();

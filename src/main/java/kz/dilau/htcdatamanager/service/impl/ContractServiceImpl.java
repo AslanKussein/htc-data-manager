@@ -52,7 +52,6 @@ public class ContractServiceImpl implements ContractService {
     private final ResourceLoader resourceLoader;
     private final KeycloakService keycloakService;
     private final DataProperties dataProperties;
-    private final ContractStatusRepository contractStatusRepository;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -83,12 +82,14 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         String result = null;
-        if (dto.getIsExclusive()) {
-            result = generateContractSaleExclusive(application, dto);
-        } else if (application.getOperationType().isBuy()) {
+        if (application.getOperationType().isBuy()) {
             result = generateContractBuy(application, dto);
-        } else if (application.getOperationType().isSell()) {
-            result = generateContractSale(application, dto);
+        } else if (nonNull(dto.getContractTypeId())) {
+            if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
+                result = generateContractSale(application, dto);
+            } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
+                result = generateContractSaleExclusive(application, dto);
+            }
         }
 
 //        if (dto.getGuid().equals("perspective_buy")) {
@@ -1215,6 +1216,9 @@ public class ContractServiceImpl implements ContractService {
         if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
+        if (nonNull(application.getContract()) && application.getContract().getContractStatus().isGenerated()) {
+            throw BadRequestException.createTemplateException("error.contract.already.generated");
+        }
         ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.MISSING));
         return contract.getId();
     }
@@ -1257,6 +1261,7 @@ public class ContractServiceImpl implements ContractService {
         contract.setContractPeriod(dto.getContractPeriod());
         contract.setContractNumber(dto.getContractNumber());
         contract.setContractStatus(status);
+        contract.setContractType(entityService.mapEntity(ContractType.class, dto.getContractTypeId()));
         boolean hasStatus = false;
         for (val history : application.getStatusHistoryList()) {
             if (history.getApplicationStatus().isContract()) {
