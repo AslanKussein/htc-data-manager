@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
 import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.ContractType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -38,8 +39,12 @@ public class ApplicationContract extends AuditableBaseEntity<String, Long> {
     @Column(name = "commission")
     private BigDecimal commission;
 
-    @Column(name = "is_exclusive")
-    private Boolean isExclusive = false;
+    @ManyToOne
+    @JoinColumn(name = "contract_type_id")
+    private ContractType contractType;
+
+    @Column(name = "contract_type_id", insertable = false, updatable = false)
+    private Long contractTypeId;
 
     @ManyToOne
     @JoinColumn(name = "status_id")

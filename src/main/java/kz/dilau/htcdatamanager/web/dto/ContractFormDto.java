@@ -27,8 +27,8 @@ public class ContractFormDto {
     private BigDecimal contractSum;
     @ApiModelProperty(value = "Комиссия")
     private BigDecimal commission;
-    @ApiModelProperty(value = "Признак эксклюзивного договора")
-    private Boolean isExclusive = false;
+    @ApiModelProperty(value = "Тип договора")
+    private Long contractTypeId;
     @ApiModelProperty(value = "Идентификатор прикрепленного документа")
     private String guid;
 
@@ -39,7 +39,7 @@ public class ContractFormDto {
             this.contractNumber = contract.getContractNumber();
             this.contractSum = contract.getContractSum();
             this.commission = contract.getCommission();
-            this.isExclusive = contract.getIsExclusive();
+            this.contractTypeId = contract.getContractTypeId();
             this.guid = contract.getGuid();
         }
     }
