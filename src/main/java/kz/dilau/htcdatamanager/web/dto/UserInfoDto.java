@@ -11,6 +11,8 @@ public class UserInfoDto {
     private String name;
     private String login;
     private String group;
+    private String phone;
+    private String email;
     private List<String> roles;
 
     public String getFullname() {
