@@ -162,7 +162,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 application.setApplicationSellData(sellData);
             }
         }
-        applicationSource = entityService.mapRequiredEntity(ApplicationSource.class, ApplicationSource.CRM);
+        applicationSource = entityService.mapRequiredEntity(ApplicationSource.class, ApplicationSource.CA);
         application.setApplicationSource(applicationSource);
         application = applicationRepository.save(application);
         if (nonNull(metadata)) {
