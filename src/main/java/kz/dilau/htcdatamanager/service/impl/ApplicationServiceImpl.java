@@ -2,10 +2,7 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
-import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
@@ -236,6 +233,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         RealPropertyMetadata metadata = null;
         RealPropertyFile realPropertyFile = null;
         OperationType operationType;
+        ApplicationSource applicationSource;
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
         } else {
@@ -365,6 +363,9 @@ public class ApplicationServiceImpl implements ApplicationService {
                 application.setApplicationSellData(sellData);
             }
         }
+
+        applicationSource = entityService.mapRequiredEntity(ApplicationSource.class, ApplicationSource.CRM);
+        application.setApplicationSource(applicationSource);
         application = applicationRepository.save(application);
         if (nonNull(metadata)) {
             metadataRepository.save(metadata);

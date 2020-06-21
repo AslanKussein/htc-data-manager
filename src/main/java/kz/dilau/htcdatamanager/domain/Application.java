@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationSource;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
@@ -34,6 +35,13 @@ public class Application extends AuditableBaseEntity<String, Long> {
     private ObjectType objectType;
     @Column(name = "object_type_id", insertable = false, updatable = false)
     private Long objectTypeId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @JoinColumn(name = "application_source_id", nullable = false)
+    private ApplicationSource applicationSource;
+
+    @Column(name = "application_source_id", insertable = false, updatable = false)
+    private Long applicationSourceId;
 
     @OneToOne(mappedBy = "application", cascade = CascadeType.ALL)
     private ApplicationSellData applicationSellData;
