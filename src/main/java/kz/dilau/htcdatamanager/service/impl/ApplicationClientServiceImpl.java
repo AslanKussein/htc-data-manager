@@ -70,6 +70,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     public Long saveApplication(Application application, ApplicationClientDTO dto) {
         RealPropertyMetadata metadata = null;
         OperationType operationType;
+        ApplicationSource applicationSource;
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
         } else {
@@ -161,6 +162,8 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 application.setApplicationSellData(sellData);
             }
         }
+        applicationSource = entityService.mapRequiredEntity(ApplicationSource.class, ApplicationSource.CRM);
+        application.setApplicationSource(applicationSource);
         application = applicationRepository.save(application);
         if (nonNull(metadata)) {
             metadataRepository.save(metadata);
