@@ -207,7 +207,7 @@ public class ContractServiceImpl implements ContractService {
             actPar.put("docNumb", "123456");
             actPar.put("customerIIN", "123123123123");
             actPar.put("docDate", "12.12.2020");
-            actPar.put("agentFullname", "Agent Agentovich");
+            actPar.put("agentFullname", userInfoDto.getFullname());
 
 
             InputStream inputAct = resourceAct.getInputStream();
@@ -220,14 +220,14 @@ public class ContractServiceImpl implements ContractService {
             actWorkPar.put("docDate", "123456");
             actWorkPar.put("actDate", "123123123123");
             actWorkPar.put("dirName", "Director Directorovich");
-            actWorkPar.put("clientFullname", "Client Clientovich");
+            actWorkPar.put("clientFullname", clientDto.getFullname());
             actWorkPar.put("clientBirthdate", "Agent Agentovich");
             actWorkPar.put("clientPassportDealDate", "12.12.2008");
             actWorkPar.put("clientPassportnumber", "123456");
             actWorkPar.put("clientPassportserial", "DF1234");
             actWorkPar.put("clientPassportDealer", "DF1234");
             actWorkPar.put("clientAddress", "DF1234");
-            actWorkPar.put("agentFullname", "Agent Agentovich");
+            actWorkPar.put("agentFullname", userInfoDto.getFullname());
             InputStream inputActWork = resourceActWork.getInputStream();
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
             JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
