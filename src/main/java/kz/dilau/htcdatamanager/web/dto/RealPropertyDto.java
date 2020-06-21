@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.domain.IdItem;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.domain.RealPropertyFile;
 import kz.dilau.htcdatamanager.domain.RealPropertyMetadata;
@@ -12,7 +13,9 @@ import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -81,6 +84,9 @@ public class RealPropertyDto {
     @ApiModelProperty(value = "Адрес")
     private MultiLangText address;
 
+    @ApiModelProperty(value = "Общая информация о сделке продажи объекта")
+    private List<ApplicationSellDataDto> sellDataDtoList;
+
     public RealPropertyDto(RealProperty realProperty) {
         this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
@@ -112,7 +118,11 @@ public class RealPropertyDto {
             this.housingPlanImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN);
             this.virtualTourImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR);
         }
-    }
+        this.sellDataDtoList = realProperty.getSellDataList()
+                .stream()
+                .map(ApplicationSellDataDto::new)
+                .collect(Collectors.toList());
+     }
 
     public RealPropertyDto(RealProperty realProperty, Long applicationId) {
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
