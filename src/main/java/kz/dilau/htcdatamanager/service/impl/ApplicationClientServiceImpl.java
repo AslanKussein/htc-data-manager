@@ -97,7 +97,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                     .applicationStatus(status)
                     .build());
 
-            application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
+            application.setObjectType(entityService.mapEntity(ObjectType.class, dto.getObjectTypeId()));
         }
         if (operationType.isBuy() && nonNull(dto.getPurchaseInfoClientDto())) {
             PurchaseInfoClientDto purchaseData = dto.getPurchaseInfoClientDto();
@@ -124,6 +124,10 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                 RealPropertyClientDto realPropertyClientDto = dto.getSellDataClientDto().getRealPropertyClientDto();
                 if (nonNull(realPropertyClientDto) && nonNull(realPropertyClientDto.getBuildingDto())) {
                     RealProperty realProperty = null;
+
+                    if (isNull(realPropertyClientDto.getBuildingDto().getPostcode())) {
+                        throw BadRequestException.createRequiredIsEmpty("postcode");
+                    }
                     Building building = buildingService.getByPostcode(realPropertyClientDto.getBuildingDto().getPostcode());
 
                     MetadataStatus approved = entityService.mapEntity(MetadataStatus.class, MetadataStatus.APPROVED);
@@ -154,6 +158,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                     sellData = new ApplicationSellData(dataDto, building, metadata);
 
                     sellData.setRealProperty(realProperty);
+                    metadata.setRealProperty(realProperty);
                 }
                 sellData.setApplication(application);
                 if (nonNull(application.getId()) && nonNull(application.getApplicationSellData())) {
