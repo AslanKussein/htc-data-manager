@@ -97,7 +97,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
                     .applicationStatus(status)
                     .build());
 
-            application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
+            application.setObjectType(entityService.mapEntity(ObjectType.class, dto.getObjectTypeId()));
         }
         if (operationType.isBuy() && nonNull(dto.getPurchaseInfoClientDto())) {
             PurchaseInfoClientDto purchaseData = dto.getPurchaseInfoClientDto();
