@@ -1,9 +1,7 @@
 package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
-import kz.dilau.htcdatamanager.service.ApplicationClientViewService;
 import kz.dilau.htcdatamanager.service.ApplicationViewService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationViewDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +22,4 @@ public class ApplicationViewResource {
         ApplicationViewDTO result = applicationViewService.getById(token, id);
         return ResponseEntity.ok(result);
     }
-
-
 }

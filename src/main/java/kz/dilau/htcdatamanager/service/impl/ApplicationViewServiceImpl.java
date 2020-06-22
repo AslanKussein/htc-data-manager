@@ -1,14 +1,11 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.*;
 import kz.dilau.htcdatamanager.service.ApplicationViewService;
 import kz.dilau.htcdatamanager.web.dto.*;
-import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
-import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
