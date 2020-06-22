@@ -46,6 +46,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String ROLE_REST_ENDPOINT = "/roles/{id}";
     private static final String PROFILE_CLIENT_REST_ENDPOINT = "/api/profile-client";
     private static final String CLIENTS_BY_LOGINS = "/getList";
+    private static final String GET_CONTRACT_FORM = "/api/organizations/getContractForm/{id}/{contractType}";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -227,6 +228,26 @@ public class KeycloakServiceImpl implements KeycloakService {
                 request,
                 new ParameterizedTypeReference<List<ProfileClientDto>>() {
                 }
+        );
+
+        return response.getBody();
+    }
+
+    @Override
+    public ContractFormTemplateDto getContractForm(Long id, String contractType) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getUserManagerToken());
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        String url = dataProperties.getKeycloakRoleManagerUrl() + GET_CONTRACT_FORM;
+        Map<String, String> params = new HashMap<>();
+        params.put("id", id.toString());
+        params.put("contractType", contractType);
+        ResponseEntity<ContractFormTemplateDto> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<ContractFormTemplateDto>(){},
+                params
         );
 
         return response.getBody();

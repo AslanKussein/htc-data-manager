@@ -18,4 +18,6 @@ public interface KeycloakService {
     ListResponse<CheckOperationGroupDto> getCheckOperationList(String token, List<String> groupCodes);
 
     List<ProfileClientDto> readClientInfoByLogins(List<String> logins);
+
+    ContractFormTemplateDto getContractForm(Long id, String contractType);
 }
