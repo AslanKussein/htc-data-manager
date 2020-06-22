@@ -47,7 +47,7 @@ public class DictionaryMappingTool {
                 mapDictionaryToText(building.getDistrict()), ", ");
         result = concatMultiLangWithMultiLang(result, mapDictionaryToText(building.getStreet()), ", ");
         result = concatStringWithMultiLang(result,
-                building.getHouseNumber() + (nonNull(building.getHouseNumberFraction()) ? "/" + building.getHouseNumberFraction() : "") + " " + apartmentNumber, " ");
+                nonNull(building.getHouseNumber())?building.getHouseNumber():"" + (nonNull(building.getHouseNumberFraction()) ? "/" + building.getHouseNumberFraction() : "") + " " + apartmentNumber, " ");
         return result;
     }
 

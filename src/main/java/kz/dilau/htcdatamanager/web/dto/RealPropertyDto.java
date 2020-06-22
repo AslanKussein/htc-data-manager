@@ -84,9 +84,6 @@ public class RealPropertyDto {
     @ApiModelProperty(value = "Адрес")
     private MultiLangText address;
 
-    @ApiModelProperty(value = "Общая информация о сделке продажи объекта")
-    private List<ApplicationSellDataDto> sellDataDtoList;
-
     public RealPropertyDto(RealProperty realProperty) {
         this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
@@ -118,10 +115,6 @@ public class RealPropertyDto {
             this.housingPlanImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN);
             this.virtualTourImageIdList = realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR);
         }
-        this.sellDataDtoList = realProperty.getSellDataList()
-                .stream()
-                .map(ApplicationSellDataDto::new)
-                .collect(Collectors.toList());
      }
 
     public RealPropertyDto(RealProperty realProperty, Long applicationId) {

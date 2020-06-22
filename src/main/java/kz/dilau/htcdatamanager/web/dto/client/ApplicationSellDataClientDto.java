@@ -32,7 +32,7 @@ public class ApplicationSellDataClientDto {
             this.note = sellData.getNote();
 
             if (nonNull(sellData.getRealProperty()) && nonNull(sellData.getApplication())) {
-                this.realPropertyClientDto = new RealPropertyClientDto(sellData.getRealProperty(), sellData.getApplication().getId());
+                this.realPropertyClientDto = new RealPropertyClientDto(sellData.getRealProperty());
             }
         }
     }
