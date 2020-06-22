@@ -15,7 +15,9 @@ import kz.dilau.htcdatamanager.repository.dictionary.CityRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.DistrictRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetTypeRepository;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.KazPostService;
+import kz.dilau.htcdatamanager.service.dictionary.Dictionary;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
 import kz.dilau.htcdatamanager.web.dto.KazPostDTO;
 import kz.dilau.htcdatamanager.web.dto.KazPostReturnDTO;
@@ -38,6 +40,7 @@ public class KazPostServiceImpl implements KazPostService {
     private final CityRepository cityRepository;
     private final KazPostMapperProperties kazPostMapperProperties;
     private final StreetTypeRepository streetTypeRepository;
+    private final DictionaryCacheService dictionaryCacheService;
 
     @Override
     public KazPostDTO getPostData(String postCode) {
@@ -66,6 +69,8 @@ public class KazPostServiceImpl implements KazPostService {
         Street street = streetRepository.findByKazPostId(streetData.getId());
         City city = cityRepository.findByKazPostId(cityData.getId()).get();
         District district = districtRepository.findByKazPostId(districtData.getId()).get();
+
+        dictionaryCacheService.clearDictionaries();
 
         return KazPostReturnDTO.builder()
                 .street(fillDictionaryDto(street.getId(), street.getMultiLang()))
