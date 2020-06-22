@@ -238,7 +238,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(getUserManagerToken());
         HttpEntity<Object> request = new HttpEntity<>(headers);
-        String url = dataProperties.getKeycloakRoleManagerUrl() + GET_CONTRACT_FORM;
+        String url = dataProperties.getKeycloakUserManagerUrl() + GET_CONTRACT_FORM;
         Map<String, String> params = new HashMap<>();
         params.put("id", id.toString());
         params.put("contractType", contractType);
