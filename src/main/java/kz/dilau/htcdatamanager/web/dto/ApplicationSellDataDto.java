@@ -27,6 +27,8 @@ public class ApplicationSellDataDto extends AApplicationDataDto {
     @ApiModelProperty(value = "Описание")
     private String description;
 
+    private Long applicationId;
+
     public ApplicationSellDataDto(ApplicationSellData sellData) {
         this.objectPrice = sellData.getObjectPrice();
         this.encumbrance = sellData.getEncumbrance();
@@ -49,5 +51,7 @@ public class ApplicationSellDataDto extends AApplicationDataDto {
                     .map(IdItem::getId)
                     .collect(Collectors.toList());
         }
+
+        this.applicationId = sellData.getApplication().getId();
     }
 }
