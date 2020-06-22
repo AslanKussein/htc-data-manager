@@ -6,13 +6,14 @@ import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.ContractStatusRepository;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
+import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperBasicDto;
@@ -81,9 +82,23 @@ public class ContractServiceImpl implements ContractService {
         if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
+        List<String> userLogin = new ArrayList<>();
+        userLogin.add(application.getClientLogin());
+        List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
+        if (profileClientDtoList.isEmpty()) {
+            throw BadRequestException.createTemplateException("error.application.contract");
+        }
+        ProfileClientDto clientDto = profileClientDtoList.get(0);
+        userLogin.clear();
+        userLogin.add(application.getCurrentAgent());
+        ListResponse<UserInfoDto> userInfos = keycloakService.readUserInfos(userLogin);
+        if (isNull(userInfos) || isNull(userInfos.getData()) || userInfos.getData().isEmpty()) {
+            throw BadRequestException.createTemplateException("error.application.contract");
+        }
+        UserInfoDto userInfoDto = userInfos.getData().get(0);
         String result = null;
         if (application.getOperationType().isBuy()) {
-            result = generateContractBuy(application, dto);
+            result = generateContractBuy(application, dto, clientDto, userInfoDto);
         } else if (nonNull(dto.getContractTypeId())) {
             if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
                 result = generateContractSale(application, dto);
@@ -110,7 +125,7 @@ public class ContractServiceImpl implements ContractService {
         return result;
     }
 
-    private String generateContractBuy(Application application, ContractFormDto dto) {
+    private String generateContractBuy(Application application, ContractFormDto dto, ProfileClientDto clientDto, UserInfoDto userInfoDto) {
         try {
             if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
                 throw BadRequestException.createTemplateException("error.application.contract");
@@ -120,13 +135,7 @@ public class ContractServiceImpl implements ContractService {
             City city = purchaseData.getCity();
             District district = purchaseData.getDistrict();
             Resource resource = resourceLoader.getResource("classpath:jasper/buy/main.jrxml");
-            List<String> userLogin = new ArrayList<>();
-            userLogin.add(application.getClientLogin());
-            List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
-            if (profileClientDtoList.isEmpty()) {
-                throw BadRequestException.createTemplateException("error.application.contract");
-            }
-            ProfileClientDto clientDto = profileClientDtoList.get(0);
+
             InputStream input = resource.getInputStream();
 
             // Add parameters
@@ -198,7 +207,7 @@ public class ContractServiceImpl implements ContractService {
             actPar.put("docNumb", "123456");
             actPar.put("customerIIN", "123123123123");
             actPar.put("docDate", "12.12.2020");
-            actPar.put("agentFullname", "Agent Agentovich");
+            actPar.put("agentFullname", userInfoDto.getFullname());
 
 
             InputStream inputAct = resourceAct.getInputStream();
@@ -211,14 +220,14 @@ public class ContractServiceImpl implements ContractService {
             actWorkPar.put("docDate", "123456");
             actWorkPar.put("actDate", "123123123123");
             actWorkPar.put("dirName", "Director Directorovich");
-            actWorkPar.put("clientFullname", "Client Clientovich");
+            actWorkPar.put("clientFullname", clientDto.getFullname());
             actWorkPar.put("clientBirthdate", "Agent Agentovich");
             actWorkPar.put("clientPassportDealDate", "12.12.2008");
             actWorkPar.put("clientPassportnumber", "123456");
             actWorkPar.put("clientPassportserial", "DF1234");
             actWorkPar.put("clientPassportDealer", "DF1234");
             actWorkPar.put("clientAddress", "DF1234");
-            actWorkPar.put("agentFullname", "Agent Agentovich");
+            actWorkPar.put("agentFullname", userInfoDto.getFullname());
             InputStream inputActWork = resourceActWork.getInputStream();
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
             JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
@@ -1210,6 +1219,7 @@ public class ContractServiceImpl implements ContractService {
             return e.getMessage();
         }
     }
+
     @Override
     public Long missContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
