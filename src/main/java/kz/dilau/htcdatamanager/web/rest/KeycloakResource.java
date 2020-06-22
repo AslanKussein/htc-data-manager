@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.web.dto.ContractFormTemplateDto;
 import kz.dilau.htcdatamanager.web.dto.RoleDto;
 import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
@@ -30,5 +31,11 @@ public class KeycloakResource {
     public ResponseEntity readRole(@PathVariable("id") Long id) {
         RoleDto result = keycloakService.readRole(id);
         return ApiResponse.OK(result);
+    }
+
+    @GetMapping("/getContractForm/{id}/{contractType}")
+    public ResponseEntity<ContractFormTemplateDto> getContractForm(@PathVariable("id") Long id,
+                                                                   @PathVariable("contractType") String contractType) {
+        return ResponseEntity.ok(keycloakService.getContractForm(id, contractType));
     }
 }
