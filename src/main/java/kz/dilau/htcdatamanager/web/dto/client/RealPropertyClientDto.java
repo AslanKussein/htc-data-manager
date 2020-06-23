@@ -29,6 +29,7 @@ import static java.util.Objects.nonNull;
 public class RealPropertyClientDto {
 
 
+    private Long id;
     @ApiModelProperty(value = "Модель здания/строения")
     private BuildingDto buildingDto;
     @ApiModelProperty(name = "totalArea", value = "Общая площадь")
@@ -64,6 +65,7 @@ public class RealPropertyClientDto {
 
 
     public RealPropertyClientDto(RealProperty realProperty) {
+        this.id = realProperty.getId();
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
         this.apartmentNumber = realProperty.getApartmentNumber();
         RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);

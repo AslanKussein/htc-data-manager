@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long>, JpaSpecificationExecutor<Application> {
     @Query(value = "select a from Application a " +
@@ -22,5 +24,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Long>,
             "where a.isRemoved = false and f.metadataStatusId = :metadataStatusId")
     Page<Application> findAllFileByMetadataStatus(@Param("metadataStatusId") Long metadataStatusId,
                                                   Pageable pageable);
+
+    Optional<Application> findByIdAndIsRemovedFalse(Long id);
 
 }

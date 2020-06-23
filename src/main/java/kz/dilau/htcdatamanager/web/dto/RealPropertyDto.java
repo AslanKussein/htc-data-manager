@@ -104,7 +104,7 @@ public class RealPropertyDto {
             this.landArea = metadata.getLandArea();
             this.atelier = metadata.getAtelier();
             this.separateBathroom = metadata.getSeparateBathroom();
-            this.generalCharacteristicsDto = new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics());
+            this.generalCharacteristicsDto = nonNull(metadata.getGeneralCharacteristics()) ? new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics()) : null;
         }
         if (nonNull(realProperty.getBuilding())) {
             this.address = DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber());
