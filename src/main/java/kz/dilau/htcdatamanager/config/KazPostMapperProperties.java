@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "postmapper")
 @Data
 public class KazPostMapperProperties {
-    private int country;
-    private int city;
-    private int district;
+    private String country;
+    private String city;
+    private String district;
     private int street;
 }

@@ -29,6 +29,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.nonNull;
+
 @Log
 @RequiredArgsConstructor
 @Service
@@ -62,9 +64,16 @@ public class KazPostServiceImpl implements KazPostService {
 
     private KazPostReturnDTO getDictionaryValue(KazPostDTO dto) {
         List<KazPostDTO.Parts> parts = dto.getFullAddress().getParts();
-        KazPostDTO.Parts cityData = parts.get(kazPostMapperProperties.getCity());
-        KazPostDTO.Parts districtData = parts.get(kazPostMapperProperties.getDistrict());
         KazPostDTO.Parts streetData = parts.get(kazPostMapperProperties.getStreet());
+
+        KazPostDTO.Parts cityData = null, districtData = null;
+        for (KazPostDTO.Parts part : parts) {
+            if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getCity())) {
+                cityData = part;
+            } else if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getDistrict())) {
+                districtData = part;
+            }
+        }
 
         Street street = streetRepository.findByKazPostId(streetData.getId());
         City city = cityRepository.findByKazPostId(cityData.getId()).get();
@@ -103,13 +112,21 @@ public class KazPostServiceImpl implements KazPostService {
     }
 
     private void fillData(KazPostData kazPostData, List<KazPostDTO.Parts> parts) {
-        KazPostDTO.Parts cityData = parts.get(kazPostMapperProperties.getCity());
-        KazPostDTO.Parts districtData = parts.get(kazPostMapperProperties.getDistrict());
+        KazPostDTO.Parts cityData = null, districtData = null;
         KazPostDTO.Parts streetData = parts.get(kazPostMapperProperties.getStreet());
+        for (KazPostDTO.Parts part : parts) {
+            if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getCity())) {
+                cityData = part;
+            } else if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getDistrict())) {
+                districtData = part;
+            }
+        }
 
+        isPresentObjectIfNotSetError(cityData, kazPostData);
         City city = getCity(cityData);
         isPresentObjectIfNotSetError(city, kazPostData);
 
+        isPresentObjectIfNotSetError(districtData, kazPostData);
         District district = getDistrict(districtData, city);
         isPresentObjectIfNotSetError(district, kazPostData);
 
