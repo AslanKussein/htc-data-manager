@@ -132,27 +132,31 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 .livingArea(realProperty.getLivingArea())
                 .kitchenArea(realProperty.getKitchenArea())
                 .balconyArea(realProperty.getBalconyArea())
-                .ceilingHeight(realProperty.getGeneralCharacteristicsDto().getCeilingHeight())
                 .numberOfBedrooms(realProperty.getNumberOfBedrooms())
                 .atelier(realProperty.getAtelier())
                 .separateBathroom(realProperty.getSeparateBathroom())
-                .numberOfFloors(realProperty.getGeneralCharacteristicsDto().getNumberOfFloors())
-                .apartmentsOnTheSite(realProperty.getGeneralCharacteristicsDto().getApartmentsOnTheSite())
-                .yearOfConstruction(realProperty.getGeneralCharacteristicsDto().getYearOfConstruction())
-                .typeOfElevatorList(realProperty.getGeneralCharacteristicsDto().getTypeOfElevatorList().stream().map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
-                        .collect(Collectors.toList()))
-                .concierge(realProperty.getGeneralCharacteristicsDto().getConcierge())
+
                 .photoIdList(realProperty.getPhotoIdList())
                 .housingPlanImageIdList(realProperty.getHousingPlanImageIdList())
-                .virtualTourImageIdList(realProperty.getVirtualTourImageIdList())
-                .playground(realProperty.getGeneralCharacteristicsDto().getPlayground())
-                .wheelchair(realProperty.getGeneralCharacteristicsDto().getWheelchair())
-                .yardType(nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId()) ? yardTypeRepository.getOne(realProperty.getGeneralCharacteristicsDto().getYardTypeId()).getMultiLang() : null)
-                .parkingTypes(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds().stream().map(aLong ->
-                        parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()))
-        ;
-        if (nonNull(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId())) {
-            dto.materialOfConstruction(materialOfConstructionRepository.getOne(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId()).getMultiLang());
+                .virtualTourImageIdList(realProperty.getVirtualTourImageIdList());
+
+        if (nonNull(realProperty.getGeneralCharacteristicsDto())) {
+            dto.ceilingHeight(realProperty.getGeneralCharacteristicsDto().getCeilingHeight())
+                    .numberOfFloors(realProperty.getGeneralCharacteristicsDto().getNumberOfFloors())
+                    .apartmentsOnTheSite(realProperty.getGeneralCharacteristicsDto().getApartmentsOnTheSite())
+                    .yearOfConstruction(realProperty.getGeneralCharacteristicsDto().getYearOfConstruction())
+                    .typeOfElevatorList(realProperty.getGeneralCharacteristicsDto().getTypeOfElevatorList().stream().map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
+                            .collect(Collectors.toList()))
+                    .concierge(realProperty.getGeneralCharacteristicsDto().getConcierge())
+                    .playground(realProperty.getGeneralCharacteristicsDto().getPlayground())
+                    .wheelchair(realProperty.getGeneralCharacteristicsDto().getWheelchair())
+                    .yardType(nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId()) ? yardTypeRepository.getOne(realProperty.getGeneralCharacteristicsDto().getYardTypeId()).getMultiLang() : null)
+                    .parkingTypes(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds().stream().map(aLong ->
+                            parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
+            if (nonNull(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId())) {
+                dto.materialOfConstruction(materialOfConstructionRepository.getOne(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId()).getMultiLang());
+            }
         }
+
     }
 }
