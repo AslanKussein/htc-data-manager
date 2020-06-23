@@ -15,7 +15,9 @@ import kz.dilau.htcdatamanager.repository.dictionary.CityRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.DistrictRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.StreetTypeRepository;
+import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.KazPostService;
+import kz.dilau.htcdatamanager.service.dictionary.Dictionary;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
 import kz.dilau.htcdatamanager.web.dto.KazPostDTO;
 import kz.dilau.htcdatamanager.web.dto.KazPostReturnDTO;
@@ -26,6 +28,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Objects.nonNull;
 
 @Log
 @RequiredArgsConstructor
@@ -38,6 +42,7 @@ public class KazPostServiceImpl implements KazPostService {
     private final CityRepository cityRepository;
     private final KazPostMapperProperties kazPostMapperProperties;
     private final StreetTypeRepository streetTypeRepository;
+    private final DictionaryCacheService dictionaryCacheService;
 
     @Override
     public KazPostDTO getPostData(String postCode) {
@@ -59,13 +64,22 @@ public class KazPostServiceImpl implements KazPostService {
 
     private KazPostReturnDTO getDictionaryValue(KazPostDTO dto) {
         List<KazPostDTO.Parts> parts = dto.getFullAddress().getParts();
-        KazPostDTO.Parts cityData = parts.get(kazPostMapperProperties.getCity());
-        KazPostDTO.Parts districtData = parts.get(kazPostMapperProperties.getDistrict());
         KazPostDTO.Parts streetData = parts.get(kazPostMapperProperties.getStreet());
+
+        KazPostDTO.Parts cityData = null, districtData = null;
+        for (KazPostDTO.Parts part : parts) {
+            if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getCity())) {
+                cityData = part;
+            } else if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getDistrict())) {
+                districtData = part;
+            }
+        }
 
         Street street = streetRepository.findByKazPostId(streetData.getId());
         City city = cityRepository.findByKazPostId(cityData.getId()).get();
         District district = districtRepository.findByKazPostId(districtData.getId()).get();
+
+        dictionaryCacheService.clearDictionaries();
 
         return KazPostReturnDTO.builder()
                 .street(fillDictionaryDto(street.getId(), street.getMultiLang()))
@@ -98,13 +112,21 @@ public class KazPostServiceImpl implements KazPostService {
     }
 
     private void fillData(KazPostData kazPostData, List<KazPostDTO.Parts> parts) {
-        KazPostDTO.Parts cityData = parts.get(kazPostMapperProperties.getCity());
-        KazPostDTO.Parts districtData = parts.get(kazPostMapperProperties.getDistrict());
+        KazPostDTO.Parts cityData = null, districtData = null;
         KazPostDTO.Parts streetData = parts.get(kazPostMapperProperties.getStreet());
+        for (KazPostDTO.Parts part : parts) {
+            if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getCity())) {
+                cityData = part;
+            } else if (part.getType().getId().equalsIgnoreCase(kazPostMapperProperties.getDistrict())) {
+                districtData = part;
+            }
+        }
 
+        isPresentObjectIfNotSetError(cityData, kazPostData);
         City city = getCity(cityData);
         isPresentObjectIfNotSetError(city, kazPostData);
 
+        isPresentObjectIfNotSetError(districtData, kazPostData);
         District district = getDistrict(districtData, city);
         isPresentObjectIfNotSetError(district, kazPostData);
 
