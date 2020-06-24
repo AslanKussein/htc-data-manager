@@ -22,7 +22,7 @@ public class NotesServiceImpl implements NotesService {
     private final RealPropertyRepository realPropertyRepository;
 
     @Override
-    public NotesDto createNote(String login, NotesDto notesDto) {
+    public NotesDto createNote(NotesDto notesDto) {
 
         Optional<RealProperty> realProperty = realPropertyRepository.findById(notesDto.getRealPropertyId());
         if (!realProperty.isPresent()) {

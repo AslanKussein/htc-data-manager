@@ -29,9 +29,8 @@ public class NotesResource {
     }
 
     @PostMapping
-    public ResponseEntity<NotesDto> createNote(@ApiIgnore @AuthenticationPrincipal final Principal principal,
-                                               @RequestBody NotesDto notesDto) {
-        NotesDto result = notesService.createNote(principal.getName(), notesDto);
+    public ResponseEntity<NotesDto> createNote(@RequestBody NotesDto notesDto) {
+        NotesDto result = notesService.createNote(notesDto);
         return ResponseEntity.ok(result);
     }
 
