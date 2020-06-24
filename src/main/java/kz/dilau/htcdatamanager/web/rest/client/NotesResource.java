@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiParam;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.NotesService;
 import kz.dilau.htcdatamanager.web.dto.NotesDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class NotesResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<Page<NotesDto>> getAllByRealPropertyId(@PathVariable("id") Long id,
-                                                                 @ApiParam Pageable pageable) {
+                                                                 @ApiParam PageableDto pageable) {
         Page<NotesDto> dto = notesService.getAllByRealPropertyId(id, pageable);
         return ResponseEntity.ok(dto);
     }
