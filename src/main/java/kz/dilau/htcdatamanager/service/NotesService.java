@@ -12,9 +12,9 @@ public interface NotesService {
 
     Page<NotesDto> getAllByRealPropertyId(Long id, Pageable pageable);
 
-    NotesDto updateNote(NotesDto notesDto);
+    NotesDto updateNote(Long id, NotesDto notesDto);
 
-    NotesDto deleteNote(NotesDto notesDto);
+    NotesDto deleteNote(Long id);
 
     Integer getCountByRealPropertyId(Long id);
 

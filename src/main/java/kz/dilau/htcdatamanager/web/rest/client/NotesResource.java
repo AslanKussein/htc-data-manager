@@ -34,15 +34,16 @@ public class NotesResource {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping
-    public ResponseEntity<NotesDto> updateNote(@RequestBody NotesDto notesDto) {
-        NotesDto result = notesService.updateNote(notesDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<NotesDto> updateNote(@PathVariable("id") Long id,
+                                               @RequestBody NotesDto notesDto) {
+        NotesDto result = notesService.updateNote(id, notesDto);
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping
-    public ResponseEntity<NotesDto> deleteNote(@RequestBody NotesDto notesDto) {
-        NotesDto result = notesService.deleteNote(notesDto);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<NotesDto> deleteNote(@PathVariable("id") Long id) {
+        NotesDto result = notesService.deleteNote(id);
         return ResponseEntity.ok(result);
     }
 }
