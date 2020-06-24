@@ -7,6 +7,10 @@ public interface ContractService {
 
     String generateContract(ContractFormDto dto);
 
+    String generateContractHandsel(ContractFormDto dto);
+
+    String generateContractAvans(ContractFormDto dto);
+
     Long missContract(ContractFormDto dto);
 
     Integer getCommission(Integer sum, Long objectTypeId);

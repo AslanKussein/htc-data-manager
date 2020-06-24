@@ -125,6 +125,132 @@ public class ContractServiceImpl implements ContractService {
         return result;
     }
 
+    @Override
+    public String generateContractHandsel(ContractFormDto dto) {
+        Application application = applicationService.getApplicationById(dto.getApplicationId());
+
+        if (hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
+
+        return printContractHandsel(application, dto, dto.getGuid());
+    }
+
+    @Override
+    public String generateContractAvans(ContractFormDto dto) {
+        Application application = applicationService.getApplicationById(dto.getApplicationId());
+
+        if (hasPermission(getAuthorName(), application)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
+
+        return printContractAvans(application, dto, dto.getGuid());
+    }
+
+    private String printContractAvans(Application application, ContractFormDto dto, String orgName) {
+
+        try {
+            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+            City city = purchaseData.getCity();
+
+            Resource resource = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/avans/main.jrxml");
+            InputStream input = resource.getInputStream();
+            Map<String, Object> mainPar = new HashMap<>();
+            InputStream image; //=
+            if (orgName.equals("vitrina")) {
+                image = getLogoVitrina();
+            } else {
+                image = getLogoPerspective();
+            }
+            mainPar.put("logoImage", image);
+            mainPar.put("contractNumber", dto.getContractNumber());
+            mainPar.put("contractDate", sdfDate.format(new Date()));
+            mainPar.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            mainPar.put("printDate", sdfDate.format(new Date()));
+            mainPar.put("buyerFullname", "Buyer Fullname");
+            //mainPar.put("sellerFullname", "Seller Fullname");
+            mainPar.put("objectFullAddress", "Nur Sultan, Mangilik El");
+            mainPar.put("objectPrice", "10 000 000");
+            mainPar.put("handselAmount", "200 000");
+            mainPar.put("docExpireDate", "20.12.2020");
+            JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, mainPar, new JREmptyDataSource());
+
+            List<JasperPrint> jasperPrintList = new ArrayList<>();
+            jasperPrintList.add(jasperPrintBasic);
+            return  getPages(jasperPrintList);
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+
+
+    private String printContractHandsel(Application application, ContractFormDto dto, String orgName) {
+
+        try {
+            //String orgName = "vitrina";
+
+            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+            PurchaseInfo purchaseInfo = purchaseData.getPurchaseInfo();
+            City city = purchaseData.getCity();
+
+            Resource resource = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/main.jrxml");
+            InputStream input = resource.getInputStream();
+            Map<String, Object> mainPar = new HashMap<>();
+            InputStream image; //=
+            if (orgName.equals("vitrina")) {
+                image = getLogoVitrina();
+            } else {
+                image = getLogoPerspective();
+            }
+            mainPar.put("logoImage", image);
+            mainPar.put("contractNumber", dto.getContractNumber());
+            mainPar.put("contractDate", sdfDate.format(new Date()));
+            mainPar.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            mainPar.put("printDate", sdfDate.format(new Date()));
+            mainPar.put("buyerFullname", "Buyer Fullname");
+            mainPar.put("sellerFullname", "Seller Fullname");
+            mainPar.put("objectFullAddress", "Nur Sultan, Mangilik El");
+            mainPar.put("objectPrice", "10 000 000");
+            mainPar.put("handselAmount", "200 000");
+            mainPar.put("docExpireDate", "20.12.2020");
+            JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
+            JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, mainPar, new JREmptyDataSource());
+            //--------------------------
+            Resource resourceDuties = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/duties.jrxml");
+
+            InputStream inputDuties = resourceDuties.getInputStream();
+            Map<String, Object> dutiesPar = new HashMap<>();
+            dutiesPar.put("comissionAmount", "300 000");
+            dutiesPar.put("sellerFullname", "Seller Fullname");
+            dutiesPar.put("buyerFullname", "Buyer Fullname");
+
+            JasperReport jasperReportDuties = JasperCompileManager.compileReport(inputDuties);
+            JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, dutiesPar, new JREmptyDataSource());
+            //--------------------------
+            Resource resourceRecv = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/recvisit.jrxml");
+
+            InputStream inputRecv = resourceRecv.getInputStream();
+            Map<String, Object> recvPar = new HashMap<>();
+            recvPar.put("agentFullname", "Agent Fullname");
+
+            JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
+            JasperPrint jasperPrintRecv = JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
+            //--------------------------
+            List<JasperPrint> jasperPrintList = new ArrayList<>();
+            jasperPrintList.add(jasperPrintBasic);
+            jasperPrintList.add(jasperPrintDuties);
+            jasperPrintList.add(jasperPrintRecv);
+            return  getPages(jasperPrintList);
+
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+
     private String generateContractBuy(Application application, ContractFormDto dto, ProfileClientDto clientDto, UserInfoDto userInfoDto) {
         try {
             if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
@@ -800,6 +926,10 @@ public class ContractServiceImpl implements ContractService {
 
     private InputStream getLogoPerspective() {
         return getClass().getResourceAsStream("/jasper/logo_perspectiva.png");
+    }
+
+    private InputStream getLogoVitrina() {
+        return getClass().getResourceAsStream("/jasper/logo.png");
     }
 
     private InputStream getFooterImagePerspective(){

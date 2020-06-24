@@ -29,6 +29,18 @@ public class ContractResource {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/generateContractAvans")
+    public ResponseEntity<String> generateContractAvans(@RequestBody ContractFormDto dto) {
+        String result = contractService.generateContractAvans(dto);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/generateContractHandsel")
+    public ResponseEntity<String> generateContractHandsel(@RequestBody ContractFormDto dto) {
+        String result = contractService.generateContractHandsel(dto);
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/missContract")
     public ResponseEntity<Long> missContract(@RequestBody ContractFormDto dto) {
         Long result = contractService.missContract(dto);

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="03167432-9c50-4e53-9261-4820e15af58b">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <subDataset name="MyDataSet" uuid="a7a1906f-0a78-4f88-87fa-9a250b0cfd10">
+        <field name="fName" class="java.lang.String"/>
+        <field name="fVal" class="java.lang.String"/>
+    </subDataset>
+    <parameter name="contractNumber" class="java.lang.String"/>
+    <parameter name="city" class="java.lang.String"/>
+    <parameter name="printDate" class="java.lang.String"/>
+    <parameter name="buyerFullname" class="java.lang.String"/>
+    <parameter name="contractDate" class="java.lang.String"/>
+    <parameter name="logoImage" class="java.io.InputStream"/>
+    <parameter name="objectFullAddress" class="java.lang.String"/>
+    <parameter name="objectPrice" class="java.lang.String"/>
+    <parameter name="sellerFullname" class="java.lang.String"/>
+    <parameter name="handselAmount" class="java.lang.String"/>
+    <parameter name="docExpireDate" class="java.lang.String"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="120" y="80" width="329" height="30" uuid="1d5fdc16-90f2-4a58-aff4-4e33d4da06fc"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["СОГЛАШЕНИЕ О ЗАДАТКЕ № "+ $P{contractNumber}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="2" y="140" width="550" height="40" uuid="abe81552-2193-46a3-8308-a73fb1d3c2e2"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u> " +$P{buyerFullname}+" </u>именуемый(-ая) в дальнейшем <b>«Покупатель»</b> с одной стороны,"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="160" y="100" width="271" height="20" uuid="71a9a697-8904-4d91-a853-add85318558f"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["на недвижимое имущество"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="170" y="270" width="171" height="20" uuid="3730421c-067b-41ab-9458-0608a2508e4e"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["1.Предмет Договора"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="1" y="286" width="551" height="230" uuid="cc67c3c0-7017-4d14-8099-08e60d038102"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["1.1. При подписании настоящего соглашения Покупатель передает, а Продавец получает задаток в размере <u>" + $P{handselAmount}+ "</u> тенге, в обеспечение выполнения обязательств по заключению и в счет причитающихся платежей по договору купли-продажи Объекта расположенного по адресу: <u>"+ $P{objectFullAddress} +"</u>, парковочное место _______ (далее по тексту – «Объект»).<br/>1.2. Указанный Объект принадлежит Продавцу на праве собственности на основании<br/>__________________________________________________________________________<br/>1.3. Полная продажная стоимость Объекта составляет <u>" + $P{objectPrice} +"</u> тенге. Сумма, указанная в п.1.1 настоящего Соглашения, включается в указанную стоимость.<br/>1.4. Стоимость Объекта, оговоренная в п.1.3 настоящего Соглашения, может быть изменена только с обоюдного согласия Сторон. <br/>Указанный договор купли-продажи Объекта должен быть заключен в срок до  "+ $P{docExpireDate} +" года. При этом нотариальные услуги Стороны оплачивают в следующем порядке: 50/50; только Продавец, только Покупатель <i>(нужное подчеркнуть)<i>"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="449" y="120" width="126" height="30" uuid="c0e0b14b-abc7-4109-8f62-c6dac8a49615"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractDate}+" г."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="1" y="120" width="100" height="30" uuid="1cf968e5-a817-450d-857a-bfe7ad12be98"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["г. " + $P{city}]]></textFieldExpression>
+            </textField>
+            <image>
+                <reportElement x="180" y="0" width="180" height="80" uuid="8f5d0e9f-a93c-4be7-8486-21c68d7d19de"/>
+                <imageExpression><![CDATA[$P{logoImage}]]></imageExpression>
+            </image>
+            <textField>
+                <reportElement x="160" y="530" width="210" height="30" uuid="0015a0f4-f4c4-40bb-88c0-eda6222de012"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["2. Обязанности сторон"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="550" width="549" height="230" uuid="c6099028-e915-40db-a1d7-c997ae386894"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["2.1. Покупатель обязан заключить договор купли-продажи Объекта с Продавцом в течение срока действия настоящего Соглашения. <br/>2.2. Продавец обязан после получения задатка, оговоренного в п.1.1 настоящего Соглашения, не заключать договоров купли-продажи Квартиры или иных договоров об отчуждении Квартиры, предварительных договоров, соглашений о задатке с иными лицами в течение срока действия настоящего Соглашения. <br/>2.3. В случае отказа Покупателя от заключения основного договора купли-продажи Объекта с Продавцом согласно ст.338 ГК РК, Покупателю не возвращается сумма задатка. <br/>2.4. В случае отказа Продавца от заключения основного Договора купли-продажи Объекта с Покупателем, то Продавец возвращает Покупателю сумму задатка в двойном размере.<br/>2.5. В случае срыва Сделки по вине любой из её сторон (Продавца и Покупателя) после заключения соглашения о задатке и передачи суммы задатка, оплаченное вознаграждение/часть вознаграждения Агентством не возвращается. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="180" width="552" height="71" uuid="5e2443e0-e722-4b7c-8662-7c5a9fb99a34"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<u>"+$P{sellerFullname}+"</u>,  именуемый(-ая) в дальнейшем <b>«Продавец»</b>, с другой стороны,<br/><u><b>ТОО «Перспектива24-Астана»<b></u>, в лице Генерального директора Нургазина Д.М., действующего на основании Устава, именуемое в дальнейшем «Агентство», с другой стороны, заключили настоящее соглашение: "]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

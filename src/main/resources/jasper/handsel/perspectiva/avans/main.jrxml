@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="03167432-9c50-4e53-9261-4820e15af58b">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <subDataset name="MyDataSet" uuid="a7a1906f-0a78-4f88-87fa-9a250b0cfd10">
+        <field name="fName" class="java.lang.String"/>
+        <field name="fVal" class="java.lang.String"/>
+    </subDataset>
+    <parameter name="contractNumber" class="java.lang.String"/>
+    <parameter name="city" class="java.lang.String"/>
+    <parameter name="printDate" class="java.lang.String"/>
+    <parameter name="buyerFullname" class="java.lang.String"/>
+    <parameter name="contractDate" class="java.lang.String"/>
+    <parameter name="logoImage" class="java.io.InputStream"/>
+    <parameter name="objectFullAddress" class="java.lang.String"/>
+    <parameter name="objectPrice" class="java.lang.String"/>
+    <parameter name="sellerFullname" class="java.lang.String"/>
+    <parameter name="handselAmount" class="java.lang.String"/>
+    <parameter name="docExpireDate" class="java.lang.String"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="90" y="80" width="359" height="30" uuid="1d5fdc16-90f2-4a58-aff4-4e33d4da06fc"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["СОГЛАШЕНИЕ О ПРИЕМЕ АВАНСА № "+ $P{contractNumber}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="2" y="140" width="550" height="500" uuid="abe81552-2193-46a3-8308-a73fb1d3c2e2"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Мы,<u> " +$P{buyerFullname}+" </u>именуемый(-ая,-ые) в дальнейшем «Клиент», с одной стороны,  и, <b>Товарищество с ограниченной ответственностью «Перспектива24-Астана»</b> в лице генерального директора Нургазина Д.М., БИН 050640020054, Почтовый адрес: 010000, Республика Казахстан, г. Астана, ул. Мангелик Ел, 17, НП-73, Наименование Банка: АО «Банк Центр Кредит», филиал г. Астана р/счет KZ798562203105659489, БИК Банка KCJBKZKX, БИН Банка 980741000260, e-mail: info@ivitrina.kz, именуемое в дальнейшем «Агент», с другой стороны, именуемые в дальнейшем совместно «Стороны», заключили соглашение о следующем (далее – Соглашение):<br/>&nbsp;&nbsp;1. В соответствии с Договором на оказание риэлторских услуг № <u>" + $P{contractNumber} + "</u> от <u>" + $P{contractDate} +"</u> Клиент передал, а Исполнитель принял денежные средства в размере <u>" +$P{handselAmount}+"</u> тенге в качестве аванса для заключения сделки по приобретению объекта недвижимого имущества, расположенного: <u>" +$P{objectFullAddress} +"</u>, парковочное место _______ (далее – объект недвижимости): <br/>&nbsp;&nbsp;2. Сделка должна быть заключена в срок до «____»________________20___г. включительно. <br/>&nbsp;&nbsp;3. В случае, если сделка не состоялась в срок, установленный пунктом 2 соглашения, аванс, указанный в пункте 1 соглашения, подлежит возврату Клиенту в течение 21 (двадцати одного) календарного дня с момента направления Исполнителю заявления на возврат денежных средств. <br/>&nbsp;&nbsp;4. Стоимость объекта недвижимости определена в размере <u>"+$P{objectPrice}+"</u> тенге , в стоимость которой входит аванс, указанный в пункте 1 настоящего соглашения. Стоимость является фиксированной и изменению не подлежит.<br/>&nbsp;&nbsp;5. Клиент дает согласие на обработку и использование персональных данных, содержащихся в настоящем документе, на срок один год. <br/>&nbsp;&nbsp;6. Настоящее соглашение вступает в силу с момента его заключения Сторонами и действует до полного исполнения всех обязательств.  <br/>&nbsp;&nbsp;7. Соглашение составлено в двух экземплярах, по одному экземпляру каждой из сторон. <br/>&nbsp;&nbsp;8. Подписи сторон"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="449" y="120" width="126" height="30" uuid="c0e0b14b-abc7-4109-8f62-c6dac8a49615"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{contractDate}+" г."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="1" y="120" width="100" height="30" uuid="1cf968e5-a817-450d-857a-bfe7ad12be98"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["г. " + $P{city}]]></textFieldExpression>
+            </textField>
+            <image>
+                <reportElement x="180" y="0" width="180" height="80" uuid="8f5d0e9f-a93c-4be7-8486-21c68d7d19de"/>
+                <imageExpression><![CDATA[$P{logoImage}]]></imageExpression>
+            </image>
+            <textField>
+                <reportElement x="0" y="640" width="552" height="40" uuid="7912cad0-7870-449f-bd45-d309c7618858"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Клиент: <u>" +$P{buyerFullname} +"</u><br/>___________________________________ (подпись) "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="700" width="552" height="40" uuid="e7bdd64c-4a99-47a7-aac4-05023c226f1f"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Исполнитель: <b>ТОО «Перспектива24-Астана»</b> <br/>___________________________________ (подпись) "]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>
