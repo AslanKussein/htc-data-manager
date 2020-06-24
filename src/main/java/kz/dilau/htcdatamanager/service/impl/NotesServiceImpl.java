@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
@@ -48,7 +49,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public NotesDto updateNote(Long id, NotesDto notesDto) {
-        if (!nonNull(id)) {
+        if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
         Notes notes = getNotesById(id);
@@ -68,7 +69,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public NotesDto deleteNote(Long id) {
-        if (!nonNull(id)) {
+        if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
         Notes notes = getNotesById(id);
