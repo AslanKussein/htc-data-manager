@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vitrina_handsale_duties" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1f0199fb-9828-4fd1-a6e2-076d6a94b9e0">
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+    <parameter name="comissionAmount" class="java.lang.String"/>
+    <parameter name="sellerFullname" class="java.lang.String"/>
+    <parameter name="buyerFullname" class="java.lang.String"/>
+    <queryString>
+        <![CDATA[]]>
+    </queryString>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <detail>
+        <band height="802" splitType="Stretch">
+            <textField>
+                <reportElement x="0" y="0" width="551" height="100" uuid="2ff243d9-c638-4ad2-9a15-7230f547c2b6"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["2.6. Сторона, ответственная за неисполнение настоящего Соглашения, обязана возместить другой стороне все понесенные убытки, связанные с неисполнением обязательств по настоящему Соглашению. <br/>2.7. Риэлтерские услуги выплачиваются и Покупателем, и Продавцом по <b><u> "+$P{comissionAmount}+"</u> тенге</b> с каждой Стороны, без учета расходов по оформлению отчуждения квартиры."]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="120" width="551" height="20" uuid="3222d263-d416-4146-bf58-c126b59c169f"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["3. Срок действия и порядок изменения Соглашения "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="140" width="551" height="139" uuid="60752be8-8df1-467d-9793-c5053885572f"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["3.1. Настоящее Соглашение вступает в силу с момента подписания его Сторонами и Агентством. <br/>3.2. Настоящее Соглашение будет считаться исполненным после выполнения взаимных обязательств и урегулирования всех расчетов между Сторонами. <br/>3.3. Настоящее Соглашение может быть расторгнуто по обоюдному согласию Сторон в любое время. <br/>3.4. Любые изменения и дополнения к настоящему Соглашению, внесенные по взаимному согласию Сторон, имеют силу только в том случае, если они оформлены в письменном виде и подписаны обеими Сторонами. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="-1" y="290" width="552" height="20" uuid="6aeb7279-3fb6-449f-a341-aba79aeaf781"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["4. Заключительные положения "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="-1" y="310" width="552" height="270" uuid="15a5aee8-e0be-4633-b25d-f30c68238a56"/>
+                <textElement textAlignment="Justified" markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["4.1. Любые изменения и дополнения к настоящему Соглашению имеют силу только в том случае, если они оформлены в письменном виде и подписаны обеими Сторонами. <br/>4.2. При подписании настоящего Соглашения Стороны подтверждают, что в дееспособности не ограничены, не находятся в состоянии наркотического, токсического, алкогольного опьянения, по состоянию здоровья могут осуществлять и защищать свои права, исполнять обязанности, не страдают заболеваниями, могущими препятствовать осознанию сути подписываемого Соглашения, а также подтверждают, что не находятся под влиянием заблуждения, обмана, насилия, злонамеренного соглашения или стечения обстоятельств.  <br/>4.3. Настоящее Соглашение составлено в трех экземплярах, имеющих одинаковую юридическую силу. <br/>4.4. Стороны гарантируют, что они заключают настоящее Соглашение не вследствие стечения тяжелых обстоятельств или на крайне невыгодных для себя условиях и что настоящее Соглашение не является для них кабальной сделкой. <br/>4.5. Во всем остальном, не предусмотренном настоящим Соглашением, Стороны будут руководствоваться действующим законодательством Республики Казахстан. "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="-1" y="580" width="552" height="20" uuid="582ac2c7-f0ef-4d7a-9e69-020829a73c6c"/>
+                <textElement textAlignment="Center">
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["5. Адреса, реквизиты и подписи сторон "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="-1" y="600" width="552" height="80" uuid="a15d16e6-57cd-4d3a-b0e2-be90729c1726"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Продавец:</b> <u>" + $P{sellerFullname}+"</u><br/>Дата рождения: ____________________, ИИН ______________________ <br/>Удостоверение личности № ___________________от______________ выдано ________ РК <br/>Адрес: ________________________________________________________________________ "]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="669" width="551" height="30" uuid="5d14bc07-b931-4a8f-9a66-a473bbd1e247"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Подпись_____________________________________________________________________"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="90" y="680" width="381" height="20" uuid="b52fdd31-b71f-4e53-9306-18cda8babb2c"/>
+                <textElement verticalAlignment="Middle">
+                    <font fontName="Times New Roman" size="8"/>
+                </textElement>
+                <textFieldExpression><![CDATA["(личная подпись, фамилия имя отчество - прописать полностью)"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="700" width="551" height="80" uuid="e0f76d1c-3415-4aa4-bc08-c6f9a1c20123"/>
+                <textElement markup="html">
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["<b>Покупатель: </b> <u>" +$P{buyerFullname} + "</u><br/>Дата рождения: ____________________, ИИН _______________________<br/>Удостоверение личности № ___________________от______________ выдано ________ РК<br/>Адрес:________________________________________________________________________"]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="0" y="770" width="551" height="32" uuid="6154bf1d-af47-42fc-a970-4ba246ad397c"/>
+                <textElement>
+                    <font fontName="Times New Roman" size="14"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Подпись_____________________________________________________________________"]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>
