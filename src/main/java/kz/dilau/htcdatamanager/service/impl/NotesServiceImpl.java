@@ -7,7 +7,9 @@ import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.NotesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.NotesService;
+import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.NotesDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,8 +43,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public Page<NotesDto> getAllByRealPropertyId(Long realPropertyId, Pageable pageable) {
-        return notesRepository.findAllByRealProperty_IdAndIsRemovedFalse(realPropertyId, pageable)
+    public Page<NotesDto> getAllByRealPropertyId(Long realPropertyId, PageableDto pageable) {
+        return notesRepository.findAllByRealProperty_IdAndIsRemovedFalse(realPropertyId, PageableUtils.createPageRequest(pageable))
                 .map(NotesDto::new);
     }
 
