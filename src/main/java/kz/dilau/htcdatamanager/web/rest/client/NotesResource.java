@@ -29,21 +29,24 @@ public class NotesResource {
     }
 
     @PostMapping
-    public ResponseEntity<NotesDto> createNote(@RequestBody NotesDto notesDto) {
-        NotesDto result = notesService.createNote(notesDto);
+    public ResponseEntity<NotesDto> createNote(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                               @RequestBody NotesDto notesDto) {
+        NotesDto result = notesService.createNote(principal.getName(), notesDto);
         return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NotesDto> updateNote(@PathVariable("id") Long id,
+    public ResponseEntity<NotesDto> updateNote(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                               @PathVariable("id") Long id,
                                                @RequestBody NotesDto notesDto) {
-        NotesDto result = notesService.updateNote(id, notesDto);
+        NotesDto result = notesService.updateNote(principal.getName(), id, notesDto);
         return ResponseEntity.ok(result);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<NotesDto> deleteNote(@PathVariable("id") Long id) {
-        NotesDto result = notesService.deleteNote(id);
+    public ResponseEntity<NotesDto> deleteNote(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                               @PathVariable("id") Long id) {
+        NotesDto result = notesService.deleteNote(principal.getName(), id);
         return ResponseEntity.ok(result);
     }
 }

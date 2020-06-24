@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
@@ -25,7 +24,7 @@ public class NotesServiceImpl implements NotesService {
     private final RealPropertyRepository realPropertyRepository;
 
     @Override
-    public NotesDto createNote(NotesDto notesDto) {
+    public NotesDto createNote(String login, NotesDto notesDto) {
 
         Optional<RealProperty> realProperty = realPropertyRepository.findById(notesDto.getRealPropertyId());
         if (!realProperty.isPresent()) {
@@ -48,7 +47,7 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesDto updateNote(Long id, NotesDto notesDto) {
+    public NotesDto updateNote(String login, Long id, NotesDto notesDto) {
         if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
@@ -68,7 +67,7 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesDto deleteNote(Long id) {
+    public NotesDto deleteNote(String login, Long id) {
         if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
