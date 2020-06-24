@@ -24,7 +24,7 @@ public class NotesServiceImpl implements NotesService {
     private final RealPropertyRepository realPropertyRepository;
 
     @Override
-    public NotesDto createNote(String name, NotesDto notesDto) {
+    public NotesDto createNote(String login, NotesDto notesDto) {
 
         Optional<RealProperty> realProperty = realPropertyRepository.findById(notesDto.getRealPropertyId());
         if (!realProperty.isPresent()) {
@@ -47,7 +47,7 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesDto updateNote(String name, Long id, NotesDto notesDto) {
+    public NotesDto updateNote(String login, Long id, NotesDto notesDto) {
         if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
@@ -67,7 +67,7 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesDto deleteNote(String name, Long id) {
+    public NotesDto deleteNote(String login, Long id) {
         if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
