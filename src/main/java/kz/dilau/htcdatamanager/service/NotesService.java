@@ -8,13 +8,13 @@ import org.springframework.data.domain.Pageable;
 
 public interface NotesService {
 
-    NotesDto createNote(String name, NotesDto dto);
+    NotesDto createNote(String login, NotesDto dto);
 
     Page<NotesDto> getAllByRealPropertyId(Long id, Pageable pageable);
 
-    NotesDto updateNote(String name, Long id, NotesDto notesDto);
+    NotesDto updateNote(String login, Long id, NotesDto notesDto);
 
-    NotesDto deleteNote(String name, Long id);
+    NotesDto deleteNote(String login, Long id);
 
     Integer getCountByRealPropertyId(Long id);
 
