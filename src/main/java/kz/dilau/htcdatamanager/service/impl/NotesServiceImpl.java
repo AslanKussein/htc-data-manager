@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 @RequiredArgsConstructor
 @Service
 public class NotesServiceImpl implements NotesService {
@@ -45,11 +48,11 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesDto updateNote(NotesDto notesDto) {
-        if (notesDto.getId() == null) {
+    public NotesDto updateNote(Long id, NotesDto notesDto) {
+        if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
-        Notes notes = getNotesById(notesDto.getId());
+        Notes notes = getNotesById(id);
         notes.setText(notesDto.getText());
         notes = notesRepository.save(notes);
 
@@ -65,12 +68,12 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesDto deleteNote(NotesDto notesDto) {
-        if (notesDto.getId() == null) {
+    public NotesDto deleteNote(Long id) {
+        if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
-        Notes notes = getNotesById(notesDto.getId());
-//        notes.setIsRemoved(Boolean.TRUE);
+        Notes notes = getNotesById(id);
+        notes.setIsRemoved(Boolean.TRUE);
         notes = notesRepository.save(notes);
 
         return new NotesDto(notes);
