@@ -122,10 +122,6 @@ public class ContractServiceImpl implements ContractService {
             }
         }
 
-//        if (dto.getGuid().equals("perspective_buy")) {
-//            result = generateContractBuyPerspective(application, dto);
-//        }
-//
 //        if (dto.getGuid().equals("perspective_sale_excl")) {
 //            result = generateContractSaleExclusivePerspective(application, dto);
 //        }
@@ -270,6 +266,7 @@ public class ContractServiceImpl implements ContractService {
             if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
                 throw BadRequestException.createTemplateException("error.application.contract");
             }
+            List<JasperPrint> jasperPrintList = new ArrayList<>();
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
             PurchaseInfo purchaseInfo = purchaseData.getPurchaseInfo();
             City city = purchaseData.getCity();
@@ -282,9 +279,16 @@ public class ContractServiceImpl implements ContractService {
             InputStream image = getLogo(templateMap.get(ContractTemplateType.LOGO.name())); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
             parameters.put("logoImage", image);
 
+            InputStream footerImage = null;
+            if (nonNull(templateMap.get(ContractTemplateType.FOOTER_LOGO.name()))) {
+                footerImage = getLogo(templateMap.get(ContractTemplateType.FOOTER_LOGO.name()));
+                parameters.put("footerImage", footerImage);
+            }
             parameters.put("contractNumber", dto.getContractNumber());
             parameters.put("contractDate", sdfDate.format(new Date()));
             parameters.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
+            parameters.put("cityKZ", nonNull(city) ? city.getMultiLang().getNameKz() : "");
+            parameters.put("cityRU", nonNull(city) ? city.getMultiLang().getNameRu() : "");
             parameters.put("printDate", sdfDate.format(new Date()));
             parameters.put("clientFullname", clientDto.getFullname());
 
@@ -296,53 +300,106 @@ public class ContractServiceImpl implements ContractService {
 
             JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
             JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, parameters, new JREmptyDataSource());
+
+            jasperPrintList.add(jasperPrintBasic);
             //----------------------
 
             InputStream inputDuties = new ByteArrayInputStream(templateMap.get(ContractTemplateType.DUTIES.name()).getBytes(StandardCharsets.UTF_8));
             JasperReport jasperReportDuties = JasperCompileManager.compileReport(inputDuties);
-            JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, null, new JREmptyDataSource());
+            Map<String, Object> dutiesPar = new HashMap<>();
+            if (nonNull(footerImage)) {
+                dutiesPar.put("footerImage", footerImage);
+            }
+            JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, dutiesPar, new JREmptyDataSource());
 
+            jasperPrintList.add(jasperPrintDuties);
 
             //--------------------
             InputStream inputPrice = new ByteArrayInputStream(templateMap.get(ContractTemplateType.PRICE.name()).getBytes(StandardCharsets.UTF_8));
             JasperReport jasperReportPrice = JasperCompileManager.compileReport(inputPrice);
-            JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, null, new JREmptyDataSource());
+            Map<String, Object> pricePar = new HashMap<>();
+            if (nonNull(footerImage)) {
+                pricePar.put("footerImage", footerImage);
+            }
+            JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, pricePar, new JREmptyDataSource());
+
+            jasperPrintList.add(jasperPrintPrice);
 
             //----------------------
             InputStream inputResp = new ByteArrayInputStream(templateMap.get(ContractTemplateType.RESPONSIBILITIES.name()).getBytes(StandardCharsets.UTF_8));
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
-            JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
+            Map<String, Object> respPar = new HashMap<>();
+            if (nonNull(footerImage)) {
+                respPar.put("footerImage", footerImage);
+            }
+            JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, respPar, new JREmptyDataSource());
+
+            jasperPrintList.add(jasperPrintResp);
 
             //----------------------
-            Map<String, Object> detailPar = new HashMap<>();
-            List<JasperBasicDto> detailItems = new ArrayList<>();
+            if (nonNull(templateMap.get(ContractTemplateType.DETAILS.name()))) {
+                Map<String, Object> detailPar = new HashMap<>();
+                List<JasperBasicDto> detailItems = new ArrayList<>();
 
-            detailItems.add(new JasperBasicDto("-", "-"));
-            JRBeanCollectionDataSource detailDs = new JRBeanCollectionDataSource(detailItems);
-            detailPar.put("CollectionBeanParam", detailDs);
+                detailItems.add(new JasperBasicDto("-", "-"));
+                JRBeanCollectionDataSource detailDs = new JRBeanCollectionDataSource(detailItems);
+                detailPar.put("CollectionBeanParam", detailDs);
+                InputStream inputDetail = new ByteArrayInputStream(templateMap.get(ContractTemplateType.DETAILS.name()).getBytes(StandardCharsets.UTF_8));
+                JasperReport jasperReportDatail = JasperCompileManager.compileReport(inputDetail);
+                JasperPrint jasperPrintDetail = JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
 
+                jasperPrintList.add(jasperPrintDetail);
+            }
+            if (nonNull(templateMap.get(ContractTemplateType.RECVISIT.name()))) {
+                InputStream inputRecv = new ByteArrayInputStream(templateMap.get(ContractTemplateType.RECVISIT.name()).getBytes(StandardCharsets.UTF_8));
+                JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
+                Map<String, Object> recvPar = new HashMap<>();
+                recvPar.put("footerImage", footerImage);
+                recvPar.put("clientFullname", "Client Clientovich");
+                recvPar.put("clientBirthdate", "Agent Agentovich");
+                recvPar.put("clientPassportDealDate", "12.12.2008");
+                recvPar.put("clientPassportnumber", "123456");
+                recvPar.put("clientPassportserial", "DF1234");
+                recvPar.put("clientPassportDealer", "DF1234");
+                recvPar.put("clientAddress", "DF1234");
+                recvPar.put("clientIIN", "4444333344443333");
+                recvPar.put("clientMobilePhone", "7 777 77777 77");
+                JasperPrint jasperPrintRecv = JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
 
-            InputStream inputDetail = new ByteArrayInputStream(templateMap.get(ContractTemplateType.DETAILS.name()).getBytes(StandardCharsets.UTF_8));
-            JasperReport jasperReportDatail = JasperCompileManager.compileReport(inputDetail);
-            JasperPrint jasperPrintDetail = JasperFillManager.fillReport(jasperReportDatail, detailPar, new JREmptyDataSource());
+                jasperPrintList.add(jasperPrintRecv);
+            }
             //----------------------
             Map<String, Object> actPar = new HashMap<>();
-            List<JasperActDto> actItems = new ArrayList<>();
+            JRBeanCollectionDataSource actDs;
+            if (isNull(footerImage)) {
+                List<JasperActDto> actItems = new ArrayList<>();
 
-            actItems.add(new JasperActDto("-", "-", "-", "-"));
-            actItems.add(new JasperActDto("*", "*", "*", "*"));
-            actItems.add(new JasperActDto("#", "#", "#", "#"));
-            JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
-            actPar.put("CollectionBeanParam", actDs);
+                actItems.add(new JasperActDto("-", "-", "-", "-"));
+                actItems.add(new JasperActDto("*", "*", "*", "*"));
+                actItems.add(new JasperActDto("#", "#", "#", "#"));
+                actDs = new JRBeanCollectionDataSource(actItems);
+                actPar.put("CollectionBeanParam", actDs);
+                actPar.put("customerIIN", "123123123123");
+            } else {
+                List<JasperPerspectivaActViewDto> actItems = new ArrayList<>();
+
+                actItems.add(new JasperPerspectivaActViewDto("1", "FIO/Address", "10.10.2019"));
+                actItems.add(new JasperPerspectivaActViewDto("2", "FIO/Address", "*"));
+                actItems.add(new JasperPerspectivaActViewDto("3", "FIO/Address", "#"));
+                actDs = new JRBeanCollectionDataSource(actItems);
+                actPar.put("CollectionPerspectivaBuyActView", actDs);
+                actPar.put("footerImage", footerImage);
+            }
             actPar.put("docNumb", "123456");
-            actPar.put("customerIIN", "123123123123");
             actPar.put("docDate", "12.12.2020");
             actPar.put("agentFullname", userInfoDto.getFullname());
-
 
             InputStream inputAct = new ByteArrayInputStream(templateMap.get(ContractTemplateType.ACT_VIEW.name()).getBytes(StandardCharsets.UTF_8));
             JasperReport jasperReportAct = JasperCompileManager.compileReport(inputAct);
             JasperPrint jasperPrintAct = JasperFillManager.fillReport(jasperReportAct, actPar, new JREmptyDataSource());
+
+            jasperPrintList.add(jasperPrintAct);
+
             //----------------------
             Map<String, Object> actWorkPar = new HashMap<>();
             actWorkPar.put("docNumb", "12356");
@@ -357,36 +414,14 @@ public class ContractServiceImpl implements ContractService {
             actWorkPar.put("clientPassportDealer", "DF1234");
             actWorkPar.put("clientAddress", "DF1234");
             actWorkPar.put("agentFullname", userInfoDto.getFullname());
-            InputStream inputActWork = new ByteArrayInputStream(templateMap.get(ContractTemplateType.ACT_WORK.name()).getBytes(StandardCharsets.UTF_8));
+            actWorkPar.put("clientIIN", "00000000000000");
+            actWorkPar.put("footerImage", footerImage); InputStream inputActWork = new ByteArrayInputStream(templateMap.get(ContractTemplateType.ACT_WORK.name()).getBytes(StandardCharsets.UTF_8));
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
             JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
-            //--------------------------
 
-            List<JasperPrint> jasperPrintList = new ArrayList<>();
-            jasperPrintList.add(jasperPrintBasic);
-            jasperPrintList.add(jasperPrintDuties);
-            jasperPrintList.add(jasperPrintPrice);
-            jasperPrintList.add(jasperPrintResp);
-            jasperPrintList.add(jasperPrintDetail);
-            jasperPrintList.add(jasperPrintAct);
             jasperPrintList.add(jasperPrintActWork);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JRPdfExporter exporter = new JRPdfExporter();
-            //Add the list as a Parameter
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-            //this will make a bookmark in the exported PDF for each of the reports
-            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
-            exporter.exportReport();
-
-
-            //byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
-            String base64String = Base64.encodeBase64String(baos.toByteArray());
-
-            log.info("Done");
-
-            return base64String;
+            return getPages(jasperPrintList);
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
@@ -772,20 +807,13 @@ public class ContractServiceImpl implements ContractService {
 
     private String generateContractBuyPerspective(Application application, ContractFormDto dto, ProfileClientDto clientDto, UserInfoDto userInfoDto, ContractFormTemplateDto contractForm) {
         try {
-
-            /*if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
+            if (application.getOperationType().isSell() || isNull(application.getApplicationPurchaseData())) {
                 throw BadRequestException.createTemplateException("error.application.contract");
-            }*/
+            }
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
             PurchaseInfo purchaseInfo = purchaseData.getPurchaseInfo();
             City city = purchaseData.getCity();
             District district = purchaseData.getDistrict();
-            //тут 404 ошибку бросает у меня
-            /*List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
-            if (profileClientDtoList.isEmpty()) {
-                throw BadRequestException.createTemplateException("error.application.contract");
-            }
-            ProfileClientDto clientDto = profileClientDtoList.get(0);*/
             Map<String, String> templateMap = contractForm.getTemplateMap();
             InputStream input = new ByteArrayInputStream(templateMap.get(ContractTemplateType.MAIN.name()).getBytes(StandardCharsets.UTF_8));
 
@@ -888,7 +916,6 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintRecv);
             jasperPrintList.add(jasperPrintActView);
             jasperPrintList.add(jasperPrintActWork);
-
 
             return getPages(jasperPrintList);
         } catch (Exception e) {
