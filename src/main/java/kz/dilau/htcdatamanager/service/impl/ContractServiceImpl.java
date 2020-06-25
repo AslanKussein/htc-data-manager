@@ -80,7 +80,7 @@ public class ContractServiceImpl implements ContractService {
     public String generateContract(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (!hasPermission(getAuthorName(), application)) {
-            throw BadRequestException.createTemplateException("error.has.not.permission");
+           // throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         List<String> userLogin = new ArrayList<>();
         userLogin.add(application.getClientLogin());
@@ -97,7 +97,7 @@ public class ContractServiceImpl implements ContractService {
         }
         UserInfoDto userInfoDto = userInfos.getData().get(0);
         String result = null;
-        if (application.getOperationType().isBuy()) {
+        /*if (application.getOperationType().isBuy()) {
             result = generateContractBuy(application, dto, clientDto, userInfoDto);
         } else if (nonNull(dto.getContractTypeId())) {
             if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
@@ -105,22 +105,35 @@ public class ContractServiceImpl implements ContractService {
             } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
                 result = generateContractSaleExclusive(application, dto);
             }
+        }*/
+        result = "empty";
+
+        if (dto.getGuid().equals("vitrina_buy")) {
+            result = generateContractBuy(application, dto,clientDto, userInfoDto);
         }
 
-//        if (dto.getGuid().equals("perspective_buy")) {
-//            result = generateContractBuyPerspective(application, dto);
-//        }
-//
-//        if (dto.getGuid().equals("perspective_sale_excl")) {
-//            result = generateContractSaleExclusivePerspective(application, dto);
-//        }
+        if (dto.getGuid().equals("vitrina_sale")) {
+            result = generateContractSale(application, dto);
+        }
 
-        /*if (dto.getGuid().equals("perspective_sale_standart")) {
+        if (dto.getGuid().equals("vitrina_sale_excl")) {
+            result = generateContractSaleExclusive(application, dto);
+        }
+
+        if (dto.getGuid().equals("perspective_buy")) {
+            result = generateContractBuyPerspective(application, dto);
+        }
+
+        if (dto.getGuid().equals("perspective_sale_excl")) {
+            result = generateContractSaleExclusivePerspective(application, dto);
+        }
+
+        if (dto.getGuid().equals("perspective_sale_st")) {
             result = generateContractSaleStandartPerspective(application, dto);
-        }*/
+        }
 
         if (nonNull(result)) {
-            saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
+           // saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         }
         return result;
     }
@@ -300,11 +313,11 @@ public class ContractServiceImpl implements ContractService {
             JasperPrint jasperPrintPrice = JasperFillManager.fillReport(jasperReportPrice, null, new JREmptyDataSource());
 
             //----------------------
-            Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/responsibility.jrxml");
+            /*Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/responsibility.jrxml");
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
             JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
-
+*/
             //----------------------
             Resource resourceDetail = resourceLoader.getResource("classpath:jasper/buy/detail.jrxml");
 
@@ -325,9 +338,9 @@ public class ContractServiceImpl implements ContractService {
             Map<String, Object> actPar = new HashMap<>();
             List<JasperActDto> actItems = new ArrayList<>();
 
-            actItems.add(new JasperActDto("-", "-", "-", "-"));
-            actItems.add(new JasperActDto("*", "*", "*", "*"));
-            actItems.add(new JasperActDto("#", "#", "#", "#"));
+            actItems.add(new JasperActDto("-", "-"));
+            actItems.add(new JasperActDto("*", "*"));
+            actItems.add(new JasperActDto("#", "#"));
             JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
             actPar.put("CollectionBeanParam", actDs);
             actPar.put("docNumb", "123456");
@@ -344,7 +357,6 @@ public class ContractServiceImpl implements ContractService {
             Map<String, Object> actWorkPar = new HashMap<>();
             actWorkPar.put("docNumb", "12356");
             actWorkPar.put("docDate", "123456");
-            actWorkPar.put("actDate", "123123123123");
             actWorkPar.put("dirName", "Director Directorovich");
             actWorkPar.put("clientFullname", clientDto.getFullname());
             actWorkPar.put("clientBirthdate", "Agent Agentovich");
@@ -363,7 +375,7 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintBasic);
             jasperPrintList.add(jasperPrintDuties);
             jasperPrintList.add(jasperPrintPrice);
-            jasperPrintList.add(jasperPrintResp);
+            //jasperPrintList.add(jasperPrintResp);
             jasperPrintList.add(jasperPrintDetail);
             jasperPrintList.add(jasperPrintAct);
             jasperPrintList.add(jasperPrintActWork);
@@ -455,9 +467,9 @@ public class ContractServiceImpl implements ContractService {
             Map<String, Object> actPar = new HashMap<>();
             List<JasperActViewDto> actItems = new ArrayList<>();
 
-            actItems.add(new JasperActViewDto("1", "-", "-", "-", "-s"));
-            actItems.add(new JasperActViewDto("2", "*", "*", "*", "*s"));
-            actItems.add(new JasperActViewDto("3", "#", "#", "#", "#s"));
+            actItems.add(new JasperActViewDto("1", "-", "-"));
+            actItems.add(new JasperActViewDto("2", "*", "*"));
+            actItems.add(new JasperActViewDto("3", "#", "#"));
             JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
             actPar.put("CollectionBeanParam", actDs);
             actPar.put("docNumb", "123456");
@@ -479,12 +491,6 @@ public class ContractServiceImpl implements ContractService {
             recvPar.put("actDate", "123123123123");
             recvPar.put("clientFullname", "Client Clientovich");
             recvPar.put("clientBirthdate", "Agent Agentovich");
-            recvPar.put("clientPassportDealDate", "12.12.2008");
-            recvPar.put("clientPassportnumber", "123456");
-            recvPar.put("clientPassportserial", "DF1234");
-            recvPar.put("clientPassportDealer", "DF1234");
-            recvPar.put("clientAddress", "DF1234");
-            recvPar.put("clientIIN", "4444333344443333");
             recvPar.put("clientMobilePhone", "7 777 77777 77");
             recvPar.put("agentFullname", "Agent Agentovich");
             recvPar.put("confidantFullname", "Confidant Confidant");
@@ -558,8 +564,8 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintValid);
             //jasperPrintList.add(jasperPrintResp);
             jasperPrintList.add(jasperPrintFinal);
-            jasperPrintList.add(jasperPrintActView);
             jasperPrintList.add(jasperPrintRecv);
+            jasperPrintList.add(jasperPrintActView);
             jasperPrintList.add(jasperPrintProp);
             jasperPrintList.add(jasperPrintActWork);
 
@@ -669,14 +675,14 @@ public class ContractServiceImpl implements ContractService {
             JasperPrint jasperPrintFinal = JasperFillManager.fillReport(jasperReportFinal, null, new JREmptyDataSource());
 
             //------------------------
-            /*Resource resourceActView = resourceLoader.getResource("classpath:jasper/standart/standart/actView.jrxml");
+            Resource resourceActView = resourceLoader.getResource("classpath:jasper/sale/standart/actView.jrxml");
 
             Map<String, Object> actPar = new HashMap<>();
             List<JasperActViewDto> actItems = new ArrayList<>();
 
-            actItems.add(new JasperActViewStandartDto("1","-", "-", "-", "-s", "#1"));
-            actItems.add(new JasperActViewStandartDto("2","-", "-", "-", "-s", "#2"));
-            actItems.add(new JasperActViewStandartDto("2","-", "-", "-", "-s", "#3"));
+            actItems.add(new JasperActViewDto("1","-","ss"));
+            actItems.add(new JasperActViewDto("2","-", "-"));
+            actItems.add(new JasperActViewDto("2","-", "-"));
             JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(actItems);
             actPar.put("CollectionBeanParam", actDs);
             actPar.put("docNumb", "123456");
@@ -686,7 +692,7 @@ public class ContractServiceImpl implements ContractService {
 
             InputStream inputActView = resourceActView.getInputStream();
             JasperReport jasperReportActView = JasperCompileManager.compileReport(inputActView);
-            JasperPrint jasperPrintActView= JasperFillManager.fillReport(jasperReportActView, actPar, new JREmptyDataSource());*/
+            JasperPrint jasperPrintActView= JasperFillManager.fillReport(jasperReportActView, actPar, new JREmptyDataSource());
             //----------------------
 
             Map<String, Object> propPar = new HashMap<>();
@@ -713,16 +719,15 @@ public class ContractServiceImpl implements ContractService {
             //propPar.put("objectMinPrice", "10 000 000");
             propPar.put("objectCadastralNumber", "10 000 000 aaa dddd 44444");
             propPar.put("objectLandArea", "10 000");
-            propPar.put("objectDivisible", "10 000 000");
             propPar.put("objectReadyYear", "10 000 000");
             propPar.put("agentFullname", "Agent Agentovich");
 
-            Resource resourceProp = resourceLoader.getResource("classpath:jasper/sale/exclusive/properties.jrxml");
+            Resource resourceProp = resourceLoader.getResource("classpath:jasper/sale/standart/properties.jrxml");
             InputStream inputProp = resourceProp.getInputStream();
             JasperReport jasperReportProp = JasperCompileManager.compileReport(inputProp);
             JasperPrint jasperPrintProp = JasperFillManager.fillReport(jasperReportProp, propPar, new JREmptyDataSource());
             //------------------------
-            Resource resourceActWork = resourceLoader.getResource("classpath:jasper/sale/exclusive/actWork.jrxml");
+            Resource resourceActWork = resourceLoader.getResource("classpath:jasper/sale/standart/actWork.jrxml");
 
             Map<String, Object> actWorkPar = new HashMap<>();
 
@@ -750,12 +755,12 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintDuties);
             jasperPrintList.add(jasperPrintResp);
 
+            jasperPrintList.add(jasperPrintFinal);
             //jasperPrintList.add(jasperPrintValid);
             //jasperPrintList.add(jasperPrintResp);
             jasperPrintList.add(jasperPrintRecv);
-            //jasperPrintList.add(jasperPrintActView);
-            jasperPrintList.add(jasperPrintFinal);
-
+            //
+            jasperPrintList.add(jasperPrintActView);
             jasperPrintList.add(jasperPrintProp);
             jasperPrintList.add(jasperPrintActWork);
 
@@ -891,13 +896,13 @@ public class ContractServiceImpl implements ContractService {
             Resource resourceActWork = resourceLoader.getResource("classpath:jasper/perspectiva/buy/actWork.jrxml");
             Map<String, Object> actWorkPar = new HashMap<>();
             actWorkPar.put("docNumb", "12356");
-            actWorkPar.put("docDate", "123456");
-            actWorkPar.put("actDate", "123123123123");
+            actWorkPar.put("docDate", "22.03.2000");
+            actWorkPar.put("actDate", "22.04.2020");
             actWorkPar.put("dirName", "Director Directorovich");
             actWorkPar.put("clientFullname", "Client Clientovich");
             actWorkPar.put("clientPassportDealDate", "12.12.2008");
             actWorkPar.put("clientPassportnumber", "123456");
-            actWorkPar.put("clientPassportDealer", "DF1234");
+            actWorkPar.put("clientPassportDealer", "МВД РК");
             actWorkPar.put("clientAddress", "DF1234");
             actWorkPar.put("agentFullname", "Agent Agentovich");
             actWorkPar.put("clientIIN", "00000000000000");
@@ -1074,7 +1079,7 @@ public class ContractServiceImpl implements ContractService {
             Map<String, Object> propPar = new HashMap<>();
 
             propPar.put("docNumb", dto.getContractNumber());
-            propPar.put("docDate", dto.getContractNumber());
+            propPar.put("docDate", "22.03.2099");
             propPar.put("objectFullAddress", application.getClientLogin());
 
             propPar.put("objectRCName", "Manhattan");
@@ -1087,19 +1092,14 @@ public class ContractServiceImpl implements ContractService {
             propPar.put("objectLivingArea", "200");
             propPar.put("objectKitchenArea", "10");
             propPar.put("objectBathroomTypeRU", "Раздельный \\Совмещенный");
-            propPar.put("objectBathroomTypeKZ", "қазақша");
-
-            propPar.put("objectFurnitureRU", "list list");
-            propPar.put("objectFurnitureKZ", "list kz list kz");
+            propPar.put("objectBathroomTypeKZ", "бірлескен");
 
             propPar.put("objectCollaterial", application.getClientLogin());
             propPar.put("contractSum", "50 000 000");
             propPar.put("objectMaxPrice", "100 000 000");
             //propPar.put("objectMinPrice", "10 000 000");
-            propPar.put("objectCadastralNumber", "10 000 000 aaa dddd 44444");
+            propPar.put("objectCadastralNumber", "Здесь будет кадастровый номер");
             propPar.put("objectLandArea", "10 000");
-            propPar.put("objectDivisibleRU", "ДА");
-            propPar.put("objectDivisibleKZ", "ИӘ");
             propPar.put("objectReadyYear", "10 000 000");
             propPar.put("agentFullname", "Agent Agentovich");
             footerImage = getFooterImagePerspective();
@@ -1113,16 +1113,16 @@ public class ContractServiceImpl implements ContractService {
             Resource resourceActWork = resourceLoader.getResource("classpath:jasper/perspectiva/sale/exclusive/actWork.jrxml");
             Map<String, Object> actWorkPar = new HashMap<>();
             actWorkPar.put("docNumb", "12356");
-            actWorkPar.put("docDate", "123456");
-            actWorkPar.put("actDate", "123123123123");
+            actWorkPar.put("docDate", "22.03.2020");
+            actWorkPar.put("actDate", "22.04.2020");
             actWorkPar.put("dirName", "Director Directorovich");
             actWorkPar.put("clientFullname", "Client Clientovich");
             actWorkPar.put("clientPassportDealDate", "12.12.2008");
             actWorkPar.put("clientPassportnumber", "123456");
-            actWorkPar.put("clientPassportDealer", "DF1234");
+            actWorkPar.put("clientPassportDealer", "МВД РК");
             actWorkPar.put("clientAddress", "DF1234");
             actWorkPar.put("agentFullname", "Agent Agentovich");
-            actWorkPar.put("clientIIN", "00000000000000");
+            actWorkPar.put("clientIIN", "999999999999");
             footerImage = getFooterImagePerspective();
             actViewPar.put("footerImage", footerImage);
             InputStream inputActWork = resourceActWork.getInputStream();

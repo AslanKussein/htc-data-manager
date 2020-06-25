@@ -157,7 +157,7 @@
                 <textElement textAlignment="Right" markup="html">
                     <font fontName="Times New Roman" size="14"/>
                 </textElement>
-                <textFieldExpression><![CDATA["<b>Приложение№1/№1Қосымша </b><br/>к договору №<u><i><b>" +($P{docNumb})+"</b></i></u><br/> на оказании услуг<br/> по поиску покупателей на объект недвижимости <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г.<br/>№<u><i><b>"+($P{docNumb})+"</b></i></u>шартқа жылжымайтын мүлік объектісін сатып алушыға қызмет көрсетуге <u><i><b>"+($P{docDate})+"</b></i></u> ж."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["<b>Приложение№1/№1Қосымша </b><br/>к договору №<u><i><b>" +($P{docNumb})+"</b></i></u><br/> на оказании услуг<br/> по поиску покупателей на объект недвижимости <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г.<br/>№<u><i><b>"+($P{docNumb})+"</b></i></u> шартқа жылжымайтын мүлік объектісін сатып алушыға қызмет көрсетуге <u><i><b>"+($P{docDate})+"</b></i></u> ж."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="209" y="130" width="151" height="100" uuid="258b611a-1e20-4179-a485-d2c31731d972"/>

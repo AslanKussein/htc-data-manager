@@ -35,8 +35,6 @@
         </queryString>
         <field name="fDate" class="java.lang.String"/>
         <field name="fFullname" class="java.lang.String"/>
-        <field name="fCustsign" class="java.lang.String"/>
-        <field name="fSuppliersign" class="java.lang.String"/>
     </subDataset>
     <parameter name="docNumb" class="java.lang.String"/>
     <parameter name="CollectionBeanParam" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
@@ -115,15 +113,7 @@
                                 <text><![CDATA[Подпись Заказчика(Покупатель)]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="100" height="30" uuid="a802b9a8-c8d6-4cf7-aec4-5dfc5e7080d9"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="DejaVu Sans" size="14"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA[$F{fCustsign}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
+                        <jr:detailCell style="Table_TD" height="30"/>
                     </jr:column>
                     <jr:column width="100" uuid="b70a817f-e27d-437b-a4e8-2d71b2cf0ac9">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
@@ -136,64 +126,49 @@
                                 <text><![CDATA[Подпись Потенциального Продавца]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="100" height="30" uuid="9fc43fad-8cc4-483f-b81d-2b485b5a3b67"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="DejaVu Sans" size="14"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA[$F{fSuppliersign}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
+                        <jr:detailCell style="Table_TD" height="30"/>
                     </jr:column>
                 </jr:table>
             </componentElement>
             <textField>
                 <reportElement x="320" y="0" width="232" height="130" uuid="10262ac0-9f73-498d-bea4-80e5221eda34"/>
                 <textElement textAlignment="Right" markup="html">
-                    <font fontName="DejaVu Sans" size="14"/>
+                    <font fontName="Times New Roman" size="14"/>
                 </textElement>
                 <textFieldExpression><![CDATA["<b>Приложение№1 </b><br/>№<u><i><b>" +($P{docNumb})+"</b></i></u><br/> об оказании риэлтерских услуг Покупателю объекта недвижимости <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="232" y="142" width="100" height="30" uuid="258b611a-1e20-4179-a485-d2c31731d972"/>
                 <textElement>
-                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["АКТ"]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="2" y="171" width="549" height="59" uuid="30a7bf3e-a034-4311-9295-15e78085a5a4"/>
                 <textElement textAlignment="Justified">
-                    <font fontName="DejaVu Sans" size="14"/>
+                    <font fontName="Times New Roman" size="14"/>
                 </textElement>
                 <textFieldExpression><![CDATA["осмотра Объектов, предложенных и показанных представителем Исполнителя (риэлтором) Заказчику"]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="0" y="230" width="450" height="30" uuid="9a6bdc6b-c1fc-4473-89ef-c7c3e2aa429e"/>
                 <textElement>
-                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["ИИН заказчика:_______________________________"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="160" y="230" width="156" height="30" uuid="2539be8e-be71-4132-af07-c4b4b89db42f"/>
-                <textElement>
-                    <font fontName="DejaVu Sans" size="14"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$P{customerIIN}]]></textFieldExpression>
-            </textField>
-            <textField>
                 <reportElement x="2" y="710" width="278" height="40" uuid="b6faf909-141f-4681-b33b-61d8ab34dff4"/>
                 <textElement>
-                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["Представитель Исполнителя (риэлтор) _____________________"]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="132" y="740" width="100" height="30" uuid="0c52413f-ffb2-40cb-97ed-efd7a5e53945"/>
+                <reportElement x="50" y="740" width="100" height="30" uuid="0c52413f-ffb2-40cb-97ed-efd7a5e53945"/>
                 <textElement>
-                    <font fontName="DejaVu Sans"/>
+                    <font fontName="Times New Roman" size="14"/>
                 </textElement>
                 <textFieldExpression><![CDATA["(подпись)"]]></textFieldExpression>
             </textField>
@@ -206,14 +181,14 @@
                     <rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
                 </box>
                 <textElement markup="html">
-                    <font fontName="DejaVu Sans" size="14" isBold="true"/>
+                    <font fontName="Times New Roman" size="14" isBold="true"/>
                 </textElement>
                 <textFieldExpression><![CDATA["<u>" +($P{agentFullname}) +"</u>"]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="1" y="764" width="208" height="30" uuid="2b724c68-3895-4f7a-bae1-e77b355f1022"/>
                 <textElement markup="html">
-                    <font fontName="DejaVu Sans"/>
+                    <font fontName="Times New Roman" size="14"/>
                 </textElement>
                 <textFieldExpression><![CDATA["<b>Подпись Заказчика:</b>"]]></textFieldExpression>
             </textField>

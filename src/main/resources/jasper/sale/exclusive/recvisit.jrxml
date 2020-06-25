@@ -63,7 +63,7 @@
 				<textElement textAlignment="Center" markup="html">
 					<font fontName="Arial" size="14"/>
 				</textElement>
-				<textFieldExpression><![CDATA["<b><u>Заказчик:</u></b><br/> <b>" +$P{clientFullname}+" </b><br/> ИИН <u>" +$P{clientIIN}+"</u><br/> Удостоверение личности(паспорт) № <u>" +$P{clientPassportnumber}+"</u> от <u>" + $P{clientPassportDealDate}+"</u> выдан <u>" +$P{clientPassportDealer}+"</u><br/> РК Мобильный тел.: <u>" +$P{clientMobilePhone}+"</u><br/>Адрес проживания: " +$P{clientAddress}+" <br/>Свой экземпляр настоящего Договора получил. <br/><b>Подпись______________________</b>" +
+				<textFieldExpression><![CDATA["<b><u>Заказчик:</u></b><br/> <b>" +$P{clientFullname}+" </b><br/> ИИН _________________________<br/> Удостоверение личности(паспорт) <br/>№ ______________ от ________________ выдан ____________________<br/> Мобильный тел.: <u>" +$P{clientMobilePhone}+"</u><br/>Адрес проживания: _________________________________________ <br/>Свой экземпляр настоящего Договора получил. <br/><b>Подпись______________________</b>" +
 "<br/><br/><b>Представитель по доверенности</b><br/>" + $P{confidantFullname} +"<br/>№________________от_____________<br/><b>Подпись______________________</b>"]]></textFieldExpression>
 			</textField>
 			<textField>
