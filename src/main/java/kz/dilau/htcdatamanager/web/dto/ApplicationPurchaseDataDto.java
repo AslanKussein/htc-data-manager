@@ -26,26 +26,28 @@ public class ApplicationPurchaseDataDto extends AApplicationDataDto {
     private Long districtId;
 
     public ApplicationPurchaseDataDto(ApplicationPurchaseData purchaseData) {
-        if (nonNull(purchaseData.getPurchaseInfo())) {
-            this.objectPricePeriod = new BigDecimalPeriod(purchaseData.getPurchaseInfo().getObjectPriceFrom(), purchaseData.getPurchaseInfo().getObjectPriceTo());
+        if (nonNull(purchaseData)) {
+            if (nonNull(purchaseData.getPurchaseInfo())) {
+                this.objectPricePeriod = new BigDecimalPeriod(purchaseData.getPurchaseInfo().getObjectPriceFrom(), purchaseData.getPurchaseInfo().getObjectPriceTo());
+            }
+            this.mortgage = purchaseData.getMortgage();
+            this.probabilityOfBidding = purchaseData.getProbabilityOfBidding();
+            this.theSizeOfTrades = purchaseData.getTheSizeOfTrades();
+            if (!purchaseData.getPossibleReasonsForBidding().isEmpty()) {
+                this.possibleReasonForBiddingIdList = purchaseData.getPossibleReasonsForBidding()
+                        .stream()
+                        .map(IdItem::getId)
+                        .collect(Collectors.toList());
+            }
+            if (!purchaseData.getApplicationFlags().isEmpty()) {
+                this.applicationFlagIdList = purchaseData.getApplicationFlags()
+                        .stream()
+                        .map(IdItem::getId)
+                        .collect(Collectors.toList());
+            }
+            this.note = purchaseData.getNote();
+            this.cityId = purchaseData.getCityId();
+            this.districtId = purchaseData.getDistrictId();
         }
-        this.mortgage = purchaseData.getMortgage();
-        this.probabilityOfBidding = purchaseData.getProbabilityOfBidding();
-        this.theSizeOfTrades = purchaseData.getTheSizeOfTrades();
-        if (!purchaseData.getPossibleReasonsForBidding().isEmpty()) {
-            this.possibleReasonForBiddingIdList = purchaseData.getPossibleReasonsForBidding()
-                    .stream()
-                    .map(IdItem::getId)
-                    .collect(Collectors.toList());
-        }
-        if (!purchaseData.getApplicationFlags().isEmpty()) {
-            this.applicationFlagIdList = purchaseData.getApplicationFlags()
-                    .stream()
-                    .map(IdItem::getId)
-                    .collect(Collectors.toList());
-        }
-        this.note = purchaseData.getNote();
-        this.cityId = purchaseData.getCityId();
-        this.districtId = purchaseData.getDistrictId();
     }
 }
