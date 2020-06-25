@@ -9,6 +9,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Getter
 @Setter
 @Builder
@@ -30,28 +32,29 @@ public class ApplicationSellDataDto extends AApplicationDataDto {
     private Long applicationId;
 
     public ApplicationSellDataDto(ApplicationSellData sellData) {
-        this.objectPrice = sellData.getObjectPrice();
-        this.encumbrance = sellData.getEncumbrance();
-        this.sharedOwnershipProperty = sellData.getSharedOwnershipProperty();
-        this.exchange = sellData.getExchange();
-        this.description = sellData.getDescription();
-        this.mortgage = sellData.getMortgage();
-        this.probabilityOfBidding = sellData.getProbabilityOfBidding();
-        this.theSizeOfTrades = sellData.getTheSizeOfTrades();
-        this.note = sellData.getNote();
-        if (!sellData.getPossibleReasonsForBidding().isEmpty()) {
-            this.possibleReasonForBiddingIdList = sellData.getPossibleReasonsForBidding()
-                    .stream()
-                    .map(IdItem::getId)
-                    .collect(Collectors.toList());
+        if (nonNull(sellData)) {
+            this.objectPrice = sellData.getObjectPrice();
+            this.encumbrance = sellData.getEncumbrance();
+            this.sharedOwnershipProperty = sellData.getSharedOwnershipProperty();
+            this.exchange = sellData.getExchange();
+            this.description = sellData.getDescription();
+            this.mortgage = sellData.getMortgage();
+            this.probabilityOfBidding = sellData.getProbabilityOfBidding();
+            this.theSizeOfTrades = sellData.getTheSizeOfTrades();
+            this.note = sellData.getNote();
+            if (!sellData.getPossibleReasonsForBidding().isEmpty()) {
+                this.possibleReasonForBiddingIdList = sellData.getPossibleReasonsForBidding()
+                        .stream()
+                        .map(IdItem::getId)
+                        .collect(Collectors.toList());
+            }
+            if (!sellData.getApplicationFlags().isEmpty()) {
+                this.applicationFlagIdList = sellData.getApplicationFlags()
+                        .stream()
+                        .map(IdItem::getId)
+                        .collect(Collectors.toList());
+            }
+            this.applicationId = sellData.getApplication().getId();
         }
-        if (!sellData.getApplicationFlags().isEmpty()) {
-            this.applicationFlagIdList = sellData.getApplicationFlags()
-                    .stream()
-                    .map(IdItem::getId)
-                    .collect(Collectors.toList());
-        }
-
-        this.applicationId = sellData.getApplication().getId();
     }
 }

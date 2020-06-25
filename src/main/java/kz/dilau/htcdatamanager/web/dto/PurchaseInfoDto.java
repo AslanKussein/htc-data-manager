@@ -10,6 +10,8 @@ import lombok.*;
 
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Getter
 @Setter
 @Builder
@@ -47,33 +49,35 @@ public class PurchaseInfoDto extends AGeneralCharacteristicsDto {
     protected Boolean separateBathroom;
 
     public PurchaseInfoDto(PurchaseInfo info) {
-        this.numberOfFloorsPeriod = new IntegerPeriod(info.getNumberOfFloorsFrom(), info.getNumberOfFloorsTo());
-        this.floorPeriod = new IntegerPeriod(info.getFloorFrom(), info.getFloorTo());
-        this.numberOfRoomsPeriod = new IntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo());
-        this.totalAreaPeriod = new BigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo());
-        this.livingAreaPeriod = new BigDecimalPeriod(info.getLivingAreaFrom(), info.getLivingAreaTo());
-        this.kitchenAreaPeriod = new BigDecimalPeriod(info.getKitchenAreaFrom(), info.getKitchenAreaTo());
-        this.balconyAreaPeriod = new BigDecimalPeriod(info.getBalconyAreaFrom(), info.getBalconyAreaTo());
-        this.ceilingHeightPeriod = new BigDecimalPeriod(info.getCeilingHeightFrom(), info.getCeilingHeightTo());
-        this.landAreaPeriod = new BigDecimalPeriod(info.getLandAreaFrom(), info.getLandAreaTo());
-        this.numberOfBedroomsPeriod = new IntegerPeriod(info.getNumberOfBedroomsFrom(), info.getNumberOfBedroomsTo());
-        this.yearOfConstructionPeriod = new IntegerPeriod(info.getYearOfConstructionFrom(), info.getYearOfConstructionTo());
-        this.apartmentsOnTheSitePeriod = new IntegerPeriod(info.getApartmentsOnTheSiteFrom(), info.getApartmentsOnTheSiteTo());
-        this.materialOfConstructionId = info.getMaterialOfConstructionId();
-        this.concierge = info.getConcierge();
-        this.wheelchair = info.getWheelchair();
-        this.yardTypeId = info.getYardTypeId();
-        this.playground = info.getPlayground();
-        this.atelier = info.getAtelier();
-        this.separateBathroom = info.getSeparateBathroom();
-        this.typeOfElevatorList = info.getTypesOfElevator()
-                .stream()
-                .map(IdItem::getId)
-                .collect(Collectors.toList());
-        this.parkingTypeIds = info.getParkingTypes()
-                .stream()
-                .map(IdItem::getId)
-                .collect(Collectors.toList());
+        if (nonNull(info)) {
+            this.numberOfFloorsPeriod = new IntegerPeriod(info.getNumberOfFloorsFrom(), info.getNumberOfFloorsTo());
+            this.floorPeriod = new IntegerPeriod(info.getFloorFrom(), info.getFloorTo());
+            this.numberOfRoomsPeriod = new IntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo());
+            this.totalAreaPeriod = new BigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo());
+            this.livingAreaPeriod = new BigDecimalPeriod(info.getLivingAreaFrom(), info.getLivingAreaTo());
+            this.kitchenAreaPeriod = new BigDecimalPeriod(info.getKitchenAreaFrom(), info.getKitchenAreaTo());
+            this.balconyAreaPeriod = new BigDecimalPeriod(info.getBalconyAreaFrom(), info.getBalconyAreaTo());
+            this.ceilingHeightPeriod = new BigDecimalPeriod(info.getCeilingHeightFrom(), info.getCeilingHeightTo());
+            this.landAreaPeriod = new BigDecimalPeriod(info.getLandAreaFrom(), info.getLandAreaTo());
+            this.numberOfBedroomsPeriod = new IntegerPeriod(info.getNumberOfBedroomsFrom(), info.getNumberOfBedroomsTo());
+            this.yearOfConstructionPeriod = new IntegerPeriod(info.getYearOfConstructionFrom(), info.getYearOfConstructionTo());
+            this.apartmentsOnTheSitePeriod = new IntegerPeriod(info.getApartmentsOnTheSiteFrom(), info.getApartmentsOnTheSiteTo());
+            this.materialOfConstructionId = info.getMaterialOfConstructionId();
+            this.concierge = info.getConcierge();
+            this.wheelchair = info.getWheelchair();
+            this.yardTypeId = info.getYardTypeId();
+            this.playground = info.getPlayground();
+            this.atelier = info.getAtelier();
+            this.separateBathroom = info.getSeparateBathroom();
+            this.typeOfElevatorList = info.getTypesOfElevator()
+                    .stream()
+                    .map(IdItem::getId)
+                    .collect(Collectors.toList());
+            this.parkingTypeIds = info.getParkingTypes()
+                    .stream()
+                    .map(IdItem::getId)
+                    .collect(Collectors.toList());
+        }
     }
 
 //    public BigDecimalPeriod getObjectPricePeriod() {
