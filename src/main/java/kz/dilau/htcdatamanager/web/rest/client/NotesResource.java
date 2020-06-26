@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiParam;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.NotesService;
 import kz.dilau.htcdatamanager.web.dto.NotesDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class NotesResource {
 
     @GetMapping("/{id}")
     public ResponseEntity<Page<NotesDto>> getAllByRealPropertyId(@PathVariable("id") Long id,
-                                                                 @ApiParam Pageable pageable) {
+                                                                 @ApiParam PageableDto pageable) {
         Page<NotesDto> dto = notesService.getAllByRealPropertyId(id, pageable);
         return ResponseEntity.ok(dto);
     }
@@ -35,15 +36,18 @@ public class NotesResource {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping
-    public ResponseEntity<NotesDto> updateNote(@RequestBody NotesDto notesDto) {
-        NotesDto result = notesService.updateNote(notesDto);
+    @PutMapping("/{id}")
+    public ResponseEntity<NotesDto> updateNote(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                               @PathVariable("id") Long id,
+                                               @RequestBody NotesDto notesDto) {
+        NotesDto result = notesService.updateNote(principal.getName(), id, notesDto);
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping
-    public ResponseEntity<NotesDto> deleteNote(@RequestBody NotesDto notesDto) {
-        NotesDto result = notesService.deleteNote(notesDto);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<NotesDto> deleteNote(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                               @PathVariable("id") Long id) {
+        NotesDto result = notesService.deleteNote(principal.getName(), id);
         return ResponseEntity.ok(result);
     }
 }

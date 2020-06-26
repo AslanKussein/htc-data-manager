@@ -7,8 +7,9 @@ import kz.dilau.htcdatamanager.domain.IdItem;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @ApiModel(value = "GeneralCharacteristicsDto", description = "Характеристики недвижимости")
 public class GeneralCharacteristicsDto extends AGeneralCharacteristicsDto {
-//    @ApiModelProperty(name = "residentialComplexId", value = "ID жилого комплекса")
+    //    @ApiModelProperty(name = "residentialComplexId", value = "ID жилого комплекса")
 //    private Long residentialComplexId;
     @ApiModelProperty(name = "propertyDeveloperId", value = "Застройщик")
     private Long propertyDeveloperId;
@@ -37,21 +38,23 @@ public class GeneralCharacteristicsDto extends AGeneralCharacteristicsDto {
     private Long houseConditionId;
 
     public GeneralCharacteristicsDto(GeneralCharacteristics generalCharacteristics) {
-        this.propertyDeveloperId = generalCharacteristics.getPropertyDeveloperId();
-        this.housingClass = generalCharacteristics.getHousingClass();
-        this.yearOfConstruction = generalCharacteristics.getYearOfConstruction();
-        this.numberOfFloors = generalCharacteristics.getNumberOfFloors();
-        this.numberOfApartments = generalCharacteristics.getNumberOfApartments();
-        this.apartmentsOnTheSite = generalCharacteristics.getApartmentsOnTheSite();
-        this.ceilingHeight = generalCharacteristics.getCeilingHeight();
-        this.houseConditionId = generalCharacteristics.getHouseConditionId();
-        this.materialOfConstructionId = generalCharacteristics.getMaterialOfConstructionId();
-        this.concierge = generalCharacteristics.getConcierge();
-        this.wheelchair = generalCharacteristics.getWheelchair();
-        this.yardTypeId = generalCharacteristics.getYardTypeId();
-        this.playground = generalCharacteristics.getPlayground();
-        this.typeOfElevatorList = generalCharacteristics.getTypesOfElevator().stream().map(IdItem::getId).collect(Collectors.toList());
-        this.parkingTypeIds = generalCharacteristics.getParkingTypes().stream().map(IdItem::getId).collect(Collectors.toList());
+        if (nonNull(generalCharacteristics)) {
+            this.propertyDeveloperId = generalCharacteristics.getPropertyDeveloperId();
+            this.housingClass = generalCharacteristics.getHousingClass();
+            this.yearOfConstruction = generalCharacteristics.getYearOfConstruction();
+            this.numberOfFloors = generalCharacteristics.getNumberOfFloors();
+            this.numberOfApartments = generalCharacteristics.getNumberOfApartments();
+            this.apartmentsOnTheSite = generalCharacteristics.getApartmentsOnTheSite();
+            this.ceilingHeight = generalCharacteristics.getCeilingHeight();
+            this.houseConditionId = generalCharacteristics.getHouseConditionId();
+            this.materialOfConstructionId = generalCharacteristics.getMaterialOfConstructionId();
+            this.concierge = generalCharacteristics.getConcierge();
+            this.wheelchair = generalCharacteristics.getWheelchair();
+            this.yardTypeId = generalCharacteristics.getYardTypeId();
+            this.playground = generalCharacteristics.getPlayground();
+            this.typeOfElevatorList = generalCharacteristics.getTypesOfElevator().stream().map(IdItem::getId).collect(Collectors.toList());
+            this.parkingTypeIds = generalCharacteristics.getParkingTypes().stream().map(IdItem::getId).collect(Collectors.toList());
+        }
     }
 }
 

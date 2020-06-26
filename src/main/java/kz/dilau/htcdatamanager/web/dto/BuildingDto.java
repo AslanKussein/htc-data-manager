@@ -36,16 +36,18 @@ public class BuildingDto {
     private BigDecimal longitude;
 
     public BuildingDto(Building building) {
-        this.cityId = building.getCity().getId();
-        this.districtId = building.getDistrict().getId();
-        this.streetId = building.getStreet().getId();
-        this.houseNumber = building.getHouseNumber();
-        this.houseNumberFraction = building.getHouseNumberFraction();
-        this.postcode = building.getPostcode();
-        this.latitude = building.getLatitude();
-        this.longitude = building.getLongitude();
-        if (nonNull(building.getResidentialComplex())) {
-            this.residentialComplexId = building.getResidentialComplex().getId();
+        if (nonNull(building)) {
+            this.cityId = building.getCity().getId();
+            this.districtId = building.getDistrict().getId();
+            this.streetId = building.getStreet().getId();
+            this.houseNumber = building.getHouseNumber();
+            this.houseNumberFraction = building.getHouseNumberFraction();
+            this.postcode = building.getPostcode();
+            this.latitude = building.getLatitude();
+            this.longitude = building.getLongitude();
+            if (nonNull(building.getResidentialComplex())) {
+                this.residentialComplexId = building.getResidentialComplex().getId();
+            }
         }
     }
 }

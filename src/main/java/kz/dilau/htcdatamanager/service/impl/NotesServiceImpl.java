@@ -7,13 +7,17 @@ import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.NotesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.NotesService;
+import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.NotesDto;
+import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static java.util.Objects.isNull;
 
 @RequiredArgsConstructor
 @Service
@@ -39,17 +43,17 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public Page<NotesDto> getAllByRealPropertyId(Long realPropertyId, Pageable pageable) {
-        return notesRepository.findAllByRealProperty_IdAndIsRemovedFalse(realPropertyId, pageable)
+    public Page<NotesDto> getAllByRealPropertyId(Long realPropertyId, PageableDto pageable) {
+        return notesRepository.findAllByRealProperty_IdAndIsRemovedFalse(realPropertyId, PageableUtils.createPageRequest(pageable))
                 .map(NotesDto::new);
     }
 
     @Override
-    public NotesDto updateNote(NotesDto notesDto) {
-        if (notesDto.getId() == null) {
+    public NotesDto updateNote(String login, Long id, NotesDto notesDto) {
+        if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
-        Notes notes = getNotesById(notesDto.getId());
+        Notes notes = getNotesById(id);
         notes.setText(notesDto.getText());
         notes = notesRepository.save(notes);
 
@@ -65,12 +69,12 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesDto deleteNote(NotesDto notesDto) {
-        if (notesDto.getId() == null) {
+    public NotesDto deleteNote(String login, Long id) {
+        if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
-        Notes notes = getNotesById(notesDto.getId());
-//        notes.setIsRemoved(Boolean.TRUE);
+        Notes notes = getNotesById(id);
+        notes.setIsRemoved(Boolean.TRUE);
         notes = notesRepository.save(notes);
 
         return new NotesDto(notes);
