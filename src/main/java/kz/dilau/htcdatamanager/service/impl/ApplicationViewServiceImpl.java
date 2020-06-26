@@ -49,16 +49,16 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 .id(application.getId())
                 .clientLogin(application.getClientLogin())
                 .agent(application.getCurrentAgent())
-                .operationType(operationTypeRepository.getOne(application.getOperationTypeId()).getMultiLang())
-                .objectType(objectTypeRepository.getOne(application.getObjectTypeId()).getMultiLang())
+                .operationType(nonNull(application.getOperationTypeId()) ? operationTypeRepository.getOne(application.getOperationTypeId()).getMultiLang() : null)
+                .objectType(nonNull(application.getObjectTypeId()) ? objectTypeRepository.getOne(application.getObjectTypeId()).getMultiLang() : null)
                 .isSell(isSell(application));
         if (isSell(application)) {
             ApplicationPurchaseDataDto dataDto = new ApplicationPurchaseDataDto(application.getApplicationPurchaseData());
             dto.comment(dataDto.getNote())
                     .mortgage(dataDto.getMortgage())
                     .objectPricePeriod(dataDto.getObjectPricePeriod())
-                    .city(cityRepository.getOne(dataDto.getCityId()).getMultiLang())
-                    .district(districtRepository.getOne(dataDto.getDistrictId()).getMultiLang())
+                    .city(nonNull(dataDto.getCityId()) ? cityRepository.getOne(dataDto.getCityId()).getMultiLang() : null)
+                    .district(nonNull(dataDto.getDistrictId()) ? districtRepository.getOne(dataDto.getDistrictId()).getMultiLang() : null)
             .probabilityOfBidding(dataDto.getProbabilityOfBidding())
             .theSizeOfTrades(dataDto.getTheSizeOfTrades())
                     .possibleReasonForBiddingIdList(dataDto.getPossibleReasonForBiddingIdList().stream().map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()))
@@ -98,8 +98,13 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     .playground(purchaseInfoDto.getPlayground())
                     .typeOfElevatorList(purchaseInfoDto.getTypeOfElevatorList().stream().map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
                             .collect(Collectors.toList()))
+                    .numberOfFloorsPeriod(purchaseInfoDto.getNumberOfFloorsPeriod())
+                    .yearOfConstructionPeriod(purchaseInfoDto.getYearOfConstructionPeriod())
+                    .apartmentsOnTheSitePeriod(purchaseInfoDto.getApartmentsOnTheSitePeriod())
                     .parkingTypes(purchaseInfoDto.getParkingTypeIds().stream().map(aLong ->
                             parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()))
+                    .atelier(purchaseInfoDto.getAtelier())
+                    .separateBathroom(purchaseInfoDto.getSeparateBathroom());
             ;
             if (nonNull(purchaseInfoDto.getMaterialOfConstructionId())) {
                 dto.materialOfConstruction(materialOfConstructionRepository.getOne(purchaseInfoDto.getMaterialOfConstructionId()).getMultiLang());
@@ -114,9 +119,9 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
 
         BuildingDto buildingDto = realProperty.getBuildingDto();
         if (nonNull(buildingDto)) {
-            dto.city(cityRepository.getOne(buildingDto.getCityId()).getMultiLang())
-                    .district(districtRepository.getOne(buildingDto.getDistrictId()).getMultiLang())
-                    .street(streetRepository.getOne(buildingDto.getStreetId()).getMultiLang())
+            dto.city(nonNull(buildingDto.getCityId()) ? cityRepository.getOne(buildingDto.getCityId()).getMultiLang() : null)
+                    .district(nonNull(buildingDto.getDistrictId()) ? districtRepository.getOne(buildingDto.getDistrictId()).getMultiLang() : null)
+                    .street(nonNull(buildingDto.getStreetId()) ? streetRepository.getOne(buildingDto.getStreetId()).getMultiLang() : null)
                     .fullAddress(realProperty.getAddress())
                     .latitude(buildingDto.getLatitude())
                     .longitude(buildingDto.getLongitude());
@@ -135,7 +140,6 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 .numberOfBedrooms(realProperty.getNumberOfBedrooms())
                 .atelier(realProperty.getAtelier())
                 .separateBathroom(realProperty.getSeparateBathroom())
-
                 .photoIdList(realProperty.getPhotoIdList())
                 .housingPlanImageIdList(realProperty.getHousingPlanImageIdList())
                 .virtualTourImageIdList(realProperty.getVirtualTourImageIdList());
