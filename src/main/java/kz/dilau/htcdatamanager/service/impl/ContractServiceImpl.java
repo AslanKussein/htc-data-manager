@@ -326,7 +326,7 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintPrice);
 
             //----------------------
-            InputStream inputResp = new ByteArrayInputStream(templateMap.get(ContractTemplateType.RESPONSIBILITIES.name()).getBytes(StandardCharsets.UTF_8));
+            //InputStream inputResp = new ByteArrayInputStream(templateMap.get(ContractTemplateType.RESPONSIBILITIES.name()).getBytes(StandardCharsets.UTF_8));
             /*Resource resourceResp = resourceLoader.getResource("classpath:jasper/buy/responsibility.jrxml");
             InputStream inputResp = resourceResp.getInputStream();
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
@@ -373,7 +373,7 @@ public class ContractServiceImpl implements ContractService {
                 jasperPrintList.add(jasperPrintRecv);
             }
             //----------------------
-            Resource resourceAct = resourceLoader.getResource("classpath:jasper/buy/act.jrxml");
+            //Resource resourceAct = resourceLoader.getResource("classpath:jasper/buy/act.jrxml");
 
             Map<String, Object> actPar = new HashMap<>();
             List<JasperActDto> actItems = new ArrayList<>();
@@ -434,7 +434,7 @@ public class ContractServiceImpl implements ContractService {
 
             // Add parameters
             Map<String, Object> mainPar = new HashMap<>();
-            InputStream image = getLogo("/jasper/logo.png"); //ImageIO.read(getClass().getResource("/images/IMAGE.png"));
+            InputStream image = getLogo("/jasper/logo.png");
             mainPar.put("logoImage", image);
 
             mainPar.put("contractNumber", dto.getContractNumber());
@@ -587,22 +587,9 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintProp);
             jasperPrintList.add(jasperPrintActWork);
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JRPdfExporter exporter = new JRPdfExporter();
-            //Add the list as a Parameter
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-            //this will make a bookmark in the exported PDF for each of the reports
-            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
-            exporter.exportReport();
-
-
-            //byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
-            String base64String = Base64.encodeBase64String(baos.toByteArray());
-
             log.info("Done");
 
-            return base64String;
+            return getPages(jasperPrintList);
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
@@ -649,7 +636,7 @@ public class ContractServiceImpl implements ContractService {
             JasperReport jasperReportResp = JasperCompileManager.compileReport(inputResp);
             JasperPrint jasperPrintResp = JasperFillManager.fillReport(jasperReportResp, null, new JREmptyDataSource());
             //------------------------
-            Resource resourceRecv = resourceLoader.getResource("classpath:jasper/sale/standart/recvisit.jrxml");
+            //Resource resourceRecv = resourceLoader.getResource("classpath:jasper/sale/standart/recvisit.jrxml");
 
             Map<String, Object> recvPar = new HashMap<>();
 
@@ -769,23 +756,9 @@ public class ContractServiceImpl implements ContractService {
             jasperPrintList.add(jasperPrintActView);
             jasperPrintList.add(jasperPrintProp);
             jasperPrintList.add(jasperPrintActWork);
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            JRPdfExporter exporter = new JRPdfExporter();
-            //Add the list as a Parameter
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT_LIST, jasperPrintList);
-            //this will make a bookmark in the exported PDF for each of the reports
-            exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
-            exporter.exportReport();
-
-
-            //byte[] bytes = JasperExportManager.exportReportToPdf(jasperPrint);
-            String base64String = Base64.encodeBase64String(baos.toByteArray());
-
             log.info("Done");
 
-            return base64String;
+            return getPages(jasperPrintList);
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage();
