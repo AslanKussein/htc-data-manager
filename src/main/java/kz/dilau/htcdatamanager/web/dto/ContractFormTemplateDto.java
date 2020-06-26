@@ -2,7 +2,7 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.enums.ContractType;
+import kz.dilau.htcdatamanager.domain.enums.ContractFormType;
 import lombok.*;
 
 import java.util.HashMap;
@@ -20,7 +20,7 @@ public class ContractFormTemplateDto {
     @ApiModelProperty(value = "Код номера договора")
     private String code;
     @ApiModelProperty(value = "Тип договора")
-    private ContractType contractType;
+    private ContractFormType contractFormType;
     @ApiModelProperty(value = "Шаблоны договора")
     private Map<String, String> templateMap = new HashMap<>();
 

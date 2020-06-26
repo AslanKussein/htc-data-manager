@@ -14,6 +14,7 @@ public class UserInfoDto {
     private String phone;
     private String email;
     private List<String> roles;
+    private OrganizationDto organizationDto;
 
     public String getFullname() {
         return surname + " " + name;

@@ -1,5 +1,5 @@
 package kz.dilau.htcdatamanager.domain.enums;
 
-public enum ContractType {
+public enum ContractFormType {
     BUY, STANDARD, EXCLUSIVE, SUPER_EXCLUSIVE;
 }
