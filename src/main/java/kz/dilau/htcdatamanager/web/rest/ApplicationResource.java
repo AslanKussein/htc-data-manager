@@ -3,8 +3,10 @@ package kz.dilau.htcdatamanager.web.rest;
 import io.swagger.annotations.ApiParam;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.web.dto.*;
-import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
+import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
+import kz.dilau.htcdatamanager.web.dto.MetadataWithApplicationsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,12 +60,6 @@ public class ApplicationResource {
     public ResponseEntity<Long> deleteById(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
                                            @PathVariable("id") Long id) {
         Long result = applicationService.deleteById(token, id);
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("/changeStatus")
-    public ResponseEntity<Long> changeStatus(@RequestBody ChangeStatusDto dto) {
-        Long result = applicationService.changeStatus(dto);
         return ResponseEntity.ok(result);
     }
 
