@@ -89,7 +89,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     .forEach(operations::addAll);
         }
         String authorName = getAuthorName();
-        if (nonNull(authorName) && authorName.equals(application.getCurrentAgent())) {
+        if (nonNull(authorName) && nonNull(application.getCurrentAgent()) && authorName.equals(application.getCurrentAgent())) {
             RoleDto roleDto = keycloakService.readRole(AGENT);
             if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
                 operations.addAll(roleDto.getOperations());
@@ -215,7 +215,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Long reassignApplication(AssignmentDto dto) {
         Application application = getApplicationById(dto.getApplicationId());
-        if (application.getCurrentAgent().equals(dto.getAgent())) {
+        if (nonNull(application.getCurrentAgent()) && application.getCurrentAgent().equals(dto.getAgent())) {
             throw BadRequestException.createReassignToSameAgent();
         }
         application.setCurrentAgent(dto.getAgent());
@@ -376,13 +376,6 @@ public class ApplicationServiceImpl implements ApplicationService {
         return application.getId();
     }
 
-    private boolean canEdit(List<String> operations, String operation, Application application, String authorName) {
-        if (isNull(application.getId()) || application.getClientLogin().equals(authorName) || application.getCurrentAgent().equals(authorName)) {
-            return true;
-        }
-        return operations.contains(operation);
-    }
-
     @Override
     public Long update(String token, Long id, ApplicationDto input) {
         Application application = getApplicationById(id);
@@ -422,7 +415,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 Set<String> agents = sellDataList.stream().map(item -> item.getApplication().getCurrentAgent()).collect(Collectors.toSet());
                 Map<String, UserInfoDto> userInfoDtoMap = keycloakService.mapUserInfos(new ArrayList<>(agents));
                 for (val item : sellDataList) {
-                    UserInfoDto userInfoDto = userInfoDtoMap.get(item.getApplication().getCurrentAgent());
+                    UserInfoDto userInfoDto = nonNull(item.getApplication().getCurrentAgent()) ? userInfoDtoMap.get(item.getApplication().getCurrentAgent()) : null;
                     applicationByRealPropertyDtoList.add(ApplicationByRealPropertyDto.builder()
                             .id(item.getApplication().getId())
                             .creationDate(item.getApplication().getCreatedDate())

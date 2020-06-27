@@ -78,7 +78,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private boolean hasPermission(String authorName, Application application) {
-        return nonNull(authorName) && nonNull(application) && (authorName.equalsIgnoreCase(application.getCreatedBy()) || authorName.equalsIgnoreCase(application.getCurrentAgent()));
+        return nonNull(authorName) && nonNull(application) && (authorName.equalsIgnoreCase(application.getCreatedBy()) || nonNull(application.getCurrentAgent()) && authorName.equalsIgnoreCase(application.getCurrentAgent()));
     }
 
     @Override
@@ -94,6 +94,9 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.application.contract");
         }
         ProfileClientDto clientDto = profileClientDtoList.get(0);
+        if (isNull(application.getCurrentAgent())) {
+            throw BadRequestException.createTemplateException("error.user.not.found");
+        }
         userLogin.clear();
         userLogin.add(application.getCurrentAgent());
         ListResponse<UserInfoDto> userInfos = keycloakService.readUserInfos(userLogin);
@@ -415,7 +418,8 @@ public class ContractServiceImpl implements ContractService {
             actWorkPar.put("clientAddress", "DF1234");
             actWorkPar.put("agentFullname", userInfoDto.getFullname());
             actWorkPar.put("clientIIN", "00000000000000");
-            actWorkPar.put("footerImage", footerImage); InputStream inputActWork = new ByteArrayInputStream(templateMap.get(ContractTemplateType.ACT_WORK.name()).getBytes(StandardCharsets.UTF_8));
+            actWorkPar.put("footerImage", footerImage);
+            InputStream inputActWork = new ByteArrayInputStream(templateMap.get(ContractTemplateType.ACT_WORK.name()).getBytes(StandardCharsets.UTF_8));
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
             JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
 
