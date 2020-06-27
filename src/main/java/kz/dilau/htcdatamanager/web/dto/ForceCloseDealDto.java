@@ -9,8 +9,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "ForceCompleteDto", description = "Модель принудительного завершения сделки")
-public class ForceCompleteDto {
+@ApiModel(value = "ForceCloseDealDto", description = "Модель принудительного завершения сделки")
+public class ForceCloseDealDto {
     @NonNull
     @ApiModelProperty(value = "ID заявки", required = true)
     private Long applicationId;

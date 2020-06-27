@@ -10,8 +10,8 @@ import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.KanbanService;
 import kz.dilau.htcdatamanager.web.dto.ChangeStatusDto;
 import kz.dilau.htcdatamanager.web.dto.CompleteDealDto;
-import kz.dilau.htcdatamanager.web.dto.ConfirmCompleteDto;
-import kz.dilau.htcdatamanager.web.dto.ForceCompleteDto;
+import kz.dilau.htcdatamanager.web.dto.ConfirmDealDto;
+import kz.dilau.htcdatamanager.web.dto.ForceCloseDealDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -63,7 +63,26 @@ public class KanbanServiceImpl implements KanbanService {
     }
 
     @Override
-    public Long forceCompleteDeal(ForceCompleteDto dto) {
+    public Long confirmComplete(ConfirmDealDto dto) {
+        Application application = applicationService.getApplicationById(dto.getApplicationId());
+        ApplicationStatus applicationStatus;
+        if (dto.getApprove()) {
+            applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.SUCCESS);
+            application.setConfirmDocGuid(dto.getGuid());
+        } else {
+            applicationStatus = getPrevStatus(application);
+        }
+        application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
+                .applicationStatus(applicationStatus)
+                .application(application)
+                .build());
+        application.setApplicationStatus(applicationStatus);
+        applicationRepository.save(application);
+        return application.getId();
+    }
+
+    @Override
+    public Long forceCloseDeal(ForceCloseDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
         application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
@@ -77,11 +96,11 @@ public class KanbanServiceImpl implements KanbanService {
     }
 
     @Override
-    public Long confirmComplete(ConfirmCompleteDto dto) {
+    public Long confirmCloseDeal(ConfirmDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         ApplicationStatus applicationStatus;
         if (dto.getApprove()) {
-            applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.SUCCESS);
+            applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FINISHED);
         } else {
             applicationStatus = getPrevStatus(application);
         }
