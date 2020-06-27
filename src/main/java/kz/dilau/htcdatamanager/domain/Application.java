@@ -66,6 +66,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @OneToOne(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ApplicationContract contract;
 
+    @Column(name = "confirm_doc_guid")
+    private String confirmDocGuid;
+
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {
             statusHistoryList = new ArrayList<>();

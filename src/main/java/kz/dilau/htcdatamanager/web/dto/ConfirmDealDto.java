@@ -9,8 +9,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "ConfirmCompleteDto", description = "Модель согласования завершения сделки")
-public class ConfirmCompleteDto {
+@ApiModel(value = "ConfirmDealDto", description = "Модель согласования завершения сделки")
+public class ConfirmDealDto {
     @NonNull
     @ApiModelProperty(value = "ID заявки", required = true)
     private Long applicationId;
@@ -18,4 +18,7 @@ public class ConfirmCompleteDto {
     @NonNull
     @ApiModelProperty(value = "Признак согласования завершения сделки")
     private Boolean approve;
+
+    @ApiModelProperty(value = "Идентификатор документа, подтверждающего завершение сделки")
+    private String guid;
 }
