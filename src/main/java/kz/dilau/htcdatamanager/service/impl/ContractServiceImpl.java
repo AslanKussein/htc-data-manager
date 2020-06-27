@@ -1383,6 +1383,7 @@ public class ContractServiceImpl implements ContractService {
                     } else {
                         result = amount.intValue();
                     }
+                    break;
                 }
             }
         }
