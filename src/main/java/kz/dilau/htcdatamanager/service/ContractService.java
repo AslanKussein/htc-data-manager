@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.config.CommissionRange;
+import kz.dilau.htcdatamanager.web.dto.CommissionRangeDto;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 
@@ -17,5 +17,5 @@ public interface ContractService {
 
     Integer getCommission(Integer sum, Long objectTypeId);
 
-    ListResponse<CommissionRange> getAllCommissions();
+    ListResponse<CommissionRangeDto> getAllCommissions();
 }

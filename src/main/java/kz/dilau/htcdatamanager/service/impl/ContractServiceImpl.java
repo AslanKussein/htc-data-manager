@@ -13,10 +13,7 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
-import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
-import kz.dilau.htcdatamanager.web.dto.ContractFormTemplateDto;
-import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
-import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
@@ -1393,8 +1390,13 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ListResponse<CommissionRange> getAllCommissions() {
-        return new ListResponse<>(dataProperties.getCommissionRangeList());
+    public ListResponse<CommissionRangeDto> getAllCommissions() {
+        List<CommissionRangeDto> result = new ArrayList<>();
+        result.add(CommissionRangeDto.builder()
+                .houseAmount(dataProperties.getCommissionForHouse())
+                .build());
+        dataProperties.getCommissionRangeList().forEach(range -> result.add(new CommissionRangeDto(range)));
+        return new ListResponse<>(result);
     }
 
     private Integer getPercentFromSum(Integer sum, Float percent) {

@@ -1,8 +1,8 @@
 package kz.dilau.htcdatamanager.web.rest;
 
-import kz.dilau.htcdatamanager.config.CommissionRange;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ContractService;
+import kz.dilau.htcdatamanager.web.dto.CommissionRangeDto;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,7 @@ public class ContractResource {
     }
 
     @GetMapping("/getAllCommissions")
-    public ResponseEntity<ListResponse<CommissionRange>> getAllCommissions() {
+    public ResponseEntity<ListResponse<CommissionRangeDto>> getAllCommissions() {
         return ResponseEntity.ok(contractService.getAllCommissions());
     }
 }
