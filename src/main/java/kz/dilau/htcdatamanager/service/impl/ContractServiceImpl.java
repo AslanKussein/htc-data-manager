@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.CommissionRange;
 import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
@@ -1389,6 +1390,11 @@ public class ContractServiceImpl implements ContractService {
             }
         }
         return result;
+    }
+
+    @Override
+    public ListResponse<CommissionRange> getAllCommissions() {
+        return new ListResponse<>(dataProperties.getCommissionRangeList());
     }
 
     private Integer getPercentFromSum(Integer sum, Float percent) {

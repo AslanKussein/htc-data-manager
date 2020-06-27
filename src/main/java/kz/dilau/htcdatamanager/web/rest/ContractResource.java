@@ -1,8 +1,10 @@
 package kz.dilau.htcdatamanager.web.rest;
 
+import kz.dilau.htcdatamanager.config.CommissionRange;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,5 +53,10 @@ public class ContractResource {
     public ResponseEntity<Integer> getCommission(@RequestParam("sum") Integer sum,
                                                  @RequestParam("objectTypeId") Long objectTypeId) {
         return ResponseEntity.ok(contractService.getCommission(sum, objectTypeId));
+    }
+
+    @GetMapping("/getAllCommissions")
+    public ResponseEntity<ListResponse<CommissionRange>> getAllCommissions() {
+        return ResponseEntity.ok(contractService.getAllCommissions());
     }
 }
