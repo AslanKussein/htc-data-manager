@@ -83,29 +83,29 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
                     purchaseInfo.setSeparateBathroom(metadata.getSeparateBathroom());
                     purchaseInfo.setTotalAreaFrom(metadata.getTotalArea());
                     purchaseInfo.setTotalAreaTo(metadata.getTotalArea());
-                }
 
-                if (nonNull(realProperty.getBuilding())
-                        && nonNull(realProperty.getBuilding().getResidentialComplex())
-                        && nonNull(realProperty.getBuilding().getResidentialComplex().getGeneralCharacteristics())) {
-                    GeneralCharacteristics generalCharacteristics = realProperty.getBuilding().getResidentialComplex().getGeneralCharacteristics();
-                    purchaseInfo.setCeilingHeightFrom(generalCharacteristics.getCeilingHeight());
-                    purchaseInfo.setCeilingHeightTo(generalCharacteristics.getCeilingHeight());
-                    purchaseInfo.setConcierge(generalCharacteristics.getConcierge());
-                    purchaseInfo.setMaterialOfConstruction(generalCharacteristics.getMaterialOfConstruction());
-                    purchaseInfo.setNumberOfFloorsFrom(generalCharacteristics.getNumberOfFloors());
-                    purchaseInfo.setNumberOfFloorsTo(generalCharacteristics.getNumberOfFloors());
-                    purchaseInfo.setParkingTypes(generalCharacteristics.getParkingTypes());
-                    purchaseInfo.setPlayground(generalCharacteristics.getPlayground());
-                    purchaseInfo.setTypesOfElevator(generalCharacteristics.getTypesOfElevator());
-                    purchaseInfo.setWheelchair(generalCharacteristics.getWheelchair());
-                    purchaseInfo.setYardType(generalCharacteristics.getYardType());
-                    purchaseInfo.setYearOfConstructionFrom(generalCharacteristics.getYearOfConstruction());
-                    purchaseInfo.setYearOfConstructionTo(generalCharacteristics.getYearOfConstruction());
+                    GeneralCharacteristics generalCharacteristics = metadata.getGeneralCharacteristics();
+                    if (nonNull(generalCharacteristics)) {
+                        purchaseInfo.setCeilingHeightFrom(generalCharacteristics.getCeilingHeight());
+                        purchaseInfo.setCeilingHeightTo(generalCharacteristics.getCeilingHeight());
+                        purchaseInfo.setConcierge(generalCharacteristics.getConcierge());
+                        purchaseInfo.setMaterialOfConstruction(generalCharacteristics.getMaterialOfConstruction());
+                        purchaseInfo.setNumberOfFloorsFrom(generalCharacteristics.getNumberOfFloors());
+                        purchaseInfo.setNumberOfFloorsTo(generalCharacteristics.getNumberOfFloors());
+                        purchaseInfo.setParkingTypes(generalCharacteristics.getParkingTypes());
+                        purchaseInfo.setPlayground(generalCharacteristics.getPlayground());
+                        purchaseInfo.setTypesOfElevator(generalCharacteristics.getTypesOfElevator());
+                        purchaseInfo.setWheelchair(generalCharacteristics.getWheelchair());
+                        purchaseInfo.setYardType(generalCharacteristics.getYardType());
+                        purchaseInfo.setYearOfConstructionFrom(generalCharacteristics.getYearOfConstruction());
+                        purchaseInfo.setYearOfConstructionTo(generalCharacteristics.getYearOfConstruction());
 
+                    }
                 }
-                purchaseData.setCity(realProperty.getBuilding().getCity());
-                purchaseData.setDistrict(realProperty.getBuilding().getDistrict());
+                if (nonNull(realProperty.getBuilding())) {
+                    purchaseData.setCity(realProperty.getBuilding().getCity());
+                    purchaseData.setDistrict(realProperty.getBuilding().getDistrict());
+                }
             }
 
             purchaseData.setPurchaseInfo(purchaseInfo);
