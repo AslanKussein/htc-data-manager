@@ -29,7 +29,7 @@ public class RealPropertyMetadata extends AuditableBaseEntity<String, Long> {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "residental_complex_id")
+    @JoinColumn(name = "residential_complex_id")
     private ResidentialComplex residentialComplex;
 
     @Column(name = "floor")
