@@ -26,6 +26,8 @@ public final class Constants {
     public static final String KEYCLOAK_REST_ENDPOINT = "/api/keycloak";
     public static final String CONTRACTS_REST_ENDPOINT = "/api/contracts";
     public static final String APPLICATION_VIEW_REST_ENDPOINT = "/api/application-view";
+    public static final String KANBAN_REST_ENDPOINT = "/api/kanban";
+    public static final String APPLICATIONS_CLIENT_AUTO_CREATE_REST_ENDPOINT = "/api/applications-client-auto-create";
 
     private Constants() {
     }

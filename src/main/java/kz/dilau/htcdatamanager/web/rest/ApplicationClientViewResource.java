@@ -2,7 +2,7 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ApplicationClientViewService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
+import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientViewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +17,8 @@ public class ApplicationClientViewResource {
     private final ApplicationClientViewService applicationClientViewService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationDto> getById(@PathVariable("id") Long id) {
-        ApplicationDto result = applicationClientViewService.getById(id);
+    public ResponseEntity<ApplicationClientViewDto> getById(@PathVariable("id") Long id) {
+        ApplicationClientViewDto result = applicationClientViewService.getById(id);
         return ResponseEntity.ok(result);
     }
 

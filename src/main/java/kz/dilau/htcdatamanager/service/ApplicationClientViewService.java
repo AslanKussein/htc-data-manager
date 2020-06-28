@@ -1,7 +1,7 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
+import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientViewDto;
 
 public interface ApplicationClientViewService {
-    ApplicationDto getById(Long id);
+    ApplicationClientViewDto getById(Long id);
 }
