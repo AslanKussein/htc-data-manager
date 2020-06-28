@@ -1,9 +1,6 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.web.dto.ChangeStatusDto;
-import kz.dilau.htcdatamanager.web.dto.CompleteDealDto;
-import kz.dilau.htcdatamanager.web.dto.ConfirmDealDto;
-import kz.dilau.htcdatamanager.web.dto.ForceCloseDealDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 
 public interface KanbanService {
     Long changeStatus(ChangeStatusDto dto);
@@ -15,4 +12,6 @@ public interface KanbanService {
     Long forceCloseDeal(ForceCloseDealDto dto);
 
     Long confirmCloseDeal(ConfirmDealDto dto);
+
+    CompleteApplicationDto applicationInfo(Long applicationId);
 }
