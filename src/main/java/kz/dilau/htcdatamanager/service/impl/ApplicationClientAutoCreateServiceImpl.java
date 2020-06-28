@@ -52,6 +52,7 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         application.setOperationType(entityService.mapEntity(OperationType.class, 1L));
         ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.FIRST_CONTACT);
         application.setApplicationStatus(status);
+        application.setCurrentAgent(targetApplication.getCurrentAgent());
 
         RealProperty realProperty = targetApplication.getApplicationSellData().getRealProperty();
         ApplicationSellData sellData = targetApplication.getApplicationSellData();
