@@ -59,6 +59,8 @@ public class ApplicationViewDTO {
     private Integer floor;
     @ApiModelProperty(name = "totalAreaPeriod", value = "Общая площадь от и до")
     private BigDecimalPeriod totalAreaPeriod;
+    @ApiModelProperty(name = "numberOfFloorsPeriod", value = "Общая этажность от и до")
+    private IntegerPeriod numberOfFloorsPeriod;
     @ApiModelProperty(name = "totalArea", value = "Общая площадь")
     private BigDecimal totalArea;
     @ApiModelProperty(value = "Жилая площадь от и до")
@@ -99,6 +101,8 @@ public class ApplicationViewDTO {
     private Integer yearOfConstruction;
     @ApiModelProperty(name = "yearOfConstructionPeriod", value = "Год постройки")
     private IntegerPeriod yearOfConstructionPeriod;
+    @ApiModelProperty(name = "apartmentsOnTheSitePeriod", value = "Год постройки")
+    private IntegerPeriod apartmentsOnTheSitePeriod;
     @ApiModelProperty(name = "typeOfElevatorList", value = "Тип лифта(мультивыбор)")
     private List<MultiLang> typeOfElevatorList;
     @ApiModelProperty(name = "concierge", value = "Консьерж")

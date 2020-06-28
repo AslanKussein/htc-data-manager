@@ -6,5 +6,6 @@ public interface ApplicationClientAutoCreateService {
 
     Long save(ApplicationDto dto);
 
+    Long update(Long id, ApplicationDto input);
 
 }

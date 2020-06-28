@@ -1,8 +1,10 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.web.dto.*;
-import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
+import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
+import kz.dilau.htcdatamanager.web.dto.MetadataWithApplicationsDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -22,8 +24,6 @@ public interface ApplicationService {
     Long reassignApplication(AssignmentDto dto);
 
     Long approveFiles(Long applicationId, Long statusId);
-
-    Long changeStatus(ChangeStatusDto dto);
 
     Application getApplicationById(Long id);
 

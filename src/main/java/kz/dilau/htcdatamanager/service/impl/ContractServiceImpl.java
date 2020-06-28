@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.CommissionRange;
 import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
@@ -12,10 +13,7 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
-import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
-import kz.dilau.htcdatamanager.web.dto.ContractFormTemplateDto;
-import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
-import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
@@ -78,7 +76,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private boolean hasPermission(String authorName, Application application) {
-        return nonNull(authorName) && nonNull(application) && (authorName.equalsIgnoreCase(application.getCreatedBy()) || authorName.equalsIgnoreCase(application.getCurrentAgent()));
+        return nonNull(authorName) && nonNull(application) && (authorName.equalsIgnoreCase(application.getCreatedBy()) || nonNull(application.getCurrentAgent()) && authorName.equalsIgnoreCase(application.getCurrentAgent()));
     }
 
     @Override
@@ -94,6 +92,9 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.application.contract");
         }
         ProfileClientDto clientDto = profileClientDtoList.get(0);
+        if (isNull(application.getCurrentAgent())) {
+            throw BadRequestException.createTemplateException("error.user.not.found");
+        }
         userLogin.clear();
         userLogin.add(application.getCurrentAgent());
         ListResponse<UserInfoDto> userInfos = keycloakService.readUserInfos(userLogin);
@@ -415,7 +416,8 @@ public class ContractServiceImpl implements ContractService {
             actWorkPar.put("clientAddress", "DF1234");
             actWorkPar.put("agentFullname", userInfoDto.getFullname());
             actWorkPar.put("clientIIN", "00000000000000");
-            actWorkPar.put("footerImage", footerImage); InputStream inputActWork = new ByteArrayInputStream(templateMap.get(ContractTemplateType.ACT_WORK.name()).getBytes(StandardCharsets.UTF_8));
+            actWorkPar.put("footerImage", footerImage);
+            InputStream inputActWork = new ByteArrayInputStream(templateMap.get(ContractTemplateType.ACT_WORK.name()).getBytes(StandardCharsets.UTF_8));
             JasperReport jasperReportActWork = JasperCompileManager.compileReport(inputActWork);
             JasperPrint jasperPrintActWork = JasperFillManager.fillReport(jasperReportActWork, actWorkPar, new JREmptyDataSource());
 
@@ -1381,10 +1383,21 @@ public class ContractServiceImpl implements ContractService {
                     } else {
                         result = amount.intValue();
                     }
+                    break;
                 }
             }
         }
         return result;
+    }
+
+    @Override
+    public ListResponse<CommissionRangeDto> getAllCommissions() {
+        List<CommissionRangeDto> result = new ArrayList<>();
+        result.add(CommissionRangeDto.builder()
+                .houseAmount(dataProperties.getCommissionForHouse())
+                .build());
+        dataProperties.getCommissionRangeList().forEach(range -> result.add(new CommissionRangeDto(range)));
+        return new ListResponse<>(result);
     }
 
     private Integer getPercentFromSum(Integer sum, Float percent) {

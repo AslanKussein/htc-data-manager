@@ -19,6 +19,8 @@ import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -66,8 +68,16 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         return saveApplication(new Application(), dto);
     }
 
+    private String getAuthorName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (nonNull(authentication) && authentication.isAuthenticated()) {
+            return authentication.getName();
+        } else {
+            return null;
+        }
+    }
 
-    public Long saveApplication(Application application, ApplicationClientDTO dto) {
+    private Long saveApplication(Application application, ApplicationClientDTO dto) {
         RealPropertyMetadata metadata = null;
         OperationType operationType;
         ApplicationSource applicationSource;
@@ -76,18 +86,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         } else {
             operationType = entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId());
 
-            String agent = applicationService.getAppointmentAgent(dto.getAgent());
-            application.setCurrentAgent(agent);
-            Assignment assignment = Assignment.builder()
-                    .application(application)
-                    .agent(agent)
-                    .build();
-            application.getAssignmentList().add(assignment);
-
-            if (isNull(dto.getClientLogin()) || dto.getClientLogin().isEmpty()) {
-                throw BadRequestException.createRequiredIsEmpty("ClientLogin");
-            }
-            application.setClientLogin(dto.getClientLogin());
+            application.setClientLogin(getAuthorName());
             application.setOperationType(operationType);
 
             ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.FIRST_CONTACT);
@@ -182,9 +181,9 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
         Specification<Application> specification = ApplicationSpecifications
                 .isRemovedEquals(false)
-                .and(ApplicationSpecifications.clientLoginEquals(clientLogin))
-                .and(ApplicationSpecifications.operationTypeIdEquals(operationTypeId))
-                .and(ApplicationSpecifications.applicationStatusCodeNotEquals("002010"));
+                .and(ApplicationSpecifications.clientLoginEquals(clientLogin)
+                        .and(ApplicationSpecifications.operationTypeIdEquals(operationTypeId)
+                                .and(ApplicationSpecifications.applicationStatusCodeNotEquals("002010"))));
 
         List<Application> list = applicationRepository.findAll(specification);
         return list.stream().map(ApplicationClientDTO::new).collect(Collectors.toList());
