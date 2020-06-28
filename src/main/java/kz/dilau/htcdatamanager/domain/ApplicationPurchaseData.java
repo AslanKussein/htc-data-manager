@@ -44,17 +44,7 @@ public class ApplicationPurchaseData extends AApplicationData {
     @Column(name = "district_id", insertable = false, updatable = false)
     private Long districtId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pay_type_id")
-    private PayType payType;
-    @Column(name = "pay_type_id", insertable = false, updatable = false)
-    private Long payTypeId;
-    @Column(name = "payed_sum")
-    private BigDecimal payedSum;
-    @Column(name = "payed_client_login")
-    private String payedClientLogin;
-    @Column(name = "is_payed")
-    private Boolean isPayed;
+
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "purchase_info_id")
@@ -117,10 +107,6 @@ public class ApplicationPurchaseData extends AApplicationData {
         this.note = dataDto.getNote();
         this.purchaseInfo = purchaseInfo;
         this.application = application;
-        this.payType = payType;
-        this.payedSum = dataDto.getPayedSum();
-        this.isPayed = dataDto.getIsPayed();
-        this.payedClientLogin = dataDto.getPayedClientLogin();
         if (nonNull(application) && nonNull(application.getApplicationPurchaseData())) {
             this.id = application.getApplicationPurchaseData().getId();
         }

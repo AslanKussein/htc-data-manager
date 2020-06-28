@@ -28,6 +28,7 @@ public final class Constants {
     public static final String APPLICATION_VIEW_REST_ENDPOINT = "/api/application-view";
     public static final String KANBAN_REST_ENDPOINT = "/api/kanban";
     public static final String APPLICATIONS_CLIENT_AUTO_CREATE_REST_ENDPOINT = "/api/applications-client-auto-create";
+    public static final String APPLICATIONS_CLIENT_PAY = "/api/applications-client-pay";
 
     private Constants() {
     }

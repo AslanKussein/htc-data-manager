@@ -1,13 +1,11 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationSource;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
-import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +66,18 @@ public class Application extends AuditableBaseEntity<String, Long> {
 
     @Column(name = "confirm_doc_guid")
     private String confirmDocGuid;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pay_type_id")
+    private PayType payType;
+    @Column(name = "pay_type_id", insertable = false, updatable = false)
+    private Long payTypeId;
+    @Column(name = "payed_sum")
+    private BigDecimal payedSum;
+    @Column(name = "payed_client_login")
+    private String payedClientLogin;
+    @Column(name = "is_payed")
+    private Boolean isPayed;
 
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {
