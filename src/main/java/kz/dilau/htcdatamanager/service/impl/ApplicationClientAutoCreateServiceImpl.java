@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationSource;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
@@ -49,6 +50,8 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         application.setObjectType(targetApplication.getObjectType());
         application.setClientLogin(getAuthorName());
         application.setOperationType(entityService.mapEntity(OperationType.class, 1L));
+        ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.FIRST_CONTACT);
+        application.setApplicationStatus(status);
 
         RealProperty realProperty = targetApplication.getApplicationSellData().getRealProperty();
         ApplicationSellData sellData = targetApplication.getApplicationSellData();
