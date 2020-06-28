@@ -12,6 +12,7 @@ import kz.dilau.htcdatamanager.service.ApplicationClientAutoCreateService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
+import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -44,7 +45,7 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
     }
 
     @Transactional
-    Long saveApplication(Application targetApplication, Application application) {
+    ApplicationClientDTO saveApplication(Application targetApplication, Application application) {
 
 
         application.setObjectType(targetApplication.getObjectType());
@@ -123,22 +124,22 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         application.setApplicationSource(applicationSource);
         application = applicationRepository.save(application);
 
-        return application.getId();
+        return new ApplicationClientDTO(application);
     }
 
     @Override
-    public Long create(Long targetApplicationId) {
+    public ApplicationClientDTO create(Long targetApplicationId) {
         Application targetApplication = applicationService.getApplicationById(targetApplicationId);
         return saveApplication(targetApplication, new Application());
     }
 
     @Override
-    public Long update(Long id, Long targetApplicationId) {
+    public ApplicationClientDTO update(Long id, Long targetApplicationId) {
         Application targetApplication = applicationService.getApplicationById(targetApplicationId);
         Application application = applicationService.getApplicationById(id);
 
         if (nonNull(application.getApplicationPurchaseData()) && nonNull(application.getApplicationPurchaseData().getCity())) {
-            return application.getId();
+            return new ApplicationClientDTO(application);
         }
 
         return saveApplication(targetApplication, application);
