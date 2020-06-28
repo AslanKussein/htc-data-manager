@@ -2,7 +2,6 @@ package kz.dilau.htcdatamanager.web.rest.client;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ApplicationClientAutoCreateService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +14,15 @@ public class ApplicationClientAutoCreateResource {
 
 
     @PostMapping
-    public ResponseEntity<Long> save(@RequestBody ApplicationDto dto) {
-        Long result = applicationClientAutoCreateService.save(dto);
+    public ResponseEntity<Long> create(@RequestBody Long targetApplicationId) {
+        Long result = applicationClientAutoCreateService.create(targetApplicationId);
         return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Long> update(@PathVariable("id") Long id,
-                                       @RequestBody ApplicationDto dto) {
-        Long result = applicationClientAutoCreateService.update(id, dto);
+                                       @RequestBody Long targetApplicationId) {
+        Long result = applicationClientAutoCreateService.update(id, targetApplicationId);
         return ResponseEntity.ok(result);
     }
 

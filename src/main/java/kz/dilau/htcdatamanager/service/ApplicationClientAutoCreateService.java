@@ -1,11 +1,10 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 
 public interface ApplicationClientAutoCreateService {
 
-    Long save(ApplicationDto dto);
+    Long create(Long targetApplicationId);
 
-    Long update(Long id, ApplicationDto input);
+    Long update(Long id, Long targetApplicationId);
 
 }
