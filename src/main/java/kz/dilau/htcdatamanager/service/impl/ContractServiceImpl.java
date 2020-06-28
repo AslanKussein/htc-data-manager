@@ -111,24 +111,19 @@ public class ContractServiceImpl implements ContractService {
         ContractFormTemplateDto contractForm;
         String result = null;
 
-        try {
-            if (application.getOperationType().isBuy()) {
-                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
-                result = printContract(application, dto, clientDto, userInfoDto, contractForm);
-            } else if (nonNull(dto.getContractTypeId())) {
-                if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
-                    contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
-                } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
-                    contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.EXCLUSIVE.name());
-                } else {
-                    throw BadRequestException.createTemplateException("error.contract.form.not.found");
-                }
-                result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+        if (application.getOperationType().isBuy()) {
+            contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
+            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+        } else if (nonNull(dto.getContractTypeId())) {
+            if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
+                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
+            } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
+                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.EXCLUSIVE.name());
+            } else {
+                throw BadRequestException.createTemplateException("error.contract.form.not.found");
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
         }
-
 
         if (nonNull(result)) {
             saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
