@@ -53,68 +53,71 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.FIRST_CONTACT);
         application.setApplicationStatus(status);
         application.setCurrentAgent(targetApplication.getCurrentAgent());
-
-        RealProperty realProperty = targetApplication.getApplicationSellData().getRealProperty();
         ApplicationSellData sellData = targetApplication.getApplicationSellData();
+        if (nonNull(sellData)) {
+            RealProperty realProperty = sellData.getRealProperty();
 
-        PurchaseInfo purchaseInfo = new PurchaseInfo();
-        purchaseInfo.setObjectPriceFrom(sellData.getObjectPrice());
-        purchaseInfo.setObjectPriceTo(sellData.getObjectPrice());
+            ApplicationPurchaseData purchaseData = new ApplicationPurchaseData();
+            PurchaseInfo purchaseInfo = new PurchaseInfo();
+            purchaseInfo.setObjectPriceFrom(sellData.getObjectPrice());
+            purchaseInfo.setObjectPriceTo(sellData.getObjectPrice());
 
-        RealPropertyMetadata metadata = realProperty.getMetadataByStatusAndApplication(MetadataStatus.NOT_APPROVED, targetApplication.getId());
-        if (nonNull(metadata)) {
-            purchaseInfo.setAtelier(metadata.getAtelier());
-            purchaseInfo.setBalconyAreaFrom(metadata.getBalconyArea());
-            purchaseInfo.setBalconyAreaTo(metadata.getBalconyArea());
-            purchaseInfo.setFloorFrom(metadata.getFloor());
-            purchaseInfo.setFloorTo(metadata.getFloor());
-            purchaseInfo.setKitchenAreaFrom(metadata.getKitchenArea());
-            purchaseInfo.setKitchenAreaTo(metadata.getKitchenArea());
-            purchaseInfo.setLandAreaFrom(metadata.getLandArea());
-            purchaseInfo.setLandAreaTo(metadata.getLandArea());
-            purchaseInfo.setLivingAreaFrom(metadata.getLivingArea());
-            purchaseInfo.setLivingAreaTo(metadata.getLivingArea());
-            purchaseInfo.setNumberOfBedroomsFrom(metadata.getNumberOfBedrooms());
-            purchaseInfo.setNumberOfBedroomsTo(metadata.getNumberOfBedrooms());
-            purchaseInfo.setNumberOfRoomsFrom(metadata.getNumberOfRooms());
-            purchaseInfo.setNumberOfRoomsTo(metadata.getNumberOfRooms());
-            purchaseInfo.setSeparateBathroom(metadata.getSeparateBathroom());
-            purchaseInfo.setTotalAreaFrom(metadata.getTotalArea());
-            purchaseInfo.setTotalAreaTo(metadata.getTotalArea());
+            if (nonNull(realProperty)) {
+                RealPropertyMetadata metadata = realProperty.getMetadataByStatusAndApplication(MetadataStatus.APPROVED, targetApplication.getId());
+                if (nonNull(metadata)) {
+                    purchaseInfo.setAtelier(metadata.getAtelier());
+                    purchaseInfo.setBalconyAreaFrom(metadata.getBalconyArea());
+                    purchaseInfo.setBalconyAreaTo(metadata.getBalconyArea());
+                    purchaseInfo.setFloorFrom(metadata.getFloor());
+                    purchaseInfo.setFloorTo(metadata.getFloor());
+                    purchaseInfo.setKitchenAreaFrom(metadata.getKitchenArea());
+                    purchaseInfo.setKitchenAreaTo(metadata.getKitchenArea());
+                    purchaseInfo.setLandAreaFrom(metadata.getLandArea());
+                    purchaseInfo.setLandAreaTo(metadata.getLandArea());
+                    purchaseInfo.setLivingAreaFrom(metadata.getLivingArea());
+                    purchaseInfo.setLivingAreaTo(metadata.getLivingArea());
+                    purchaseInfo.setNumberOfBedroomsFrom(metadata.getNumberOfBedrooms());
+                    purchaseInfo.setNumberOfBedroomsTo(metadata.getNumberOfBedrooms());
+                    purchaseInfo.setNumberOfRoomsFrom(metadata.getNumberOfRooms());
+                    purchaseInfo.setNumberOfRoomsTo(metadata.getNumberOfRooms());
+                    purchaseInfo.setSeparateBathroom(metadata.getSeparateBathroom());
+                    purchaseInfo.setTotalAreaFrom(metadata.getTotalArea());
+                    purchaseInfo.setTotalAreaTo(metadata.getTotalArea());
+                }
+
+                if (nonNull(realProperty.getBuilding())
+                        && nonNull(realProperty.getBuilding().getResidentialComplex())
+                        && nonNull(realProperty.getBuilding().getResidentialComplex().getGeneralCharacteristics())) {
+                    GeneralCharacteristics generalCharacteristics = realProperty.getBuilding().getResidentialComplex().getGeneralCharacteristics();
+                    purchaseInfo.setCeilingHeightFrom(generalCharacteristics.getCeilingHeight());
+                    purchaseInfo.setCeilingHeightTo(generalCharacteristics.getCeilingHeight());
+                    purchaseInfo.setConcierge(generalCharacteristics.getConcierge());
+                    purchaseInfo.setMaterialOfConstruction(generalCharacteristics.getMaterialOfConstruction());
+                    purchaseInfo.setNumberOfFloorsFrom(generalCharacteristics.getNumberOfFloors());
+                    purchaseInfo.setNumberOfFloorsTo(generalCharacteristics.getNumberOfFloors());
+                    purchaseInfo.setParkingTypes(generalCharacteristics.getParkingTypes());
+                    purchaseInfo.setPlayground(generalCharacteristics.getPlayground());
+                    purchaseInfo.setTypesOfElevator(generalCharacteristics.getTypesOfElevator());
+                    purchaseInfo.setWheelchair(generalCharacteristics.getWheelchair());
+                    purchaseInfo.setYardType(generalCharacteristics.getYardType());
+                    purchaseInfo.setYearOfConstructionFrom(generalCharacteristics.getYearOfConstruction());
+                    purchaseInfo.setYearOfConstructionTo(generalCharacteristics.getYearOfConstruction());
+
+                }
+                purchaseData.setCity(realProperty.getBuilding().getCity());
+                purchaseData.setDistrict(realProperty.getBuilding().getDistrict());
+            }
+
+            purchaseData.setPurchaseInfo(purchaseInfo);
+            purchaseData.setMortgage(sellData.getMortgage());
+            purchaseData.setPossibleReasonsForBidding(sellData.getPossibleReasonsForBidding());
+            purchaseData.setProbabilityOfBidding(sellData.getProbabilityOfBidding());
+            purchaseData.setTheSizeOfTrades(sellData.getTheSizeOfTrades());
+
+            purchaseData.setApplication(application);
+            application.setApplicationPurchaseData(purchaseData);
+
         }
-
-        if (nonNull(realProperty.getBuilding())
-                && nonNull(realProperty.getBuilding().getResidentialComplex())
-                && nonNull(realProperty.getBuilding().getResidentialComplex().getGeneralCharacteristics())) {
-            GeneralCharacteristics generalCharacteristics = realProperty.getBuilding().getResidentialComplex().getGeneralCharacteristics();
-            purchaseInfo.setCeilingHeightFrom(generalCharacteristics.getCeilingHeight());
-            purchaseInfo.setCeilingHeightTo(generalCharacteristics.getCeilingHeight());
-            purchaseInfo.setConcierge(generalCharacteristics.getConcierge());
-            purchaseInfo.setMaterialOfConstruction(generalCharacteristics.getMaterialOfConstruction());
-            purchaseInfo.setNumberOfFloorsFrom(generalCharacteristics.getNumberOfFloors());
-            purchaseInfo.setNumberOfFloorsTo(generalCharacteristics.getNumberOfFloors());
-            purchaseInfo.setParkingTypes(generalCharacteristics.getParkingTypes());
-            purchaseInfo.setPlayground(generalCharacteristics.getPlayground());
-            purchaseInfo.setTypesOfElevator(generalCharacteristics.getTypesOfElevator());
-            purchaseInfo.setWheelchair(generalCharacteristics.getWheelchair());
-            purchaseInfo.setYardType(generalCharacteristics.getYardType());
-            purchaseInfo.setYearOfConstructionFrom(generalCharacteristics.getYearOfConstruction());
-            purchaseInfo.setYearOfConstructionTo(generalCharacteristics.getYearOfConstruction());
-
-        }
-
-        ApplicationPurchaseData purchaseData = new ApplicationPurchaseData();
-        purchaseData.setPurchaseInfo(purchaseInfo);
-        purchaseData.setCity(realProperty.getBuilding().getCity());
-        purchaseData.setDistrict(realProperty.getBuilding().getDistrict());
-        purchaseData.setMortgage(targetApplication.getApplicationSellData().getMortgage());
-        purchaseData.setPossibleReasonsForBidding(sellData.getPossibleReasonsForBidding());
-        purchaseData.setProbabilityOfBidding(sellData.getProbabilityOfBidding());
-        purchaseData.setTheSizeOfTrades(sellData.getTheSizeOfTrades());
-
-        purchaseData.setApplication(application);
-        application.setApplicationPurchaseData(purchaseData);
-
 
         ApplicationSource applicationSource = entityService.mapRequiredEntity(ApplicationSource.class, ApplicationSource.CA);
         application.setApplicationSource(applicationSource);
