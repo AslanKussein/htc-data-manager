@@ -8,10 +8,8 @@ import kz.dilau.htcdatamanager.domain.enums.ContractTemplateType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.ContractService;
-import kz.dilau.htcdatamanager.service.EntityService;
-import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.service.*;
+import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
@@ -53,6 +51,7 @@ public class ContractServiceImpl implements ContractService {
     private final ResourceLoader resourceLoader;
     private final KeycloakService keycloakService;
     private final DataProperties dataProperties;
+    private final EventService eventService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -104,18 +103,23 @@ public class ContractServiceImpl implements ContractService {
         }
         ContractFormTemplateDto contractForm;
         String result = null;
-        if (application.getOperationType().isBuy()) {
-            contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
-            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
-        } else if (nonNull(dto.getContractTypeId())) {
-            if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
-                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
-            } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
-                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.EXCLUSIVE.name());
-            } else {
-                throw BadRequestException.createTemplateException("error.contract.form.not.found");
+
+        try {
+            if (application.getOperationType().isBuy()) {
+                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
+                result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+            } else if (nonNull(dto.getContractTypeId())) {
+                if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
+                    contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
+                } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
+                    contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.EXCLUSIVE.name());
+                } else {
+                    throw BadRequestException.createTemplateException("error.contract.form.not.found");
+                }
+                result = printContract(application, dto, clientDto, userInfoDto, contractForm);
             }
-            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
@@ -298,6 +302,10 @@ public class ContractServiceImpl implements ContractService {
                 pars.put(par, clientDto.getPhoneNumber());
             } else if (par.equals("agentFullname")) {
                 pars.put(par, userInfoDto.getFullname());
+            } else if (par.equals("objectFullAddress")) {
+                pars.put(par,nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
+            } else if (par.equals("objectRCName")) {
+                pars.put(par,nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getResidentialComplex()) ? realPropertyMetadata.getResidentialComplex().getHouseName() : "");
             } else if (par.equals("objectRegion")) {
                 pars.put(par,nonNull(district) ? district.getMultiLang().getNameRu() : "");
             } else if (par.equals("objectType")) {
@@ -308,11 +316,35 @@ public class ContractServiceImpl implements ContractService {
                 } else {
                     pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms() : "");
                 }
+            } else if (par.equals("objectBathroomType") || par.equals("objectBathroomTypeRU") || par.equals("objectBathroomTypeKZ")) {
+                if (application.getOperationType().isSell()) {
+                    if (nonNull(realPropertyMetadata.getSeparateBathroom())) {
+                        pars.put(par, realPropertyMetadata.getSeparateBathroom() ? "Раздельный" : "совмещенный");
+                    } else {
+                        pars.put(par, "");
+                    }
+                } else {
+                    pars.put(par, "");
+                }
             } else if (par.equals("objectArea")) {
                 if (application.getOperationType().isBuy()) {
                     pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getTotalAreaFrom() + " - " + purchaseInfo.getTotalAreaTo() : "");
                 } else {
                     pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getTotalArea() : "");
+                }
+            } else if (par.equals("objectKitchenArea")) {
+                pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea() : "");
+            } else if (par.equals("objectLivingArea")) {
+                pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea() : "");
+            } else if (par.equals("objectReadyYear")) {
+                pars.put(par,nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
+            } else if (par.equals("objectCadastralNumber")) {
+                pars.put(par,nonNull(realProperty) ? realProperty.getCadastralNumber() : "");
+            } else if (par.equals("objectCollaterial")) {
+                if (nonNull(sellData)) {
+                    pars.put(par,sellData.getEncumbrance() ?  "Да" : "Нет");
+                } else {
+                    pars.put(par,"");
                 }
             } else if (par.equals("objectFloor")) {
                 if (application.getOperationType().isBuy()) {
@@ -326,20 +358,18 @@ public class ContractServiceImpl implements ContractService {
                 pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getObjectPriceTo().toString() : "");
             }  else if (par.equals("docNumb") || par.equals("contractNumber")) {
                 pars.put(par, dto.getContractNumber());
-            } else if (par.equals("CollectionBeanParam"))  {
-                List<JasperActViewDto> parColltems = new ArrayList<>();
-                parColltems.add(new JasperActViewDto("1", "-", "-"));
-                parColltems.add(new JasperActViewDto("2", "*", "*"));
-                parColltems.add(new JasperActViewDto("3", "#", "#"));
-                JRBeanCollectionDataSource parDS = new JRBeanCollectionDataSource(parColltems);
+            } else if (par.equals("CollectionBeanParam") || par.equals("CollectionPerspectivaBuyActView"))  {
+                List<JasperActViewDto> ev = new ArrayList<>();
+                if (application.getOperationType().isBuy()) {
+                    ev = eventService.getViewbyTargetApp(dto.getApplicationId());
+                } else {
+                    ev = eventService.getViewBySourceApp(dto.getApplicationId());
+                }
+                if (ev.isEmpty()) {
+                    ev.add(new JasperActViewDto("","",""));
+                }
+                JRBeanCollectionDataSource parDS = new JRBeanCollectionDataSource(ev);
                 pars.put("CollectionBeanParam", parDS);
-            } else if (par.equals("CollectionPerspectivaBuyActView")) {
-                List<JasperPerspectivaActViewDto> parColltems = new ArrayList<>();
-                parColltems.add(new JasperPerspectivaActViewDto("1", "FIO/Address", "10.10.2019"));
-                parColltems.add(new JasperPerspectivaActViewDto("2", "FIO/Address", "*"));
-                parColltems.add(new JasperPerspectivaActViewDto("3", "FIO/Address", "#"));
-                JRBeanCollectionDataSource actDs = new JRBeanCollectionDataSource(parColltems);
-                pars.put(par, actDs);
             } else {
                 pars.put(par, "empty par " + par);
             }
