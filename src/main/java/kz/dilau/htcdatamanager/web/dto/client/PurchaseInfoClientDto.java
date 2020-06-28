@@ -44,14 +44,6 @@ public class PurchaseInfoClientDto {
     private IntegerPeriod floorPeriod;
     @ApiModelProperty(name = "mortgage", value = "Покупка через ипотеку")
     private Boolean mortgage;
-    @ApiModelProperty(name = "payTypeId", value = "Тип оплаты")
-    private Long payTypeId;
-    @ApiModelProperty(name = "payedSum", value = "Сумма оплаты")
-    private BigDecimal payedSum;
-    @ApiModelProperty(name = "payedClientLogin", value = "Кем оплачено(логин клиента)")
-    private String payedClientLogin;
-    @ApiModelProperty(name = "isPayed", value = "Признак оплачено")
-    private Boolean isPayed;
 
     public PurchaseInfoClientDto(ApplicationPurchaseData data) {
         if (nonNull(data)) {
@@ -70,10 +62,6 @@ public class PurchaseInfoClientDto {
             this.districtId = data.getDistrictId();
             this.mortgage = data.getMortgage();
             this.note = data.getNote();
-            this.payTypeId = data.getPayTypeId();
-            this.payedSum = data.getPayedSum();
-            this.isPayed = data.getIsPayed();
-            this.payedClientLogin = data.getPayedClientLogin();
         }
     }
 }

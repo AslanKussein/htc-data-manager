@@ -70,8 +70,6 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pay_type_id")
     private PayType payType;
-    @Column(name = "pay_type_id", insertable = false, updatable = false)
-    private Long payTypeId;
     @Column(name = "payed_sum")
     private BigDecimal payedSum;
     @Column(name = "payed_client_login")
