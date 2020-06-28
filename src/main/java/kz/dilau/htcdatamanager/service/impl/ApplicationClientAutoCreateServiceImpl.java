@@ -3,7 +3,6 @@ package kz.dilau.htcdatamanager.service.impl;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationSource;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyFileRepository;
@@ -63,7 +62,7 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
             purchaseInfo.setObjectPriceTo(sellData.getObjectPrice());
 
             if (nonNull(realProperty)) {
-                RealPropertyMetadata metadata = realProperty.getMetadataByStatusAndApplication(MetadataStatus.APPROVED, targetApplication.getId());
+                RealPropertyMetadata metadata = realProperty.getMetadataByStatus(targetApplication.getId());
                 if (nonNull(metadata)) {
                     purchaseInfo.setAtelier(metadata.getAtelier());
                     purchaseInfo.setBalconyAreaFrom(metadata.getBalconyArea());
