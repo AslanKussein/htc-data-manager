@@ -288,92 +288,126 @@ public class ContractServiceImpl implements ContractService {
         }
 
         for ( String par : tpl.getParList()) {
-            if (par.equals("logoImage")) {
-                pars.put(par, logoImage);
-            } else if (par.equals("footerImage")) {
-                pars.put(par,footerImage);
-            }  else if (par.equals("city") || par.equals("cityRU") ) {
-                pars.put(par,nonNull(city) ? city.getMultiLang().getNameRu() : "");
-            } else if (par.equals("cityKZ")) {
-                pars.put(par,nonNull(city) ? city.getMultiLang().getNameKz() : "");
-            } else if (par.equals("printDate") || par.equals("docDate")) {
-                pars.put(par,sdfDate.format(new Date()));
-            } else if (par.equals("clientFullname")) {
-                pars.put(par, clientDto.getFullname());
-            } else if (par.equals("clientMobilePhone")) {
-                pars.put(par, clientDto.getPhoneNumber());
-            } else if (par.equals("agentFullname")) {
-                pars.put(par, userInfoDto.getFullname());
-            } else if (par.equals("objectFullAddress")) {
-                pars.put(par,nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
-            } else if (par.equals("objectRCName")) {
-                pars.put(par,nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getResidentialComplex()) ? realPropertyMetadata.getResidentialComplex().getHouseName() : "");
-            } else if (par.equals("objectRegion")) {
-                pars.put(par,nonNull(district) ? district.getMultiLang().getNameRu() : "");
-            } else if (par.equals("objectType")) {
-                pars.put(par,application.getObjectType().getMultiLang().getNameRu());
-            } else if (par.equals("objectRoomCount")) {
-                if (application.getOperationType().isBuy()) {
-                    pars.put(par,nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
-                } else {
-                    pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms() : "");
-                }
-            } else if (par.equals("objectBathroomType") || par.equals("objectBathroomTypeRU") || par.equals("objectBathroomTypeKZ")) {
-                if (application.getOperationType().isSell()) {
-                    if (nonNull(realPropertyMetadata.getSeparateBathroom())) {
-                        pars.put(par, realPropertyMetadata.getSeparateBathroom() ? "Раздельный" : "совмещенный");
+            switch (par) {
+                case "logoImage":
+                    pars.put(par, logoImage);
+                    break;
+                case "city":
+                case "cityRU":
+                    pars.put(par, nonNull(city) ? city.getMultiLang().getNameRu() : "");
+                    break;
+                case "cityKZ":
+                    pars.put(par, nonNull(city) ? city.getMultiLang().getNameKz() : "");
+                    break;
+                case "printDate":
+                case "docDate":
+                    pars.put(par, sdfDate.format(new Date()));
+                    break;
+                case "clientFullname":
+                    pars.put(par, clientDto.getFullname());
+                    break;
+                case "clientMobilePhone":
+                    pars.put(par, clientDto.getPhoneNumber());
+                    break;
+                case "agentFullname":
+                    pars.put(par, userInfoDto.getFullname());
+                    break;
+                case "objectFullAddress":
+                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
+                    break;
+                case "objectRCName":
+                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getResidentialComplex()) ? realPropertyMetadata.getResidentialComplex().getHouseName() : "");
+                    break;
+                case "objectRegion":
+                    pars.put(par, nonNull(district) ? district.getMultiLang().getNameRu() : "");
+                    break;
+                case "objectType":
+                    pars.put(par, application.getObjectType().getMultiLang().getNameRu());
+                    break;
+                case "objectRoomCount":
+                    if (application.getOperationType().isBuy()) {
+                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
+                    } else {
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms() : "");
+                    }
+                    break;
+                case "objectBathroomType":
+                case "objectBathroomTypeRU":
+                case "objectBathroomTypeKZ":
+                    if (application.getOperationType().isSell()) {
+                        if (nonNull(realPropertyMetadata.getSeparateBathroom())) {
+                            pars.put(par, realPropertyMetadata.getSeparateBathroom() ? "Раздельный" : "совмещенный");
+                        } else {
+                            pars.put(par, "");
+                        }
                     } else {
                         pars.put(par, "");
                     }
-                } else {
+                    break;
+                case "objectArea":
+                    if (application.getOperationType().isBuy()) {
+                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getTotalAreaFrom() + " - " + purchaseInfo.getTotalAreaTo() : "");
+                    } else {
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getTotalArea() : "");
+                    }
+                    break;
+                case "objectKitchenArea":
+                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea() : "");
+                    break;
+                case "objectLivingArea":
+                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea() : "");
+                    break;
+                case "objectReadyYear":
+                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
+                    break;
+                case "objectCadastralNumber":
+                    pars.put(par, nonNull(realProperty) ? realProperty.getCadastralNumber() : "");
+                    break;
+                case "objectCollaterial":
+                    if (nonNull(sellData)) {
+                        pars.put(par, sellData.getEncumbrance() ? "Да" : "Нет");
+                    } else {
+                        pars.put(par, "");
+                    }
+                    break;
+                case "objectFloor":
+                    if (application.getOperationType().isBuy()) {
+                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
+                    } else {
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getFloor() : "");
+                    }
+                    break;
+                case "objectFloorTotal":
+                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors() : "" );
+                    break;
+                case "contractSum":
+                case "objectPrice":
+                    pars.put(par, nonNull(dto.getContractSum()) ? dto.getContractSum().toString() : "");
+                    break;
+                case "objectMaxPrice":
+                    pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getObjectPriceTo().toString() : "");
+                    break;
+                case "docNumb":
+                case "contractNumber":
+                    pars.put(par, dto.getContractNumber());
+                    break;
+                case "CollectionBeanParam":
+                case "CollectionPerspectivaBuyActView":
+                    List<JasperActViewDto> ev = new ArrayList<>();
+                    if (application.getOperationType().isBuy()) {
+                        ev = eventService.getViewbyTargetApp(dto.getApplicationId());
+                    } else {
+                        ev = eventService.getViewBySourceApp(dto.getApplicationId());
+                    }
+                    if (ev.isEmpty()) {
+                        ev.add(new JasperActViewDto("", "", ""));
+                    }
+                    JRBeanCollectionDataSource parDS = new JRBeanCollectionDataSource(ev);
+                    pars.put("CollectionBeanParam", parDS);
+                    break;
+                default:
                     pars.put(par, "");
-                }
-            } else if (par.equals("objectArea")) {
-                if (application.getOperationType().isBuy()) {
-                    pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getTotalAreaFrom() + " - " + purchaseInfo.getTotalAreaTo() : "");
-                } else {
-                    pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getTotalArea() : "");
-                }
-            } else if (par.equals("objectKitchenArea")) {
-                pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea() : "");
-            } else if (par.equals("objectLivingArea")) {
-                pars.put(par,nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea() : "");
-            } else if (par.equals("objectReadyYear")) {
-                pars.put(par,nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
-            } else if (par.equals("objectCadastralNumber")) {
-                pars.put(par,nonNull(realProperty) ? realProperty.getCadastralNumber() : "");
-            } else if (par.equals("objectCollaterial")) {
-                if (nonNull(sellData)) {
-                    pars.put(par,sellData.getEncumbrance() ?  "Да" : "Нет");
-                } else {
-                    pars.put(par,"");
-                }
-            } else if (par.equals("objectFloor")) {
-                if (application.getOperationType().isBuy()) {
-                    pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
-                } else {
-                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getFloor() : "");
-                }
-            } else if (par.equals("ContractSum")) {
-                pars.put(par,nonNull(dto.getContractSum()) ? dto.getContractSum().toString() : "");
-            } else if (par.equals("objectMaxPrice")) {
-                pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getObjectPriceTo().toString() : "");
-            }  else if (par.equals("docNumb") || par.equals("contractNumber")) {
-                pars.put(par, dto.getContractNumber());
-            } else if (par.equals("CollectionBeanParam") || par.equals("CollectionPerspectivaBuyActView"))  {
-                List<JasperActViewDto> ev = new ArrayList<>();
-                if (application.getOperationType().isBuy()) {
-                    ev = eventService.getViewbyTargetApp(dto.getApplicationId());
-                } else {
-                    ev = eventService.getViewBySourceApp(dto.getApplicationId());
-                }
-                if (ev.isEmpty()) {
-                    ev.add(new JasperActViewDto("","",""));
-                }
-                JRBeanCollectionDataSource parDS = new JRBeanCollectionDataSource(ev);
-                pars.put("CollectionBeanParam", parDS);
-            } else {
-                pars.put(par, "empty par " + par);
+                    break;
             }
         }
         return pars;
