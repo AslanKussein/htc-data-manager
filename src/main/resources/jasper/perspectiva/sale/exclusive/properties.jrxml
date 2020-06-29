@@ -11,7 +11,6 @@
     <parameter name="objectArea" class="java.lang.String"/>
     <parameter name="objectKitchenArea" class="java.lang.String"/>
     <parameter name="objectBathroomTypeRU" class="java.lang.String"/>
-    <parameter name="objectFurnitureRU" class="java.lang.String"/>
     <parameter name="objectCollaterial" class="java.lang.String"/>
     <parameter name="contractSum" class="java.lang.String"/>
     <parameter name="objectMaxPrice" class="java.lang.String"/>
@@ -24,9 +23,7 @@
     <parameter name="docDate" class="java.lang.String"/>
     <parameter name="objectLivingArea" class="java.lang.String"/>
     <parameter name="footerImage" class="java.io.InputStream"/>
-    <parameter name="objectFurnitureKZ" class="java.lang.String"/>
     <parameter name="objectBathroomTypeKZ" class="java.lang.String"/>
-    <parameter name="objectDivisibleKZ" class="java.lang.String"/>
     <queryString>
         <![CDATA[]]>
     </queryString>
@@ -130,14 +127,14 @@
                 <textElement markup="html">
                     <font fontName="Times New Roman" size="12"/>
                 </textElement>
-                <textFieldExpression><![CDATA["Адрес: <u>"+$P{objectFullAddress}+"</u><br/>1) ЖК  <u>"+$P{objectRCName}+"</u><br/>2) Тип объекта: <u>"+$P{objectType} +"</u><br/>3) Этажность дома " +$P{objectFloorTotal}+", этаж "+$P{objectFloor}+"<br/>4)  Количество комнат <u>"+$P{objectRoomCount} +"</u>, общая площадь <u>" +$P{objectArea} +"</u> (кв.м), жилая <u>"+$P{objectLivingArea}+"</u> (кв.м), кухня <u>" +$P{objectKitchenArea} +"</u> (кв.м)<br/>5) Ремонт: </b> черновая отделка, чистовая от застройщика, требует ремонта, обычный ремонт, евроремонт, дизайнерский ремонт (нужное подчеркнуть).<br/>7) Санузел: <u>"+$P{objectBathroomTypeRU}+"</u>.<br/>8) Мебель: " + $P{objectFurnitureRU}+"<br/>8) В залоге: <u>"+$P{objectCollaterial}+"</u><br/>9) Год постройки/ввода в эксплуатацию: <u>"+$P{objectReadyYear}+"</u><br/>10) Ценовые критерии Объекта: <br/>Нижний предел: <u>"+$P{contractSum}+"</u> млн. тенге. <br/>Верхний предел:  <u>"+$P{objectMaxPrice}+"</u> млн. тенге. <br/>11) Кадастровый номер объекта (земельный участок, коттедж): <u>" +$P{objectCadastralNumber}+"</u><br/>12) Площадь объекта (земельный участок) <u>"+$P{objectLandArea}+"</u><br/>13) Делимый/неделимый объект: " +$P{objectDivisibleRU} +"."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["Адрес: <u>"+$P{objectFullAddress}+"</u><br/>1) ЖК  <u>"+$P{objectRCName}+"</u><br/>2) Тип объекта: <u>"+$P{objectType} +"</u><br/>3) Этажность дома " +$P{objectFloorTotal}+", этаж "+$P{objectFloor}+"<br/>4)  Количество комнат <u>"+$P{objectRoomCount} +"</u>, общая площадь <u>" +$P{objectArea} +"</u> (кв.м), жилая <u>"+$P{objectLivingArea}+"</u> (кв.м), кухня <u>" +$P{objectKitchenArea} +"</u> (кв.м)<br/>5) Ремонт: </b> черновая отделка, чистовая от застройщика, требует ремонта, обычный ремонт, евроремонт, дизайнерский ремонт (нужное подчеркнуть).<br/>6) Санузел: <u>"+$P{objectBathroomTypeRU}+"</u>, 2 санузла, 3 санузла <i>(нужное подчеркнуть)</i>.<br/>7) Мебель: полностью с мебелью и техникой, частично меблирована, пустая <i>(нужное подчеркнуть)</i>.<br/>8) В залоге: <u>"+$P{objectCollaterial}+"</u><br/>9) Год постройки/ввода в эксплуатацию: <u>"+$P{objectReadyYear}+"</u><br/>10) Ценовые критерии Объекта: <br/>Нижний предел: <u>"+$P{contractSum}+"</u> млн. тенге. <br/>Верхний предел:  <u>"+$P{objectMaxPrice}+"</u> млн. тенге. <br/>11) Кадастровый номер объекта (земельный участок, коттедж): <u>" +$P{objectCadastralNumber}+"</u><br/>12) Площадь объекта (земельный участок) <u>"+$P{objectLandArea}+"</u><br/>13) Делимый/неделимый объект: Да, Нет <i>(нужное подчеркнуть)</i>."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="0" y="480" width="555" height="240" uuid="3a5ba891-4786-4a37-a9be-9793eb5d2f81"/>
                 <textElement markup="html">
                     <font fontName="Times New Roman" size="12"/>
                 </textElement>
-                <textFieldExpression><![CDATA["Мекен-жайы: <u>"+$P{objectFullAddress}+"</u><br/>1) Тұрғын үй кешені   <u>"+$P{objectRCName}+"</u><br/>2) Объектінің түрі: <u>"+$P{objectType} +"</u><br/>3) үйдің қабаттылығы " +$P{objectFloorTotal}+", қабат  "+$P{objectFloor}+"<br/>4)  Кбөлмелер саны <u>"+$P{objectRoomCount} +"</u>, жалпы ауданы <u>" +$P{objectArea} +"</u> (ш.м.), тұрғын <u>"+$P{objectLivingArea}+"</u>(ш.м.), ас бөлмесі <u>" +$P{objectKitchenArea} +"</u> (ш.м.)<br/>5) жөндеу: бастапқы Әрлеу, құрылыс салушыдан таза, жөндеуді қажет етеді, қалыпты жөндеу, еурожөндеу, дизайнерлік жөндеу.<i>(қажеттісінің астын сызу)</i><br/>6) санитариялық торап: <u>"+$P{objectBathroomTypeKZ}+"</u>, 2 санитариялық торап, 3 санитариялық торап <i>(қажеттісінің астын сызу). </i><br/>7) жиһаз: " + $P{objectFurnitureKZ}+"<br/>8) кепілде: <u>"+$P{objectCollaterial}+"</u><br/>9) салынған/пайдалануға берілген жылы:  </b><u>"+$P{objectReadyYear}+"</u><br/>10) объектінің баға критерийлері: </b> <br/>  Төменгі шегі:  <u>"+$P{contractSum}+"</u> теңге.<br/>Жоғарғы шегі:  <u>"+$P{objectMaxPrice}+"</u> млн. теңге.<br/>11) объектінің кадастрлық нөмірі (жер учаскесі, коттедж):<u>" +$P{objectCadastralNumber}+"</u><br/>12)  объектінің алаңы (жер учаскесі)<u>"+$P{objectLandArea}+"</u><br/>13) бөлінетін/бөлінбейтін объект: " +$P{objectDivisibleKZ} +"."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["Мекен-жайы: <u>"+$P{objectFullAddress}+"</u><br/>1) Тұрғын үй кешені   <u>"+$P{objectRCName}+"</u><br/>2) Объектінің түрі: <u>"+$P{objectType} +"</u><br/>3) үйдің қабаттылығы " +$P{objectFloorTotal}+", қабат  "+$P{objectFloor}+"<br/>4)  бөлмелер саны <u>"+$P{objectRoomCount} +"</u>, жалпы ауданы <u>" +$P{objectArea} +"</u> (ш.м.), тұрғын <u>"+$P{objectLivingArea}+"</u>(ш.м.), ас бөлмесі <u>" +$P{objectKitchenArea} +"</u> (ш.м.)<br/>5) жөндеу: бастапқы Әрлеу, құрылыс салушыдан таза, жөндеуді қажет етеді, қалыпты жөндеу, еурожөндеу, дизайнерлік жөндеу.<i>(қажеттісінің астын сызу)</i><br/>6) санитариялық торап: <u>"+$P{objectBathroomTypeKZ}+"</u>, 2 санитариялық торап, 3 санитариялық торап <i>(қажеттісінің астын сызу). </i><br/>7) жиһаз: толық жиһазбен және техникамен, ішінара жиһазбен, бос <i>(қажеттісінің астын сызу)</i><br/>8) кепілде: <u>"+$P{objectCollaterial}+"</u><br/>9) салынған/пайдалануға берілген жылы:  </b><u>"+$P{objectReadyYear}+"</u><br/>10) объектінің баға критерийлері: </b> <br/>  Төменгі шегі:  <u>"+$P{contractSum}+"</u> теңге.<br/>Жоғарғы шегі:  <u>"+$P{objectMaxPrice}+"</u> млн. теңге.<br/>11) объектінің кадастрлық нөмірі (жер учаскесі, коттедж): <u>" +$P{objectCadastralNumber}+"</u><br/>12)  объектінің алаңы (жер учаскесі) <u>"+$P{objectLandArea}+"</u><br/>13) бөлінетін/бөлінбейтін объект: Иә, Жоқ <i>(керегінің астын сызу)</i>."]]></textFieldExpression>
             </textField>
         </band>
     </detail>

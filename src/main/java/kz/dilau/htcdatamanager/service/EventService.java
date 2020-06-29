@@ -1,6 +1,9 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.web.dto.EventDto;
+import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
+
+import java.util.List;
 
 public interface EventService {
     Long addEvent(EventDto event);
@@ -12,4 +15,8 @@ public interface EventService {
     Long commentEvent(String token, Long id, String comment);
 
     Long deleteEventById(String token, Long id);
+
+    List<JasperActViewDto> getViewbyTargetApp(Long appId);
+
+    List<JasperActViewDto> getViewBySourceApp(Long appId);
 }

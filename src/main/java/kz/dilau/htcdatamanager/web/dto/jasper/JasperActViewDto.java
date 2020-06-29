@@ -7,20 +7,14 @@ public class JasperActViewDto {
 
     private String fFullname;
 
-    private String fIIN;
-
-    private String fCustomersign;
-
     /*public JasperActViewDto () {
 
     }*/
 
-    public JasperActViewDto(String fNum, String fDate,  String fFullname, String fIIN, String fCustomersign) {
+    public JasperActViewDto(String fNum, String fDate,  String fFullname) {
         this.fNum = fNum;
         this.fDate = fDate;
         this.fFullname = fFullname;
-        this.fIIN = fIIN;
-        this.fCustomersign = fCustomersign;
     }
 
     public String getfNum() {
@@ -47,19 +41,4 @@ public class JasperActViewDto {
         this.fFullname = ffullname;
     }
 
-    public String getfIIN() {
-        return fIIN;
-    }
-
-    public void setfIIN(String fIIN) {
-        this.fIIN = fIIN;
-    }
-
-    public String getfCustomersign() {
-        return fCustomersign;
-    }
-
-    public void setfCustomersign(String fCustomersign) {
-        this.fCustomersign = fCustomersign;
-    }
 }

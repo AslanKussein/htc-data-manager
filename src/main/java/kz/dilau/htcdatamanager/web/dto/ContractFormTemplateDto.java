@@ -5,7 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.enums.ContractFormType;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.isNull;
@@ -23,6 +25,10 @@ public class ContractFormTemplateDto {
     private ContractFormType contractFormType;
     @ApiModelProperty(value = "Шаблоны договора")
     private Map<String, String> templateMap = new HashMap<>();
+
+
+    @ApiModelProperty(value = "Шаблоны договора 2")
+    private List<ContractTempaleDto> templateList = new ArrayList<>();
 
     public Map<String, String> getTemplateMap() {
         if (isNull(templateMap)) {
