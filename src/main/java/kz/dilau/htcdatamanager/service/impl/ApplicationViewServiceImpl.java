@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.*;
+import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ApplicationViewService;
 import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
 public class ApplicationViewServiceImpl implements ApplicationViewService {
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
 
 
     private final ApplicationFlagRepository applicationFlagRepository;
@@ -36,52 +38,59 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
 
     @Override
     public ApplicationViewDTO getById(String token, Long id) {
-        Optional<Application> application = applicationRepository.findByIdAndIsRemovedFalse(id);
-        return application.map(this::mapToApplicationDto).orElse(null);
+        ApplicationDto application = applicationService.getById(token, id);
+        return mapToApplicationDto(application);
     }
 
-    private Boolean isSell(Application application) {
-        return application.getOperationType().getCode().equals("001001");
+    private Boolean isSell(ApplicationDto application) {
+        return application.getOperationTypeId() == 1;
     }
 
-    private ApplicationViewDTO mapToApplicationDto(Application application) {
+    private ApplicationViewDTO mapToApplicationDto(ApplicationDto application) {
         ApplicationViewDTO.ApplicationViewDTOBuilder dto = ApplicationViewDTO.builder()
                 .id(application.getId())
                 .clientLogin(application.getClientLogin())
-                .agent(application.getCurrentAgent())
+                .agent(application.getAgent())
                 .operationType(nonNull(application.getOperationTypeId()) ? operationTypeRepository.getOne(application.getOperationTypeId()).getMultiLang() : null)
                 .objectType(nonNull(application.getObjectTypeId()) ? objectTypeRepository.getOne(application.getObjectTypeId()).getMultiLang() : null)
                 .isSell(isSell(application));
         if (isSell(application)) {
-            ApplicationPurchaseDataDto dataDto = new ApplicationPurchaseDataDto(application.getApplicationPurchaseData());
+            ApplicationPurchaseDataDto dataDto = application.getPurchaseDataDto();
             dto.comment(dataDto.getNote())
                     .mortgage(dataDto.getMortgage())
                     .objectPricePeriod(dataDto.getObjectPricePeriod())
                     .city(nonNull(dataDto.getCityId()) ? cityRepository.getOne(dataDto.getCityId()).getMultiLang() : null)
                     .district(nonNull(dataDto.getDistrictId()) ? districtRepository.getOne(dataDto.getDistrictId()).getMultiLang() : null)
-            .probabilityOfBidding(dataDto.getProbabilityOfBidding())
-            .theSizeOfTrades(dataDto.getTheSizeOfTrades())
-                    .possibleReasonForBiddingIdList(dataDto.getPossibleReasonForBiddingIdList().stream().map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()))
-                    .applicationFlagIdList(dataDto.getApplicationFlagIdList().stream().map(aLong -> applicationFlagRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()))
-            ;
+                    .probabilityOfBidding(dataDto.getProbabilityOfBidding())
+                    .theSizeOfTrades(dataDto.getTheSizeOfTrades());
+            if (nonNull(dataDto.getPossibleReasonForBiddingIdList())) {
+                dto.possibleReasonForBiddingIdList(dataDto.getPossibleReasonForBiddingIdList().stream()
+                        .map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+            }
+            if (nonNull(dataDto.getApplicationFlagIdList())) {
+                dto.applicationFlagIdList(dataDto.getApplicationFlagIdList().stream().map(aLong -> applicationFlagRepository.getOne(aLong).getMultiLang())
+                        .collect(Collectors.toList()));
+            }
         }
         if (!isSell(application)) {
-            ApplicationSellDataDto sellData = new ApplicationSellDataDto(application.getApplicationSellData());
+            ApplicationSellDataDto sellData = application.getSellDataDto();
             dto.comment(sellData.getNote())
                     .description(sellData.getDescription())
                     .mortgage(sellData.getMortgage())
                     .probabilityOfBidding(sellData.getProbabilityOfBidding())
                     .objectPrice(sellData.getObjectPrice())
-                    .possibleReasonForBiddingIdList(sellData.getPossibleReasonForBiddingIdList().stream().map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()))
                     .theSizeOfTrades(sellData.getTheSizeOfTrades())
                     .encumbrance(sellData.getEncumbrance())
                     .sharedOwnershipProperty(sellData.getSharedOwnershipProperty())
-                    .exchange(sellData.getExchange())
-            ;
+                    .exchange(sellData.getExchange());
+            if (nonNull(sellData.getPossibleReasonForBiddingIdList())) {
+                dto.possibleReasonForBiddingIdList(sellData.getPossibleReasonForBiddingIdList().stream()
+                        .map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+            }
             fillRealProperty(dto, application);
         }
         if (isSell(application)) {
-            PurchaseInfoDto purchaseInfoDto = new PurchaseInfoDto(application.getApplicationPurchaseData().getPurchaseInfo());
+            PurchaseInfoDto purchaseInfoDto = application.getPurchaseInfoDto();
 
             dto.numberOfRoomsPeriod(purchaseInfoDto.getNumberOfRoomsPeriod())
                     .floorPeriod(purchaseInfoDto.getFloorPeriod())
@@ -94,28 +103,36 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     .yearOfConstructionPeriod(purchaseInfoDto.getYearOfConstructionPeriod())
                     .concierge(purchaseInfoDto.getConcierge())
                     .wheelchair(purchaseInfoDto.getWheelchair())
-                    .yardType(nonNull(purchaseInfoDto.getYardTypeId()) ? yardTypeRepository.getOne(purchaseInfoDto.getYardTypeId()).getMultiLang() : null)
                     .playground(purchaseInfoDto.getPlayground())
-                    .typeOfElevatorList(purchaseInfoDto.getTypeOfElevatorList().stream().map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
-                            .collect(Collectors.toList()))
                     .numberOfFloorsPeriod(purchaseInfoDto.getNumberOfFloorsPeriod())
                     .yearOfConstructionPeriod(purchaseInfoDto.getYearOfConstructionPeriod())
                     .apartmentsOnTheSitePeriod(purchaseInfoDto.getApartmentsOnTheSitePeriod())
-                    .parkingTypes(purchaseInfoDto.getParkingTypeIds().stream().map(aLong ->
-                            parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()))
                     .atelier(purchaseInfoDto.getAtelier())
                     .separateBathroom(purchaseInfoDto.getSeparateBathroom());
-            ;
             if (nonNull(purchaseInfoDto.getMaterialOfConstructionId())) {
                 dto.materialOfConstruction(materialOfConstructionRepository.getOne(purchaseInfoDto.getMaterialOfConstructionId()).getMultiLang());
+            }
+            if (nonNull(purchaseInfoDto.getYardTypeId())) {
+                dto.yardType(nonNull(purchaseInfoDto.getYardTypeId()) ? yardTypeRepository.getOne(purchaseInfoDto.getYardTypeId()).getMultiLang() : null);
+            }
+            if (nonNull(purchaseInfoDto.getParkingTypeIds())) {
+                dto.parkingTypes(purchaseInfoDto.getParkingTypeIds().stream().map(aLong ->
+                        parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
+            }
+            if (nonNull(purchaseInfoDto.getTypeOfElevatorList())) {
+                dto.typeOfElevatorList(purchaseInfoDto.getTypeOfElevatorList().stream().map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
+                        .collect(Collectors.toList()));
             }
         }
 
         return dto.build();
     }
 
-    private void fillRealProperty(ApplicationViewDTO.ApplicationViewDTOBuilder dto, Application application) {
-        RealPropertyDto realProperty = new RealPropertyDto(application.getApplicationSellData().getRealProperty());
+    private void fillRealProperty(ApplicationViewDTO.ApplicationViewDTOBuilder dto, ApplicationDto application) {
+        if (isNull(application.getRealPropertyDto())) {
+            return;
+        }
+        RealPropertyDto realProperty = application.getRealPropertyDto();
 
         BuildingDto buildingDto = realProperty.getBuildingDto();
         if (nonNull(buildingDto)) {
@@ -149,16 +166,22 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     .numberOfFloors(realProperty.getGeneralCharacteristicsDto().getNumberOfFloors())
                     .apartmentsOnTheSite(realProperty.getGeneralCharacteristicsDto().getApartmentsOnTheSite())
                     .yearOfConstruction(realProperty.getGeneralCharacteristicsDto().getYearOfConstruction())
-                    .typeOfElevatorList(realProperty.getGeneralCharacteristicsDto().getTypeOfElevatorList().stream().map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
-                            .collect(Collectors.toList()))
                     .concierge(realProperty.getGeneralCharacteristicsDto().getConcierge())
                     .playground(realProperty.getGeneralCharacteristicsDto().getPlayground())
-                    .wheelchair(realProperty.getGeneralCharacteristicsDto().getWheelchair())
-                    .yardType(nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId()) ? yardTypeRepository.getOne(realProperty.getGeneralCharacteristicsDto().getYardTypeId()).getMultiLang() : null)
-                    .parkingTypes(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds().stream().map(aLong ->
-                            parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
+                    .wheelchair(realProperty.getGeneralCharacteristicsDto().getWheelchair());
             if (nonNull(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId())) {
                 dto.materialOfConstruction(materialOfConstructionRepository.getOne(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId()).getMultiLang());
+            }
+            if (nonNull(realProperty.getGeneralCharacteristicsDto().getTypeOfElevatorList())) {
+                dto.typeOfElevatorList(realProperty.getGeneralCharacteristicsDto().getTypeOfElevatorList().stream().map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
+                        .collect(Collectors.toList()));
+            }
+            if (nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId())) {
+                dto.yardType(nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId()) ? yardTypeRepository.getOne(realProperty.getGeneralCharacteristicsDto().getYardTypeId()).getMultiLang() : null);
+            }
+            if (nonNull(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds())) {
+                dto.parkingTypes(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds().stream()
+                        .map(aLong -> parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
             }
         }
 
