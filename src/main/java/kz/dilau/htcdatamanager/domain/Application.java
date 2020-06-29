@@ -64,18 +64,24 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @OneToOne(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ApplicationContract contract;
 
+    @OneToOne(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private ApplicationDeposit deposit;
+
+    @OneToOne(mappedBy = "sellApplication", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private ApplicationDeposit sellDeposit;
+
     @Column(name = "confirm_doc_guid")
     private String confirmDocGuid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pay_type_id")
-    private PayType payType;
-    @Column(name = "payed_sum")
-    private BigDecimal payedSum;
-    @Column(name = "payed_client_login")
-    private String payedClientLogin;
-    @Column(name = "is_payed")
-    private Boolean isPayed;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "pay_type_id")
+//    private PayType payType;
+//    @Column(name = "payed_sum")
+//    private BigDecimal payedSum;
+//    @Column(name = "payed_client_login")
+//    private String payedClientLogin;
+//    @Column(name = "is_payed")
+//    private Boolean isPayed;
 
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {

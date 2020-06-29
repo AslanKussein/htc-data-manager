@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.ApplicationDeposit;
 import kz.dilau.htcdatamanager.domain.dictionary.PayType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
@@ -39,14 +40,19 @@ public class ApplicationClientPayServiceImpl implements ApplicationClientPayServ
     public ApplicationClientDTO update(Long id, ApplicationClientPayDTO dto) {
         Application application = applicationService.getApplicationById(id);
 
-        if (application.getIsPayed()) {
+        if (!application.getOperationType().isSell()) {
+            throw BadRequestException.createTemplateException("error.application.to.buy.deposit");
+        }
+        if (nonNull(application.getSellDeposit())) {
             throw BadRequestException.applicationPayed(id);
         }
 
-        application.setIsPayed(dto.isPayed());
-        application.setPayedSum(dto.getPayedSum());
-        application.setPayType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()));
-        application.setPayedClientLogin(getAuthorName());
+        application.setSellDeposit(ApplicationDeposit.builder()
+                .sellApplication(application)
+                .payedSum(dto.getPayedSum())
+                .payType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()))
+                .payedClientLogin(getAuthorName())
+                .build());
 
         applicationRepository.save(application);
 

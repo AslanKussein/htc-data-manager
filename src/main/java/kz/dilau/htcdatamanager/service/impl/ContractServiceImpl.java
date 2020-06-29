@@ -146,6 +146,21 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
+    public String generateDepositContract(DepositFormDto dto) {
+        Application application = applicationService.getApplicationById(dto.getApplicationId());
+        Application sellApplication = null;
+        if (!application.getOperationType().isBuy()) {
+            throw BadRequestException.createTemplateException("");
+        }
+        if (nonNull(dto.getSellApplicationId())) {
+            sellApplication = applicationService.getApplicationById(dto.getSellApplicationId());
+            if (!sellApplication.getOperationType().isSell() || nonNull(sellApplication.getSellDeposit())) {
+                throw BadRequestException.createTemplateException("");
+            }
+        }
+        return null;
+    }
+
     @Override
     public String generateContractHandsel(ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
