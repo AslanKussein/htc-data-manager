@@ -316,7 +316,7 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
                     break;
                 case "objectRCName":
-                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getResidentialComplex()) ? realPropertyMetadata.getResidentialComplex().getHouseName() : "");
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getResidentialComplex()) ? realProperty.getBuilding().getResidentialComplex().getHouseName() : "");
                     break;
                 case "objectRegion":
                     pars.put(par, nonNull(district) ? district.getMultiLang().getNameRu() : "");
