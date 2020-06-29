@@ -5,6 +5,6 @@ alter table htc_dm_application
     add column is_payed boolean  default false;
 
 alter table htc_dm_application
-    add constraint htc_dm_purchase_data_htc_dm_dic_pay_type_id_fk
+    add constraint htc_dm_application_htc_dm_dic_pay_type_id_fk
         foreign key (pay_type_id) references htc_dm_dic_pay_type;
 
