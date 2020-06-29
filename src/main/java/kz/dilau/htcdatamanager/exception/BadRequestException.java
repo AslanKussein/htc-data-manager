@@ -59,4 +59,7 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createMaxApplicationCount(String apartmentNumber, String postcode) {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.max.application.count", postcode, apartmentNumber));
     }
+    public static BadRequestException applicationPayed(Long appId) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.application.payed", appId));
+    }
 }
