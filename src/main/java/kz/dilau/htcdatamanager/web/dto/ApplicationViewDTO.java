@@ -29,8 +29,10 @@ public class ApplicationViewDTO {
     private String agent;
     @ApiModelProperty(name = "operationType", value = "операции")
     private MultiLang operationType;
-    @ApiModelProperty(value = "Это подать")
+    @ApiModelProperty(value = "Это продать")
     private Boolean isSell;
+    @ApiModelProperty(value = "Это квартира")
+    private Boolean isFlat;
     @ApiModelProperty(name = "objectType", value = "объект")
     private MultiLang objectType;
     @ApiModelProperty(name = "objectPrice", value = "цена объекта")
@@ -55,8 +57,12 @@ public class ApplicationViewDTO {
     private Integer numberOfRooms;
     @ApiModelProperty(name = "floorPeriod", value = "Этаж от и до")
     private IntegerPeriod floorPeriod;
+    @ApiModelProperty(name = "landAreaPeriod", value = "Участок от и до")
+    private BigDecimalPeriod landAreaPeriod;
     @ApiModelProperty(name = "floor", value = "Этаж")
     private Integer floor;
+    @ApiModelProperty(name = "floor", value = "участок")
+    private BigDecimal landArea;
     @ApiModelProperty(name = "totalAreaPeriod", value = "Общая площадь от и до")
     private BigDecimalPeriod totalAreaPeriod;
     @ApiModelProperty(name = "numberOfFloorsPeriod", value = "Общая этажность от и до")
@@ -115,6 +121,12 @@ public class ApplicationViewDTO {
     private Boolean playground;
     @ApiModelProperty(value = "типа парковки")
     private List<MultiLang> parkingTypes;
+    @ApiModelProperty(value = "Состояние")
+    private MultiLang houseCondition;
+    @ApiModelProperty(value = "Канализация")
+    private MultiLang sewerage;
+    @ApiModelProperty(value = "Отопление")
+    private MultiLang heatingSystem;
     @ApiModelProperty(name = "mortgage", value = "ипотека")
     private Boolean mortgage;
     @ApiModelProperty(name = "encumbrance", value = "Обременение")
