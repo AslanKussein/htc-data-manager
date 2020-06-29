@@ -1,8 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.ApplicationStatusHistory;
-import kz.dilau.htcdatamanager.domain.Event;
+import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.EventType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
@@ -12,12 +10,22 @@ import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.EventRepository;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
+import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
+import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
+import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
@@ -25,6 +33,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EntityService entityService;
     private final ApplicationRepository applicationRepository;
+    private final KeycloakService keycloakService;
 
     @Override
     @Transactional
@@ -91,6 +100,101 @@ public class EventServiceImpl implements EventService {
         } else {
             throw NotFoundException.createEventById(id);
         }
+    }
+
+    private String getViewInfo(List<ProfileClientDto> dto,Application appSource) {
+        return dto
+                .stream()
+                .filter(l -> l.getPhoneNumber().equals(appSource.getClientLogin()))
+                .map(l -> {
+                    StringBuilder sb = new StringBuilder().append(l.getFullname()).append(", ");
+                    if (nonNull(appSource.getApplicationSellData())) {
+                        RealProperty rp = appSource.getApplicationSellData().getRealProperty();
+                        if (nonNull(rp)) {
+                            sb.append(DictionaryMappingTool.mapAddressToMultiLang(rp.getBuilding(), rp.getApartmentNumber()).getNameRu());
+                        }
+                    }
+                    return sb.toString();
+                })
+                .findFirst().orElse("");
+    }
+
+    @Override
+    public List<JasperActViewDto> getViewbyTargetApp(Long appId) {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
+        List<Event> elst = eventRepository
+                .findByTargetApplicationIdAndEventTypeId(appId, EventType.DEMO);
+
+        List<JasperActViewDto> lst = new ArrayList();
+
+        if (elst.size() > 0) {
+            List<String> logins = elst.stream()
+                    .map(t -> t.getSourceApplication().getClientLogin())
+                    .collect(Collectors.toList());
+
+            System.out.println(logins);
+            List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(logins);
+            //ListResponse<UserInfoDto> dto = keycloakService.readUserInfos(logins);
+            System.out.println(profileClientDtoList);
+            int idx = 0;
+            for ( Event t : elst) {
+                idx++;
+                lst.add(
+                        new JasperActViewDto(String.valueOf(idx),
+                                sdfDate.format(t.getEventDate()),
+                                getViewInfo(profileClientDtoList, t.getSourceApplication()))
+                );
+            }
+
+
+            /*lst = elst.stream()
+                    .map(t -> {
+                                JasperActViewDto d = new JasperActViewDto(t.getId().toString(),
+                                        sdfDate.format(t.getEventDate()),
+                                        getViewInfo(profileClientDtoList, t.getSourceApplication()));
+                                return d;
+                            }
+                    )
+                    .collect(Collectors.toList());*/
+        }
+
+        return lst;
+    }
+    @Override
+    public List<JasperActViewDto> getViewBySourceApp(Long appId) {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
+        List<Event> elst = eventRepository
+                .findBySourceApplicationIdAndEventTypeId(appId, EventType.DEMO);
+
+        List<JasperActViewDto> lst = new ArrayList();
+
+        if (elst.size() > 0) {
+            List<String> logins = elst.stream()
+                    .map(t -> t.getTargetApplication().getClientLogin())
+                    .collect(Collectors.toList());
+
+            System.out.println(logins);
+            List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(logins);
+            System.out.println(profileClientDtoList);
+
+
+            int idx = 0;
+            for ( Event t : elst) {
+                idx++;
+                lst.add(
+                        new JasperActViewDto(String.valueOf(idx),
+                                sdfDate.format(t.getEventDate()),profileClientDtoList
+                                .stream()
+                                .filter(l -> l.getPhoneNumber().equals(t.getTargetApplication().getClientLogin()))
+                                .map( x -> x.getFullname())
+                                .findFirst()
+                                .orElse("")
+                        )
+                );
+            }
+        }
+
+        return lst;
     }
 
     @Override

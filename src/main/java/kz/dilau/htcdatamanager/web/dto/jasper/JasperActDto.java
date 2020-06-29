@@ -5,19 +5,13 @@ public class JasperActDto {
 
     private String fFullname;
 
-    private String fCustsign;
-
-    private String fSuppliersign;
-
     public String getfDate() {
         return fDate;
     }
 
-    public JasperActDto(String fDate, String fFullname, String fCustsign, String fSuppliersign){
+    public JasperActDto(String fDate, String fFullname){
         this.fDate = fDate;
         this.fFullname = fFullname;
-        this.fCustsign = fCustsign;
-        this.fSuppliersign = fSuppliersign;
     }
 
     public JasperActDto() {
@@ -34,21 +28,5 @@ public class JasperActDto {
 
     public void setfFullname(String fFullname) {
         this.fFullname = fFullname;
-    }
-
-    public String getfCustsign() {
-        return fCustsign;
-    }
-
-    public void setfCustsign(String fCustsign) {
-        this.fCustsign = fCustsign;
-    }
-
-    public String getfSuppliersign() {
-        return fSuppliersign;
-    }
-
-    public void setfSuppliersign(String fSuppliersign) {
-        this.fSuppliersign = fSuppliersign;
     }
 }

@@ -35,8 +35,6 @@
         </queryString>
         <field name="fDate" class="java.lang.String"/>
         <field name="fFullname" class="java.lang.String"/>
-        <field name="fIIN" class="java.lang.String"/>
-        <field name="fCustomersign" class="java.lang.String"/>
         <field name="fNum" class="java.lang.String"/>
     </subDataset>
     <parameter name="docNumb" class="java.lang.String"/>
@@ -68,7 +66,7 @@
                         <jr:columnHeader style="Table_CH" height="40" rowSpan="1">
                             <textField>
                                 <reportElement x="0" y="0" width="30" height="40" uuid="91718777-0b25-4918-92ef-2b569ab88ec6"/>
-                                <textElement>
+                                <textElement textAlignment="Center">
                                     <font fontName="Arial" size="14" isBold="true"/>
                                 </textElement>
                                 <textFieldExpression><![CDATA["№"]]></textFieldExpression>
@@ -77,6 +75,9 @@
                         <jr:detailCell style="Table_TD" height="30">
                             <textField>
                                 <reportElement x="0" y="0" width="30" height="30" uuid="82801670-ad87-481d-aebc-b9a53b09cc6a"/>
+                                <textElement textAlignment="Center">
+                                    <font size="14"/>
+                                </textElement>
                                 <textFieldExpression><![CDATA[$F{fNum}]]></textFieldExpression>
                             </textField>
                         </jr:detailCell>
@@ -134,15 +135,7 @@
                                 <text><![CDATA[ИИН]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="100" height="30" uuid="a802b9a8-c8d6-4cf7-aec4-5dfc5e7080d9"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="DejaVu Sans" size="14"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA[$F{fIIN}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
+                        <jr:detailCell style="Table_TD" height="30"/>
                     </jr:column>
                     <jr:column width="90" uuid="b70a817f-e27d-437b-a4e8-2d71b2cf0ac9">
                         <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
@@ -155,15 +148,7 @@
                                 <text><![CDATA[Подпись Заказчика]]></text>
                             </staticText>
                         </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="90" height="30" uuid="9fc43fad-8cc4-483f-b81d-2b485b5a3b67"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="DejaVu Sans" size="14"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA[$F{fCustomersign}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
+                        <jr:detailCell style="Table_TD" height="30"/>
                     </jr:column>
                 </jr:table>
             </componentElement>
@@ -172,7 +157,7 @@
                 <textElement textAlignment="Right" markup="html">
                     <font fontName="Arial" size="14"/>
                 </textElement>
-                <textFieldExpression><![CDATA["<b>Приложение№1 </b><br/>к Эксклюзивному договору<br/>№<u><i><b>" +($P{docNumb})+"</b></i></u><br/> на оказании услуг по поиску покупателей на объект недвижимости <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["<b>Приложение № 1 </b><br/>к Эксклюзивному договору №<u><i><b>" +($P{docNumb})+"</b></i></u><br/> на оказании услуг по поиску покупателей на объект недвижимости <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="190" y="110" width="180" height="20" uuid="258b611a-1e20-4179-a485-d2c31731d972"/>

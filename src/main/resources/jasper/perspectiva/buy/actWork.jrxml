@@ -6,6 +6,7 @@
     <parameter name="docDate" class="java.lang.String"/>
     <parameter name="actDate" class="java.lang.String"/>
     <parameter name="clientFullname" class="java.lang.String"/>
+    <parameter name="clientBirthdate" class="java.lang.String"/>
     <parameter name="clientPassportDealDate" class="java.lang.String"/>
     <parameter name="clientAddress" class="java.lang.String"/>
     <parameter name="clientPassportnumber" class="java.lang.String"/>
@@ -27,7 +28,7 @@
                 <textElement textAlignment="Right" markup="html">
                     <font fontName="Times New Roman" size="12"/>
                 </textElement>
-                <textFieldExpression><![CDATA["<b>Приложение № 2 </b><br/>к договору №<u><i><b>" +($P{docNumb})+"</b></i></u><br/>на оказание услуг покупателю объекта недвижимости  <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["<b>Приложение № 3 </b><br/>к договору №<u><i><b>" +($P{docNumb})+"</b></i></u><br/>на оказание услуг покупателю объекта недвижимости  <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="198" y="80" width="230" height="20" uuid="6a1707c8-f0e2-4a53-98cf-5169c702d55a"/>
@@ -48,7 +49,7 @@
                 <textElement textAlignment="Justified" markup="html">
                     <font fontName="Times New Roman" size="12"/>
                 </textElement>
-                <textFieldExpression><![CDATA["Товарищество с ограниченной ответственностью «Перспектива24-Астана», в лице генерального директора Нургазина Д.М, именуемый в дальнейшем «ИСПОЛНИТЕЛЬ», с одной стороны и гр. <u>"+$P{clientFullname}+"</u><br/>Номер удостоверения личности (паспорт): " + ($P{clientPassportnumber}) + " <br/>ИИН "+$P{clientIIN}+" выдан " + ($P{clientPassportDealer}) +  " " + ($P{clientPassportDealDate}) + " г., адрес проживания: " + ($P{clientAddress}) + " , именуемый в дальнейшем «Заказчик», сдругой стороны: составили настоящий Акт, о том, что услуги по договору <b>№ " + ($P{docNumb}) +"</b> от <b>" + ($P{docDate}) +"</b> г., заключенному между Заказчикоми Исполнителем выполнены Исполнителем в полном объеме и надлежащем порядке. Претензии по качеству и объему оказанных услуг Заказчик не имеет."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["Товарищество с ограниченной ответственностью «Перспектива24-Астана», в лице генерального директора Нургазина Д.М, именуемый в дальнейшем «ИСПОЛНИТЕЛЬ», с одной стороны и гр. <u>"+$P{clientFullname}+"</u><br/>Номер удостоверения личности (паспорт): " + ($P{clientPassportnumber}) + " <br/>ИИН "+$P{clientIIN}+" выдан " + ($P{clientPassportDealer}) +  " от " + ($P{clientPassportDealDate}) + " г., адрес проживания: " + ($P{clientAddress}) + " , именуемый в дальнейшем «Заказчик», сдругой стороны: составили настоящий Акт, о том, что услуги по договору <b>№ " + ($P{docNumb}) +"</b> от <b>" + ($P{docDate}) +"</b> г., заключенному между Заказчикоми Исполнителем выполнены Исполнителем в полном объеме и надлежащем порядке. Претензии по качеству и объему оказанных услуг Заказчик не имеет."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="3" y="280" width="118" height="19" uuid="1e633f70-c53c-4b87-8f5e-57e7294714ae"/>
@@ -106,7 +107,7 @@
                 <textElement textAlignment="Right" markup="html">
                     <font fontName="Times New Roman" size="12"/>
                 </textElement>
-                <textFieldExpression><![CDATA["<b>Қосымша № 2 </b><br/>Шартқа №<u><i><b>" +($P{docNumb})+"</b></i></u><br/> жылжымайтын мүлік объектісін сатып алушыға қызмет көрсетуге   <br><u><i><b>" +($P{docDate}) +"</b></i></u> ж."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["<b>Қосымша № 3 </b><br/>Шартқа №<u><i><b>" +($P{docNumb})+"</b></i></u><br/> жылжымайтын мүлік объектісін сатып алушыға қызмет көрсетуге   <br><u><i><b>" +($P{docDate}) +"</b></i></u> ж."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="220" y="500" width="120" height="20" uuid="54e3b9d4-db58-4d8a-b124-50deb1cf83cc"/>
@@ -127,7 +128,7 @@
                 <textElement textAlignment="Justified" markup="html">
                     <font fontName="Times New Roman" size="12"/>
                 </textElement>
-                <textFieldExpression><![CDATA["«Перспектива 24-Астана» жауапкершілігі шектеулі серіктестігі, атынан Бас директор Д. М. Нұрғазин, бұдан әрі «Орындаушы» деп аталатын, бұдан әрі «Орындаушы» деп аталатын, бір тараптан және азамат/-ша <u>" + $P{clientFullname} +"</u> Жеке куәлік нөмірі(паспорт) <u>" + $P{clientPassportnumber} +"</u><br/>ЖСН : <u>"+ $P{clientIIN}+ " " +$P{clientPassportDealDate} +" "+$P{clientPassportDealer}+"</u><br/>Тұратын мекен-жайы: <u>" + $P{clientAddress} + "</u>, бұдан әрі «Тапсырыс беруші», екінші жағынан:<br/><b>№ " + $P{docNumb} +" </b> шарт  бойынша  қызметтер <b>" + $P{docDate} + "</b> ж. және тиісті тәртіппен орындалған. Тапсырыс берушінің көрсетілген қызметтердің сапасы мен көлемі бойынша наразылығы жоқ."]]></textFieldExpression>
+                <textFieldExpression><![CDATA["«Перспектива 24-Астана» жауапкершілігі шектеулі серіктестігі, атынан Бас директор Д. М. Нұрғазин, бұдан әрі «Орындаушы» деп аталатын, бұдан әрі «Орындаушы» деп аталатын, бір тараптан және азамат/-ша <u>" + $P{clientFullname} +"</u> Жеке куәлік нөмірі(паспорт) <u>" + $P{clientPassportnumber} +"</u><br/>ЖСН : <u>"+ $P{clientIIN}+ " <br/>" +$P{clientPassportDealDate} +" ж. "+$P{clientPassportDealer}+"</u> берілген<br/>Тұратын мекен-жайы: <u>" + $P{clientAddress} + "</u>, бұдан әрі «Тапсырыс беруші», екінші жағынан:<br/><b>№ " + $P{docNumb} +" </b> шарт  бойынша  қызметтер <b>" + $P{docDate} + "</b> ж. және тиісті тәртіппен орындалған. Тапсырыс берушінің көрсетілген қызметтердің сапасы мен көлемі бойынша наразылығы жоқ."]]></textFieldExpression>
             </textField>
             <textField>
                 <reportElement x="3" y="650" width="118" height="19" uuid="5b28a52d-1c66-44ea-bef5-dcd30c837246"/>

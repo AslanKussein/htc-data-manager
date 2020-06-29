@@ -124,7 +124,7 @@
                     <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
                     <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
                 </box>
-                <textElement>
+                <textElement textAlignment="Center">
                     <font fontName="Arial" size="14"/>
                 </textElement>
                 <textFieldExpression><![CDATA["30 000 001 тенге до 40 000 000 тенге"]]></textFieldExpression>
@@ -150,7 +150,7 @@
                     <bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
                     <rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
                 </box>
-                <textElement>
+                <textElement textAlignment="Center">
                     <font fontName="Arial" size="14"/>
                 </textElement>
                 <textFieldExpression><![CDATA["от 20 000 001 тенге до 25 000 000 тенге"]]></textFieldExpression>
