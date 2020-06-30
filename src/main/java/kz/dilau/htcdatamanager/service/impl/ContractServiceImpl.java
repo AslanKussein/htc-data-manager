@@ -123,6 +123,8 @@ public class ContractServiceImpl implements ContractService {
                 throw BadRequestException.createTemplateException("error.contract.form.not.found");
             }
             result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+        } else {
+            throw BadRequestException.createTemplateException("error.contract.form.not.found");
         }
 
         if (nonNull(result)) {
