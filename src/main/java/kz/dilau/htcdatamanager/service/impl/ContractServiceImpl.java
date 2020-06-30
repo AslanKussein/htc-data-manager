@@ -188,6 +188,10 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
+        if (isNull(contractForm.getCode())) {
+            throw BadRequestException.createTemplateException("error.contract.type.not.defined");
+        }
+
         String nextNumb = getContractAvansNextNumb(contractForm.getCode());
 
         result = printContractAvans(nextNumb, dto, buyerDto, sellerDto, application, sellApplication, userInfoDto, contractForm);
@@ -242,8 +246,8 @@ public class ContractServiceImpl implements ContractService {
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
             List<ContractTempaleDto> templateList = contractForm.getTemplateList();
-            ContractTempaleDto logoPath = getImageTemplate(ContractTemplateType.LOGO.name(), templateList);
-            ContractTempaleDto logoFooterPath = getImageTemplate(ContractTemplateType.FOOTER_LOGO.name(), templateList);
+            ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
+            ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
                 logoImage = getLogo(logoPath.getTemplate());
@@ -556,8 +560,8 @@ public class ContractServiceImpl implements ContractService {
             InputStream footerImage = null;
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
-            ContractTempaleDto logoPath = getImageTemplate(ContractTemplateType.LOGO.name(), templateList);
-            ContractTempaleDto logoFooterPath = getImageTemplate(ContractTemplateType.FOOTER_LOGO.name(), templateList);
+            ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
+            ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
                 logoImage = getLogo(logoPath.getTemplate());
@@ -603,7 +607,7 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private ContractTempaleDto getImageTemplate(String name, List<ContractTempaleDto> templateList) {
+    private ContractTempaleDto getTemplateByName(String name, List<ContractTempaleDto> templateList) {
         return templateList.stream()
                 .filter(t -> t.getName().equals(name))
                 .findFirst()
