@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ContractService;
 import kz.dilau.htcdatamanager.web.dto.CommissionRangeDto;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
+import kz.dilau.htcdatamanager.web.dto.DepositFormDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +32,9 @@ public class ContractResource {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping("/generateContractAvans")
-    public ResponseEntity<String> generateContractAvans(@RequestBody ContractFormDto dto) {
-        String result = contractService.generateContractAvans(dto);
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("/generateContractHandsel")
-    public ResponseEntity<String> generateContractHandsel(@RequestBody ContractFormDto dto) {
-        String result = contractService.generateContractHandsel(dto);
+    @PostMapping("/generateDepositContract")
+    public ResponseEntity<String> generateDepositContract(@RequestBody DepositFormDto dto) {
+        String result = contractService.generateDepositContract(dto);
         return ResponseEntity.ok(result);
     }
 

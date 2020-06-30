@@ -38,3 +38,6 @@ comment on column htc_dm_application_deposit.payed_sum is 'Сумма';
 comment on column htc_dm_application_deposit.payed_client_login is 'Логин пользователя, сделавшего оплату';
 comment on column htc_dm_application_deposit.print_date is 'Дата формирования договора о задатке/авансе';
 comment on column htc_dm_application_deposit.guid is 'Идентификатор договора о задатке/авансе';
+
+INSERT INTO htc_dm_dic_pay_type (id, name_en, name_kz, name_ru, is_removed) VALUES (4, 'Договор задатка', 'Договор задатка', 'Договор задатка', false);
+INSERT INTO htc_dm_dic_pay_type (id, name_en, name_kz, name_ru, is_removed) VALUES (5, 'Договор аванса', 'Договор аванса', 'Договор аванса', false);

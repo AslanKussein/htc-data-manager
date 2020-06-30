@@ -24,15 +24,15 @@ public class ContractFormTemplateDto {
     @ApiModelProperty(value = "Тип договора")
     private ContractFormType contractFormType;
     @ApiModelProperty(value = "Шаблоны договора")
-    private Map<String, String> templateMap = new HashMap<>();
+    private Map<String, ContractTempaleDto> templateMap = new HashMap<>();
 
 
     @ApiModelProperty(value = "Шаблоны договора 2")
     private List<ContractTempaleDto> templateList = new ArrayList<>();
 
-    public Map<String, String> getTemplateMap() {
+    public Map<String, ContractTempaleDto> getTemplateMap() {
         if (isNull(templateMap)) {
-            templateMap = new HashMap<>();
+            templateList.forEach(item -> templateMap.put(item.getName(), item));
         }
         return templateMap;
     }

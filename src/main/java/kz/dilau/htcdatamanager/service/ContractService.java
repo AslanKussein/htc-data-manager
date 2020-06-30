@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.web.dto.CommissionRangeDto;
 import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
+import kz.dilau.htcdatamanager.web.dto.DepositFormDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 
 public interface ContractService {
@@ -9,9 +10,7 @@ public interface ContractService {
 
     String generateContract(ContractFormDto dto);
 
-    String generateContractHandsel(ContractFormDto dto);
-
-    String generateContractAvans(ContractFormDto dto);
+    String generateDepositContract(DepositFormDto dto);
 
     Long missContract(ContractFormDto dto);
 

@@ -16,13 +16,16 @@ import static java.util.Objects.nonNull;
 @NoArgsConstructor
 @ApiModel(value = "DepositFormDto", description = "Модель формирования договора аванса/задатка")
 public class DepositFormDto {
-    @ApiModelProperty(value = "ID заявки")
+    @NonNull
+    @ApiModelProperty(value = "ID заявки", required = true)
     private Long applicationId;
     @ApiModelProperty(value = "ID заявки на продажу")
     private Long sellApplicationId;
-    @ApiModelProperty(value = "Сумма")
+    @NonNull
+    @ApiModelProperty(value = "Сумма", required = true)
     private BigDecimal payedSum;
-    @ApiModelProperty(value = "Тип договора")
+    @NonNull
+    @ApiModelProperty(value = "Тип договора", required = true)
     private Long payTypeId;
 
     public DepositFormDto(ApplicationDeposit deposit) {
