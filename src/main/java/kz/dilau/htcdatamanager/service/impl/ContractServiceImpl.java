@@ -1,6 +1,5 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.config.CommissionRange;
 import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
@@ -9,13 +8,9 @@ import kz.dilau.htcdatamanager.domain.enums.ContractTemplateType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.ContractService;
-import kz.dilau.htcdatamanager.service.EntityService;
-import kz.dilau.htcdatamanager.service.KeycloakService;
-import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 import lombok.RequiredArgsConstructor;
@@ -85,31 +80,10 @@ public class ContractServiceImpl implements ContractService {
         if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
-        List<String> userLogin = new ArrayList<>();
-        userLogin.add(application.getClientLogin());
-        List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
-        if (profileClientDtoList.isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
-        }
-        ProfileClientDto clientDto = profileClientDtoList.get(0);
-        if (isNull(application.getCurrentAgent())) {
-            throw BadRequestException.createTemplateException("error.user.not.found");
-        }
-        userLogin.clear();
-        userLogin.add(application.getCurrentAgent());
-        ListResponse<UserInfoDto> userInfos = keycloakService.readUserInfos(userLogin);
-        if (isNull(userInfos) || isNull(userInfos.getData()) || userInfos.getData().isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
-        }
-        UserInfoDto userInfoDto = userInfos.getData().get(0);
-        if (isNull(userInfoDto)) {
-            throw BadRequestException.createTemplateException("error.user.not.found");
-        }
-        if (isNull(userInfoDto.getOrganizationDto())) {
-            throw BadRequestException.createTemplateException("error.contract.form.not.found");
-        }
+        ProfileClientDto clientDto = getClientDto(application);
+        UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
-        String result = null;
+        String result;
 
         if (application.getOperationType().isBuy()) {
             contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
@@ -124,13 +98,44 @@ public class ContractServiceImpl implements ContractService {
             }
             result = printContract(application, dto, clientDto, userInfoDto, contractForm);
         } else {
-            throw BadRequestException.createTemplateException("error.contract.form.not.found");
+            throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
         if (nonNull(result)) {
             saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         }
         return result;
+    }
+
+    private ProfileClientDto getClientDto(Application application) {
+        List<String> userLogin = new ArrayList<>();
+        userLogin.add(application.getClientLogin());
+        List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
+        if (profileClientDtoList.isEmpty()) {
+            throw BadRequestException.createTemplateException("error.application.contract");
+        }
+        ProfileClientDto clientDto = profileClientDtoList.get(0);
+        if (isNull(application.getCurrentAgent())) {
+            throw BadRequestException.createTemplateException("error.user.not.found");
+        }
+        return clientDto;
+    }
+
+    private UserInfoDto getUserInfo(Application application) {
+        List<String> userLogin = new ArrayList<>();
+        userLogin.add(application.getCurrentAgent());
+        ListResponse<UserInfoDto> userInfos = keycloakService.readUserInfos(userLogin);
+        if (isNull(userInfos) || isNull(userInfos.getData()) || userInfos.getData().isEmpty()) {
+            throw BadRequestException.createTemplateException("error.application.contract");
+        }
+        UserInfoDto userInfoDto = userInfos.getData().get(0);
+        if (isNull(userInfoDto)) {
+            throw BadRequestException.createTemplateException("error.user.not.found");
+        }
+        if (isNull(userInfoDto.getOrganizationDto())) {
+            throw BadRequestException.createTemplateException("error.contract.form.not.found");
+        }
+        return userInfoDto;
     }
 
     private ContractFormTemplateDto getContractForm(Long organizationId, String contractType) {
@@ -143,39 +148,59 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateContractHandsel(ContractFormDto dto) {
+    public String generateDepositContract(DepositFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-
+        Application sellApplication = null;
         if (hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
+        } else if (!application.getOperationType().isBuy()) {
+            throw BadRequestException.createTemplateException("error.only.purchase.application.can.deposit");
+        } else if (nonNull(application.getDeposit())) {
+            throw BadRequestException.createTemplateException("error.deposit.exist");
         }
-
-        return printContractHandsel(application, dto, dto.getGuid());
+        if (nonNull(dto.getSellApplicationId())) {
+            sellApplication = applicationService.getApplicationById(dto.getSellApplicationId());
+            if (!sellApplication.getOperationType().isSell()) {
+                throw BadRequestException.createTemplateException("error.only.sell.application.can.deposit");
+            } else if (nonNull(sellApplication.getSellDeposit())) {
+                throw BadRequestException.createTemplateException("error.application.to.sell.deposit");
+            }
+        }
+        UserInfoDto userInfoDto = getUserInfo(application);
+        ContractFormTemplateDto contractForm;
+        String result;
+        if (dto.getPayTypeId().equals(PayType.DEPOSIT)) {
+            contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.DEPOSIT.name());
+            result = printContractHandsel(application, userInfoDto, contractForm);
+        } else if (dto.getPayTypeId().equals(PayType.PREPAYMENT)) {
+            contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.PREPAYMENT.name());
+            result = printContractAvans(application, userInfoDto, contractForm);
+        } else {
+            throw BadRequestException.createTemplateException("error.contract.type.not.defined");
+        }
+        if (nonNull(result)) {
+            application.setDeposit(ApplicationDeposit.builder()
+                    .application(application)
+                    .sellApplication(sellApplication)
+                    .payType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()))
+                    .payedSum(dto.getPayedSum())
+                    .payedClientLogin(getAuthorName())
+                    .build());
+            applicationRepository.save(application);
+        }
+        return result;
     }
 
-    @Override
-    public String generateContractAvans(ContractFormDto dto) {
-        Application application = applicationService.getApplicationById(dto.getApplicationId());
-
-        if (hasPermission(getAuthorName(), application)) {
-            throw BadRequestException.createTemplateException("error.has.not.permission");
-        }
-
-        return printContractAvans(application, dto, dto.getGuid());
-    }
-
-    private String printContractAvans(Application application, ContractFormDto dto, String orgName) {
+    private String printContractAvans(Application application, UserInfoDto userInfo, ContractFormTemplateDto contractForm) {
 
         try {
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
             City city = purchaseData.getCity();
 
-            Resource resource = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/avans/main.jrxml");
-            InputStream input = resource.getInputStream();
             Map<String, Object> mainPar = new HashMap<>();
             InputStream image = getLogo(""); //=
             mainPar.put("logoImage", image);
-            mainPar.put("contractNumber", dto.getContractNumber());
+            mainPar.put("contractNumber", nonNull(application.getContract()) ? application.getContract().getContractNumber() : "");
             mainPar.put("contractDate", sdfDate.format(new Date()));
             mainPar.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
             mainPar.put("printDate", sdfDate.format(new Date()));
@@ -185,7 +210,7 @@ public class ContractServiceImpl implements ContractService {
             mainPar.put("objectPrice", "10 000 000");
             mainPar.put("handselAmount", "200 000");
             mainPar.put("docExpireDate", "20.12.2020");
-            JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
+            JasperReport jasperReportBasic = JasperCompileManager.compileReport(getJrxml(contractForm.getTemplateMap().get(ContractTemplateType.MAIN.name())));
             JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, mainPar, new JREmptyDataSource());
 
             List<JasperPrint> jasperPrintList = new ArrayList<>();
@@ -199,7 +224,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
 
-    private String printContractHandsel(Application application, ContractFormDto dto, String orgName) {
+    private String printContractHandsel(Application application, UserInfoDto userInfo, ContractFormTemplateDto contractForm) {
 
         try {
             //String orgName = "vitrina";
@@ -208,12 +233,12 @@ public class ContractServiceImpl implements ContractService {
             PurchaseInfo purchaseInfo = purchaseData.getPurchaseInfo();
             City city = purchaseData.getCity();
 
-            Resource resource = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/main.jrxml");
+            Resource resource = resourceLoader.getResource("classpath:jasper/handsel/" + userInfo + "/main.jrxml");
             InputStream input = resource.getInputStream();
             Map<String, Object> mainPar = new HashMap<>();
             InputStream image = getLogo(""); //=
             mainPar.put("logoImage", image);
-            mainPar.put("contractNumber", dto.getContractNumber());
+            mainPar.put("contractNumber", nonNull(application.getContract()) ? application.getContract().getContractNumber() : "");
             mainPar.put("contractDate", sdfDate.format(new Date()));
             mainPar.put("city", nonNull(city) ? city.getMultiLang().getNameRu() : "");
             mainPar.put("printDate", sdfDate.format(new Date()));
@@ -223,27 +248,21 @@ public class ContractServiceImpl implements ContractService {
             mainPar.put("objectPrice", "10 000 000");
             mainPar.put("handselAmount", "200 000");
             mainPar.put("docExpireDate", "20.12.2020");
-            JasperReport jasperReportBasic = JasperCompileManager.compileReport(input);
+            JasperReport jasperReportBasic = JasperCompileManager.compileReport(getJrxml(contractForm.getTemplateMap().get(ContractTemplateType.MAIN.name())));
             JasperPrint jasperPrintBasic = JasperFillManager.fillReport(jasperReportBasic, mainPar, new JREmptyDataSource());
             //--------------------------
-            Resource resourceDuties = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/duties.jrxml");
-
-            InputStream inputDuties = resourceDuties.getInputStream();
             Map<String, Object> dutiesPar = new HashMap<>();
             dutiesPar.put("comissionAmount", "300 000");
             dutiesPar.put("sellerFullname", "Seller Fullname");
             dutiesPar.put("buyerFullname", "Buyer Fullname");
 
-            JasperReport jasperReportDuties = JasperCompileManager.compileReport(inputDuties);
+            JasperReport jasperReportDuties = JasperCompileManager.compileReport(getJrxml(contractForm.getTemplateMap().get(ContractTemplateType.DUTIES.name())));
             JasperPrint jasperPrintDuties = JasperFillManager.fillReport(jasperReportDuties, dutiesPar, new JREmptyDataSource());
             //--------------------------
-            Resource resourceRecv = resourceLoader.getResource("classpath:jasper/handsel/" + orgName + "/recvisit.jrxml");
-
-            InputStream inputRecv = resourceRecv.getInputStream();
             Map<String, Object> recvPar = new HashMap<>();
             recvPar.put("agentFullname", "Agent Fullname");
 
-            JasperReport jasperReportRecv = JasperCompileManager.compileReport(inputRecv);
+            JasperReport jasperReportRecv = JasperCompileManager.compileReport(getJrxml(contractForm.getTemplateMap().get(ContractTemplateType.RECVISIT.name())));
             JasperPrint jasperPrintRecv = JasperFillManager.fillReport(jasperReportRecv, recvPar, new JREmptyDataSource());
             //--------------------------
             List<JasperPrint> jasperPrintList = new ArrayList<>();
@@ -281,7 +300,7 @@ public class ContractServiceImpl implements ContractService {
             purchaseInfo = isNull(purchaseData) ? null : purchaseData.getPurchaseInfo();
         } else {
             realProperty = isNull(sellData) ? null : sellData.getRealProperty();
-            realPropertyMetadata = isNull (realProperty) ? null : realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
+            realPropertyMetadata = isNull(realProperty) ? null : realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
 
             if (nonNull(realProperty.getBuilding())) {
                 city = realProperty.getBuilding().getCity();
@@ -289,7 +308,7 @@ public class ContractServiceImpl implements ContractService {
             }
         }
 
-        for ( String par : tpl.getParList()) {
+        for (String par : tpl.getParList()) {
             switch (par) {
                 case "logoImage":
                     pars.put(par, logoImage);
@@ -380,7 +399,7 @@ public class ContractServiceImpl implements ContractService {
                     }
                     break;
                 case "objectFloorTotal":
-                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors() : "" );
+                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors() : "");
                     break;
                 case "contractSum":
                 case "objectPrice":
@@ -431,11 +450,11 @@ public class ContractServiceImpl implements ContractService {
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
             ContractTempaleDto logoPath = templateList.stream()
-                    .filter( t -> t.getName().equals(ContractTemplateType.LOGO.name()))
+                    .filter(t -> t.getName().equals(ContractTemplateType.LOGO.name()))
                     .findFirst()
                     .orElse(null);
             ContractTempaleDto logoFooterPath = templateList.stream()
-                    .filter( t -> t.getName().equals(ContractTemplateType.FOOTER_LOGO.name()))
+                    .filter(t -> t.getName().equals(ContractTemplateType.FOOTER_LOGO.name()))
                     .findFirst()
                     .orElse(null);
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
@@ -451,7 +470,7 @@ public class ContractServiceImpl implements ContractService {
                         continue;
                     }
 
-                    if (nonNull(tpl.getParList()) ) {
+                    if (nonNull(tpl.getParList())) {
                         Map<String, Object> pars = getBindPars(tpl,
                                 purchaseData,
                                 sellData,
@@ -461,7 +480,7 @@ public class ContractServiceImpl implements ContractService {
                                 dto,
                                 logoImage,
                                 footerImage
-                                );
+                        );
                         JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
                         JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
                         jasperPrintList.add(jp);
