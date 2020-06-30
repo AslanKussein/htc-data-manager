@@ -233,8 +233,6 @@ public class ContractServiceImpl implements ContractService {
             PurchaseInfo purchaseInfo = purchaseData.getPurchaseInfo();
             City city = purchaseData.getCity();
 
-            Resource resource = resourceLoader.getResource("classpath:jasper/handsel/" + userInfo + "/main.jrxml");
-            InputStream input = resource.getInputStream();
             Map<String, Object> mainPar = new HashMap<>();
             InputStream image = getLogo(""); //=
             mainPar.put("logoImage", image);
