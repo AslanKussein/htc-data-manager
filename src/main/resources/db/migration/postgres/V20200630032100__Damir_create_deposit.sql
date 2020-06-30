@@ -27,9 +27,6 @@ create table htc_dm_application_deposit
   is_removed         boolean default false not null
 );
 
-alter table htc_dm_application_deposit
-  owner to postgres;
-
 comment on table htc_dm_application_deposit is 'Сущность договора аванса/задатка, либо бронирования с КП';
 comment on column htc_dm_application_deposit.application_id is 'Ссылка на заявку на покупку';
 comment on column htc_dm_application_deposit.sell_application_id is 'Ссылка на заявку на продажу';
