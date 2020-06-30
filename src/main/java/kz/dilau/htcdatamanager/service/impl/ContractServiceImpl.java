@@ -1,6 +1,5 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.config.CommissionRange;
 import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
@@ -9,13 +8,9 @@ import kz.dilau.htcdatamanager.domain.enums.ContractTemplateType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.ContractService;
-import kz.dilau.htcdatamanager.service.EntityService;
-import kz.dilau.htcdatamanager.service.KeycloakService;
-import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 import lombok.RequiredArgsConstructor;
@@ -146,14 +141,26 @@ public class ContractServiceImpl implements ContractService {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         Application sellApplication = null;
         if (!application.getOperationType().isBuy()) {
-            throw BadRequestException.createTemplateException("");
+            throw BadRequestException.createTemplateException("error.only.purchase.application.can.deposit");
+        } else if (nonNull(application.getDeposit())) {
+            throw BadRequestException.createTemplateException("error.deposit.exist");
         }
         if (nonNull(dto.getSellApplicationId())) {
             sellApplication = applicationService.getApplicationById(dto.getSellApplicationId());
-            if (!sellApplication.getOperationType().isSell() || nonNull(sellApplication.getSellDeposit())) {
-                throw BadRequestException.createTemplateException("");
+            if (!sellApplication.getOperationType().isSell()) {
+                throw BadRequestException.createTemplateException("error.only.sell.application.can.deposit");
+            } else if (nonNull(sellApplication.getSellDeposit())) {
+                throw BadRequestException.createTemplateException("error.application.to.sell.deposit");
             }
         }
+        application.setDeposit(ApplicationDeposit.builder()
+                .application(application)
+                .sellApplication(sellApplication)
+                .payType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()))
+                .payedSum(dto.getPayedSum())
+                .payedClientLogin(getAuthorName())
+                .build());
+        applicationRepository.save(application);
         return null;
     }
 
@@ -296,7 +303,7 @@ public class ContractServiceImpl implements ContractService {
             purchaseInfo = isNull(purchaseData) ? null : purchaseData.getPurchaseInfo();
         } else {
             realProperty = isNull(sellData) ? null : sellData.getRealProperty();
-            realPropertyMetadata = isNull (realProperty) ? null : realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
+            realPropertyMetadata = isNull(realProperty) ? null : realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
 
             if (nonNull(realProperty.getBuilding())) {
                 city = realProperty.getBuilding().getCity();
@@ -304,7 +311,7 @@ public class ContractServiceImpl implements ContractService {
             }
         }
 
-        for ( String par : tpl.getParList()) {
+        for (String par : tpl.getParList()) {
             switch (par) {
                 case "logoImage":
                     pars.put(par, logoImage);
@@ -395,7 +402,7 @@ public class ContractServiceImpl implements ContractService {
                     }
                     break;
                 case "objectFloorTotal":
-                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors() : "" );
+                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors() : "");
                     break;
                 case "contractSum":
                 case "objectPrice":
@@ -446,11 +453,11 @@ public class ContractServiceImpl implements ContractService {
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
             ContractTempaleDto logoPath = templateList.stream()
-                    .filter( t -> t.getName().equals(ContractTemplateType.LOGO.name()))
+                    .filter(t -> t.getName().equals(ContractTemplateType.LOGO.name()))
                     .findFirst()
                     .orElse(null);
             ContractTempaleDto logoFooterPath = templateList.stream()
-                    .filter( t -> t.getName().equals(ContractTemplateType.FOOTER_LOGO.name()))
+                    .filter(t -> t.getName().equals(ContractTemplateType.FOOTER_LOGO.name()))
                     .findFirst()
                     .orElse(null);
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
@@ -466,7 +473,7 @@ public class ContractServiceImpl implements ContractService {
                         continue;
                     }
 
-                    if (nonNull(tpl.getParList()) ) {
+                    if (nonNull(tpl.getParList())) {
                         Map<String, Object> pars = getBindPars(tpl,
                                 purchaseData,
                                 sellData,
@@ -476,7 +483,7 @@ public class ContractServiceImpl implements ContractService {
                                 dto,
                                 logoImage,
                                 footerImage
-                                );
+                        );
                         JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
                         JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
                         jasperPrintList.add(jp);
