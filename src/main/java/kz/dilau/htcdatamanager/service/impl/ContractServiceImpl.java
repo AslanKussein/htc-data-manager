@@ -151,7 +151,7 @@ public class ContractServiceImpl implements ContractService {
     public String generateDepositContract(DepositFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         Application sellApplication = null;
-        if (hasPermission(getAuthorName(), application)) {
+        if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         } else if (!application.getOperationType().isBuy()) {
             throw BadRequestException.createTemplateException("error.only.purchase.application.can.deposit");
