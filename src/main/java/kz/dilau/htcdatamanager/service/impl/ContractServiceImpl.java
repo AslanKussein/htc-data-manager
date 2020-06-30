@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.domain.enums.ContractFormType;
 import kz.dilau.htcdatamanager.domain.enums.ContractTemplateType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
+import kz.dilau.htcdatamanager.repository.ApplicationDepositRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
@@ -44,6 +45,7 @@ public class ContractServiceImpl implements ContractService {
     private static final SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
 
     private final ApplicationContractRepository contractRepository;
+    private final ApplicationDepositRepository depositRepository;
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
     private final ApplicationService applicationService;
@@ -179,14 +181,35 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
         if (nonNull(result)) {
-            application.setDeposit(ApplicationDeposit.builder()
-                    .application(application)
-                    .sellApplication(sellApplication)
-                    .payType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()))
-                    .payedSum(dto.getPayedSum())
-                    .payedClientLogin(getAuthorName())
-                    .build());
-            applicationRepository.save(application);
+            ApplicationDeposit deposit = application.getDeposit();
+            if (isNull(deposit)) {
+                deposit = ApplicationDeposit.builder()
+                        .application(application)
+                        .build();
+            }
+            deposit.setSellApplication(sellApplication);
+            deposit.setPayType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()));
+            deposit.setPayedSum(dto.getPayedSum());
+            deposit.setPayedClientLogin(getAuthorName());
+            boolean hasStatus = false;
+            for (val history : application.getStatusHistoryList()) {
+                if (history.getApplicationStatus().isDeposit()) {
+                    hasStatus = true;
+                    break;
+                }
+            }
+            if (hasStatus) {
+                depositRepository.save(deposit);
+            } else {
+                ApplicationStatus applicationStatus = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.DEPOSIT);
+                application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
+                        .application(application)
+                        .applicationStatus(applicationStatus)
+                        .build());
+                application.setApplicationStatus(applicationStatus);
+                application.setDeposit(deposit);
+                applicationRepository.save(application);
+            }
         }
         return result;
     }
