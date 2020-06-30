@@ -24,11 +24,17 @@ public class ApplicationStatus extends BaseSystemDictionary {
     public static final Long CLOSE_TRANSACTION = 7L;
     public static final Long SUCCESS = 8L;
     public static final Long FINISHED = 9L;
+    public static final Long DEPOSIT = 10L;
 
     public static final List<Long> ALL_STATUSES = Arrays.asList(FIRST_CONTACT, MEETING, CONTRACT, ADS, PHOTO_SHOOT, DEMO, CLOSE_TRANSACTION, SUCCESS, FINISHED);
 
     @Transient
     public boolean isContract() {
         return CONTRACT.equals(this.id);
+    }
+
+    @Transient
+    public boolean isDeposit() {
+        return DEPOSIT.equals(this.id);
     }
 }
