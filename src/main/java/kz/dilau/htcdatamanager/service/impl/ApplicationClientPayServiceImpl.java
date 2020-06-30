@@ -41,7 +41,7 @@ public class ApplicationClientPayServiceImpl implements ApplicationClientPayServ
         Application application = applicationService.getApplicationById(id);
 
         if (!application.getOperationType().isSell()) {
-            throw BadRequestException.createTemplateException("error.application.to.buy.deposit");
+            throw BadRequestException.createTemplateException("error.only.sell.application.can.deposit");
         }
         if (nonNull(application.getSellDeposit())) {
             throw BadRequestException.applicationPayed(id);
