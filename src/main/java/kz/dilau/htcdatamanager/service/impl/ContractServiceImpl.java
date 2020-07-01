@@ -333,13 +333,13 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par,nextNumb);
                     break;
                 case "contractNumber":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getContractNumber() : null);
+                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getContractNumber() : "");
                     break;
                 case "contractDate":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? sdfDate.format(appBuy.getContract().getPrintDate()) : null);
+                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? sdfDate.format(appBuy.getContract().getPrintDate()) : "");
                     break;
                 case "comissionAmount":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getCommission().toString() : null);
+                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getCommission().toString() : "");
                     break;
                 case "buyerFullname":
                     pars.put(par, buyerDto.getFullname());
@@ -354,10 +354,10 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(formDto.getPayedSum()) ? formDto.getPayedSum().toString() : "");
                     break;
                 case "objectPrice":
-                    pars.put(par, nonNull(appSell) && nonNull(appSell.getApplicationSellData()) ? appSell.getApplicationSellData().getObjectPrice() : "");
+                    pars.put(par, nonNull(appSell) && nonNull(appSell.getApplicationSellData()) ? appSell.getApplicationSellData().getObjectPrice().toString() : "");
                     break;
                 case "objectFullAddress":
-                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "_____________");
+                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
                     break;
                 case "objectRCName":
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getResidentialComplex()) ? realProperty.getBuilding().getResidentialComplex().getHouseName() : "");
