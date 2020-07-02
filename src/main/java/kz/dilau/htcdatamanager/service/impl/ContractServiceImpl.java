@@ -33,6 +33,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static java.util.Objects.isNull;
@@ -43,6 +45,7 @@ import static java.util.Objects.nonNull;
 @Service
 public class ContractServiceImpl implements ContractService {
     private static final SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
+    private static final DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private final ApplicationContractRepository contractRepository;
     private final ApplicationDepositRepository depositRepository;
@@ -336,7 +339,11 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getContractNumber() : "");
                     break;
                 case "contractDate":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? sdfDate.format(appBuy.getContract().getPrintDate()) : "");
+                    if (nonNull(appBuy) && nonNull(appBuy.getContract())) {
+                        pars.put(par, dtfDate.format(appBuy.getContract().getCreatedDate()));
+                    } else {
+                        pars.put(par, "");
+                    }
                     break;
                 case "comissionAmount":
                     pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getCommission().toString() : "");
@@ -456,7 +463,7 @@ public class ContractServiceImpl implements ContractService {
                     if (application.getOperationType().isBuy()) {
                         pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
                     } else {
-                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms() : "");
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms().toString() : "");
                     }
                     break;
                 case "objectBathroomType":
@@ -476,14 +483,14 @@ public class ContractServiceImpl implements ContractService {
                     if (application.getOperationType().isBuy()) {
                         pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getTotalAreaFrom() + " - " + purchaseInfo.getTotalAreaTo() : "");
                     } else {
-                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getTotalArea() : "");
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getTotalArea().toString() : "");
                     }
                     break;
                 case "objectKitchenArea":
-                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea().toString() : "");
                     break;
                 case "objectLivingArea":
-                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea().toString() : "");
                     break;
                 case "objectReadyYear":
                     pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
@@ -502,11 +509,11 @@ public class ContractServiceImpl implements ContractService {
                     if (application.getOperationType().isBuy()) {
                         pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
                     } else {
-                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getFloor() : "");
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getFloor().toString() : "");
                     }
                     break;
                 case "objectFloorTotal":
-                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors() : "");
+                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors().toString() : "");
                     break;
                 case "contractSum":
                 case "objectPrice":
@@ -722,6 +729,7 @@ public class ContractServiceImpl implements ContractService {
         contract.setContractSum(dto.getContractSum());
         contract.setContractPeriod(dto.getContractPeriod());
         contract.setContractNumber(dto.getContractNumber());
+        contract.setPrintDate(ZonedDateTime.now());
         contract.setContractStatus(status);
         contract.setContractType(entityService.mapEntity(ContractType.class, dto.getContractTypeId()));
         boolean hasStatus = false;
