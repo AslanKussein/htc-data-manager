@@ -2,10 +2,7 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ContractService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.CommissionRangeDto;
-import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
-import kz.dilau.htcdatamanager.web.dto.DepositFormDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +30,9 @@ public class ContractResource {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/generateClientAppContract/{applicationId}")
-    public ResponseEntity<String> generateClientAppContract(@PathVariable("applicationId") Long appId) {
-        String result = contractService.generateClientAppContract(appId);
+    @PostMapping("/generateClientAppContract")
+    public ResponseEntity<String> generateClientAppContract(@RequestBody ClientAppBuyDto clientAppBuyDto) {
+        String result = contractService.generateClientAppContract(clientAppBuyDto);
         return ResponseEntity.ok(result);
     }
 

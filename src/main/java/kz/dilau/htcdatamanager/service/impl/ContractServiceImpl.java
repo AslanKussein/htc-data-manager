@@ -247,17 +247,42 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateClientAppContract(Long appId) {
-        Application application = applicationService.getApplicationById(appId);
-
-        if (!application.getOperationType().isSell()) {
-            throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
-        } else if (nonNull(application.getDeposit())) {
-            throw BadRequestException.createTemplateException("error.deposit.exist");
+    public String generateClientAppContract(ClientAppBuyDto clientAppBuyDto) {
+        if (isNull(clientAppBuyDto.getTargetApplicationId())) {
+            throw BadRequestException.createRequiredIsEmpty("targetApplicationId");
         }
 
-        ProfileClientDto ClientDto = getClientDtobyLogin(getAuthorName());
-        UserInfoDto userInfoDto = getUserInfo(application);
+        if (isNull(clientAppBuyDto.getCurrentApplicationId())) {
+            throw BadRequestException.createRequiredIsEmpty("currentApplicationId");
+        }
+
+        String currentUser = getAuthorName();
+
+        Application currentApp = applicationService.getApplicationById(clientAppBuyDto.getCurrentApplicationId());
+
+        if (!hasPermission(currentUser, currentApp)) {
+            //throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
+
+        if (!currentApp.getOperationType().isBuy()) {
+            throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
+        }
+
+        Application sellApp = applicationService.getApplicationById(clientAppBuyDto.getTargetApplicationId());
+
+        if (!sellApp.getOperationType().isSell()) {
+            throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
+        } else if (nonNull(sellApp.getDeposit())) {
+            throw BadRequestException.createTemplateException("error.deposit.exist");
+        } else {
+            /*List<ApplicationContract> appContracyKP = contractRepository.findByApplicationIdAndContractTypeId(sellApp.getId(), ContractType.KP);
+            if (nonNull(appContracyKP) && appContracyKP.size() > 0) {
+                throw BadRequestException.createTemplateException("error.contract.already.generated");
+            }*/
+        }
+
+        ProfileClientDto ClientDto = getClientDtobyLogin(currentUser);
+        UserInfoDto userInfoDto = getUserInfo(sellApp);
 
         ContractFormTemplateDto contractForm = keycloakService.getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.KP.name());
         if (isNull(contractForm.getCode())) {
@@ -267,13 +292,13 @@ public class ContractServiceImpl implements ContractService {
 
         ContractFormDto dto = new ContractFormDto();
         dto.setContractNumber(nextNumb);
-        dto.setContractSum(application.getApplicationSellData().getObjectPrice());
+        dto.setContractSum(sellApp.getApplicationSellData().getObjectPrice());
         dto.setContractTypeId(ContractType.KP);
 
-        String base64Sring = printContract(application, dto, ClientDto, userInfoDto, contractForm);
+        String base64Sring = printContract(sellApp, dto, ClientDto, userInfoDto, contractForm);
 
         if (nonNull(base64Sring)) {
-            saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
+            saveContract(dto, sellApp, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         }
         return base64Sring;
     }
@@ -574,9 +599,9 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectFloor":
                     if (application.getOperationType().isBuy()) {
-                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
+                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() + (nonNull(purchaseInfo.getFloorTo()) ? " - " + purchaseInfo.getFloorTo() : "")  : "");
                     } else {
-                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getFloor().toString() : "");
+                        pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getFloor()) ? realPropertyMetadata.getFloor().toString() : "");
                     }
                     break;
                 case "objectFloorTotal":
