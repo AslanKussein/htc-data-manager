@@ -538,7 +538,7 @@ public class ContractServiceImpl implements ContractService {
                     }
                     if (application.getOperationType().isSell()) {
                         if (nonNull(realPropertyMetadata.getSeparateBathroom())) {
-                            pars.put(par, realPropertyMetadata.getSeparateBathroom() ? tmplMsg("template.contract.bathroomtype.split", locale): tmplMsg("template.contract.bathroomtype.single", locale));
+                            pars.put(par, realPropertyMetadata.getSeparateBathroom() ? getTmplMsg("template.contract.bathroomtype.split", locale): getTmplMsg("template.contract.bathroomtype.single", locale));
                         } else {
                             pars.put(par, "");
                         }
@@ -567,7 +567,7 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectCollaterial":
                     if (nonNull(sellData)) {
-                        pars.put(par, sellData.getEncumbrance() ? tmplMsg("template.contract.yes", "ru") : tmplMsg("template.contract.no", "ru"));
+                        pars.put(par, sellData.getEncumbrance() ? getTmplMsg("template.contract.yes", "ru") : getTmplMsg("template.contract.no", "ru"));
                     } else {
                         pars.put(par, "");
                     }
@@ -624,7 +624,7 @@ public class ContractServiceImpl implements ContractService {
         return pars;
     }
 
-    private String tmplMsg (String name, String locale) {
+    private String getTmplMsg(String name, String locale) {
         return BundleMessageUtil.getMessage(name, new Locale(locale));
     }
 
