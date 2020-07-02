@@ -804,6 +804,7 @@ public class ContractServiceImpl implements ContractService {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMM");
 
         StringBuilder codeStr = new StringBuilder(formCode);
+        codeStr.append("-");
         codeStr.append(fmt.format(new Date()));
 
         DepositNumb dn = depositNumbRepository.findByCode(codeStr.toString()).orElse(null);
