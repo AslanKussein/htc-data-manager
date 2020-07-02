@@ -205,6 +205,8 @@ public class PurchaseInfo extends AGeneralCharacteristics {
                 this.totalAreaFrom = dto.getTotalAreaPeriod().getFrom();
                 this.totalAreaTo = dto.getTotalAreaPeriod().getTo();
             }
+            this.yearOfConstructionFrom = 0;
+            this.yearOfConstructionTo = 3000;
             this.separateBathroom = dto.getSeparateBathroom();
             this.atelier = dto.getAtelier();
         }
