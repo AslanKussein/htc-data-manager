@@ -15,4 +15,5 @@ public class ContractType extends BaseSystemDictionary {
     public static final Long STANDARD = 1L;
     public static final Long EXCLUSIVE = 2L;
     public static final Long SUPER_EXCLUSIVE = 3L;
+    public static final Long KP = 4L;
 }

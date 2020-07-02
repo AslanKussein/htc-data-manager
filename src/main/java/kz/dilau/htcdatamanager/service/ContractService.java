@@ -12,6 +12,8 @@ public interface ContractService {
 
     String generateDepositContract(DepositFormDto dto);
 
+    String generateClientAppContract(Long appId);
+
     Long missContract(ContractFormDto dto);
 
     Integer getCommission(Integer sum, Long objectTypeId);

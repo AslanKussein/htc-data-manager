@@ -20,6 +20,19 @@ public class ProfileClientDto {
     private String patronymic;
     @ApiModelProperty(value = "Имя")
     private String firstName;
+
+    @ApiModelProperty(value = "ИИН клиента")
+    private String iin;
+
+    @ApiModelProperty(value = "Организация выдавшая документ")
+    private String docOrg;
+    @ApiModelProperty(value = "№ документа")
+    private String docNumber;
+    @ApiModelProperty(value = "Дата документа")
+    private ZonedDateTime docDate;
+    @ApiModelProperty(value = "Адрес")
+    private String address;
+
     @ApiModelProperty(value = "День рождения")
     private ZonedDateTime birthDate;
     @ApiModelProperty(value = "Местонахождения")
