@@ -38,6 +38,8 @@ public class PurchaseInfoClientDto {
     private BigDecimalPeriod objectPricePeriod;
     @ApiModelProperty(value = "Количество комнат от и до")
     private IntegerPeriod numberOfRoomsPeriod;
+    @ApiModelProperty(value = "Количество комнат для  создания заявки из КП")
+    private Integer numberOfRooms;
     @ApiModelProperty(name = "totalAreaPeriod", value = "Общая площадь от и до")
     private BigDecimalPeriod totalAreaPeriod;
     @ApiModelProperty(name = "floorPeriod", value = "Этаж от и до")

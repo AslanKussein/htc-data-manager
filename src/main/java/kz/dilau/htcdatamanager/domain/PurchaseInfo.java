@@ -192,23 +192,23 @@ public class PurchaseInfo extends AGeneralCharacteristics {
             this.objectPriceTo = objectPrice.getTo();
         }
         if (nonNull(dto)) {
-            if (nonNull(dto.getNumberOfRoomsPeriod())) {
-                this.numberOfRoomsFrom = dto.getNumberOfRoomsPeriod().getFrom();
-                this.numberOfRoomsTo = dto.getNumberOfRoomsPeriod().getTo();
+            if (nonNull(dto.getNumberOfRooms())) {
+                this.numberOfRoomsFrom = dto.getNumberOfRooms();
+                this.numberOfRoomsTo = dto.getNumberOfRooms();
             }
             if (nonNull(dto.getFloorPeriod())) {
                 this.floorFrom = dto.getFloorPeriod().getFrom();
                 this.floorTo = dto.getFloorPeriod().getTo();
-            }
-            if (nonNull(dto.getFloorPeriod())) {
-                this.numberOfFloorsFrom = dto.getFloorPeriod().getFrom();
-                this.numberOfFloorsTo = dto.getFloorPeriod().getTo();
             }
 
             if (nonNull(dto.getTotalAreaPeriod())) {
                 this.totalAreaFrom = dto.getTotalAreaPeriod().getFrom();
                 this.totalAreaTo = dto.getTotalAreaPeriod().getTo();
             }
+            this.yearOfConstructionFrom = 0;
+            this.yearOfConstructionTo = 3000;
+            this.separateBathroom = dto.getSeparateBathroom();
+            this.atelier = dto.getAtelier();
         }
     }
 }
