@@ -15,7 +15,7 @@ import static java.util.Objects.nonNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "ContractFormDto", description = "Модель формы договора")
+@ApiModel(value = "ContractTempaleDto", description = "Модель формы договора")
 public class ContractTempaleDto {
 
     @ApiModelProperty(value = "Наимаенование")
