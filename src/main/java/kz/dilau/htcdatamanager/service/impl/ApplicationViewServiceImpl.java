@@ -5,7 +5,10 @@ import kz.dilau.htcdatamanager.repository.dictionary.*;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ApplicationViewService;
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
+import kz.dilau.htcdatamanager.web.rest.KazPostResource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -36,6 +39,7 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
     private final HouseConditionRepository houseConditionRepository;
     private final HeatingSystemRepository heatingSystemRepository;
     private final SewerageRepository sewerageRepository;
+    private final KazPostResource kazPostResource;
 
     @Override
     public ApplicationViewDTO getById(String token, Long id) {
@@ -163,6 +167,15 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
             if (nonNull(buildingDto.getResidentialComplexId())) {
                 Optional<ResidentialComplex> residentialComplex = residentialComplexRepository.findById(buildingDto.getResidentialComplexId());
                 residentialComplex.ifPresent(complex -> dto.residenceComplex(complex.getHouseName()));
+            }
+            if (nonNull(buildingDto.getPostcode())) {
+                ResponseEntity<KazPostDTO> address = kazPostResource.getPostData(buildingDto.getPostcode());
+                if (nonNull(address) && nonNull(address.getBody())) {
+                    MultiLangText text = new MultiLangText();
+                    text.setNameRu(address.getBody().getAddressRus());
+                    text.setNameKz(address.getBody().getAddressKaz());
+                    dto.fullAddress(text);
+                }
             }
         }
         dto.numberOfRooms(realProperty.getNumberOfRooms())
