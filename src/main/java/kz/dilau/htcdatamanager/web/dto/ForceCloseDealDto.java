@@ -17,4 +17,7 @@ public class ForceCloseDealDto {
 
     @ApiModelProperty(value = "Обоснование")
     private String comment;
+
+    @ApiModelProperty(value = "Признак успешного закрытия")
+    private boolean isApprove = false;
 }

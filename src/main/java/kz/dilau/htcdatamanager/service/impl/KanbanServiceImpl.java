@@ -9,6 +9,8 @@ import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
+import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.RequiredArgsConstructor;
@@ -88,7 +90,7 @@ public class KanbanServiceImpl implements KanbanService {
     @Override
     public Long forceCloseDeal(ForceCloseDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
+        ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, dto.isApprove() ? ApplicationStatus.APPROVAL_FOR_SUCCESS : ApplicationStatus.APPROVAL_FOR_FAILED);
         application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
                 .applicationStatus(applicationStatus)
                 .application(application)
@@ -104,7 +106,7 @@ public class KanbanServiceImpl implements KanbanService {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         ApplicationStatus applicationStatus;
         if (dto.getApprove()) {
-            applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FINISHED);
+            applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FAILED);
         } else {
             applicationStatus = getPrevStatus(application);
         }
@@ -176,6 +178,15 @@ public class KanbanServiceImpl implements KanbanService {
                     result.setNumberOfRooms(metadata.getNumberOfRooms());
                 }
             }
+        } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())) {
+            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+            MultiLangText text = DictionaryMappingTool.concatMultiLangWithMultiLang(DictionaryMappingTool.mapDictionaryToText(purchaseData.getCity()), DictionaryMappingTool.mapDictionaryToText(purchaseData.getDistrict()), ", ");
+            result.setAddress(text);
+            if (nonNull(purchaseData.getPurchaseInfo())) {
+                result.setObjectPricePeriod(new BigDecimalPeriod(purchaseData.getPurchaseInfo().getObjectPriceFrom(), purchaseData.getPurchaseInfo().getObjectPriceTo()));
+                result.setNumberOfRoomsPeriod(new IntegerPeriod(purchaseData.getPurchaseInfo().getNumberOfRoomsFrom(), purchaseData.getPurchaseInfo().getNumberOfRoomsTo()));
+            }
+
         }
         return result;
     }

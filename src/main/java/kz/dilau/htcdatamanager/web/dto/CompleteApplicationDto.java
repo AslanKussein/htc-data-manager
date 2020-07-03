@@ -2,7 +2,9 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
+import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.*;
 
@@ -35,6 +37,8 @@ public class CompleteApplicationDto {
     private String clientFullname;
     @ApiModelProperty(value = "Цена объекта(млн тг)")
     private BigDecimal objectPrice;
+    @ApiModelProperty(value = "Цена объекта(млн тг) ОТ и ДО")
+    private BigDecimalPeriod objectPricePeriod;
     @ApiModelProperty(value = "Адрес")
     private MultiLangText address;
     @ApiModelProperty(value = "Список ID фотографии")
@@ -45,6 +49,8 @@ public class CompleteApplicationDto {
     private Set<String> virtualTourImageIdList;
     @ApiModelProperty(value = "Количество комнат")
     private Integer numberOfRooms;
+    @ApiModelProperty(value = "Количество комнат ОТ и ДО")
+    private IntegerPeriod numberOfRoomsPeriod;
     @ApiModelProperty(value = "Статус заявки")
     private DictionaryMultilangItemDto status;
     @ApiModelProperty(value = "УРЛ договора")
