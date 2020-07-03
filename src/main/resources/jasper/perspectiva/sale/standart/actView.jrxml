@@ -1,225 +1,225 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="acts" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ecd136ea-cc18-4b4b-864f-84950a239165">
-    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-    <style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
-        <box>
-            <pen lineWidth="0.5" lineColor="#000000"/>
-            <topPen lineWidth="0.5" lineColor="#000000"/>
-            <leftPen lineWidth="0.5" lineColor="#000000"/>
-            <bottomPen lineWidth="0.5" lineColor="#000000"/>
-            <rightPen lineWidth="0.5" lineColor="#000000"/>
-        </box>
-    </style>
-    <style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
-        <box>
-            <pen lineWidth="0.5" lineColor="#000000"/>
-            <topPen lineWidth="0.5" lineColor="#000000"/>
-            <leftPen lineWidth="0.5" lineColor="#000000"/>
-            <bottomPen lineWidth="0.5" lineColor="#000000"/>
-            <rightPen lineWidth="0.5" lineColor="#000000"/>
-        </box>
-    </style>
-    <style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
-        <box>
-            <pen lineWidth="0.5" lineColor="#000000"/>
-            <topPen lineWidth="0.5" lineColor="#000000"/>
-            <leftPen lineWidth="0.5" lineColor="#000000"/>
-            <bottomPen lineWidth="0.5" lineColor="#000000"/>
-            <rightPen lineWidth="0.5" lineColor="#000000"/>
-        </box>
-    </style>
-    <subDataset name="MyDataSet" uuid="9f0cd1ee-5b04-4a8f-be07-64c1533559f6">
-        <queryString>
-            <![CDATA[]]>
-        </queryString>
-        <field name="fDate" class="java.lang.String"/>
-        <field name="fNum" class="java.lang.String"/>
-        <field name="fSellerFullnameAndAddress" class="java.lang.String"/>
-    </subDataset>
-    <parameter name="docNumb" class="java.lang.String"/>
-    <parameter name="CollectionPerspectivaBuyActView" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
-    <parameter name="docDate" class="java.lang.String"/>
-    <parameter name="agentFullname" class="java.lang.String"/>
-    <parameter name="footerImage" class="java.io.InputStream"/>
-    <queryString>
-        <![CDATA[]]>
-    </queryString>
-    <background>
-        <band splitType="Stretch"/>
-    </background>
-    <detail>
-        <band height="802" splitType="Stretch">
-            <componentElement>
-                <reportElement x="0" y="230" width="550" height="480" uuid="40438c6f-c510-446a-874d-a508812971d0">
-                    <property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-                    <property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
-                    <property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
-                    <property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
-                </reportElement>
-                <jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-                    <datasetRun subDataset="MyDataSet" uuid="45371799-3919-41c3-a7d9-2193cc00982c">
-                        <dataSourceExpression><![CDATA[$P{CollectionPerspectivaBuyActView}]]></dataSourceExpression>
-                    </datasetRun>
-                    <jr:column width="20" uuid="a2036619-98c6-4958-85dd-86a007b68b4c">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-                        <jr:columnHeader style="Table_CH" height="70" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="20" height="70" uuid="91718777-0b25-4918-92ef-2b569ab88ec6"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA["№"]]></textFieldExpression>
-                            </textField>
-                        </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="20" height="30" uuid="82801670-ad87-481d-aebc-b9a53b09cc6a"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA[$F{fNum}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
-                    </jr:column>
-                    <jr:column width="60" uuid="4da97d26-5894-4365-a44e-237b3ede467f">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-                        <jr:columnHeader style="Table_CH" height="70" rowSpan="1">
-                            <staticText>
-                                <reportElement x="0" y="0" width="60" height="70" uuid="238bf08f-9a80-4214-ba60-6bb0c70ee72d"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                                </textElement>
-                                <text><![CDATA[Дата/ Күні]]></text>
-                            </staticText>
-                        </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="60" height="30" uuid="37b24b55-aadb-461d-bfee-0c0486c749f1"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA[$F{fDate}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
-                    </jr:column>
-                    <jr:column width="190" uuid="a45184f5-11cd-4f09-b1c1-70bffd6afef3">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-                        <jr:columnHeader style="Table_CH" height="70" rowSpan="1">
-                            <staticText>
-                                <reportElement x="0" y="0" width="190" height="70" uuid="46848d16-9abe-4327-a0cd-f6b29805491e"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                                </textElement>
-                                <text><![CDATA[Ф.И.О. Потенциального покупателя/ адрес объекта Әлеуетті сатып алушының Т.А.Ә.]]></text>
-                            </staticText>
-                        </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30">
-                            <textField>
-                                <reportElement x="0" y="0" width="190" height="30" uuid="86f1e1f3-5006-4c2e-b5e8-7b427a9d3279"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA[$F{fSellerFullnameAndAddress}]]></textFieldExpression>
-                            </textField>
-                        </jr:detailCell>
-                    </jr:column>
-                    <jr:column width="100" uuid="367e78de-984a-42e2-884f-689b03951715">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
-                        <jr:columnHeader style="Table_CH" height="70" rowSpan="1">
-                            <staticText>
-                                <reportElement x="0" y="0" width="100" height="70" uuid="6d7477ec-1468-40ee-b184-5a5002d83fa7"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                                </textElement>
-                                <text><![CDATA[ИИН
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="MyDataSet" uuid="9f0cd1ee-5b04-4a8f-be07-64c1533559f6">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="fDate" class="java.lang.String"/>
+		<field name="fNum" class="java.lang.String"/>
+		<field name="fFullname" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="docNumb" class="java.lang.String"/>
+	<parameter name="CollectionPerspectivaBuyActView" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="docDate" class="java.lang.String"/>
+	<parameter name="agentFullname" class="java.lang.String"/>
+	<parameter name="footerImage" class="java.io.InputStream"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<componentElement>
+				<reportElement x="0" y="230" width="550" height="480" uuid="40438c6f-c510-446a-874d-a508812971d0">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="MyDataSet" uuid="45371799-3919-41c3-a7d9-2193cc00982c">
+						<dataSourceExpression><![CDATA[$P{CollectionPerspectivaBuyActView}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="20" uuid="a2036619-98c6-4958-85dd-86a007b68b4c">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:columnHeader style="Table_CH" height="70" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="20" height="70" uuid="91718777-0b25-4918-92ef-2b569ab88ec6"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA["№"]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="20" height="30" uuid="82801670-ad87-481d-aebc-b9a53b09cc6a"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fNum}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="4da97d26-5894-4365-a44e-237b3ede467f">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:columnHeader style="Table_CH" height="70" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="70" uuid="238bf08f-9a80-4214-ba60-6bb0c70ee72d"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Дата/ Күні]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="30" uuid="37b24b55-aadb-461d-bfee-0c0486c749f1"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fDate}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="190" uuid="a45184f5-11cd-4f09-b1c1-70bffd6afef3">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:columnHeader style="Table_CH" height="70" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="190" height="70" uuid="46848d16-9abe-4327-a0cd-f6b29805491e"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Ф.И.О. Потенциального покупателя/ адрес объекта Әлеуетті сатып алушының Т.А.Ә.]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="190" height="30" uuid="86f1e1f3-5006-4c2e-b5e8-7b427a9d3279"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{fFullname}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="100" uuid="367e78de-984a-42e2-884f-689b03951715">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+						<jr:columnHeader style="Table_CH" height="70" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="70" uuid="6d7477ec-1468-40ee-b184-5a5002d83fa7"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[ИИН
 Потенциального Покупателя/ Әлеуетті Сатып Алушының ЖСН ]]></text>
-                            </staticText>
-                        </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30"/>
-                    </jr:column>
-                    <jr:column width="100" uuid="b70a817f-e27d-437b-a4e8-2d71b2cf0ac9">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
-                        <jr:columnHeader style="Table_CH" height="70" rowSpan="1">
-                            <staticText>
-                                <reportElement x="0" y="0" width="100" height="70" uuid="d387f719-4fcd-4424-a5a4-bc492d430d4e"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                                </textElement>
-                                <text><![CDATA[Подпись
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30"/>
+					</jr:column>
+					<jr:column width="100" uuid="b70a817f-e27d-437b-a4e8-2d71b2cf0ac9">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+						<jr:columnHeader style="Table_CH" height="70" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="100" height="70" uuid="d387f719-4fcd-4424-a5a4-bc492d430d4e"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12" isBold="true"/>
+								</textElement>
+								<text><![CDATA[Подпись
 потенциального Покупателя/
 Әлеуетті сатып алушының қолы ]]></text>
-                            </staticText>
-                        </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30"/>
-                    </jr:column>
-                    <jr:column width="80" uuid="a7663058-a557-46b7-a0c0-f338aedd6c2e">
-                        <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
-                        <jr:columnHeader style="Table_CH" height="70" rowSpan="1">
-                            <textField>
-                                <reportElement x="0" y="0" width="80" height="70" uuid="be5bf177-a5aa-46e1-a70e-237586e6c591"/>
-                                <textElement textAlignment="Center">
-                                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                                </textElement>
-                                <textFieldExpression><![CDATA["Подпись Заказчика (Продавца)/  Тапсырыс берушінің (Сатушының) қолы"]]></textFieldExpression>
-                            </textField>
-                        </jr:columnHeader>
-                        <jr:detailCell style="Table_TD" height="30"/>
-                    </jr:column>
-                </jr:table>
-            </componentElement>
-            <textField>
-                <reportElement x="170" y="0" width="382" height="130" uuid="10262ac0-9f73-498d-bea4-80e5221eda34"/>
-                <textElement textAlignment="Right" markup="html">
-                    <font fontName="Times New Roman" size="14"/>
-                </textElement>
-                <textFieldExpression><![CDATA["<b>Приложение№1/№1Қосымша </b><br/>к договору №<u><i><b>" +($P{docNumb})+"</b></i></u><br/> на оказании услуг<br/> по поиску покупателей на объект недвижимости <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г.<br/>№<u><i><b>"+($P{docNumb})+"</b></i></u> шартқа жылжымайтын мүлік объектісін сатып алушыға қызмет көрсетуге <u><i><b>"+($P{docDate})+"</b></i></u> ж."]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="209" y="130" width="151" height="100" uuid="258b611a-1e20-4179-a485-d2c31731d972"/>
-                <textElement textAlignment="Center">
-                    <font fontName="Times New Roman" size="14" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA["АКТ ПРОСМОТРА Объекта недвижимости/ Жылжымайтын мүлік объектісінің ҚАРАУ АКТІСІ"]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="2" y="710" width="278" height="40" uuid="b6faf909-141f-4681-b33b-61d8ab34dff4"/>
-                <textElement markup="html">
-                    <font fontName="Times New Roman" size="14" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Исполниетль/Орындаушы: <br/> _____________________"]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="30" y="740" width="100" height="30" uuid="0c52413f-ffb2-40cb-97ed-efd7a5e53945"/>
-                <textElement>
-                    <font fontName="Times New Roman" size="14"/>
-                </textElement>
-                <textFieldExpression><![CDATA["подпись/Қолы"]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement style="Table_TD" x="281" y="710" width="264" height="30" uuid="15bfbbe6-d8e2-495c-9cbb-214672fb1482"/>
-                <box>
-                    <topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-                    <leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-                    <bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-                    <rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-                </box>
-                <textElement markup="html">
-                    <font fontName="Times New Roman" size="14" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA["<u>" +($P{agentFullname}) +"</u>"]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="0" y="780" width="270" height="21" uuid="fa17313c-3bf1-4db0-b048-36f0ff5c7c43"/>
-                <textElement>
-                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Подпись Заказчика:____________________"]]></textFieldExpression>
-            </textField>
-            <image>
-                <reportElement x="449" y="780" width="115" height="22" uuid="65c04e82-1ca9-4ff8-b4aa-1ffa27668518"/>
-                <imageExpression><![CDATA[$P{footerImage}]]></imageExpression>
-            </image>
-        </band>
-    </detail>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30"/>
+					</jr:column>
+					<jr:column width="80" uuid="a7663058-a557-46b7-a0c0-f338aedd6c2e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+						<jr:columnHeader style="Table_CH" height="70" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="80" height="70" uuid="be5bf177-a5aa-46e1-a70e-237586e6c591"/>
+								<textElement textAlignment="Center">
+									<font fontName="Times New Roman" size="12" isBold="true"/>
+								</textElement>
+								<textFieldExpression><![CDATA["Подпись Заказчика (Продавца)/  Тапсырыс берушінің (Сатушының) қолы"]]></textFieldExpression>
+							</textField>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30"/>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<textField>
+				<reportElement x="170" y="0" width="382" height="130" uuid="10262ac0-9f73-498d-bea4-80e5221eda34"/>
+				<textElement textAlignment="Right" markup="html">
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>Приложение№1/№1Қосымша </b><br/>к договору №<u><i><b>" +($P{docNumb})+"</b></i></u><br/> на оказании услуг<br/> по поиску покупателей на объект недвижимости <br> от <u><i><b>" +($P{docDate}) +"</b></i></u> г.<br/>№<u><i><b>"+($P{docNumb})+"</b></i></u> шартқа жылжымайтын мүлік объектісін сатып алушыға қызмет көрсетуге <u><i><b>"+($P{docDate})+"</b></i></u> ж."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="209" y="130" width="151" height="100" uuid="258b611a-1e20-4179-a485-d2c31731d972"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["АКТ ПРОСМОТРА Объекта недвижимости/ Жылжымайтын мүлік объектісінің ҚАРАУ АКТІСІ"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="2" y="710" width="278" height="40" uuid="b6faf909-141f-4681-b33b-61d8ab34dff4"/>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Исполниетль/Орындаушы: <br/> _____________________"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="740" width="100" height="30" uuid="0c52413f-ffb2-40cb-97ed-efd7a5e53945"/>
+				<textElement>
+					<font fontName="Times New Roman" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["подпись/Қолы"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="Table_TD" x="281" y="710" width="264" height="30" uuid="15bfbbe6-d8e2-495c-9cbb-214672fb1482"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement markup="html">
+					<font fontName="Times New Roman" size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<u>" +($P{agentFullname}) +"</u>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="780" width="270" height="21" uuid="fa17313c-3bf1-4db0-b048-36f0ff5c7c43"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Подпись Заказчика:____________________"]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="449" y="780" width="115" height="22" uuid="65c04e82-1ca9-4ff8-b4aa-1ffa27668518"/>
+				<imageExpression><![CDATA[$P{footerImage}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
 </jasperReport>
