@@ -11,6 +11,7 @@ import kz.dilau.htcdatamanager.repository.ApplicationDepositRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.DepositNumbRepository;
 import kz.dilau.htcdatamanager.service.*;
+import kz.dilau.htcdatamanager.util.BundleMessageUtil;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
@@ -33,6 +34,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static java.util.Objects.isNull;
@@ -43,6 +46,7 @@ import static java.util.Objects.nonNull;
 @Service
 public class ContractServiceImpl implements ContractService {
     private static final SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
+    private static final DateTimeFormatter dtfDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private final ApplicationContractRepository contractRepository;
     private final ApplicationDepositRepository depositRepository;
@@ -108,6 +112,17 @@ public class ContractServiceImpl implements ContractService {
             saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         }
         return result;
+    }
+
+    private ProfileClientDto getClientDtobyLogin(String clientLogin) {
+        List<String> userLogin = new ArrayList<>();
+        userLogin.add(clientLogin);
+
+        List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
+        if (profileClientDtoList.isEmpty()) {
+            throw BadRequestException.createTemplateException("error.application.contract");
+        }
+        return profileClientDtoList.get(0);
     }
 
     private ProfileClientDto getClientDto(Application application) {
@@ -192,7 +207,7 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
-        String nextNumb = getContractAvansNextNumb(contractForm.getCode());
+        String nextNumb = getContractNextNumb(contractForm.getCode());
 
         result = printContractAvans(nextNumb, dto, buyerDto, sellerDto, application, sellApplication, userInfoDto, contractForm);
 
@@ -229,6 +244,63 @@ public class ContractServiceImpl implements ContractService {
             }
         }
         return result;
+    }
+
+    @Override
+    public String generateClientAppContract(ClientAppBuyDto clientAppBuyDto) {
+        if (isNull(clientAppBuyDto.getTargetApplicationId())) {
+            throw BadRequestException.createRequiredIsEmpty("targetApplicationId");
+        }
+
+        if (isNull(clientAppBuyDto.getCurrentApplicationId())) {
+            throw BadRequestException.createRequiredIsEmpty("currentApplicationId");
+        }
+
+        String currentUser = getAuthorName();
+
+        Application currentApp = applicationService.getApplicationById(clientAppBuyDto.getCurrentApplicationId());
+
+        if (!hasPermission(currentUser, currentApp)) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
+
+        if (!currentApp.getOperationType().isBuy()) {
+            throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
+        }
+
+        Application sellApp = applicationService.getApplicationById(clientAppBuyDto.getTargetApplicationId());
+
+        if (!sellApp.getOperationType().isSell()) {
+            throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
+        } else if (nonNull(sellApp.getDeposit())) {
+            throw BadRequestException.createTemplateException("error.deposit.exist");
+        } else {
+            /*List<ApplicationContract> appContracyKP = contractRepository.findByApplicationIdAndContractTypeId(sellApp.getId(), ContractType.KP);
+            if (nonNull(appContracyKP) && appContracyKP.size() > 0) {
+                throw BadRequestException.createTemplateException("error.contract.already.generated");
+            }*/
+        }
+
+        ProfileClientDto ClientDto = getClientDtobyLogin(currentUser);
+        UserInfoDto userInfoDto = getUserInfo(sellApp);
+
+        ContractFormTemplateDto contractForm = keycloakService.getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.KP.name());
+        if (isNull(contractForm.getCode())) {
+            throw BadRequestException.createTemplateException("error.contract.type.not.defined");
+        }
+        String nextNumb = getContractNextNumb(contractForm.getCode());
+
+        ContractFormDto dto = new ContractFormDto();
+        dto.setContractNumber(nextNumb);
+        dto.setContractSum(sellApp.getApplicationSellData().getObjectPrice());
+        dto.setContractTypeId(ContractType.KP);
+
+        String base64Sring = printContract(sellApp, dto, ClientDto, userInfoDto, contractForm);
+
+        if (nonNull(base64Sring)) {
+            saveContract(dto, sellApp, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
+        }
+        return base64Sring;
     }
 
     private String printContractAvans(String nextNumb,
@@ -336,7 +408,11 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getContractNumber() : "");
                     break;
                 case "contractDate":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? sdfDate.format(appBuy.getContract().getPrintDate()) : "");
+                    if (nonNull(appBuy) && nonNull(appBuy.getContract())) {
+                        pars.put(par, dtfDate.format(appBuy.getContract().getCreatedDate()));
+                    } else {
+                        pars.put(par, "");
+                    }
                     break;
                 case "comissionAmount":
                     pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getCommission().toString() : "");
@@ -381,7 +457,8 @@ public class ContractServiceImpl implements ContractService {
         return pars;
     }
 
-    private Map<String, Object> getBindPars(ContractTempaleDto tpl,
+    private Map<String, Object> getBindPars(
+                                            ContractTempaleDto tpl,
                                             ApplicationPurchaseData purchaseData,
                                             ApplicationSellData sellData,
                                             ProfileClientDto clientDto,
@@ -437,6 +514,24 @@ public class ContractServiceImpl implements ContractService {
                 case "clientMobilePhone":
                     pars.put(par, clientDto.getPhoneNumber());
                     break;
+                case "clientDocOrg":
+                    pars.put(par, nonNull(clientDto.getDocOrg()) ? clientDto.getDocOrg() : "");
+                    break;
+                case "clientDocDate":
+                    pars.put(par, nonNull(clientDto.getDocDate()) ? dtfDate.format(clientDto.getDocDate()) : "");
+                    break;
+                case "clientAddress":
+                    pars.put(par, nonNull(clientDto.getDocDate()) ? clientDto.getAddress() : "");
+                    break;
+                case "clientDocNumb":
+                    pars.put(par, nonNull(clientDto.getDocNumber()) ? clientDto.getDocNumber() : "");
+                    break;
+                case "clientEmail":
+                    pars.put(par, nonNull(clientDto.getEmail()) ? clientDto.getEmail() : "");
+                    break;
+                case "clientIIN":
+                    pars.put(par, nonNull(clientDto.getIin()) ? clientDto.getIin() : "");
+                    break;
                 case "agentFullname":
                     pars.put(par, userInfoDto.getFullname());
                     break;
@@ -456,15 +551,19 @@ public class ContractServiceImpl implements ContractService {
                     if (application.getOperationType().isBuy()) {
                         pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
                     } else {
-                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms() : "");
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms().toString() : "");
                     }
                     break;
                 case "objectBathroomType":
                 case "objectBathroomTypeRU":
                 case "objectBathroomTypeKZ":
+                    String locale = "ru";
+                    if (par.equals("objectBathroomTypeKZ")) {
+                        locale = "kz";
+                    }
                     if (application.getOperationType().isSell()) {
                         if (nonNull(realPropertyMetadata.getSeparateBathroom())) {
-                            pars.put(par, realPropertyMetadata.getSeparateBathroom() ? "Раздельный" : "совмещенный");
+                            pars.put(par, realPropertyMetadata.getSeparateBathroom() ? getTmplMsg("template.contract.bathroomtype.split", locale): getTmplMsg("template.contract.bathroomtype.single", locale));
                         } else {
                             pars.put(par, "");
                         }
@@ -476,14 +575,14 @@ public class ContractServiceImpl implements ContractService {
                     if (application.getOperationType().isBuy()) {
                         pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getTotalAreaFrom() + " - " + purchaseInfo.getTotalAreaTo() : "");
                     } else {
-                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getTotalArea() : "");
+                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getTotalArea().toString() : "");
                     }
                     break;
                 case "objectKitchenArea":
-                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea().toString() : "");
                     break;
                 case "objectLivingArea":
-                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea().toString() : "");
                     break;
                 case "objectReadyYear":
                     pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
@@ -493,31 +592,40 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectCollaterial":
                     if (nonNull(sellData)) {
-                        pars.put(par, sellData.getEncumbrance() ? "Да" : "Нет");
+                        pars.put(par, sellData.getEncumbrance() ? getTmplMsg("template.contract.yes", "ru") : getTmplMsg("template.contract.no", "ru"));
                     } else {
                         pars.put(par, "");
                     }
                     break;
                 case "objectFloor":
                     if (application.getOperationType().isBuy()) {
-                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
+                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() + (nonNull(purchaseInfo.getFloorTo()) ? " - " + purchaseInfo.getFloorTo() : "")  : "");
                     } else {
-                        pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getFloor() : "");
+                        pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getFloor()) ? realPropertyMetadata.getFloor().toString() : "");
                     }
                     break;
                 case "objectFloorTotal":
-                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors() : "");
+                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors().toString() : "");
                     break;
                 case "contractSum":
-                case "objectPrice":
                     pars.put(par, nonNull(dto.getContractSum()) ? dto.getContractSum().toString() : "");
+                    break;
+                case "objectPrice":
+                    if (nonNull(purchaseInfo)) {
+                        pars.put(par, nonNull(purchaseInfo)  ? purchaseInfo.getObjectPriceFrom() + " - " + purchaseInfo.getObjectPriceTo() : "");
+                    } else {
+                        pars.put(par, nonNull(sellData) ? sellData.getObjectPrice().toString() : "");
+                    }
+                    break;
+                case "objectPrice3Prc":
+                    pars.put(par, nonNull(sellData) ? String.valueOf(sellData.getObjectPrice().floatValue() * 0.03): "");
                     break;
                 case "objectMaxPrice":
                     pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getObjectPriceTo().toString() : "");
                     break;
                 case "docNumb":
                 case "contractNumber":
-                    pars.put(par, dto.getContractNumber());
+                    pars.put(par, nonNull(dto) ? dto.getContractNumber() : "");
                     break;
                 case "CollectionBeanParam":
                 case "CollectionPerspectivaBuyActView":
@@ -539,6 +647,10 @@ public class ContractServiceImpl implements ContractService {
             }
         }
         return pars;
+    }
+
+    private String getTmplMsg(String name, String locale) {
+        return BundleMessageUtil.getMessage(name, new Locale(locale));
     }
 
     private String printContract(Application application,
@@ -577,7 +689,8 @@ public class ContractServiceImpl implements ContractService {
                     }
 
                     if (nonNull(tpl.getParList())) {
-                        Map<String, Object> pars = getBindPars(tpl,
+                        Map<String, Object> pars = getBindPars(
+                                tpl,
                                 purchaseData,
                                 sellData,
                                 clientDto,
@@ -684,13 +797,14 @@ public class ContractServiceImpl implements ContractService {
         return result.intValue();
     }
 
-    private String getContractAvansNextNumb(String formCode) {
+    private String getContractNextNumb(String formCode) {
         if (isNull(formCode)) {
             throw BadRequestException.createTemplateException("error.contract.form.not.found");
         }
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMM");
 
         StringBuilder codeStr = new StringBuilder(formCode);
+        codeStr.append("-");
         codeStr.append(fmt.format(new Date()));
 
         DepositNumb dn = depositNumbRepository.findByCode(codeStr.toString()).orElse(null);
@@ -722,6 +836,7 @@ public class ContractServiceImpl implements ContractService {
         contract.setContractSum(dto.getContractSum());
         contract.setContractPeriod(dto.getContractPeriod());
         contract.setContractNumber(dto.getContractNumber());
+        contract.setPrintDate(ZonedDateTime.now());
         contract.setContractStatus(status);
         contract.setContractType(entityService.mapEntity(ContractType.class, dto.getContractTypeId()));
         boolean hasStatus = false;
