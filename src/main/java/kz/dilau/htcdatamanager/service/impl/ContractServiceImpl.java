@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import com.google.common.io.ByteSource;
 import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
@@ -90,11 +91,10 @@ public class ContractServiceImpl implements ContractService {
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
-        String result;
+        byte[] result;
 
         if (application.getOperationType().isBuy()) {
             contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
-            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
         } else if (nonNull(dto.getContractTypeId())) {
             if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
                 contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
@@ -103,10 +103,13 @@ public class ContractServiceImpl implements ContractService {
             } else {
                 throw BadRequestException.createTemplateException("error.contract.form.not.found");
             }
-            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+
         } else {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
+
+
+        result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
         if (nonNull(result)) {
             saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
@@ -295,75 +298,72 @@ public class ContractServiceImpl implements ContractService {
         dto.setContractSum(sellApp.getApplicationSellData().getObjectPrice());
         dto.setContractTypeId(ContractType.KP);
 
-        String base64Sring = printContract(sellApp, dto, ClientDto, userInfoDto, contractForm);
+        byte[] baos;
 
-        if (nonNull(base64Sring)) {
-            saveContract(dto, sellApp, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
+        try {
+            baos = printContract(sellApp, dto, ClientDto, userInfoDto, contractForm);
+            keycloakService.uploadFile(ByteSource.wrap(baos).openStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw BadRequestException.createTemplateException("error.contract.forming");
         }
-        return base64Sring;
+
+        return Base64.encodeBase64String(baos);
     }
 
-    private String printContractAvans(String nextNumb,
+    private byte[] printContractAvans(String nextNumb,
                                       DepositFormDto formDto,
                                       ProfileClientDto buyerDto,
                                       ProfileClientDto sellerDto,
                                       Application appBuy,
                                       Application appSell,
                                       UserInfoDto userInfo,
-                                      ContractFormTemplateDto contractForm) {
+                                      ContractFormTemplateDto contractForm)  throws Exception {
+        InputStream logoImage = null;
+        InputStream footerImage = null;
+        List<JasperPrint> jasperPrintList = new ArrayList<>();
 
-        try {
-            InputStream logoImage = null;
-            InputStream footerImage = null;
-            List<JasperPrint> jasperPrintList = new ArrayList<>();
+        List<ContractTempaleDto> templateList = contractForm.getTemplateList();
+        ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
+        ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
-            List<ContractTempaleDto> templateList = contractForm.getTemplateList();
-            ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
-            ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
-
-            if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
-                logoImage = getLogo(logoPath.getTemplate());
-            }
-            if (nonNull(logoFooterPath) && nonNull(logoFooterPath.getTemplate())) {
-                footerImage = getLogo(logoFooterPath.getTemplate());
-            }
-
-            if (!templateList.isEmpty() && templateList.size() > 0) {
-                for (ContractTempaleDto tpl : templateList) {
-                    if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
-                        continue;
-                    }
-
-                    if (nonNull(tpl.getParList())) {
-                        Map<String, Object> pars = getBindParAvans(nextNumb,
-                                tpl,
-                                formDto,
-                                buyerDto,
-                                sellerDto,
-                                appBuy,
-                                appSell,
-                                userInfo,
-                                logoImage,
-                                footerImage
-                        );
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    } else {
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    }
-                }
-                return getPages(jasperPrintList);
-            } else {
-                return "empty";
-            }
-
-        } catch (Exception e) {
-            //e.printStackTrace();
-            return e.getMessage();
+        if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
+            logoImage = getLogo(logoPath.getTemplate());
         }
+        if (nonNull(logoFooterPath) && nonNull(logoFooterPath.getTemplate())) {
+            footerImage = getLogo(logoFooterPath.getTemplate());
+        }
+
+        if (templateList.isEmpty() || templateList.size() ==0) {
+            throw BadRequestException.createTemplateException("error.application.contract");
+        }
+        for (ContractTempaleDto tpl : templateList) {
+            if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
+                continue;
+            }
+
+            if (nonNull(tpl.getParList())) {
+                Map<String, Object> pars = getBindParAvans(nextNumb,
+                        tpl,
+                        formDto,
+                        buyerDto,
+                        sellerDto,
+                        appBuy,
+                        appSell,
+                        userInfo,
+                        logoImage,
+                        footerImage
+                );
+                JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
+                jasperPrintList.add(jp);
+            } else {
+                JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
+                jasperPrintList.add(jp);
+            }
+        }
+        return getPages(jasperPrintList);
     }
 
     private Map<String, Object> getBindParAvans (String nextNumb,
@@ -653,71 +653,64 @@ public class ContractServiceImpl implements ContractService {
         return BundleMessageUtil.getMessage(name, new Locale(locale));
     }
 
-    private String printContract(Application application,
+    private byte[] printContract(Application application,
                                  ContractFormDto dto,
                                  ProfileClientDto clientDto,
                                  UserInfoDto userInfoDto,
-                                 ContractFormTemplateDto contractForm) {
-        try {
-            if (application.getOperationType().isSell() && isNull(application.getApplicationSellData()) ||
-                    application.getOperationType().isBuy() && isNull(application.getApplicationPurchaseData())) {
-                throw BadRequestException.createTemplateException("error.application.contract");
-            }
-
-            ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
-            ApplicationSellData sellData = application.getApplicationSellData();
-            List<ContractTempaleDto> templateList = contractForm.getTemplateList();
-
-            InputStream logoImage = null;
-            InputStream footerImage = null;
-            List<JasperPrint> jasperPrintList = new ArrayList<>();
-
-            ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
-            ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
-
-            if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
-                logoImage = getLogo(logoPath.getTemplate());
-            }
-            if (nonNull(logoFooterPath) && nonNull(logoFooterPath.getTemplate())) {
-                footerImage = getLogo(logoFooterPath.getTemplate());
-            }
-
-            if (!templateList.isEmpty() && templateList.size() > 0) {
-                for (ContractTempaleDto tpl : templateList) {
-                    if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
-                        continue;
-                    }
-
-                    if (nonNull(tpl.getParList())) {
-                        Map<String, Object> pars = getBindPars(
-                                tpl,
-                                purchaseData,
-                                sellData,
-                                clientDto,
-                                userInfoDto,
-                                application,
-                                dto,
-                                logoImage,
-                                footerImage
-                        );
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    } else {
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    }
-                }
-                return getPages(jasperPrintList);
-            } else {
-                return "empty";
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return e.getMessage();
+                                 ContractFormTemplateDto contractForm) throws Exception {
+        if (application.getOperationType().isSell() && isNull(application.getApplicationSellData()) ||
+                application.getOperationType().isBuy() && isNull(application.getApplicationPurchaseData())) {
+            throw BadRequestException.createTemplateException("error.application.contract");
         }
+
+        ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
+        ApplicationSellData sellData = application.getApplicationSellData();
+        List<ContractTempaleDto> templateList = contractForm.getTemplateList();
+
+        InputStream logoImage = null;
+        InputStream footerImage = null;
+        List<JasperPrint> jasperPrintList = new ArrayList<>();
+
+        ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
+        ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
+
+        if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
+            logoImage = getLogo(logoPath.getTemplate());
+        }
+        if (nonNull(logoFooterPath) && nonNull(logoFooterPath.getTemplate())) {
+            footerImage = getLogo(logoFooterPath.getTemplate());
+        }
+
+        if (templateList.isEmpty()) {
+            throw BadRequestException.createTemplateException("error.application.contract");
+        }
+        for (ContractTempaleDto tpl : templateList) {
+            if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
+                continue;
+            }
+
+            if (nonNull(tpl.getParList())) {
+                Map<String, Object> pars = getBindPars(
+                        tpl,
+                        purchaseData,
+                        sellData,
+                        clientDto,
+                        userInfoDto,
+                        application,
+                        dto,
+                        logoImage,
+                        footerImage
+                );
+                JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
+                jasperPrintList.add(jp);
+            } else {
+                JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
+                jasperPrintList.add(jp);
+            }
+        }
+        return getPages(jasperPrintList);
     }
 
     private ContractTempaleDto getTemplateByName(String name, List<ContractTempaleDto> templateList) {
@@ -735,7 +728,7 @@ public class ContractServiceImpl implements ContractService {
         return new ByteArrayInputStream(tpl.getTemplate().getBytes(StandardCharsets.UTF_8));
     }
 
-    private String getPages(List<JasperPrint> jasperPrintList) throws Exception {
+    private byte[] getPages(List<JasperPrint> jasperPrintList) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         JRPdfExporter exporter = new JRPdfExporter();
         //Add the list as a Parameter
@@ -744,7 +737,7 @@ public class ContractServiceImpl implements ContractService {
         exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
         exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
         exporter.exportReport();
-        return Base64.encodeBase64String(baos.toByteArray());
+        return baos.toByteArray();//Base64.encodeBase64String(baos.toByteArray());
     }
 
     @Override

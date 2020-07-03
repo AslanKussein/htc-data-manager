@@ -3,6 +3,7 @@ package kz.dilau.htcdatamanager.service;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -20,4 +21,6 @@ public interface KeycloakService {
     List<ProfileClientDto> readClientInfoByLogins(List<String> logins);
 
     ContractFormTemplateDto getContractForm(Long id, String contractType);
+
+    FileInfoDto uploadFile(InputStream pFile);
 }

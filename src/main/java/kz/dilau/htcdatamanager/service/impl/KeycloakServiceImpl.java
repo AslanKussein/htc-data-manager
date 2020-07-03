@@ -19,6 +19,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.File;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +49,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String PROFILE_CLIENT_REST_ENDPOINT = "/api/profile-client";
     private static final String CLIENTS_BY_LOGINS = "/getList";
     private static final String GET_CONTRACT_FORM = "/api/organizations/getContractForm";
+    private static final String UPLOAD_FILE = "/api/upload";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -232,6 +235,26 @@ public class KeycloakServiceImpl implements KeycloakService {
         );
 
         return response.getBody();
+    }
+
+    @Override
+    public FileInfoDto uploadFile(InputStream pFile) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getUserManagerToken());
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        String url = dataProperties.getKeycloakFileManagerUrl() + UPLOAD_FILE;
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        RestTemplate restTemplate = new RestTemplate();
+
+        LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("file", pFile);
+
+        HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+        FileInfoDto response = restTemplate.postForObject(uriBuilder.toUriString(), requestEntity, FileInfoDto.class);
+
+        return response;
+
     }
 
     @Override
