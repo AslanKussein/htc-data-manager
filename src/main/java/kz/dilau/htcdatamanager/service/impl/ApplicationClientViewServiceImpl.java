@@ -10,6 +10,7 @@ import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.NotesService;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
+import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientViewDto;
 import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientViewDto;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class ApplicationClientViewServiceImpl implements ApplicationClientViewSe
         dto.setClientLogin(application.getClientLogin());
         dto.setAgent(application.getCurrentAgent());
         dto.setId(application.getId());
+        dto.setContractDto(new ContractFormDto(application.getContract()));
         if (application.getApplicationSellData() != null) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
             RealPropertyClientViewDto realPropertyDto = new RealPropertyClientViewDto(realProperty);
