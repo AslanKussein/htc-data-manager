@@ -22,6 +22,8 @@ public class ApplicationClientViewDto {
     @ApiModelProperty(value = "ID типа объекта", required = true)
     private Long objectTypeId;
 
+    private Long applicationStatusId;
+
     @ApiModelProperty(value = "Общая информация о сделке продажи объекта")
     private ApplicationSellDataDto sellDataDto;
 
