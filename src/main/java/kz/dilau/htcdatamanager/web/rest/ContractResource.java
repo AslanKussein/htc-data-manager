@@ -25,20 +25,20 @@ public class ContractResource {
     }
 
     @PostMapping("/generateContract")
-    public ResponseEntity<String> generateContract(@RequestBody ContractFormDto dto) {
-        String result = contractService.generateContract(dto);
+    public ResponseEntity<String> generateContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody ContractFormDto dto) {
+        String result = contractService.generateContract(token, dto);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/generateClientAppContract")
-    public ResponseEntity<String> generateClientAppContract(@RequestBody ClientAppBuyDto clientAppBuyDto) {
-        String result = contractService.generateClientAppContract(clientAppBuyDto);
+    public ResponseEntity<ClientAppContractResponseDto> generateClientAppContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody ClientAppContractRequestDto clientAppContractRequestDto) {
+        ClientAppContractResponseDto result = contractService.generateClientAppContract(token, clientAppContractRequestDto);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/generateDepositContract")
-    public ResponseEntity<String> generateDepositContract(@RequestBody DepositFormDto dto) {
-        String result = contractService.generateDepositContract(dto);
+    public ResponseEntity<String> generateDepositContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody DepositFormDto dto) {
+        String result = contractService.generateDepositContract(token, dto);
         return ResponseEntity.ok(result);
     }
 
