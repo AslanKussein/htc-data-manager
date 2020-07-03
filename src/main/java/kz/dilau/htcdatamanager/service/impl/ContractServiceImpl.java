@@ -265,11 +265,11 @@ public class ContractServiceImpl implements ContractService {
     @Override
     public ClientAppContractResponseDto generateClientAppContract(String token, ClientAppContractRequestDto clientAppContractRequestDto) {
         if (isNull(clientAppContractRequestDto.getSellApplicationId())) {
-            throw BadRequestException.createRequiredIsEmpty("targetApplicationId");
+            throw BadRequestException.createRequiredIsEmpty("selltApplicationId");
         }
 
         if (isNull(clientAppContractRequestDto.getApplicationId())) {
-            throw BadRequestException.createRequiredIsEmpty("currentApplicationId");
+            throw BadRequestException.createRequiredIsEmpty("applicationId");
         }
 
         String currentUser = getAuthorName();
@@ -285,7 +285,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (!hasPermission(currentUser, currentApp)) {
-            throw BadRequestException.createTemplateException("error.has.not.permission");
+            //throw BadRequestException.createTemplateException("error.has.not.permission");
         }
 
         if (!currentApp.getOperationType().isBuy()) {
@@ -304,11 +304,11 @@ public class ContractServiceImpl implements ContractService {
         UserInfoDto userInfoDto = getUserInfo(currentApp);
 
         ContractFormTemplateDto contractForm;
-        if (clientAppContractRequestDto.getPayTypeId() == 0L) {
+        if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BUY_THREE_PRC)) {
             contractForm = keycloakService.getContractForm(
                     userInfoDto.getOrganizationDto().getId(),
                     ContractFormType.KP_BUY.name());
-        } else if (clientAppContractRequestDto.getPayTypeId() == 1L){
+        } else if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING)){
             contractForm = keycloakService.getContractForm(
                     userInfoDto.getOrganizationDto().getId(),
                     ContractFormType.KP_BOOKING.name());
@@ -323,9 +323,8 @@ public class ContractServiceImpl implements ContractService {
 
         ContractFormDto dto = new ContractFormDto();
         dto.setContractNumber(nextNumb);
-        dto.setContractSum(sellApp.getApplicationSellData().getObjectPrice());
-        //todo тут какой тип i need to вставит? расширять справочник pay_type?
-        //dto.setContractTypeId();
+        dto.setContractSum(clientAppContractRequestDto.getPayedSum());
+        dto.setContractTypeId(clientAppContractRequestDto.getPayTypeId());
 
         byte[] baos = printContract(sellApp, dto, ClientDto, userInfoDto, contractForm);
 
@@ -335,6 +334,7 @@ public class ContractServiceImpl implements ContractService {
             saveAppDepostit(clientAppContractRequestDto, currentApp, sellApp, nextNumb, fileInfoDto.getUuid());
             responseDto.setSourceStr(fileInfoDto.getUuid());
             responseDto.setSourceType("guid");
+            //todo какое то уведомление нужно отправить агенту продавца
         } else {
             responseDto.setSourceStr(Base64.encodeBase64String(baos));
             responseDto.setSourceType("base64");
@@ -600,7 +600,7 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectRoomCount":
                     if (application.getOperationType().isBuy()) {
-                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
+                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getNumberOfRoomsFrom()) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
                     } else {
                         pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms().toString() : "");
                     }
@@ -650,7 +650,7 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectFloor":
                     if (application.getOperationType().isBuy()) {
-                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() + (nonNull(purchaseInfo.getFloorTo()) ? " - " + purchaseInfo.getFloorTo() : "")  : "");
+                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() +  " - " + purchaseInfo.getFloorTo() : "");
                     } else {
                         pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getFloor()) ? realPropertyMetadata.getFloor().toString() : "");
                     }

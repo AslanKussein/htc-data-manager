@@ -14,4 +14,8 @@ public class ClientAppContractRequestDto extends DepositFormDto {
     private Long sellApplicationId;
     @ApiModelProperty(value = "Сохранить или нет", required = true)
     private Boolean toSave;
+
+    @NonNull
+    @ApiModelProperty(value = "Тип оплаты (2 - Оплата 3 прц, 1 - Бронирование)", required = true)
+    private Long payTypeId;
 }
