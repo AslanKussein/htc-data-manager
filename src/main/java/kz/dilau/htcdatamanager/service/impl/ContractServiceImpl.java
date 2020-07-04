@@ -285,7 +285,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (!hasPermission(currentUser, currentApp)) {
-            //throw BadRequestException.createTemplateException("error.has.not.permission");
+            throw BadRequestException.createTemplateException("error.has.not.permission");
         }
 
         if (!currentApp.getOperationType().isBuy()) {
