@@ -319,7 +319,7 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(contractForm.getCode())) {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
-        String nextNumb = getContractNextNumb("KP");
+        String nextNumb = getContractNextNumb(contractForm.getCode());
 
         ContractFormDto dto = new ContractFormDto();
         dto.setContractNumber(nextNumb);
@@ -381,7 +381,7 @@ public class ContractServiceImpl implements ContractService {
                 footerImage = getLogo(logoFooterPath.getTemplate());
             }
 
-            if (templateList.isEmpty() || templateList.size() == 0) {
+            if (templateList.isEmpty()) {
                 throw BadRequestException.createTemplateException("error.application.contract");
             }
             for (ContractTempaleDto tpl : templateList) {
