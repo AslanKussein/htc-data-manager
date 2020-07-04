@@ -214,11 +214,10 @@ public class ContractServiceImpl implements ContractService {
 
         result = printContractAvans(nextNumb, dto, buyerDto, sellerDto, application, sellApplication, userInfoDto, contractForm);
 
-        if (nonNull(result)) {
-            FileInfoDto fileInfoDto = uploadToFM(token,result,nextNumb + ".pdf");
-            saveAppDepostit(dto,application,sellApplication,nextNumb,fileInfoDto.getUuid());
-        }
-        return Base64.encodeBase64String(result);
+        FileInfoDto fileInfoDto = uploadToFM(token,result,nextNumb + ".pdf");
+        saveAppDepostit(dto,application,sellApplication,nextNumb,fileInfoDto.getUuid());
+
+        return fileInfoDto.getUuid();
     }
 
     private ApplicationDeposit saveAppDepostit(DepositFormDto dto,
