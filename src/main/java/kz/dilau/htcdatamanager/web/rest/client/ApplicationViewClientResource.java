@@ -13,7 +13,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(Constants.APPLICATION_VIEW_CLIENT_REST_ENDPOINT)
-public class ApplicationClientViewResource {
+public class ApplicationViewClientResource {
     private final ApplicationViewClientService applicationViewClientService;
 
     @GetMapping("/{id}")
