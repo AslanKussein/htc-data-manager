@@ -55,4 +55,7 @@ public class ApplicationContract extends AuditableBaseEntity<String, Long> {
 
     @Column(name = "guid")
     private String guid;
+
+    @Column(name = "file_guid")
+    private String fileGuid;
 }

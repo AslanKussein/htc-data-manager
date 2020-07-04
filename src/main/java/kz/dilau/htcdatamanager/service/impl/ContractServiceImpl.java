@@ -82,7 +82,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateContract(ContractFormDto dto) {
+    public String generateContract(String token, ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
@@ -90,11 +90,10 @@ public class ContractServiceImpl implements ContractService {
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
-        String result;
+        byte[] result;
 
         if (application.getOperationType().isBuy()) {
             contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
-            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
         } else if (nonNull(dto.getContractTypeId())) {
             if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
                 contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
@@ -103,15 +102,19 @@ public class ContractServiceImpl implements ContractService {
             } else {
                 throw BadRequestException.createTemplateException("error.contract.form.not.found");
             }
-            result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+
         } else {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
-        if (nonNull(result)) {
-            saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
-        }
-        return result;
+        result = printContract(application, dto, clientDto, userInfoDto, contractForm);
+
+        FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber()+".pdf");
+        ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
+        contract.setFileGuid(fileInfoDto.getUuid());
+        contractRepository.save(contract);
+
+        return fileInfoDto.getUuid();
     }
 
     private ProfileClientDto getClientDtobyLogin(String clientLogin) {
@@ -166,7 +169,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateDepositContract(DepositFormDto dto) {
+    public String generateDepositContract(String token,DepositFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         Application sellApplication = null;
         if (!hasPermission(getAuthorName(), application)) {
@@ -186,7 +189,7 @@ public class ContractServiceImpl implements ContractService {
         }
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
-        String result;
+        byte[] result;
 
         ProfileClientDto buyerDto = getClientDto(application);
         ProfileClientDto sellerDto = null;
@@ -212,53 +215,74 @@ public class ContractServiceImpl implements ContractService {
         result = printContractAvans(nextNumb, dto, buyerDto, sellerDto, application, sellApplication, userInfoDto, contractForm);
 
         if (nonNull(result)) {
-            ApplicationDeposit deposit = application.getDeposit();
-            if (isNull(deposit)) {
-                deposit = ApplicationDeposit.builder()
-                        .application(application)
-                        .build();
-            }
-            deposit.setSellApplication(sellApplication);
-            deposit.setPayType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()));
-            deposit.setPayedSum(dto.getPayedSum());
-            deposit.setPayedClientLogin(getAuthorName());
-            deposit.setContractNumber(nextNumb);
-            boolean hasStatus = false;
-            for (val history : application.getStatusHistoryList()) {
-                if (history.getApplicationStatus().isDeposit()) {
-                    hasStatus = true;
-                    break;
-                }
-            }
-            if (hasStatus) {
-                depositRepository.save(deposit);
-            } else {
-                ApplicationStatus applicationStatus = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.DEPOSIT);
-                application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
-                        .application(application)
-                        .applicationStatus(applicationStatus)
-                        .build());
-                application.setApplicationStatus(applicationStatus);
-                application.setDeposit(deposit);
-                applicationRepository.save(application);
-            }
+            FileInfoDto fileInfoDto = uploadToFM(token,result,nextNumb + ".pdf");
+            saveAppDepostit(dto,application,sellApplication,nextNumb,fileInfoDto.getUuid());
         }
-        return result;
+        return Base64.encodeBase64String(result);
+    }
+
+    private ApplicationDeposit saveAppDepostit(DepositFormDto dto,
+                                               Application application,
+                                               Application sellApplication,
+                                               String contractNumber,
+                                               String fileGuid) {
+        ApplicationDeposit deposit = application.getDeposit();
+        if (isNull(deposit)) {
+            deposit = ApplicationDeposit.builder()
+                    .application(application)
+                    .build();
+        }
+        deposit.setSellApplication(sellApplication);
+        deposit.setPayType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()));
+        deposit.setPayedSum(dto.getPayedSum());
+        deposit.setPayedClientLogin(getAuthorName());
+        if (nonNull(contractNumber)) deposit.setContractNumber(contractNumber);
+        if (nonNull(fileGuid)) deposit.setFileGuid(fileGuid);
+
+        /*boolean hasStatus = false;
+        for (val history : application.getStatusHistoryList()) {
+            if (history.getApplicationStatus().isDeposit()) {
+                hasStatus = true;
+                break;
+            }
+        }*/
+
+        depositRepository.save(deposit);
+
+        //if (!hasStatus) {
+        ApplicationStatus applicationStatus = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.DEPOSIT);
+        application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
+                .application(application)
+                .applicationStatus(applicationStatus)
+                .build());
+        application.setApplicationStatus(applicationStatus);
+        application.setDeposit(deposit);
+        applicationRepository.save(application);
+        //}
+        return deposit;
     }
 
     @Override
-    public String generateClientAppContract(ClientAppBuyDto clientAppBuyDto) {
-        if (isNull(clientAppBuyDto.getTargetApplicationId())) {
-            throw BadRequestException.createRequiredIsEmpty("targetApplicationId");
+    public ClientAppContractResponseDto generateClientAppContract(String token, ClientAppContractRequestDto clientAppContractRequestDto) {
+        if (isNull(clientAppContractRequestDto.getSellApplicationId())) {
+            throw BadRequestException.createRequiredIsEmpty("selltApplicationId");
         }
 
-        if (isNull(clientAppBuyDto.getCurrentApplicationId())) {
-            throw BadRequestException.createRequiredIsEmpty("currentApplicationId");
+        if (isNull(clientAppContractRequestDto.getApplicationId())) {
+            throw BadRequestException.createRequiredIsEmpty("applicationId");
         }
 
         String currentUser = getAuthorName();
 
-        Application currentApp = applicationService.getApplicationById(clientAppBuyDto.getCurrentApplicationId());
+        Application currentApp = applicationService.getApplicationById(clientAppContractRequestDto.getApplicationId());
+
+        if (!(currentApp.getApplicationStatus().getId().equals(ApplicationStatus.FIRST_CONTACT) ||
+                currentApp.getApplicationStatus().getId().equals(ApplicationStatus.CONTRACT) ||
+                currentApp.getApplicationStatus().getId().equals(ApplicationStatus.MEETING) ||
+                currentApp.getApplicationStatus().getId().equals(ApplicationStatus.DEMO))) {
+            ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.DEPOSIT);
+            throw BadRequestException.createChangeStatus(currentApp.getApplicationStatus().getCode(), status.getCode());
+        }
 
         if (!hasPermission(currentUser, currentApp)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
@@ -268,23 +292,30 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
         }
 
-        Application sellApp = applicationService.getApplicationById(clientAppBuyDto.getTargetApplicationId());
+        Application sellApp = applicationService.getApplicationById(clientAppContractRequestDto.getSellApplicationId());
 
         if (!sellApp.getOperationType().isSell()) {
             throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
         } else if (nonNull(sellApp.getDeposit())) {
             throw BadRequestException.createTemplateException("error.deposit.exist");
-        } else {
-            /*List<ApplicationContract> appContracyKP = contractRepository.findByApplicationIdAndContractTypeId(sellApp.getId(), ContractType.KP);
-            if (nonNull(appContracyKP) && appContracyKP.size() > 0) {
-                throw BadRequestException.createTemplateException("error.contract.already.generated");
-            }*/
         }
 
         ProfileClientDto ClientDto = getClientDtobyLogin(currentUser);
-        UserInfoDto userInfoDto = getUserInfo(sellApp);
+        UserInfoDto userInfoDto = getUserInfo(currentApp);
 
-        ContractFormTemplateDto contractForm = keycloakService.getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.KP.name());
+        ContractFormTemplateDto contractForm;
+        if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BUY_THREE_PRC)) {
+            contractForm = keycloakService.getContractForm(
+                    userInfoDto.getOrganizationDto().getId(),
+                    ContractFormType.KP_BUY.name());
+        } else if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING)){
+            contractForm = keycloakService.getContractForm(
+                    userInfoDto.getOrganizationDto().getId(),
+                    ContractFormType.KP_BOOKING.name());
+        } else {
+            throw BadRequestException.createTemplateException("error.contract.type.not.defined");
+        }
+
         if (isNull(contractForm.getCode())) {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
@@ -292,18 +323,41 @@ public class ContractServiceImpl implements ContractService {
 
         ContractFormDto dto = new ContractFormDto();
         dto.setContractNumber(nextNumb);
-        dto.setContractSum(sellApp.getApplicationSellData().getObjectPrice());
-        dto.setContractTypeId(ContractType.KP);
+        dto.setContractSum(clientAppContractRequestDto.getPayedSum());
+        dto.setContractTypeId(clientAppContractRequestDto.getPayTypeId());
 
-        String base64Sring = printContract(sellApp, dto, ClientDto, userInfoDto, contractForm);
+        byte[] baos = printContract(sellApp, dto, ClientDto, userInfoDto, contractForm);
 
-        if (nonNull(base64Sring)) {
-            saveContract(dto, sellApp, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
+        ClientAppContractResponseDto responseDto = new ClientAppContractResponseDto();
+        if (clientAppContractRequestDto.getToSave()) {
+            FileInfoDto fileInfoDto = uploadToFM(token, baos, nextNumb + ".pdf");
+            saveAppDepostit(clientAppContractRequestDto, currentApp, sellApp, nextNumb, fileInfoDto.getUuid());
+            responseDto.setSourceStr(fileInfoDto.getUuid());
+            responseDto.setSourceType("guid");
+            //todo какое то уведомление нужно отправить агенту продавца
+        } else {
+            responseDto.setSourceStr(Base64.encodeBase64String(baos));
+            responseDto.setSourceType("base64");
         }
-        return base64Sring;
+        return responseDto;
     }
 
-    private String printContractAvans(String nextNumb,
+    private FileInfoDto uploadToFM(String token, byte[] baos, String filename) {
+        FileInfoDto fileInfoDto;
+        try {
+            fileInfoDto = keycloakService.uploadFile(token, baos, filename);
+            if (isNull(fileInfoDto) || isNull(fileInfoDto.getUuid()))
+                throw BadRequestException.createTemplateException("error.contract.save.to.file.manager");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw BadRequestException.createTemplateException("error.contract.save.to.file.manager");
+        }
+        return fileInfoDto;
+    }
+
+
+
+    private byte[] printContractAvans(String nextNumb,
                                       DepositFormDto formDto,
                                       ProfileClientDto buyerDto,
                                       ProfileClientDto sellerDto,
@@ -311,7 +365,6 @@ public class ContractServiceImpl implements ContractService {
                                       Application appSell,
                                       UserInfoDto userInfo,
                                       ContractFormTemplateDto contractForm) {
-
         try {
             InputStream logoImage = null;
             InputStream footerImage = null;
@@ -328,41 +381,39 @@ public class ContractServiceImpl implements ContractService {
                 footerImage = getLogo(logoFooterPath.getTemplate());
             }
 
-            if (!templateList.isEmpty() && templateList.size() > 0) {
-                for (ContractTempaleDto tpl : templateList) {
-                    if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
-                        continue;
-                    }
-
-                    if (nonNull(tpl.getParList())) {
-                        Map<String, Object> pars = getBindParAvans(nextNumb,
-                                tpl,
-                                formDto,
-                                buyerDto,
-                                sellerDto,
-                                appBuy,
-                                appSell,
-                                userInfo,
-                                logoImage,
-                                footerImage
-                        );
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    } else {
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    }
-                }
-                return getPages(jasperPrintList);
-            } else {
-                return "empty";
+            if (templateList.isEmpty()) {
+                throw BadRequestException.createTemplateException("error.application.contract");
             }
+            for (ContractTempaleDto tpl : templateList) {
+                if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
+                    continue;
+                }
 
+                if (nonNull(tpl.getParList())) {
+                    Map<String, Object> pars = getBindParAvans(nextNumb,
+                            tpl,
+                            formDto,
+                            buyerDto,
+                            sellerDto,
+                            appBuy,
+                            appSell,
+                            userInfo,
+                            logoImage,
+                            footerImage
+                    );
+                    JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                    JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
+                    jasperPrintList.add(jp);
+                } else {
+                    JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                    JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
+                    jasperPrintList.add(jp);
+                }
+            }
+            return getPages(jasperPrintList);
         } catch (Exception e) {
-            //e.printStackTrace();
-            return e.getMessage();
+            e.printStackTrace();
+            throw BadRequestException.createTemplateException("error.contract.forming");
         }
     }
 
@@ -549,7 +600,7 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectRoomCount":
                     if (application.getOperationType().isBuy()) {
-                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
+                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getNumberOfRoomsFrom()) ? purchaseInfo.getNumberOfRoomsFrom() + " - " + purchaseInfo.getNumberOfRoomsTo() : "");
                     } else {
                         pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getNumberOfRooms().toString() : "");
                     }
@@ -579,36 +630,39 @@ public class ContractServiceImpl implements ContractService {
                     }
                     break;
                 case "objectKitchenArea":
-                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getKitchenArea().toString() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getKitchenArea()) ? realPropertyMetadata.getKitchenArea().toString() : "");
                     break;
                 case "objectLivingArea":
-                    pars.put(par, nonNull(realPropertyMetadata) ? realPropertyMetadata.getLivingArea().toString() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getLivingArea()) ? realPropertyMetadata.getLivingArea().toString() : "");
                     break;
                 case "objectReadyYear":
-                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) && nonNull(realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
                     break;
                 case "objectCadastralNumber":
                     pars.put(par, nonNull(realProperty) ? realProperty.getCadastralNumber() : "");
                     break;
                 case "objectCollaterial":
                     if (nonNull(sellData)) {
-                        pars.put(par, sellData.getEncumbrance() ? getTmplMsg("template.contract.yes", "ru") : getTmplMsg("template.contract.no", "ru"));
+                        pars.put(par, nonNull(sellData.getEncumbrance()) && sellData.getEncumbrance() ? getTmplMsg("template.contract.yes", "ru") : getTmplMsg("template.contract.no", "ru"));
                     } else {
                         pars.put(par, "");
                     }
                     break;
                 case "objectFloor":
                     if (application.getOperationType().isBuy()) {
-                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() + (nonNull(purchaseInfo.getFloorTo()) ? " - " + purchaseInfo.getFloorTo() : "")  : "");
+                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() +  " - " + purchaseInfo.getFloorTo() : "");
                     } else {
                         pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getFloor()) ? realPropertyMetadata.getFloor().toString() : "");
                     }
                     break;
                 case "objectFloorTotal":
-                    pars.put(par, nonNull(realPropertyMetadata.getGeneralCharacteristics()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors().toString() : "");
+                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) && nonNull(realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors()) ? realPropertyMetadata.getGeneralCharacteristics().getNumberOfFloors().toString() : "");
                     break;
                 case "contractSum":
                     pars.put(par, nonNull(dto.getContractSum()) ? dto.getContractSum().toString() : "");
+                    break;
+                case "contractSum3Prc":
+                    pars.put(par, nonNull(dto.getContractSum()) ? String.valueOf(dto.getContractSum().floatValue() * 0.03): "");
                     break;
                 case "objectPrice":
                     if (nonNull(purchaseInfo)) {
@@ -653,7 +707,7 @@ public class ContractServiceImpl implements ContractService {
         return BundleMessageUtil.getMessage(name, new Locale(locale));
     }
 
-    private String printContract(Application application,
+    private byte[] printContract(Application application,
                                  ContractFormDto dto,
                                  ProfileClientDto clientDto,
                                  UserInfoDto userInfoDto,
@@ -682,41 +736,39 @@ public class ContractServiceImpl implements ContractService {
                 footerImage = getLogo(logoFooterPath.getTemplate());
             }
 
-            if (!templateList.isEmpty() && templateList.size() > 0) {
-                for (ContractTempaleDto tpl : templateList) {
-                    if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
-                        continue;
-                    }
-
-                    if (nonNull(tpl.getParList())) {
-                        Map<String, Object> pars = getBindPars(
-                                tpl,
-                                purchaseData,
-                                sellData,
-                                clientDto,
-                                userInfoDto,
-                                application,
-                                dto,
-                                logoImage,
-                                footerImage
-                        );
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    } else {
-                        JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
-                        JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
-                        jasperPrintList.add(jp);
-                    }
-                }
-                return getPages(jasperPrintList);
-            } else {
-                return "empty";
+            if (templateList.isEmpty()) {
+                throw BadRequestException.createTemplateException("error.application.contract");
             }
+            for (ContractTempaleDto tpl : templateList) {
+                if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
+                    continue;
+                }
 
+                if (nonNull(tpl.getParList())) {
+                    Map<String, Object> pars = getBindPars(
+                            tpl,
+                            purchaseData,
+                            sellData,
+                            clientDto,
+                            userInfoDto,
+                            application,
+                            dto,
+                            logoImage,
+                            footerImage
+                    );
+                    JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                    JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
+                    jasperPrintList.add(jp);
+                } else {
+                    JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
+                    JasperPrint jp = JasperFillManager.fillReport(jr, null, new JREmptyDataSource());
+                    jasperPrintList.add(jp);
+                }
+            }
+            return getPages(jasperPrintList);
         } catch (Exception e) {
             e.printStackTrace();
-            return e.getMessage();
+            throw BadRequestException.createTemplateException("error.contract.forming");
         }
     }
 
@@ -735,7 +787,7 @@ public class ContractServiceImpl implements ContractService {
         return new ByteArrayInputStream(tpl.getTemplate().getBytes(StandardCharsets.UTF_8));
     }
 
-    private String getPages(List<JasperPrint> jasperPrintList) throws Exception {
+    private byte[] getPages(List<JasperPrint> jasperPrintList) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         JRPdfExporter exporter = new JRPdfExporter();
         //Add the list as a Parameter
@@ -744,7 +796,7 @@ public class ContractServiceImpl implements ContractService {
         exporter.setParameter(JRPdfExporterParameter.IS_CREATING_BATCH_MODE_BOOKMARKS, Boolean.TRUE);
         exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
         exporter.exportReport();
-        return Base64.encodeBase64String(baos.toByteArray());
+        return baos.toByteArray();//Base64.encodeBase64String(baos.toByteArray());
     }
 
     @Override

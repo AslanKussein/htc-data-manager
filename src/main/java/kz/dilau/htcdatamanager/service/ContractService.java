@@ -1,19 +1,16 @@
 package kz.dilau.htcdatamanager.service;
 
-import kz.dilau.htcdatamanager.web.dto.ClientAppBuyDto;
-import kz.dilau.htcdatamanager.web.dto.CommissionRangeDto;
-import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
-import kz.dilau.htcdatamanager.web.dto.DepositFormDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 
 public interface ContractService {
     ContractFormDto getContractForm(String token, Long applicationId);
 
-    String generateContract(ContractFormDto dto);
+    String generateContract(String token, ContractFormDto dto);
 
-    String generateDepositContract(DepositFormDto dto);
+    String generateDepositContract(String token, DepositFormDto dto);
 
-    String generateClientAppContract(ClientAppBuyDto clientAppBuyDto);
+    ClientAppContractResponseDto generateClientAppContract(String token, ClientAppContractRequestDto clientAppContractRequestDto);
 
     Long missContract(ContractFormDto dto);
 

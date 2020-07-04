@@ -53,4 +53,7 @@ public class ApplicationDeposit extends AuditableBaseEntity<String, Long> {
 
     @Column(name = "contract_number")
     private String contractNumber;
+
+    @Column(name = "file_guid")
+    private String fileGuid;
 }

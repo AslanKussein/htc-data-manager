@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -47,6 +48,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String PROFILE_CLIENT_REST_ENDPOINT = "/api/profile-client";
     private static final String CLIENTS_BY_LOGINS = "/getList";
     private static final String GET_CONTRACT_FORM = "/api/organizations/getContractForm";
+    private static final String UPLOAD_FILE_ENDPOINT = "/api/upload";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -232,6 +234,44 @@ public class KeycloakServiceImpl implements KeycloakService {
         );
 
         return response.getBody();
+    }
+
+    private class MultipartByteArrayResource extends ByteArrayResource {
+
+        private String fileName;
+
+        public MultipartByteArrayResource(byte[] byteArray, String fileName) {
+            super(byteArray);
+            this.setFilename(fileName);
+        }
+
+        public String getFilename() {
+            return fileName;
+        }
+
+        public void setFilename(String fileName) {
+            this.fileName= fileName;
+        }
+
+    }
+
+    @Override
+    public FileInfoDto uploadFile(String token, byte[] pFile, String pFilename) {
+        HttpHeaders headers = new HttpHeaders();
+        //headers.setBearerAuth(token);
+        headers.set("Authorization", token);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        String url = dataProperties.getKeycloakFileManagerUrl() + UPLOAD_FILE_ENDPOINT;
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        RestTemplate restTemplate = new RestTemplate();
+
+        LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        map.add("file", new MultipartByteArrayResource(pFile, pFilename));
+
+        HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+        return restTemplate
+                .postForObject(uriBuilder.toUriString(), requestEntity, FileInfoDto.class);
     }
 
     @Override
