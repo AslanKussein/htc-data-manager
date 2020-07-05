@@ -44,6 +44,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String USER_REST_ENDPOINT = "/api/users";
     private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
     private static final String USERS_INFO = "/infos";
+    private static final String USER_INFO = "/info";
     private static final String ROLE_REST_ENDPOINT = "/roles/{id}";
     private static final String PROFILE_CLIENT_REST_ENDPOINT = "/api/profile-client";
     private static final String CLIENTS_BY_LOGINS = "/getList";
@@ -153,6 +154,26 @@ public class KeycloakServiceImpl implements KeycloakService {
                 HttpMethod.GET,
                 request,
                 new ParameterizedTypeReference<ListResponse<UserInfoDto>>() {
+                }
+        );
+
+        return response.getBody();
+    }
+
+    @Override
+    public UserInfoDto readUserInfo(String login) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getUserManagerToken());
+        HttpEntity<Object> request = new HttpEntity<>(login, headers);
+        String url = dataProperties.getKeycloakUserManagerUrl() + USER_REST_ENDPOINT + USER_INFO;
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        uriBuilder.queryParam("login", login);
+        ResponseEntity<UserInfoDto> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<UserInfoDto>() {
                 }
         );
 

@@ -11,6 +11,8 @@ public interface KeycloakService {
 
     ListResponse<UserInfoDto> readUserInfos(List<String> login);
 
+    UserInfoDto readUserInfo(String login);
+
     ListResponse<AgentDto> getAgents(String token);
 
     RoleDto readRole(Long id);

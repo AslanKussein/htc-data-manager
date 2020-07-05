@@ -143,20 +143,14 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private UserInfoDto getUserInfo(Application application) {
-        List<String> userLogin = new ArrayList<>();
-        userLogin.add(application.getCurrentAgent());
-        ListResponse<UserInfoDto> userInfos = keycloakService.readUserInfos(userLogin);
-        if (isNull(userInfos) || isNull(userInfos.getData()) || userInfos.getData().isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
-        }
-        UserInfoDto userInfoDto = userInfos.getData().get(0);
-        if (isNull(userInfoDto)) {
+        UserInfoDto userInfo = keycloakService.readUserInfo(application.getCurrentAgent());
+        if (isNull(userInfo)) {
             throw BadRequestException.createTemplateException("error.user.not.found");
         }
-        if (isNull(userInfoDto.getOrganizationDto())) {
+        if (isNull(userInfo.getOrganizationDto())) {
             throw BadRequestException.createTemplateException("error.contract.form.not.found");
         }
-        return userInfoDto;
+        return userInfo;
     }
 
     private ContractFormTemplateDto getContractForm(Long organizationId, String contractType) {

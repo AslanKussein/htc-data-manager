@@ -15,6 +15,8 @@ import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class KanbanServiceImpl implements KanbanService {
         ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId());
         if (application.getOperationType().isSell() && (dto.getStatusId().equals(ApplicationStatus.PHOTO_SHOOT) && application.getApplicationStatus().isContract() ||
                 dto.getStatusId().equals(ApplicationStatus.ADS) && (application.getApplicationStatus().isContract() || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT)) ||
-                dto.getStatusId().equals(ApplicationStatus.DEMO) && (application.getApplicationStatus().isContract() || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS))) ||
+                dto.getStatusId().equals(ApplicationStatus.DEMO) && nonNull(application.getContract()) && (application.getApplicationStatus().isContract() || application.getApplicationStatus().getId().equals(ApplicationStatus.PHOTO_SHOOT) || application.getApplicationStatus().getId().equals(ApplicationStatus.ADS))) ||
                 application.getOperationType().isBuy() && dto.getStatusId().equals(ApplicationStatus.DEMO) && application.getApplicationStatus().isContract()) {
             application.setApplicationStatus(entityService.mapRequiredEntity(ApplicationStatus.class, dto.getStatusId()));
             return applicationRepository.save(application).getId();
@@ -52,20 +54,29 @@ public class KanbanServiceImpl implements KanbanService {
     public Long completeDeal(CompleteDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (isNull(application.getContract())) {
-            throw BadRequestException.createTemplateException("error.contract.form.not.found");
+            throw BadRequestException.createTemplateException("error.empty.contract");
         }
         application.getContract().setGuid(dto.getContractGuid());
         if (application.getOperationType().isBuy() && nonNull(dto.getDepositGuid())) {
-            //todo сохранение идентификатора файла задатка
+            if (isNull(application.getDeposit())) {
+                throw BadRequestException.createTemplateException("error.empty.deposit.contract");
+            } else {
+                application.getDeposit().setGuid(dto.getDepositGuid());
+            }
         }
-        ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
-        application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
-                .applicationStatus(applicationStatus)
-                .application(application)
-                .build());
-        application.setApplicationStatus(applicationStatus);
-        applicationRepository.save(application);
-        return application.getId();
+        if (application.getApplicationStatus().getId().equals(ApplicationStatus.DEMO) || application.getOperationType().isBuy() &&
+                application.getApplicationStatus().getId().equals(ApplicationStatus.DEPOSIT)) {
+            ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
+            application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
+                    .applicationStatus(applicationStatus)
+                    .application(application)
+                    .build());
+            application.setApplicationStatus(applicationStatus);
+            application = applicationRepository.save(application);
+            return application.getId();
+        } else {
+            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
+        }
     }
 
     @Override
@@ -87,10 +98,33 @@ public class KanbanServiceImpl implements KanbanService {
         return application.getId();
     }
 
+    private String getAuthorName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (nonNull(authentication) && authentication.isAuthenticated()) {
+            return authentication.getName();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public Long forceCloseDeal(ForceCloseDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, dto.isApprove() ? ApplicationStatus.APPROVAL_FOR_SUCCESS : ApplicationStatus.APPROVAL_FOR_FAILED);
+        ApplicationStatus applicationStatus;
+        if (dto.isApprove()) {
+            if (application.getApplicationStatus().getId().equals(ApplicationStatus.CLOSE_TRANSACTION)) {
+                applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.APPROVAL_FOR_SUCCESS);
+            } else {
+                throw BadRequestException.createTemplateException("");
+            }
+        } else {
+            UserInfoDto userInfo = keycloakService.readUserInfo(getAuthorName());
+            if (userInfo.getRoles().contains("")) {
+                applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FAILED);
+            } else {
+                applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.APPROVAL_FOR_FAILED);
+            }
+        }
         application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
                 .applicationStatus(applicationStatus)
                 .application(application)
