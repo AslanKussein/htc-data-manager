@@ -20,4 +20,6 @@ public interface KeycloakService {
     List<ProfileClientDto> readClientInfoByLogins(List<String> logins);
 
     ContractFormTemplateDto getContractForm(Long id, String contractType);
+
+    FileInfoDto uploadFile(String token, byte[] pFile, String pFilename);
 }

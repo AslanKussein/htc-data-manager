@@ -2,9 +2,7 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ContractService;
-import kz.dilau.htcdatamanager.web.dto.CommissionRangeDto;
-import kz.dilau.htcdatamanager.web.dto.ContractFormDto;
-import kz.dilau.htcdatamanager.web.dto.DepositFormDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +25,20 @@ public class ContractResource {
     }
 
     @PostMapping("/generateContract")
-    public ResponseEntity<String> generateContract(@RequestBody ContractFormDto dto) {
-        String result = contractService.generateContract(dto);
+    public ResponseEntity<String> generateContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody ContractFormDto dto) {
+        String result = contractService.generateContract(token, dto);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/generateClientAppContract")
+    public ResponseEntity<ClientAppContractResponseDto> generateClientAppContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody ClientAppContractRequestDto clientAppContractRequestDto) {
+        ClientAppContractResponseDto result = contractService.generateClientAppContract(token, clientAppContractRequestDto);
         return ResponseEntity.ok(result);
     }
 
     @PostMapping("/generateDepositContract")
-    public ResponseEntity<String> generateDepositContract(@RequestBody DepositFormDto dto) {
-        String result = contractService.generateDepositContract(dto);
+    public ResponseEntity<String> generateDepositContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody DepositFormDto dto) {
+        String result = contractService.generateDepositContract(token, dto);
         return ResponseEntity.ok(result);
     }
 

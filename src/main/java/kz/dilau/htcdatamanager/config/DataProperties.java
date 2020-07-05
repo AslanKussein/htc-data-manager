@@ -20,6 +20,7 @@ public class DataProperties {
     private String keycloakUserManagerUrl;
     private String keycloakUserManagerLogin;
     private String keycloakUserManagerPassword;
+    private String keycloakFileManagerUrl;
     private int maxApplicationCountForOneRealProperty;
     private BigDecimal commissionForHouse;
     private List<CommissionRange> commissionRangeList;

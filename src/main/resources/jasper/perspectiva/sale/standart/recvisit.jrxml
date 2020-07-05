@@ -1,62 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.12.2.final using JasperReports Library version 6.12.2-75c5e90a222ab406e416cbf590a5397028a52de3  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="perspectiva_buy_contacts" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1e34513b-8feb-4c94-b643-83a9ec97b66a">
-    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-    <parameter name="clientIIN" class="java.lang.String"/>
-    <parameter name="clientFullname" class="java.lang.String"/>
-    <parameter name="clientPassportnumber" class="java.lang.String"/>
-    <parameter name="clientPassportDealer" class="java.lang.String"/>
-    <parameter name="clientPassportDealDate" class="java.lang.String"/>
-    <parameter name="clientAddress" class="java.lang.String"/>
-    <parameter name="clientMobilePhone" class="java.lang.String"/>
-    <parameter name="footerImage" class="java.io.InputStream"/>
-    <parameter name="agentFullname" class="java.lang.String"/>
-    <queryString>
-        <![CDATA[]]>
-    </queryString>
-    <background>
-        <band splitType="Stretch"/>
-    </background>
-    <detail>
-        <band height="802" splitType="Stretch">
-            <textField>
-                <reportElement x="0" y="0" width="270" height="550" uuid="ab6a008a-c0ab-40b0-af57-4ac6c47174c4"/>
-                <textElement textAlignment="Justified" markup="html">
-                    <font fontName="Times New Roman" size="12"/>
-                </textElement>
-                <textFieldExpression><![CDATA["<b>6. Тараптардың мекенжайлары, деректемелері және қолдары<br/><u>Заказчик/Тапсырыс беруші:</u><br/><br/>Ф.И.О./ аты-жөні <u><i>"+$P{clientFullname}+"</i></u></b><br/>ИИН/ЖСН <u>"+ $P{clientIIN} + "</u><br/>Удостоверение личности (паспорт)/жеке куәлік (төлқұжат) № <u>" + $P{clientPassportnumber} +"</u> от <u>"+$P{clientPassportDealer} +"</u>  выдан <u>" + $P{clientPassportDealDate} + "</u> берілген<br/>Мобильный тел. <u>" + $P{clientMobilePhone} + "</u><br/>Адрес/мекенжайы: <u>"+$P{clientAddress}+"</u><br/>Свой экземпляр настоящего Договора получил./ Осы Шарттың өз данасын алдым. <br/><br/><b>Подпись/ қолы_______________</b><br/><br/><b>Представитель по доверенности / Сенімхат бойынша өкіл </b><br/>№ доверенности/ сенімхат____________________  <br/>«__» ________20___г./ж. <br/>Ф.И.О./ аты-жөні____________________________<br/>________________________________<br/>ИИН/ЖСН_____________________________ <br/>Удостоверение личности (паспорт)/жеке куәлік (төлқұжат)_____________________________<br/>№ _____________________________  <br/>от_______________ выдан _____________________________берілген<br/><b>Подпись/қолы______________________</b>"]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="290" y="0" width="270" height="480" uuid="298e2688-806a-4d13-9ead-8e500eca64f0"/>
-                <textElement textAlignment="Justified" markup="html">
-                    <font fontName="Times New Roman" size="12"/>
-                </textElement>
-                <textFieldExpression><![CDATA["<b>6. Адреса, реквизиты и подписи Сторон</b><br/><br/><u><b>Исполнитель/Орындаушы: </b></u><br/><br/><b>ТОО «Перспектива-24 Астана» ЖШС</b><br/>БИН/БСН 050640020054<br/>Почтовый адрес/ пошталық мекенжай: 010000, Республика Казахстан, г. Нур-Султан, ул. Мангелик Ел, 17, НП-73 Реквизиты/ деректеме: АО «Банк Центр Кредит», филиал г. Нур-Султан <br/>Расчетный счет/есеп айырысу шоты KZ798562203105659489 <br/>БИК Банка KCJBKZKX, <br/>БИН Банка 980741000260, e-mail: info@ivitrina.kz <br/><b>Генеральный/ Бас директор ___________________Нургазин Д.М.</b>"]]></textFieldExpression>
-            </textField>
-            <line>
-                <reportElement x="280" y="0" width="1" height="510" uuid="e43006de-7d0f-47d2-bad7-5beb2436f302"/>
-            </line>
-            <textField>
-                <reportElement x="0" y="780" width="270" height="21" uuid="24a99f59-d5ec-4f75-88f4-d8e08c918166"/>
-                <textElement>
-                    <font fontName="Times New Roman" size="12" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Подпись Заказчика:____________________"]]></textFieldExpression>
-            </textField>
-            <line>
-                <reportElement x="0" y="550" width="550" height="1" uuid="c1705ec5-930a-4f09-80bb-25ac2953b745"/>
-            </line>
-            <image>
-                <reportElement x="449" y="780" width="115" height="22" uuid="7ab06503-046a-41c9-9ba0-536c78d5bcea"/>
-                <imageExpression><![CDATA[$P{footerImage}]]></imageExpression>
-            </image>
-            <textField>
-                <reportElement x="150" y="520" width="250" height="30" uuid="dd94d8ef-f9b1-401d-be93-a405bae66475"/>
-                <textElement textAlignment="Center" markup="html">
-                    <font fontName="Times New Roman" size="12"/>
-                </textElement>
-                <textFieldExpression><![CDATA["<u>"+$P{agentFullname} +"</u>"]]></textFieldExpression>
-            </textField>
-        </band>
-    </detail>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="clientFullname" class="java.lang.String"/>
+	<parameter name="clientMobilePhone" class="java.lang.String"/>
+	<parameter name="footerImage" class="java.io.InputStream"/>
+	<parameter name="agentFullname" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="270" height="550" uuid="ab6a008a-c0ab-40b0-af57-4ac6c47174c4"/>
+				<textElement textAlignment="Left" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>6. Тараптардың мекенжайлары, деректемелері және қолдары<br/><u>Заказчик/Тапсырыс беруші:</u><br/><br/>Ф.И.О./ аты-жөні <u><i>"+$P{clientFullname}+"</i></u></b><br/>ИИН/ЖСН ______________________<br/>Удостоверение личности (паспорт)/жеке куәлік (төлқұжат) № ________________ от ________________  выдан _____________________ берілген<br/>Мобильный тел. <u>" + $P{clientMobilePhone} + "</u><br/>Адрес/мекенжайы: ____________________________<br/>Свой экземпляр настоящего Договора получил./ Осы Шарттың өз данасын алдым. <br/><br/><b>Подпись/ қолы_______________</b><br/><br/><b>Представитель по доверенности / Сенімхат бойынша өкіл </b><br/>№ доверенности/ сенімхат____________________  <br/>«__» ________20___г./ж. <br/>Ф.И.О./ аты-жөні____________________________<br/>________________________________<br/>ИИН/ЖСН_____________________________ <br/>Удостоверение личности (паспорт)/жеке куәлік (төлқұжат)_____________________________<br/>№ _____________________________  <br/>от_______________ выдан _____________________________берілген<br/><b>Подпись/қолы______________________</b>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="0" width="270" height="480" uuid="298e2688-806a-4d13-9ead-8e500eca64f0"/>
+				<textElement textAlignment="Justified" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<b>6. Адреса, реквизиты и подписи Сторон</b><br/><br/><u><b>Исполнитель/Орындаушы: </b></u><br/><br/><b>ТОО «Перспектива-24 Астана» ЖШС</b><br/>БИН/БСН 050640020054<br/>Почтовый адрес/ пошталық мекенжай: 010000, Республика Казахстан, г. Нур-Султан, ул. Мангелик Ел, 17, НП-73 Реквизиты/ деректеме: АО «Банк Центр Кредит», филиал г. Нур-Султан <br/>Расчетный счет/есеп айырысу шоты KZ798562203105659489 <br/>БИК Банка KCJBKZKX, <br/>БИН Банка 980741000260, e-mail: info@ivitrina.kz <br/><b>Генеральный/ Бас директор ___________________Нургазин Д.М.</b>"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="280" y="0" width="1" height="510" uuid="e43006de-7d0f-47d2-bad7-5beb2436f302"/>
+			</line>
+			<textField>
+				<reportElement x="0" y="780" width="270" height="21" uuid="24a99f59-d5ec-4f75-88f4-d8e08c918166"/>
+				<textElement>
+					<font fontName="Times New Roman" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Подпись Заказчика:____________________"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="550" width="550" height="1" uuid="c1705ec5-930a-4f09-80bb-25ac2953b745"/>
+			</line>
+			<image>
+				<reportElement x="449" y="780" width="115" height="22" uuid="7ab06503-046a-41c9-9ba0-536c78d5bcea"/>
+				<imageExpression><![CDATA[$P{footerImage}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="150" y="520" width="250" height="30" uuid="dd94d8ef-f9b1-401d-be93-a405bae66475"/>
+				<textElement textAlignment="Center" markup="html">
+					<font fontName="Times New Roman" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<u>"+$P{agentFullname} +"</u>"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
 </jasperReport>
