@@ -6,9 +6,6 @@ import kz.dilau.htcdatamanager.web.dto.ApplicationViewClientDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,8 +14,7 @@ public class ApplicationViewClientResource {
     private final ApplicationViewClientService applicationViewClientService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApplicationViewClientDTO> getByIdForClient(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
-                                                            @PathVariable("id") Long id) {
-        return ResponseEntity.ok(applicationViewClientService.getByIdForClient(token, id));
+    public ResponseEntity<ApplicationViewClientDTO> getByIdForClient(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(applicationViewClientService.getByIdForClient(id));
     }
 }
