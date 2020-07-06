@@ -90,4 +90,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
         }
         return assignmentList;
     }
+
+    @Transient
+    public ApplicationStatusHistory getLastStatusHistory() {
+        return getStatusHistoryList().get(getStatusHistoryList().size() - 1);
+    }
 }

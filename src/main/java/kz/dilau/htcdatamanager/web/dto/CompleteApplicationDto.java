@@ -53,6 +53,8 @@ public class CompleteApplicationDto {
     private IntegerPeriod numberOfRoomsPeriod;
     @ApiModelProperty(value = "Статус заявки")
     private DictionaryMultilangItemDto status;
+    @ApiModelProperty(value = "Обоснование")
+    private String comment;
     @ApiModelProperty(value = "УРЛ договора")
     private String contractGuid;
     @ApiModelProperty(value = "УРЛ договора аванса/задатка")

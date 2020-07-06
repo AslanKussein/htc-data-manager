@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -215,6 +216,21 @@ public class KeycloakServiceImpl implements KeycloakService {
         );
 
         return response.getBody();
+    }
+
+    @Override
+    public List<String> getOperations(String token, List<String> groups) {
+        List<String> operations = new ArrayList<>();
+        ListResponse<CheckOperationGroupDto> checkOperationList = getCheckOperationList(token, groups);
+        if (nonNull(checkOperationList) && nonNull(checkOperationList.getData())) {
+            checkOperationList
+                    .getData()
+                    .stream()
+                    .filter(operation -> nonNull(operation.getOperations()) && !operation.getOperations().isEmpty())
+                    .map(CheckOperationGroupDto::getOperations)
+                    .forEach(operations::addAll);
+        }
+        return operations;
     }
 
     @Override
