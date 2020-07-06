@@ -15,7 +15,6 @@ import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
-import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -78,16 +77,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     public List<String> getOperationList(String token, Application application) {
-        List<String> operations = new ArrayList<>();
-        ListResponse<CheckOperationGroupDto> checkOperationList = keycloakService.getCheckOperationList(token, APP_OPERATIONS);
-        if (nonNull(checkOperationList) && nonNull(checkOperationList.getData())) {
-            checkOperationList
-                    .getData()
-                    .stream()
-                    .filter(operation -> nonNull(operation.getOperations()) && !operation.getOperations().isEmpty())
-                    .map(CheckOperationGroupDto::getOperations)
-                    .forEach(operations::addAll);
-        }
+        List<String> operations = keycloakService.getOperations(token, APP_OPERATIONS);
         String authorName = getAuthorName();
         if (nonNull(authorName) && nonNull(application.getCurrentAgent()) && authorName.equals(application.getCurrentAgent())) {
             RoleDto roleDto = keycloakService.readRole(AGENT);

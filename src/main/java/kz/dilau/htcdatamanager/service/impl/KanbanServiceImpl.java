@@ -11,15 +11,13 @@ import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
-import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -34,6 +32,9 @@ public class KanbanServiceImpl implements KanbanService {
     private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
     private final ContractService contractService;
+
+    private static final String CHOOSE_GROUP_AGENT = "CHOOSE_GROUP_AGENT";
+    private static final List<String> AGENT_GROUP = Arrays.asList("AGENT_GROUP");
 
     @Override
     public Long changeStatus(ChangeStatusDto dto) {
@@ -101,17 +102,8 @@ public class KanbanServiceImpl implements KanbanService {
         return application.getId();
     }
 
-    private String getAuthorName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (nonNull(authentication) && authentication.isAuthenticated()) {
-            return authentication.getName();
-        } else {
-            return null;
-        }
-    }
-
     @Override
-    public Long forceCloseDeal(ForceCloseDealDto dto) {
+    public Long forceCloseDeal(String token, ForceCloseDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         ApplicationStatus applicationStatus;
         if (dto.isApprove()) {
@@ -128,8 +120,8 @@ public class KanbanServiceImpl implements KanbanService {
                 application.setTargetApplication(targetApplication);
             }
         } else {
-            UserInfoDto userInfo = keycloakService.readUserInfo(getAuthorName());
-            if (userInfo.getRoles().contains("")) {
+            List<String> operations = keycloakService.getOperations(token, AGENT_GROUP);
+            if (operations.contains(CHOOSE_GROUP_AGENT)) {
                 applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FAILED);
             } else {
                 applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.APPROVAL_FOR_FAILED);
@@ -238,7 +230,7 @@ public class KanbanServiceImpl implements KanbanService {
                 .objectType(DictionaryMappingTool.mapMultilangDictionary(application.getObjectType()))
                 .status(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()))
                 .contractGuid(nonNull(application.getContract()) ? application.getContract().getGuid() : null)
-//                .depositGuid()
+                .depositGuid(nonNull(application.getDeposit()) ? application.getDeposit().getGuid() : nonNull(application.getSellDeposit()) ? application.getSellDeposit().getGuid() : null)
                 .build();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
             ApplicationSellData sellData = application.getApplicationSellData();
@@ -276,6 +268,10 @@ public class KanbanServiceImpl implements KanbanService {
                 result.setNumberOfRoomsPeriod(new IntegerPeriod(purchaseData.getPurchaseInfo().getNumberOfRoomsFrom(), purchaseData.getPurchaseInfo().getNumberOfRoomsTo()));
             }
 
+        }
+        ApplicationStatusHistory statusHistory = application.getLastStatusHistory();
+        if (statusHistory.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
+            result.setComment(statusHistory.getComment());
         }
         return result;
     }
