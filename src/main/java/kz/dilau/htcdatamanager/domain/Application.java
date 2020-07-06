@@ -73,15 +73,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @Column(name = "confirm_doc_guid")
     private String confirmDocGuid;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "pay_type_id")
-//    private PayType payType;
-//    @Column(name = "payed_sum")
-//    private BigDecimal payedSum;
-//    @Column(name = "payed_client_login")
-//    private String payedClientLogin;
-//    @Column(name = "is_payed")
-//    private Boolean isPayed;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_application_id")
+    private Application targetApplication;
 
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {

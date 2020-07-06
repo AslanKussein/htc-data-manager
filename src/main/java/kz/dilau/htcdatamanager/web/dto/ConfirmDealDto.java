@@ -16,8 +16,8 @@ public class ConfirmDealDto {
     private Long applicationId;
 
     @NonNull
-    @ApiModelProperty(value = "Признак согласования завершения сделки")
-    private Boolean approve;
+    @ApiModelProperty(value = "Признак согласования завершения сделки", required = true)
+    private boolean approve = false;
 
     @ApiModelProperty(value = "Идентификатор документа, подтверждающего завершение сделки")
     private String guid;

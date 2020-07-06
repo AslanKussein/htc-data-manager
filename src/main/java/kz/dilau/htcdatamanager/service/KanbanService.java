@@ -14,4 +14,6 @@ public interface KanbanService {
     Long confirmCloseDeal(ConfirmDealDto dto);
 
     CompleteApplicationDto applicationInfo(Long applicationId);
+
+    CompleteTargetApplicationDto targetApplicationInfo(Long applicationId);
 }
