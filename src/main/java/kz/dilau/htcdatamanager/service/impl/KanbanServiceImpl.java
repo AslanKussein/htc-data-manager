@@ -82,8 +82,11 @@ public class KanbanServiceImpl implements KanbanService {
     @Override
     public Long confirmComplete(ConfirmDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
+        if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
+            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
+        }
         ApplicationStatus applicationStatus;
-        if (dto.getApprove()) {
+        if (dto.isApprove()) {
             applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.SUCCESS);
             application.setConfirmDocGuid(dto.getGuid());
         } else {
@@ -115,7 +118,14 @@ public class KanbanServiceImpl implements KanbanService {
             if (application.getApplicationStatus().getId().equals(ApplicationStatus.CLOSE_TRANSACTION)) {
                 applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.APPROVAL_FOR_SUCCESS);
             } else {
-                throw BadRequestException.createTemplateException("");
+                throw BadRequestException.createTemplateException("error.close.application.without.status");
+            }
+            if (nonNull(dto.getTargetApplicationId())) {
+                Application targetApplication = applicationService.getApplicationById(dto.getTargetApplicationId());
+                if (application.getOperationType().getCode().equals(targetApplication.getOperationType().getCode())) {
+                    throw BadRequestException.createTemplateException("error.operation.type.in.target.application");
+                }
+                application.setTargetApplication(targetApplication);
             }
         } else {
             UserInfoDto userInfo = keycloakService.readUserInfo(getAuthorName());
@@ -138,8 +148,11 @@ public class KanbanServiceImpl implements KanbanService {
     @Override
     public Long confirmCloseDeal(ConfirmDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
+        if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
+            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
+        }
         ApplicationStatus applicationStatus;
-        if (dto.getApprove()) {
+        if (dto.isApprove()) {
             applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FAILED);
         } else {
             applicationStatus = getPrevStatus(application);
@@ -162,17 +175,59 @@ public class KanbanServiceImpl implements KanbanService {
         ProfileClientDto clientDto = nonNull(profileClientDtoList) && !profileClientDtoList.isEmpty() ? profileClientDtoList.get(0) : null;
         UserInfoDto agentDto = null;
         if (nonNull(application.getCurrentAgent())) {
-            logins.clear();
-            logins.add(application.getCurrentAgent());
-            ListResponse<UserInfoDto> response = keycloakService.readUserInfos(logins);
-            if (nonNull(response) && nonNull(response.getData()) && !response.getData().isEmpty()) {
-                agentDto = response.getData().get(0);
-            }
+            agentDto = keycloakService.readUserInfo(application.getCurrentAgent());
         }
-        return mapToComplateApplicationDto(application, clientDto, agentDto);
+        return mapToCompleteApplicationDto(application, clientDto, agentDto);
     }
 
-    private CompleteApplicationDto mapToComplateApplicationDto(Application application, ProfileClientDto clientDto, UserInfoDto agentDto) {
+    @Override
+    public CompleteTargetApplicationDto targetApplicationInfo(Long applicationId) {
+        Application application = applicationService.getApplicationById(applicationId);
+        UserInfoDto agentDto = null;
+        if (nonNull(application.getCurrentAgent())) {
+            agentDto = keycloakService.readUserInfo(application.getCurrentAgent());
+        }
+        return mapToTargetApplicationDto(application, agentDto);
+    }
+
+    private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application, UserInfoDto agentDto) {
+        CompleteTargetApplicationDto dto = CompleteTargetApplicationDto.builder()
+                .id(application.getId())
+                .operationType(DictionaryMappingTool.mapMultilangDictionary(application.getOperationType()))
+                .createDate(application.getCreatedDate())
+                .agentLogin(application.getCurrentAgent())
+                .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
+                .status(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()))
+                .build();
+        if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
+            ApplicationSellData data = application.getApplicationSellData();
+            dto.setObjectPrice(data.getObjectPrice());
+            if (nonNull(data.getRealProperty())) {
+                RealPropertyMetadata metadata = data.getRealProperty().getMetadataByStatus(MetadataStatus.APPROVED);
+                if (nonNull(metadata)) {
+                    dto.setNumberOfRooms(metadata.getNumberOfRooms());
+                    dto.setFloor(metadata.getFloor());
+                    dto.setTotalArea(metadata.getTotalArea());
+                }
+                if (nonNull(data.getRealProperty().getBuilding())) {
+                    dto.setDistrict(DictionaryMappingTool.mapMultilangDictionary(data.getRealProperty().getBuilding().getDistrict()));
+                }
+            }
+        } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())) {
+            ApplicationPurchaseData data = application.getApplicationPurchaseData();
+            dto.setDistrict(DictionaryMappingTool.mapMultilangDictionary(data.getDistrict()));
+            if (nonNull(data.getPurchaseInfo())) {
+                PurchaseInfo info = data.getPurchaseInfo();
+                dto.setObjectPricePeriod(new BigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()));
+                dto.setNumberOfRoomsPeriod(new IntegerPeriod(info.getNumberOfRoomsFrom(), info.getNumberOfRoomsTo()));
+                dto.setTotalAreaPeriod(new BigDecimalPeriod(info.getTotalAreaFrom(), info.getTotalAreaTo()));
+                dto.setFloorPeriod(new IntegerPeriod(info.getFloorFrom(), info.getFloorTo()));
+            }
+        }
+        return dto;
+    }
+
+    private CompleteApplicationDto mapToCompleteApplicationDto(Application application, ProfileClientDto clientDto, UserInfoDto agentDto) {
         CompleteApplicationDto result = CompleteApplicationDto.builder()
                 .id(application.getId())
                 .agentLogin(application.getCurrentAgent())

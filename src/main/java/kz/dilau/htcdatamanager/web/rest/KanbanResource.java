@@ -28,6 +28,13 @@ public class KanbanResource {
         return ResponseEntity.ok(result);
     }
 
+    @ApiOperation(value = "Получение данных по связанной заявке для завершения сделки")
+    @PostMapping("/targetApplicationInfo/{id}")
+    public ResponseEntity<CompleteTargetApplicationDto> targetApplicationInfo(@PathVariable("id") Long applicationId) {
+        CompleteTargetApplicationDto result = kanbanService.targetApplicationInfo(applicationId);
+        return ResponseEntity.ok(result);
+    }
+
     @ApiOperation(value = "Завершение сделки прикреплением договоров")
     @PostMapping("/completeDeal")
     public ResponseEntity<Long> completeDeal(@RequestBody CompleteDealDto dto) {
@@ -35,7 +42,7 @@ public class KanbanResource {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "Подтверждение завершения сделки бухгалтером")
+    @ApiOperation(value = "Подтверждение успешного завершения сделки бухгалтером")
     @PostMapping("/confirmComplete")
     public ResponseEntity<Long> confirmComplete(@RequestBody ConfirmDealDto dto) {
         Long result = kanbanService.confirmComplete(dto);

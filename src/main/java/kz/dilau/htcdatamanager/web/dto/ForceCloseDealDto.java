@@ -20,4 +20,7 @@ public class ForceCloseDealDto {
 
     @ApiModelProperty(value = "Признак успешного закрытия")
     private boolean isApprove = false;
+
+    @ApiModelProperty(value = "ID связанной заявки", required = true)
+    private Long targetApplicationId;
 }
