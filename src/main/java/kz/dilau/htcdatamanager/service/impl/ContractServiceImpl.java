@@ -124,7 +124,7 @@ public class ContractServiceImpl implements ContractService {
 
         List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
         if (profileClientDtoList.isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
+            throw BadRequestException.createTemplateExceptionWithParam("error.client.not.found", clientLogin);
         }
         return profileClientDtoList.get(0);
     }
@@ -134,7 +134,7 @@ public class ContractServiceImpl implements ContractService {
         userLogin.add(application.getClientLogin());
         List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
         if (profileClientDtoList.isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
+            throw BadRequestException.createTemplateExceptionWithParam("error.client.not.found", application.getClientLogin());
         }
         ProfileClientDto clientDto = profileClientDtoList.get(0);
         if (isNull(application.getCurrentAgent())) {
