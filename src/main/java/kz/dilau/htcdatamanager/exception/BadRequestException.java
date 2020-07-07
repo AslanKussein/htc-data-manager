@@ -74,4 +74,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException applicationAdentOrgNotDefined(Long appId) {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.organization.not.found", appId));
     }
+
+    public static BadRequestException applicationDuplicateContractNumber(Long appId) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.contract.number.duplicate", appId));
+    }
 }
