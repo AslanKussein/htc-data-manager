@@ -23,10 +23,12 @@ public class ApplicationStatus extends BaseSystemDictionary {
     public static final Long DEMO = 6L;
     public static final Long CLOSE_TRANSACTION = 7L;
     public static final Long SUCCESS = 8L;
-    public static final Long FINISHED = 9L;
+    public static final Long FAILED = 9L;
     public static final Long DEPOSIT = 10L;
+    public static final Long APPROVAL_FOR_SUCCESS = 11L;
+    public static final Long APPROVAL_FOR_FAILED = 12L;
 
-    public static final List<Long> ALL_STATUSES = Arrays.asList(FIRST_CONTACT, MEETING, CONTRACT, ADS, PHOTO_SHOOT, DEMO, CLOSE_TRANSACTION, SUCCESS, FINISHED);
+    public static final List<Long> ALL_STATUSES = Arrays.asList(FIRST_CONTACT, MEETING, CONTRACT, ADS, PHOTO_SHOOT, DEMO, CLOSE_TRANSACTION, SUCCESS, FAILED);
 
     @Transient
     public boolean isContract() {

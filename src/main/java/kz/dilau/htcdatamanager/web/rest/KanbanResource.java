@@ -7,6 +7,9 @@ import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,6 +31,13 @@ public class KanbanResource {
         return ResponseEntity.ok(result);
     }
 
+    @ApiOperation(value = "Получение данных по связанной заявке для завершения сделки")
+    @PostMapping("/targetApplicationInfo/{id}")
+    public ResponseEntity<CompleteTargetApplicationDto> targetApplicationInfo(@PathVariable("id") Long applicationId) {
+        CompleteTargetApplicationDto result = kanbanService.targetApplicationInfo(applicationId);
+        return ResponseEntity.ok(result);
+    }
+
     @ApiOperation(value = "Завершение сделки прикреплением договоров")
     @PostMapping("/completeDeal")
     public ResponseEntity<Long> completeDeal(@RequestBody CompleteDealDto dto) {
@@ -35,7 +45,7 @@ public class KanbanResource {
         return ResponseEntity.ok(result);
     }
 
-    @ApiOperation(value = "Подтверждение завершения сделки бухгалтером")
+    @ApiOperation(value = "Подтверждение успешного завершения сделки бухгалтером")
     @PostMapping("/confirmComplete")
     public ResponseEntity<Long> confirmComplete(@RequestBody ConfirmDealDto dto) {
         Long result = kanbanService.confirmComplete(dto);
@@ -44,8 +54,9 @@ public class KanbanResource {
 
     @ApiOperation(value = "Принудительное закрытие заявки агентом")
     @PostMapping("/forceCloseDeal")
-    public ResponseEntity<Long> forceCloseDeal(@RequestBody ForceCloseDealDto dto) {
-        Long result = kanbanService.forceCloseDeal(dto);
+    public ResponseEntity<Long> forceCloseDeal(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                               @RequestBody ForceCloseDealDto dto) {
+        Long result = kanbanService.forceCloseDeal(token, dto);
         return ResponseEntity.ok(result);
     }
 

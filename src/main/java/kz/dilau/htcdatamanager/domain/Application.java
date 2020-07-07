@@ -1,15 +1,18 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationSource;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
+import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -73,15 +76,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @Column(name = "confirm_doc_guid")
     private String confirmDocGuid;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "pay_type_id")
-//    private PayType payType;
-//    @Column(name = "payed_sum")
-//    private BigDecimal payedSum;
-//    @Column(name = "payed_client_login")
-//    private String payedClientLogin;
-//    @Column(name = "is_payed")
-//    private Boolean isPayed;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "target_application_id")
+    private Application targetApplication;
 
     public List<ApplicationStatusHistory> getStatusHistoryList() {
         if (isNull(statusHistoryList)) {
@@ -95,5 +92,16 @@ public class Application extends AuditableBaseEntity<String, Long> {
             assignmentList = new ArrayList<>();
         }
         return assignmentList;
+    }
+
+    @Transient
+    public ApplicationStatusHistory getLastStatusHistory() {
+        return getStatusHistoryList().get(getStatusHistoryList().size() - 1);
+    }
+
+    @Transient
+    public boolean isReservedRealProperty() {
+        return this.operationType.isSell() && nonNull(this.applicationSellData) && nonNull(this.applicationSellData.getRealProperty())
+                && nonNull(this.applicationSellData.getRealProperty().getIsReserved()) && this.applicationSellData.getRealProperty().getIsReserved();
     }
 }

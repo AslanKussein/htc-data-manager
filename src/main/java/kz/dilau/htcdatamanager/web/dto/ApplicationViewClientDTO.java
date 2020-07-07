@@ -9,6 +9,7 @@ import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +22,8 @@ import java.util.Set;
 public class ApplicationViewClientDTO {
     @ApiModelProperty(value = "ID заявки")
     private Long id;
+    @ApiModelProperty(value = "Дата создания заявки")
+    private ZonedDateTime createdDate;
     @ApiModelProperty(name = "operationType", value = "операции")
     private MultiLang operationType;
     @ApiModelProperty(value = "Это продать")

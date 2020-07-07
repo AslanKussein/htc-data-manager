@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
@@ -109,7 +110,7 @@ public class ContractServiceImpl implements ContractService {
 
         result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
-        FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber()+".pdf");
+        FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
         ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
         contract.setFileGuid(fileInfoDto.getUuid());
         contractRepository.save(contract);
@@ -123,7 +124,7 @@ public class ContractServiceImpl implements ContractService {
 
         List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
         if (profileClientDtoList.isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
+            throw BadRequestException.createTemplateExceptionWithParam("error.client.not.found", clientLogin);
         }
         return profileClientDtoList.get(0);
     }
@@ -133,7 +134,7 @@ public class ContractServiceImpl implements ContractService {
         userLogin.add(application.getClientLogin());
         List<ProfileClientDto> profileClientDtoList = keycloakService.readClientInfoByLogins(userLogin);
         if (profileClientDtoList.isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
+            throw BadRequestException.createTemplateExceptionWithParam("error.client.not.found", application.getClientLogin());
         }
         ProfileClientDto clientDto = profileClientDtoList.get(0);
         if (isNull(application.getCurrentAgent())) {
@@ -143,20 +144,14 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private UserInfoDto getUserInfo(Application application) {
-        List<String> userLogin = new ArrayList<>();
-        userLogin.add(application.getCurrentAgent());
-        ListResponse<UserInfoDto> userInfos = keycloakService.readUserInfos(userLogin);
-        if (isNull(userInfos) || isNull(userInfos.getData()) || userInfos.getData().isEmpty()) {
-            throw BadRequestException.createTemplateException("error.application.contract");
-        }
-        UserInfoDto userInfoDto = userInfos.getData().get(0);
-        if (isNull(userInfoDto)) {
+        UserInfoDto userInfo = keycloakService.readUserInfo(application.getCurrentAgent());
+        if (isNull(userInfo)) {
             throw BadRequestException.createTemplateException("error.user.not.found");
         }
-        if (isNull(userInfoDto.getOrganizationDto())) {
+        if (isNull(userInfo.getOrganizationDto())) {
             throw BadRequestException.createTemplateException("error.contract.form.not.found");
         }
-        return userInfoDto;
+        return userInfo;
     }
 
     private ContractFormTemplateDto getContractForm(Long organizationId, String contractType) {
@@ -169,7 +164,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateDepositContract(String token,DepositFormDto dto) {
+    public String generateDepositContract(String token, DepositFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         Application sellApplication = null;
         if (!hasPermission(getAuthorName(), application)) {
@@ -177,14 +172,14 @@ public class ContractServiceImpl implements ContractService {
         } else if (!application.getOperationType().isBuy()) {
             throw BadRequestException.createTemplateException("error.only.purchase.application.can.deposit");
         } else if (nonNull(application.getDeposit())) {
-            throw BadRequestException.createTemplateException("error.deposit.exist");
+            throw BadRequestException.createTemplateExceptionWithParam("error.deposit.exist", dto.getApplicationId().toString());
         }
         if (nonNull(dto.getSellApplicationId())) {
             sellApplication = applicationService.getApplicationById(dto.getSellApplicationId());
             if (!sellApplication.getOperationType().isSell()) {
                 throw BadRequestException.createTemplateException("error.only.sell.application.can.deposit");
-            } else if (nonNull(sellApplication.getSellDeposit())) {
-                throw BadRequestException.createTemplateException("error.application.to.sell.deposit");
+            } else if (sellApplication.isReservedRealProperty()) {
+                throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", dto.getSellApplicationId().toString());
             }
         }
         UserInfoDto userInfoDto = getUserInfo(application);
@@ -194,7 +189,7 @@ public class ContractServiceImpl implements ContractService {
         ProfileClientDto buyerDto = getClientDto(application);
         ProfileClientDto sellerDto = null;
 
-        if (nonNull(sellApplication) ) {
+        if (nonNull(sellApplication)) {
             sellerDto = getClientDto(sellApplication);
         }
 
@@ -214,8 +209,8 @@ public class ContractServiceImpl implements ContractService {
 
         result = printContractAvans(nextNumb, dto, buyerDto, sellerDto, application, sellApplication, userInfoDto, contractForm);
 
-        FileInfoDto fileInfoDto = uploadToFM(token,result,nextNumb + ".pdf");
-        saveAppDepostit(dto,application,sellApplication,nextNumb,fileInfoDto.getUuid());
+        FileInfoDto fileInfoDto = uploadToFM(token, result, nextNumb + ".pdf");
+        saveAppDepostit(dto, application, sellApplication, nextNumb, fileInfoDto.getUuid());
 
         return fileInfoDto.getUuid();
     }
@@ -230,6 +225,10 @@ public class ContractServiceImpl implements ContractService {
             deposit = ApplicationDeposit.builder()
                     .application(application)
                     .build();
+        }
+        if (nonNull(sellApplication) && nonNull(sellApplication.getApplicationSellData()) && nonNull(sellApplication.getApplicationSellData().getRealProperty())) {
+            sellApplication.getApplicationSellData().getRealProperty().setIsReserved(true);
+            applicationRepository.save(sellApplication);
         }
         deposit.setSellApplication(sellApplication);
         deposit.setPayType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()));
@@ -295,8 +294,8 @@ public class ContractServiceImpl implements ContractService {
 
         if (!sellApp.getOperationType().isSell()) {
             throw BadRequestException.createTemplateException("error.only.sell.application.can.buy");
-        } else if (nonNull(sellApp.getDeposit())) {
-            throw BadRequestException.createTemplateException("error.deposit.exist");
+        } else if (sellApp.isReservedRealProperty()) {
+            throw BadRequestException.createTemplateExceptionWithParam("error.deposit.exist", clientAppContractRequestDto.getSellApplicationId().toString());
         }
 
         ProfileClientDto ClientDto = getClientDtobyLogin(currentUser);
@@ -307,7 +306,7 @@ public class ContractServiceImpl implements ContractService {
             contractForm = keycloakService.getContractForm(
                     userInfoDto.getOrganizationDto().getId(),
                     ContractFormType.KP_BUY.name());
-        } else if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING)){
+        } else if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING)) {
             contractForm = keycloakService.getContractForm(
                     userInfoDto.getOrganizationDto().getId(),
                     ContractFormType.KP_BOOKING.name());
@@ -353,7 +352,6 @@ public class ContractServiceImpl implements ContractService {
         }
         return fileInfoDto;
     }
-
 
 
     private byte[] printContractAvans(String nextNumb,
@@ -416,16 +414,16 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private Map<String, Object> getBindParAvans (String nextNumb,
-                                                 ContractTempaleDto tpl,
-                                                 DepositFormDto formDto,
-                                                 ProfileClientDto buyerDto,
-                                                 ProfileClientDto sellerDto,
-                                                 Application appBuy,
-                                                 Application appSell,
-                                                 UserInfoDto userInfoDto,
-                                                 InputStream logoImage,
-                                                 InputStream footerImage) {
+    private Map<String, Object> getBindParAvans(String nextNumb,
+                                                ContractTempaleDto tpl,
+                                                DepositFormDto formDto,
+                                                ProfileClientDto buyerDto,
+                                                ProfileClientDto sellerDto,
+                                                Application appBuy,
+                                                Application appSell,
+                                                UserInfoDto userInfoDto,
+                                                InputStream logoImage,
+                                                InputStream footerImage) {
         Map<String, Object> pars = new HashMap<>();
 
         RealProperty realProperty = null;
@@ -434,7 +432,7 @@ public class ContractServiceImpl implements ContractService {
             realProperty = nonNull(appSell.getApplicationSellData()) ? appSell.getApplicationSellData().getRealProperty() : null;
         }
 
-        District district = nonNull(realProperty) && nonNull(realProperty.getBuilding())? realProperty.getBuilding().getDistrict() : null;
+        District district = nonNull(realProperty) && nonNull(realProperty.getBuilding()) ? realProperty.getBuilding().getDistrict() : null;
 
         for (String par : tpl.getParList()) {
             switch (par) {
@@ -445,14 +443,14 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, footerImage);
                     break;
                 case "city":
-                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getCity()) ?  realProperty.getBuilding().getCity().getMultiLang().getNameRu() : "");
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getCity()) ? realProperty.getBuilding().getCity().getMultiLang().getNameRu() : "");
                     break;
                 case "printDate":
                 case "docDate":
                     pars.put(par, sdfDate.format(new Date()));
                     break;
                 case "docNumb":
-                    pars.put(par,nextNumb);
+                    pars.put(par, nextNumb);
                     break;
                 case "contractNumber":
                     pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getContractNumber() : "");
@@ -476,7 +474,7 @@ public class ContractServiceImpl implements ContractService {
                 case "agentFullname":
                     pars.put(par, userInfoDto.getFullname());
                     break;
-                case "handselAmount" :
+                case "handselAmount":
                     pars.put(par, nonNull(formDto.getPayedSum()) ? formDto.getPayedSum().toString() : "");
                     break;
                 case "objectPrice":
@@ -494,10 +492,10 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getStreet()) ? realProperty.getBuilding().getStreet().getMultiLang().getNameRu() : "");
                     break;
                 case "objectHouseNumber":
-                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getHouseNumber())? realProperty.getBuilding().getHouseNumber():"" + (nonNull(realProperty.getBuilding().getHouseNumberFraction()) ? "/" + realProperty.getBuilding().getHouseNumberFraction() : ""));
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getHouseNumber()) ? realProperty.getBuilding().getHouseNumber() : "" + (nonNull(realProperty.getBuilding().getHouseNumberFraction()) ? "/" + realProperty.getBuilding().getHouseNumberFraction() : ""));
                     break;
                 case "objectApartmentNumber":
-                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getApartmentNumber())? realProperty.getApartmentNumber() : "");
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getApartmentNumber()) ? realProperty.getApartmentNumber() : "");
                     break;
                 default:
                     pars.put(par, "");
@@ -508,15 +506,15 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private Map<String, Object> getBindPars(
-                                            ContractTempaleDto tpl,
-                                            ApplicationPurchaseData purchaseData,
-                                            ApplicationSellData sellData,
-                                            ProfileClientDto clientDto,
-                                            UserInfoDto userInfoDto,
-                                            Application application,
-                                            ContractFormDto dto,
-                                            InputStream logoImage,
-                                            InputStream footerImage) {
+            ContractTempaleDto tpl,
+            ApplicationPurchaseData purchaseData,
+            ApplicationSellData sellData,
+            ProfileClientDto clientDto,
+            UserInfoDto userInfoDto,
+            Application application,
+            ContractFormDto dto,
+            InputStream logoImage,
+            InputStream footerImage) {
         Map<String, Object> pars = new HashMap<>();
         City city = null;
         District district = null;
@@ -613,7 +611,7 @@ public class ContractServiceImpl implements ContractService {
                     }
                     if (application.getOperationType().isSell()) {
                         if (nonNull(realPropertyMetadata.getSeparateBathroom())) {
-                            pars.put(par, realPropertyMetadata.getSeparateBathroom() ? getTmplMsg("template.contract.bathroomtype.split", locale): getTmplMsg("template.contract.bathroomtype.single", locale));
+                            pars.put(par, realPropertyMetadata.getSeparateBathroom() ? getTmplMsg("template.contract.bathroomtype.split", locale) : getTmplMsg("template.contract.bathroomtype.single", locale));
                         } else {
                             pars.put(par, "");
                         }
@@ -649,7 +647,7 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectFloor":
                     if (application.getOperationType().isBuy()) {
-                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() +  " - " + purchaseInfo.getFloorTo() : "");
+                        pars.put(par, nonNull(purchaseInfo) && nonNull(purchaseInfo.getFloorFrom()) ? purchaseInfo.getFloorFrom() + " - " + purchaseInfo.getFloorTo() : "");
                     } else {
                         pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getFloor()) ? realPropertyMetadata.getFloor().toString() : "");
                     }
@@ -661,17 +659,17 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(dto.getContractSum()) ? dto.getContractSum().toString() : "");
                     break;
                 case "contractSum3Prc":
-                    pars.put(par, nonNull(dto.getContractSum()) ? String.valueOf(dto.getContractSum().floatValue() * 0.03): "");
+                    pars.put(par, nonNull(dto.getContractSum()) ? String.valueOf(dto.getContractSum().floatValue() * 0.03) : "");
                     break;
                 case "objectPrice":
                     if (nonNull(purchaseInfo)) {
-                        pars.put(par, nonNull(purchaseInfo)  ? purchaseInfo.getObjectPriceFrom() + " - " + purchaseInfo.getObjectPriceTo() : "");
+                        pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getObjectPriceFrom() + " - " + purchaseInfo.getObjectPriceTo() : "");
                     } else {
                         pars.put(par, nonNull(sellData) ? sellData.getObjectPrice().toString() : "");
                     }
                     break;
                 case "objectPrice3Prc":
-                    pars.put(par, nonNull(sellData) ? String.valueOf(sellData.getObjectPrice().floatValue() * 0.03): "");
+                    pars.put(par, nonNull(sellData) ? String.valueOf(sellData.getObjectPrice().floatValue() * 0.03) : "");
                     break;
                 case "objectMaxPrice":
                     pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getObjectPriceTo().toString() : "");
@@ -883,7 +881,7 @@ public class ContractServiceImpl implements ContractService {
                     .application(application)
                     .build();
         }
-        contract.setCommission(dto.getCommission());
+        contract.setCommission(BigDecimal.valueOf(getCommission(dto.getContractSum().intValue(), application.getObjectTypeId())));
         contract.setContractSum(dto.getContractSum());
         contract.setContractPeriod(dto.getContractPeriod());
         contract.setContractNumber(dto.getContractNumber());

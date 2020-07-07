@@ -11,9 +11,13 @@ public interface KeycloakService {
 
     ListResponse<UserInfoDto> readUserInfos(List<String> login);
 
+    UserInfoDto readUserInfo(String login);
+
     ListResponse<AgentDto> getAgents(String token);
 
     RoleDto readRole(Long id);
+
+    List<String> getOperations(String token, List<String> groups);
 
     ListResponse<CheckOperationGroupDto> getCheckOperationList(String token, List<String> groupCodes);
 

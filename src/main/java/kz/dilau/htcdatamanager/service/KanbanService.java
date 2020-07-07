@@ -9,9 +9,11 @@ public interface KanbanService {
 
     Long confirmComplete(ConfirmDealDto dto);
 
-    Long forceCloseDeal(ForceCloseDealDto dto);
+    Long forceCloseDeal(String token, ForceCloseDealDto dto);
 
     Long confirmCloseDeal(ConfirmDealDto dto);
 
     CompleteApplicationDto applicationInfo(Long applicationId);
+
+    CompleteTargetApplicationDto targetApplicationInfo(Long applicationId);
 }

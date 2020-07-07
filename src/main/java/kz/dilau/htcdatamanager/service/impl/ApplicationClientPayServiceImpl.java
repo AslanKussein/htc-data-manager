@@ -43,7 +43,7 @@ public class ApplicationClientPayServiceImpl implements ApplicationClientPayServ
         if (!application.getOperationType().isSell()) {
             throw BadRequestException.createTemplateException("error.only.sell.application.can.deposit");
         }
-        if (nonNull(application.getSellDeposit())) {
+        if (application.isReservedRealProperty()) {
             throw BadRequestException.applicationPayed(id);
         }
 
@@ -53,7 +53,9 @@ public class ApplicationClientPayServiceImpl implements ApplicationClientPayServ
                 .payType(entityService.mapRequiredEntity(PayType.class, dto.getPayTypeId()))
                 .payedClientLogin(getAuthorName())
                 .build());
-
+        if (nonNull(application.getApplicationSellData()) && nonNull(application.getApplicationSellData().getRealProperty())) {
+            application.getApplicationSellData().getRealProperty().setIsReserved(true);
+        }
         applicationRepository.save(application);
 
         return new ApplicationClientDTO(application);

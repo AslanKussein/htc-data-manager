@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String USER_REST_ENDPOINT = "/api/users";
     private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
     private static final String USERS_INFO = "/infos";
+    private static final String USER_INFO = "/info";
     private static final String ROLE_REST_ENDPOINT = "/roles/{id}";
     private static final String PROFILE_CLIENT_REST_ENDPOINT = "/api/profile-client";
     private static final String CLIENTS_BY_LOGINS = "/getList";
@@ -160,6 +162,26 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     @Override
+    public UserInfoDto readUserInfo(String login) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getUserManagerToken());
+        HttpEntity<Object> request = new HttpEntity<>(login, headers);
+        String url = dataProperties.getKeycloakUserManagerUrl() + USER_REST_ENDPOINT + USER_INFO;
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        uriBuilder.queryParam("login", login);
+        ResponseEntity<UserInfoDto> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<UserInfoDto>() {
+                }
+        );
+
+        return response.getBody();
+    }
+
+    @Override
     public ListResponse<AgentDto> getAgents(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, token);
@@ -194,6 +216,21 @@ public class KeycloakServiceImpl implements KeycloakService {
         );
 
         return response.getBody();
+    }
+
+    @Override
+    public List<String> getOperations(String token, List<String> groups) {
+        List<String> operations = new ArrayList<>();
+        ListResponse<CheckOperationGroupDto> checkOperationList = getCheckOperationList(token, groups);
+        if (nonNull(checkOperationList) && nonNull(checkOperationList.getData())) {
+            checkOperationList
+                    .getData()
+                    .stream()
+                    .filter(operation -> nonNull(operation.getOperations()) && !operation.getOperations().isEmpty())
+                    .map(CheckOperationGroupDto::getOperations)
+                    .forEach(operations::addAll);
+        }
+        return operations;
     }
 
     @Override
