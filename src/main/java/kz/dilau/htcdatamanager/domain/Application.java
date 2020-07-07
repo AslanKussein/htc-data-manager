@@ -1,15 +1,18 @@
 package kz.dilau.htcdatamanager.domain;
 
 import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
-import kz.dilau.htcdatamanager.domain.dictionary.*;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationSource;
+import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.ObjectType;
+import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
 import lombok.*;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -94,5 +97,11 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @Transient
     public ApplicationStatusHistory getLastStatusHistory() {
         return getStatusHistoryList().get(getStatusHistoryList().size() - 1);
+    }
+
+    @Transient
+    public boolean isReservedRealProperty() {
+        return this.operationType.isSell() && nonNull(this.applicationSellData) && nonNull(this.applicationSellData.getRealProperty())
+                && nonNull(this.applicationSellData.getRealProperty().getIsReserved()) && this.applicationSellData.getRealProperty().getIsReserved();
     }
 }
