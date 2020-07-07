@@ -88,6 +88,18 @@ public class ContractServiceImpl implements ContractService {
         if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
+        if (isNull(dto.getContractNumber()) || dto.getContractNumber().length()==0) {
+            throw  BadRequestException.createRequiredIsEmpty("contractNumber");
+        }
+        if (isNull(dto.getContractSum()) || dto.getContractSum().compareTo(BigDecimal.ZERO)!=1) {
+            throw  BadRequestException.createRequiredIsEmpty("contractSum");
+        }
+        if (isNull(dto.getCommission()) || dto.getCommission().compareTo(BigDecimal.ZERO)!=1) {
+            throw  BadRequestException.createRequiredIsEmpty("comission");
+        }
+        ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
+        if (nonNull(applicationContract)) throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
+
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
@@ -103,7 +115,6 @@ public class ContractServiceImpl implements ContractService {
             } else {
                 throw BadRequestException.createTemplateException("error.contract.form.not.found");
             }
-
         } else {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
