@@ -24,8 +24,14 @@ public class EventDto {
     @ApiModelProperty(value = "ID заявки инициатора", required = true)
     private Long sourceApplicationId;
 
+    @ApiModelProperty(value = "Признак брони недвижимости в заявке инициатора")
+    private Boolean isSourceReserved = false;
+
     @ApiModelProperty(value = "Выбранная заявка")
     private Long targetApplicationId;
+
+    @ApiModelProperty(value = "Признак брони недвижимости в выбранной заявке")
+    private Boolean isTargetReserved = false;
 
     @ApiModelProperty(value = "Дата и время события", required = true)
     private Date eventDate;
@@ -43,9 +49,13 @@ public class EventDto {
         this.id = event.getId();
         this.eventDate = event.getEventDate();
         this.eventTypeId = event.getEventType().getId();
-        this.sourceApplicationId = event.getSourceApplication().getId();
+        if (nonNull(event.getSourceApplication())) {
+            this.sourceApplicationId = event.getSourceApplication().getId();
+            this.isSourceReserved = event.getSourceApplication().isReservedRealProperty();
+        }
         if (nonNull(event.getTargetApplication())) {
             this.targetApplicationId = event.getTargetApplication().getId();
+            this.isTargetReserved = event.getTargetApplication().isReservedRealProperty();
         }
         this.description = event.getDescription();
         this.comment = event.getComment();
