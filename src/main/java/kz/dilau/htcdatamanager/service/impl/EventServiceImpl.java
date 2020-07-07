@@ -8,6 +8,7 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.EventRepository;
+import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final EntityService entityService;
     private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
 
     @Override
@@ -43,46 +46,42 @@ public class EventServiceImpl implements EventService {
                 .eventType(entityService.mapRequiredEntity(EventType.class, dto.getEventTypeId()))
                 .description(dto.getDescription())
                 .build();
-        Application sourceApplication = entityService.mapRequiredEntity(Application.class, dto.getSourceApplicationId());
+        Application sourceApplication = applicationService.getApplicationById(dto.getSourceApplicationId());
         event.setSourceApplication(sourceApplication);
         if (eventRepository.existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(sourceApplication.getId(), dto.getEventDate())) {
-            throw BadRequestException.createDuplicateEvent(sourceApplication.getId());
+            throw BadRequestException.createTemplateException("error.event.date.duplicate");
         }
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
-            Application targetApplication = entityService.mapRequiredEntity(Application.class, dto.getTargetApplicationId());
+            Application targetApplication = applicationService.getApplicationById(dto.getTargetApplicationId());
             event.setTargetApplication(targetApplication);
             if (sourceApplication.getOperationType().getId().equals(targetApplication.getOperationType().getId())) {
-                throw BadRequestException.createRequiredIsEmpty("");
+                throw BadRequestException.createTemplateException("error.operation.type.in.target.application");
             }
             if (eventRepository.existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(targetApplication.getId(), dto.getEventDate())) {
-                throw BadRequestException.createDuplicateEvent(targetApplication.getId());
+                throw BadRequestException.createTemplateException("error.event.date.duplicate");
             }
-//            if(sourceApplication.getContractPeriod()) todo 4. Система должна произвести проверку заявки на наличие признака действий по Договору ОУ (1. договор распечатан 2. формирование договора пропущено 3. нет действий)
-            if (!sourceApplication.getApplicationStatus().getId().equals(ApplicationStatus.DEMO)) {
-                setStatusHistory(sourceApplication, ApplicationStatus.DEMO);
-                applicationRepository.save(sourceApplication);
+            if (isNull(sourceApplication.getContract())) {
+                throw BadRequestException.createTemplateException("error.empty.contract");
             }
-            if (!targetApplication.getApplicationStatus().getId().equals(ApplicationStatus.DEMO)) {
-                setStatusHistory(targetApplication, ApplicationStatus.DEMO);
-                applicationRepository.save(targetApplication);
-            }
+            setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.DEMO);
+            setStatusHistoryAndSaveApplication(targetApplication, ApplicationStatus.DEMO);
         } else if (dto.getEventTypeId().equals(EventType.MEETING)) {
-            if (!sourceApplication.getApplicationStatus().getId().equals(ApplicationStatus.MEETING)) {
-                setStatusHistory(sourceApplication, ApplicationStatus.MEETING);
-                applicationRepository.save(sourceApplication);
-            }
+            setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.MEETING);
         }
         return eventRepository.save(event).getId();
     }
 
-    private void setStatusHistory(Application application, Long statusId) {
-        ApplicationStatus status = entityService.mapEntity(ApplicationStatus.class, statusId);
-        application.setApplicationStatus(status);
-        ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
-                .application(application)
-                .applicationStatus(status)
-                .build();
-        application.getStatusHistoryList().add(statusHistory);
+    private void setStatusHistoryAndSaveApplication(Application application, Long statusId) {
+        if (!application.getApplicationStatus().getId().equals(statusId)) {
+            ApplicationStatus status = entityService.mapEntity(ApplicationStatus.class, statusId);
+            application.setApplicationStatus(status);
+            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+                    .application(application)
+                    .applicationStatus(status)
+                    .build();
+            application.getStatusHistoryList().add(statusHistory);
+            applicationRepository.save(application);
+        }
     }
 
     @Override
