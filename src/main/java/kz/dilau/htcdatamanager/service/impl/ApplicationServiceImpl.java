@@ -341,8 +341,8 @@ public class ApplicationServiceImpl implements ApplicationService {
                         metadata.setApplication(application);
                         realPropertyFile.setRealProperty(realProperty);
                         realPropertyFile.setApplication(application);
-//                        realProperty.getMetadataList().add(metadata);
-//                        realProperty.getFileList().add(realPropertyFile);
+//                        realProperty.getMetadataList().save(metadata);
+//                        realProperty.getFileList().save(realPropertyFile);
                     }
                     sellData.setRealProperty(realProperty);
                 }
