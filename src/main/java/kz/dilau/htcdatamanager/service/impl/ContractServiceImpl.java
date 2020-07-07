@@ -636,7 +636,7 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) && nonNull(realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
                     break;
                 case "objectCadastralNumber":
-                    pars.put(par, nonNull(realProperty) ? realProperty.getCadastralNumber() : "");
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getCadastralNumber()) ? realProperty.getCadastralNumber() : "");
                     break;
                 case "objectCollaterial":
                     if (nonNull(sellData)) {

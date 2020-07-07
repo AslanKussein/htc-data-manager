@@ -10,6 +10,8 @@ import javax.persistence.Transient;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import static java.util.Objects.nonNull;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -58,6 +60,6 @@ public class ProfileClientDto {
 
     @Transient
     public String getFullname() {
-        return this.surname + " " + this.firstName + " " + this.patronymic;
+        return nonNull(this.patronymic) ? this.surname + " " + this.firstName + " " + this.patronymic : this.surname + " " + this.firstName;
     }
 }
