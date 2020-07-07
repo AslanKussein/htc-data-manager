@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
@@ -880,7 +881,7 @@ public class ContractServiceImpl implements ContractService {
                     .application(application)
                     .build();
         }
-        contract.setCommission(dto.getCommission());
+        contract.setCommission(BigDecimal.valueOf(getCommission(dto.getContractSum().intValue(), application.getObjectTypeId())));
         contract.setContractSum(dto.getContractSum());
         contract.setContractPeriod(dto.getContractPeriod());
         contract.setContractNumber(dto.getContractNumber());
