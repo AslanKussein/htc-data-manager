@@ -66,4 +66,12 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException applicationPayed(Long appId) {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.application.payed", appId));
     }
+
+    public static BadRequestException applicationAgentNotDefined(Long appId) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.application.agent.not.defined", appId));
+    }
+
+    public static BadRequestException applicationAdentOrgNotDefined(Long appId) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.organization.not.found", appId));
+    }
 }
