@@ -138,18 +138,21 @@ public class ContractServiceImpl implements ContractService {
         }
         ProfileClientDto clientDto = profileClientDtoList.get(0);
         if (isNull(application.getCurrentAgent())) {
-            throw BadRequestException.createTemplateException("error.user.not.found");
+            throw BadRequestException.applicationAgentNotDefined(application.getId());
         }
         return clientDto;
     }
 
     private UserInfoDto getUserInfo(Application application) {
+        if (isNull(application.getCurrentAgent())) {
+            throw BadRequestException.applicationAgentNotDefined(application.getId());
+        }
         UserInfoDto userInfo = keycloakService.readUserInfo(application.getCurrentAgent());
         if (isNull(userInfo)) {
             throw BadRequestException.createTemplateException("error.user.not.found");
         }
         if (isNull(userInfo.getOrganizationDto())) {
-            throw BadRequestException.createTemplateException("error.contract.form.not.found");
+            throw BadRequestException.applicationAdentOrgNotDefined(application.getId());
         }
         return userInfo;
     }
