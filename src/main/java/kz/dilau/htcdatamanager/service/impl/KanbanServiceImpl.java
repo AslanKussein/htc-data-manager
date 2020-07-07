@@ -117,6 +117,9 @@ public class KanbanServiceImpl implements KanbanService {
                 if (application.getOperationType().getCode().equals(targetApplication.getOperationType().getCode())) {
                     throw BadRequestException.createTemplateException("error.operation.type.in.target.application");
                 }
+                if (targetApplication.isReservedRealProperty()) {
+                    throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", dto.getTargetApplicationId().toString());
+                }
                 application.setTargetApplication(targetApplication);
             }
         } else {
@@ -146,6 +149,12 @@ public class KanbanServiceImpl implements KanbanService {
         ApplicationStatus applicationStatus;
         if (dto.isApprove()) {
             applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FAILED);
+            if (nonNull(application.getTargetApplication()) && application.getTargetApplication().isReservedRealProperty() &&
+                    nonNull(application.getTargetApplication().getApplicationSellData()) && nonNull(application.getTargetApplication().getApplicationSellData().getRealProperty())) {
+                Application target = application.getTargetApplication();
+                target.getApplicationSellData().getRealProperty().setIsReserved(false);
+                applicationRepository.save(target);
+            }
         } else {
             applicationStatus = getPrevStatus(application);
         }
@@ -175,6 +184,9 @@ public class KanbanServiceImpl implements KanbanService {
     @Override
     public CompleteTargetApplicationDto targetApplicationInfo(Long applicationId) {
         Application application = applicationService.getApplicationById(applicationId);
+        if (application.isReservedRealProperty()) {
+            throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", applicationId.toString());
+        }
         UserInfoDto agentDto = null;
         if (nonNull(application.getCurrentAgent())) {
             agentDto = keycloakService.readUserInfo(application.getCurrentAgent());

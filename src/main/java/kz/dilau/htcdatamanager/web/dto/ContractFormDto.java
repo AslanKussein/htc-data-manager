@@ -17,15 +17,19 @@ import static java.util.Objects.nonNull;
 @NoArgsConstructor
 @ApiModel(value = "ContractFormDto", description = "Модель формирования договора ОУ")
 public class ContractFormDto {
-    @ApiModelProperty(value = "ID заявки")
+    @NonNull
+    @ApiModelProperty(value = "ID заявки", required = true)
     private Long applicationId;
-    @ApiModelProperty(value = "Срок действия договора")
+    @NonNull
+    @ApiModelProperty(value = "Срок действия договора", required = true)
     private ZonedDateTime contractPeriod;
     @ApiModelProperty(value = "Номер договора")
     private String contractNumber;
-    @ApiModelProperty(value = "Сумма по договору")
+    @NonNull
+    @ApiModelProperty(value = "Сумма по договору", required = true)
     private BigDecimal contractSum;
-    @ApiModelProperty(value = "Комиссия")
+    @NonNull
+    @ApiModelProperty(value = "Комиссия", required = true)
     private BigDecimal commission;
     @ApiModelProperty(value = "Тип договора")
     private Long contractTypeId;
