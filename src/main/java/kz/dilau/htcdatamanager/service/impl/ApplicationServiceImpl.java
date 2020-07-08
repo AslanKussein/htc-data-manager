@@ -315,7 +315,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 } else {
                                     metadata.setMetadataStatus(notApproved);
                                 }
-                            } else {
+                            } else if (nonNull(metadataByStatus)) {
                                 metadata = metadataByStatus;
                             }
                             RealPropertyFile filesByStatus = realProperty.getFileByStatus(MetadataStatus.APPROVED);
