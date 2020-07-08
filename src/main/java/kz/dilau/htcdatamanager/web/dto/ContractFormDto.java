@@ -20,15 +20,12 @@ public class ContractFormDto {
     @NonNull
     @ApiModelProperty(value = "ID заявки", required = true)
     private Long applicationId;
-    @NonNull
     @ApiModelProperty(value = "Срок действия договора", required = true)
     private ZonedDateTime contractPeriod;
     @ApiModelProperty(value = "Номер договора")
     private String contractNumber;
-    @NonNull
     @ApiModelProperty(value = "Сумма по договору", required = true)
     private BigDecimal contractSum;
-    @NonNull
     @ApiModelProperty(value = "Комиссия", required = true)
     private BigDecimal commission;
     @ApiModelProperty(value = "Тип договора")
