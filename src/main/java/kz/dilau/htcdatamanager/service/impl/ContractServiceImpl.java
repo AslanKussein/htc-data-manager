@@ -899,7 +899,7 @@ public class ContractServiceImpl implements ContractService {
                     .application(application)
                     .build();
         }
-        contract.setCommission(BigDecimal.valueOf(getCommission(dto.getContractSum().intValue(), application.getObjectTypeId())));
+        contract.setCommission(nonNull(dto.getContractSum()) ? BigDecimal.valueOf(getCommission(dto.getContractSum().intValue(), application.getObjectTypeId())) : null);
         contract.setContractSum(dto.getContractSum());
         contract.setContractPeriod(dto.getContractPeriod());
         contract.setContractNumber(dto.getContractNumber());
