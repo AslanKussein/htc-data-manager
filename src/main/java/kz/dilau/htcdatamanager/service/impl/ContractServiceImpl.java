@@ -480,7 +480,7 @@ public class ContractServiceImpl implements ContractService {
                     }
                     break;
                 case "comissionAmount":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getCommission().toString() : "");
+                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract())&& nonNull(appBuy.getContract().getCommission()) ? appBuy.getContract().getCommission().toString() : "");
                     break;
                 case "buyerFullname":
                     pars.put(par, buyerDto.getFullname());
@@ -495,7 +495,7 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(formDto.getPayedSum()) ? formDto.getPayedSum().toString() : "");
                     break;
                 case "objectPrice":
-                    pars.put(par, nonNull(appSell) && nonNull(appSell.getApplicationSellData()) ? appSell.getApplicationSellData().getObjectPrice().toString() : "");
+                    pars.put(par, nonNull(appSell) && nonNull(appSell.getApplicationSellData()) && nonNull(appSell.getApplicationSellData().getObjectPrice()) ? appSell.getApplicationSellData().getObjectPrice().toString() : "");
                     break;
                 case "objectFullAddress":
                     pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
