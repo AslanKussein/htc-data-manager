@@ -29,6 +29,7 @@ public class ApplicationStatus extends BaseSystemDictionary {
     public static final Long APPROVAL_FOR_FAILED = 12L;
 
     public static final List<Long> ALL_STATUSES = Arrays.asList(FIRST_CONTACT, MEETING, CONTRACT, ADS, PHOTO_SHOOT, DEMO, CLOSE_TRANSACTION, SUCCESS, FAILED);
+    public static final List<Long> CLOSED_STATUSES = Arrays.asList(SUCCESS, FAILED);
 
     @Transient
     public boolean isContract() {
