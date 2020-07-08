@@ -12,11 +12,9 @@ pipeline {
         maven 'mvn-3.6.3'
     }
     stages {
-        stage('Code analysis') {
+        stage('Build') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn clean package sonar:sonar -Dmaven.test.skip=true'
-                }
+                sh 'mvn clean package -Dmaven.test.skip=true'
             }
         }
 

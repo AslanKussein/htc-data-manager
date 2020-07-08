@@ -52,6 +52,9 @@ public class EventServiceImpl implements EventService {
             throw BadRequestException.createTemplateException("error.event.date.duplicate");
         }
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
+            if (isNull(dto.getTargetApplicationId())) {
+                throw BadRequestException.createRequiredIsEmpty("targetApplicationId");
+            }
             Application targetApplication = applicationService.getApplicationById(dto.getTargetApplicationId());
             event.setTargetApplication(targetApplication);
             if (sourceApplication.getOperationType().getId().equals(targetApplication.getOperationType().getId())) {

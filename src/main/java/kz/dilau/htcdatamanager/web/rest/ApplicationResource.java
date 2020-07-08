@@ -90,4 +90,9 @@ public class ApplicationResource {
                                              @PathVariable("statusId") Long statusId) {
         return ResponseEntity.ok(applicationService.approveFiles(applicationId, statusId));
     }
+
+    @GetMapping("/approveReserve/{applicationId}")
+    public ResponseEntity<Long> approveReserve(@PathVariable("applicationId") Long applicationId) {
+        return ResponseEntity.ok(applicationService.approveReserve(applicationId));
+    }
 }

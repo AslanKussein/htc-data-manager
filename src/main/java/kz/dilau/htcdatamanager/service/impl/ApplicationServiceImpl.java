@@ -8,6 +8,7 @@ import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.*;
+import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.BuildingService;
 import kz.dilau.htcdatamanager.service.EntityService;
@@ -20,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -315,7 +317,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 } else {
                                     metadata.setMetadataStatus(notApproved);
                                 }
-                            } else {
+                            } else if (nonNull(metadataByStatus)) {
                                 metadata = metadataByStatus;
                             }
                             RealPropertyFile filesByStatus = realProperty.getFileByStatus(MetadataStatus.APPROVED);
@@ -330,7 +332,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 } else {
                                     realPropertyFile.setMetadataStatus(notApproved);
                                 }
-                            } else {
+                            } else if (nonNull(filesByStatus)) {
                                 realPropertyFile = filesByStatus;
                             }
                         } else {
@@ -341,8 +343,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                         metadata.setApplication(application);
                         realPropertyFile.setRealProperty(realProperty);
                         realPropertyFile.setApplication(application);
-//                        realProperty.getMetadataList().add(metadata);
-//                        realProperty.getFileList().add(realPropertyFile);
                     }
                     sellData.setRealProperty(realProperty);
                 }
@@ -360,7 +360,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(metadata)) {
             metadataRepository.save(metadata);
         }
-        if (nonNull(realPropertyFile)) {
+        if (nonNull(realPropertyFile) && !realPropertyFile.getFilesMap().isEmpty()) {
             fileRepository.save(realPropertyFile);
         }
         return application.getId();
@@ -515,5 +515,32 @@ public class ApplicationServiceImpl implements ApplicationService {
             applicationDto.setRealPropertyDto(realPropertyDto);
         }
         return applicationDto;
+    }
+
+    @Override
+    public Long approveReserve(Long applicationId) {
+        Application application = getApplicationById(applicationId);
+        String author = getAuthorName();
+        if (!application.getCreatedBy().equalsIgnoreCase(author) && (isNull(application.getCurrentAgent()) || !application.getCurrentAgent().equalsIgnoreCase(author))) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
+        if (!application.getOperationType().isSell()) {
+            throw BadRequestException.createTemplateException("error.application.operation.type.to.reserve");
+        }
+        if (isNull(application.getApplicationSellData()) || isNull(application.getApplicationSellData().getRealProperty())) {
+            throw BadRequestException.createTemplateExceptionWithParam("error.real.property.not.found", applicationId.toString());
+        }
+        if (nonNull(application.getApplicationSellData().getRealProperty().getIsReserved()) && application.getApplicationSellData().getRealProperty().getIsReserved()) {
+            throw BadRequestException.createTemplateException("error.real.property.reserve.exist");
+        }
+        Specification<Application> specification = ApplicationSpecifications.isRemovedEquals(false)
+                .and(ApplicationSpecifications.targetApplicationIdEquals(applicationId)
+                        .and(ApplicationSpecifications.applicationStatusIdNotIn(ApplicationStatus.CLOSED_STATUSES)));
+        if (applicationRepository.findAll(specification).isEmpty()) {
+            throw BadRequestException.createRequiredIsEmpty("");
+        }
+        application.getApplicationSellData().getRealProperty().setIsReserved(true);
+        applicationRepository.save(application);
+        return application.getId();
     }
 }
