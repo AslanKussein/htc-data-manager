@@ -521,8 +521,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Long approveReserve(Long applicationId) {
         Application application = getApplicationById(applicationId);
         String author = getAuthorName();
-        if (!application.getCreatedBy().equals(author) && (isNull(application.getCurrentAgent()) || !application.getCurrentAgent().equals(author))) {
-            throw BadRequestException.createRequiredIsEmpty("error.has.not.permission");
+        if (!application.getCreatedBy().equalsIgnoreCase(author) && (isNull(application.getCurrentAgent()) || !application.getCurrentAgent().equalsIgnoreCase(author))) {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         if (!application.getOperationType().isSell()) {
             throw BadRequestException.createTemplateException("error.application.operation.type.to.reserve");
