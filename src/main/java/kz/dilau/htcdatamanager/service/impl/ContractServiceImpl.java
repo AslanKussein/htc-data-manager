@@ -6,6 +6,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.domain.enums.ContractFormType;
 import kz.dilau.htcdatamanager.domain.enums.ContractTemplateType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationContractRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationDepositRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -83,7 +85,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateContract(String token, ContractFormDto dto) {
+    public FileInfoDto generateContract(String token, ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
@@ -126,7 +128,7 @@ public class ContractServiceImpl implements ContractService {
         contract.setFileGuid(fileInfoDto.getUuid());
         contractRepository.save(contract);
 
-        return fileInfoDto.getUuid();
+        return fileInfoDto;
     }
 
     private ProfileClientDto getClientDtobyLogin(String clientLogin) {
@@ -178,7 +180,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateDepositContract(String token, DepositFormDto dto) {
+    public FileInfoDto generateDepositContract(String token, DepositFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         Application sellApplication = null;
         if (!hasPermission(getAuthorName(), application)) {
@@ -226,7 +228,7 @@ public class ContractServiceImpl implements ContractService {
         FileInfoDto fileInfoDto = uploadToFM(token, result, nextNumb + ".pdf");
         saveAppDepostit(dto, application, sellApplication, nextNumb, fileInfoDto.getUuid());
 
-        return fileInfoDto.getUuid();
+        return fileInfoDto;
     }
 
     private ApplicationDeposit saveAppDepostit(DepositFormDto dto,
@@ -240,7 +242,10 @@ public class ContractServiceImpl implements ContractService {
                     .application(application)
                     .build();
         }
-        if (nonNull(sellApplication) && nonNull(sellApplication.getApplicationSellData()) && nonNull(sellApplication.getApplicationSellData().getRealProperty())) {
+        if (nonNull(sellApplication)) {
+            if (isNull(sellApplication.getApplicationSellData()) || isNull(sellApplication.getApplicationSellData().getRealProperty())) {
+                throw NotFoundException.createEntityNotFoundById("realProperty", sellApplication.getId());
+            }
             sellApplication.getApplicationSellData().getRealProperty().setIsReserved(true);
             applicationRepository.save(sellApplication);
         }
