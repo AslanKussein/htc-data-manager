@@ -38,4 +38,6 @@ public interface ApplicationService {
     List<String> getOperationList(String token, Application application);
 
     String getAppointmentAgent(String agent);
+
+    Long approveReserve(Long applicationId);
 }
