@@ -89,17 +89,18 @@ public class ContractServiceImpl implements ContractService {
         if (!hasPermission(getAuthorName(), application)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
-        if (isNull(dto.getContractNumber()) || dto.getContractNumber().length()==0) {
-            throw  BadRequestException.createRequiredIsEmpty("contractNumber");
+        if (isNull(dto.getContractNumber()) || dto.getContractNumber().length() == 0) {
+            throw BadRequestException.createRequiredIsEmpty("contractNumber");
         }
-        if (isNull(dto.getContractSum()) || dto.getContractSum().compareTo(BigDecimal.ZERO)!=1) {
-            throw  BadRequestException.createRequiredIsEmpty("contractSum");
+        if (isNull(dto.getContractSum()) || dto.getContractSum().compareTo(BigDecimal.ZERO) != 1) {
+            throw BadRequestException.createRequiredIsEmpty("contractSum");
         }
-        if (isNull(dto.getCommission()) || dto.getCommission().compareTo(BigDecimal.ZERO)!=1) {
-            throw  BadRequestException.createRequiredIsEmpty("comission");
+        if (isNull(dto.getCommission()) || dto.getCommission().compareTo(BigDecimal.ZERO) != 1) {
+            throw BadRequestException.createRequiredIsEmpty("comission");
         }
         ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
-        if (nonNull(applicationContract)) throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
+        if (nonNull(applicationContract))
+            throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
 
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
@@ -123,9 +124,7 @@ public class ContractServiceImpl implements ContractService {
         result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
         FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
-        ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED));
-        contract.setFileGuid(fileInfoDto.getUuid());
-        contractRepository.save(contract);
+        saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
 
         return fileInfoDto;
     }
@@ -823,7 +822,7 @@ public class ContractServiceImpl implements ContractService {
         if (nonNull(application.getContract()) && application.getContract().getContractStatus().isGenerated()) {
             throw BadRequestException.createTemplateException("error.contract.already.generated");
         }
-        ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.MISSING));
+        ApplicationContract contract = saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.MISSING), null);
         return contract.getId();
     }
 
@@ -892,7 +891,7 @@ public class ContractServiceImpl implements ContractService {
         return codeStr.toString();
     }
 
-    private ApplicationContract saveContract(ContractFormDto dto, Application application, ContractStatus status) {
+    private ApplicationContract saveContract(ContractFormDto dto, Application application, ContractStatus status, String uuid) {
         ApplicationContract contract = application.getContract();
         if (isNull(contract)) {
             contract = ApplicationContract.builder()
@@ -906,6 +905,7 @@ public class ContractServiceImpl implements ContractService {
         contract.setPrintDate(ZonedDateTime.now());
         contract.setContractStatus(status);
         contract.setContractType(entityService.mapEntity(ContractType.class, dto.getContractTypeId()));
+        contract.setFileGuid(uuid);
         boolean hasStatus = false;
         for (val history : application.getStatusHistoryList()) {
             if (history.getApplicationStatus().isContract()) {
