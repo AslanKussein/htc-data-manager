@@ -537,7 +537,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .and(ApplicationSpecifications.targetApplicationIdEquals(applicationId)
                         .and(ApplicationSpecifications.applicationStatusIdNotIn(ApplicationStatus.CLOSED_STATUSES)));
         if (applicationRepository.findAll(specification).isEmpty()) {
-            throw BadRequestException.createRequiredIsEmpty("");
+            throw BadRequestException.createTemplateException("error.target.application.not.found");
         }
         application.getApplicationSellData().getRealProperty().setIsReserved(true);
         applicationRepository.save(application);
