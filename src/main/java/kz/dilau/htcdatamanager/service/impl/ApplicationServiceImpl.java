@@ -522,7 +522,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = getApplicationById(applicationId);
         String author = getAuthorName();
         if (!application.getCreatedBy().equals(author) && (isNull(application.getCurrentAgent()) || !application.getCurrentAgent().equals(author))) {
-            throw BadRequestException.createRequiredIsEmpty("error.has.not.permission");
+            throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         if (!application.getOperationType().isSell()) {
             throw BadRequestException.createTemplateException("error.application.operation.type.to.reserve");
