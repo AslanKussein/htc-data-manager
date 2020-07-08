@@ -481,7 +481,7 @@ public class ContractServiceImpl implements ContractService {
                     }
                     break;
                 case "comissionAmount":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getCommission().toString() : "");
+                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract())&& nonNull(appBuy.getContract().getCommission()) ? appBuy.getContract().getCommission().toString() : "");
                     break;
                 case "buyerFullname":
                     pars.put(par, buyerDto.getFullname());
