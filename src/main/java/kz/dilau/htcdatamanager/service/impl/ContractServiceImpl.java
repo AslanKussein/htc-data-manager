@@ -549,7 +549,7 @@ public class ContractServiceImpl implements ContractService {
             realProperty = isNull(sellData) ? null : sellData.getRealProperty();
             realPropertyMetadata = isNull(realProperty) ? null : realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
 
-            if (nonNull(realProperty.getBuilding())) {
+            if (nonNull(realProperty) && nonNull(realProperty.getBuilding())) {
                 city = realProperty.getBuilding().getCity();
                 district = realProperty.getBuilding().getDistrict();
             }
