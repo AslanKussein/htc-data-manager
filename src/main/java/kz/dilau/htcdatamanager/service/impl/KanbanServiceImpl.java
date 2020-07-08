@@ -14,6 +14,8 @@ import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,6 +37,15 @@ public class KanbanServiceImpl implements KanbanService {
 
     private static final String CHOOSE_GROUP_AGENT = "CHOOSE_GROUP_AGENT";
     private static final List<String> AGENT_GROUP = Arrays.asList("AGENT_GROUP");
+
+    private String getAuthorName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (nonNull(authentication) && authentication.isAuthenticated()) {
+            return authentication.getName();
+        } else {
+            return null;
+        }
+    }
 
     @Override
     public Long changeStatus(ChangeStatusDto dto) {
@@ -117,7 +128,11 @@ public class KanbanServiceImpl implements KanbanService {
                 if (application.getOperationType().getCode().equals(targetApplication.getOperationType().getCode())) {
                     throw BadRequestException.createTemplateException("error.operation.type.in.target.application");
                 }
-                if (targetApplication.isReservedRealProperty()) {
+                Long sellApplicationId = getTargetApplication(application);
+                if (nonNull(sellApplicationId) && !sellApplicationId.equals(dto.getTargetApplicationId())) {
+                    throw BadRequestException.createTemplateException("error.target.application.exist");
+                }
+                if (isNull(sellApplicationId) && targetApplication.isReservedRealProperty()) {
                     throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", dto.getTargetApplicationId().toString());
                 }
                 application.setTargetApplication(targetApplication);
@@ -192,6 +207,25 @@ public class KanbanServiceImpl implements KanbanService {
             agentDto = keycloakService.readUserInfo(application.getCurrentAgent());
         }
         return mapToTargetApplicationDto(application, agentDto);
+    }
+
+    @Override
+    public Long getTargetApplication(Long applicationId) {
+        Application application = applicationService.getApplicationById(applicationId);
+        String author = getAuthorName();
+        if (nonNull(author) && (application.getCreatedBy().equalsIgnoreCase(author) || nonNull(application.getCurrentAgent()) && application.getCurrentAgent().equalsIgnoreCase(author))) {
+            return getTargetApplication(application);
+        } else {
+            throw BadRequestException.createTemplateException("error.has.not.permission");
+        }
+    }
+
+    private Long getTargetApplication(Application application) {
+        if (application.getOperationType().isBuy() && nonNull(application.getDeposit())) {
+            return application.getDeposit().getSellApplicationId();
+        } else {
+            return null;
+        }
     }
 
     private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application, UserInfoDto agentDto) {
