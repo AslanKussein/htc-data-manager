@@ -1,6 +1,6 @@
 package kz.dilau.htcdatamanager.domain;
 
-import kz.dilau.htcdatamanager.domain.base.AuditableBaseEntity;
+import kz.dilau.htcdatamanager.domain.base.Auditable;
 import kz.dilau.htcdatamanager.domain.dictionary.PayType;
 import lombok.*;
 
@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
+import static kz.dilau.htcdatamanager.config.Constants.SEQUENCE_CONTRACT;
 import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 
 @Getter
@@ -17,7 +18,9 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @NoArgsConstructor
 @Entity
 @Table(name = TABLE_NAME_PREFIX + "application_deposit")
-public class ApplicationDeposit extends AuditableBaseEntity<String, Long> {
+@SequenceGenerator(name = "SQ_DEPOSIT", sequenceName = SEQUENCE_CONTRACT, allocationSize = 1)
+public class ApplicationDeposit extends Auditable<String> {
+
     @ManyToOne
     @JoinColumn(name = "application_id")
     private Application application;
@@ -56,4 +59,9 @@ public class ApplicationDeposit extends AuditableBaseEntity<String, Long> {
 
     @Column(name = "file_guid")
     private String fileGuid;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SQ_DEPOSIT")
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
 }
