@@ -330,7 +330,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                                 } else {
                                     realPropertyFile.setMetadataStatus(notApproved);
                                 }
-                            } else {
+                            } else if (nonNull(filesByStatus)) {
                                 realPropertyFile = filesByStatus;
                             }
                         } else {
@@ -341,8 +341,6 @@ public class ApplicationServiceImpl implements ApplicationService {
                         metadata.setApplication(application);
                         realPropertyFile.setRealProperty(realProperty);
                         realPropertyFile.setApplication(application);
-//                        realProperty.getMetadataList().add(metadata);
-//                        realProperty.getFileList().add(realPropertyFile);
                     }
                     sellData.setRealProperty(realProperty);
                 }
@@ -360,7 +358,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(metadata)) {
             metadataRepository.save(metadata);
         }
-        if (nonNull(realPropertyFile)) {
+        if (nonNull(realPropertyFile) && !realPropertyFile.getFilesMap().isEmpty()) {
             fileRepository.save(realPropertyFile);
         }
         return application.getId();
