@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Getter
 @Setter
@@ -40,4 +41,7 @@ public class ApplicationDto {
     private String agent;
     @ApiModelProperty(value = "Логин Клиента")
     private String clientLogin;
+
+    @ApiModelProperty(value = "Список доступных операций по текущей заявке")
+    private List<String> operationList;
 }

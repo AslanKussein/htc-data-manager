@@ -103,6 +103,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private ApplicationDto mapToApplicationDto(Application application, List<String> operations) {
         ApplicationDto dto = new ApplicationDto();
+        dto.setOperationList(operations);
         dto.setAgent(application.getCurrentAgent());
         dto.setClientLogin(application.getClientLogin());
         dto.setOperationTypeId(application.getOperationTypeId());
