@@ -44,6 +44,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String AGENT_REST_ENDPOINT = "/api/agents";
     private static final String USER_REST_ENDPOINT = "/api/users";
     private static final String OPERATIONS_REST_ENDPOINT = "/operations/check";
+    private static final String OPERATIONS_BY_ROLE_REST_ENDPOINT = "/operations/checkRolesAndOperations";
     private static final String USERS_INFO = "/infos";
     private static final String USER_INFO = "/info";
     private static final String ROLE_REST_ENDPOINT = "/roles/{id}";
@@ -231,6 +232,22 @@ public class KeycloakServiceImpl implements KeycloakService {
                     .forEach(operations::addAll);
         }
         return operations;
+    }
+
+    @Override
+    public ListResponse<String> getOperationsByRole(String token, OperationFilterDto filterDto) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, token);
+        HttpEntity<Object> request = new HttpEntity<>(filterDto, headers);
+        String url = dataProperties.getKeycloakRoleManagerUrl() + OPERATIONS_BY_ROLE_REST_ENDPOINT;
+        ResponseEntity<ListResponse<String>> response = restTemplate.exchange(
+                url,
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<ListResponse<String>>() {
+                }
+        );
+        return response.getBody();
     }
 
     @Override

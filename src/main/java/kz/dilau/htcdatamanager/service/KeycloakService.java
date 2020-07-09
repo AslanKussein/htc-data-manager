@@ -19,6 +19,8 @@ public interface KeycloakService {
 
     List<String> getOperations(String token, List<String> groups);
 
+    ListResponse<String> getOperationsByRole(String token, OperationFilterDto filterDto);
+
     ListResponse<CheckOperationGroupDto> getCheckOperationList(String token, List<String> groupCodes);
 
     List<ProfileClientDto> readClientInfoByLogins(List<String> logins);

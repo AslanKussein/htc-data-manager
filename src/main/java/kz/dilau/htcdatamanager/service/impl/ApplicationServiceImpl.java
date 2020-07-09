@@ -16,6 +16,7 @@ import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -39,20 +40,21 @@ import static java.util.Objects.nonNull;
 public class ApplicationServiceImpl implements ApplicationService {
     private static final String VIEW = "VIEW_";
     private static final String UPDATE = "UPDATE_";
-    private static final Long AUTHOR = 2L;
-    private static final Long AGENT = 3L;
 
     private static final String APPLICATION_GROUP = "APPLICATION_GROUP";
+    private static final String REAL_PROPERTY_GROUP = "REAL_PROPERTY_GROUP";
+    private static final String AGENT_GROUP = "AGENT_GROUP";
+    private static final String CLIENT_GROUP = "CLIENT_GROUP";
+
     private static final String SALE_DEAL_INFO = "SALE_DEAL_INFO";
     private static final String PURCHASE_DEAL_INFO = "PURCHASE_DEAL_INFO";
     private static final String DEAL_DATA = "DEAL_DATA";
 
-    private static final String REAL_PROPERTY_GROUP = "REAL_PROPERTY_GROUP";
     private static final String SALE_OBJECT_INFO = "SALE_OBJECT_INFO";
     private static final String PURCHASE_OBJECT_INFO = "PURCHASE_OBJECT_INFO";
     private static final String SALE_OBJECT_DATA = "SALE_OBJECT_DATA";
 
-    private static final List<String> APP_OPERATIONS = Arrays.asList("APPLICATION_GROUP", "REAL_PROPERTY_GROUP");
+    private static final List<String> APP_OPERATIONS = Arrays.asList(APPLICATION_GROUP, REAL_PROPERTY_GROUP, AGENT_GROUP, CLIENT_GROUP);
 
     private final ApplicationRepository applicationRepository;
     private final EntityService entityService;
@@ -79,21 +81,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     public List<String> getOperationList(String token, Application application) {
-        List<String> operations = keycloakService.getOperations(token, APP_OPERATIONS);
-        String authorName = getAuthorName();
-        if (nonNull(authorName) && nonNull(application.getCurrentAgent()) && authorName.equals(application.getCurrentAgent())) {
-            RoleDto roleDto = keycloakService.readRole(AGENT);
-            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
-                operations.addAll(roleDto.getOperations());
-            }
+        List<String> result = new ArrayList<>();
+        OperationFilterDto filterDto = OperationFilterDto.builder()
+                .author(application.getCreatedBy())
+                .currentAgent(application.getCurrentAgent())
+                .operationGroupList(APP_OPERATIONS)
+                .build();
+        ListResponse<String> operations = keycloakService.getOperationsByRole(token, filterDto);
+        if (nonNull(operations) && nonNull(operations.getData()) && !operations.getData().isEmpty()) {
+            result.addAll(operations.getData());
         }
-        if (nonNull(authorName) && authorName.equals(application.getCreatedBy()) || isNull(application.getId())) {
-            RoleDto roleDto = keycloakService.readRole(AUTHOR);
-            if (nonNull(roleDto) && nonNull(roleDto.getOperations()) && !roleDto.getOperations().isEmpty()) {
-                operations.addAll(roleDto.getOperations());
-            }
-        }
-        return operations;
+        return result;
     }
 
     @Override
@@ -105,6 +103,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private ApplicationDto mapToApplicationDto(Application application, List<String> operations) {
         ApplicationDto dto = new ApplicationDto();
+        dto.setOperationList(operations);
         dto.setAgent(application.getCurrentAgent());
         dto.setClientLogin(application.getClientLogin());
         dto.setOperationTypeId(application.getOperationTypeId());
