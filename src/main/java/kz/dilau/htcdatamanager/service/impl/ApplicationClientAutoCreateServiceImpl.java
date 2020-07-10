@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
@@ -138,7 +139,12 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         Application targetApplication = applicationService.getApplicationById(targetApplicationId);
         Application application = applicationService.getApplicationById(id);
 
-        if (nonNull(application.getApplicationPurchaseData()) && nonNull(application.getApplicationPurchaseData().getCity())) {
+        if (nonNull(application.getApplicationPurchaseData())
+                && nonNull(application.getApplicationPurchaseData().getCity())) {
+            if (isNullOrEmpty(application.getCurrentAgent())) {
+                application.setCurrentAgent(targetApplication.getCurrentAgent());
+                application = applicationRepository.save(application);
+            }
             return new ApplicationClientDTO(application);
         }
 
