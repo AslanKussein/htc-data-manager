@@ -153,4 +153,6 @@ public class ApplicationViewDTO {
     private Set<String> housingPlanImageIdList;
     @ApiModelProperty(name = "virtualTourImageIdList", value = "Список ID фотографии")
     private Set<String> virtualTourImageIdList;
+    @ApiModelProperty(value = "Список доступных операций по текущей заявке")
+    private List<String> operationList;
 }
