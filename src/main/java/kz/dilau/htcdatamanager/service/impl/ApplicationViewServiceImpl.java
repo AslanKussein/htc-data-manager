@@ -63,7 +63,8 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 .operationType(nonNull(application.getOperationTypeId()) ? operationTypeRepository.getOne(application.getOperationTypeId()).getMultiLang() : null)
                 .objectType(nonNull(application.getObjectTypeId()) ? objectTypeRepository.getOne(application.getObjectTypeId()).getMultiLang() : null)
                 .isSell(isSell(application))
-                .isFlat(isFlat(application));
+                .isFlat(isFlat(application))
+                .operationList(application.getOperationList());
         if (isSell(application)) {
             ApplicationPurchaseDataDto dataDto = application.getPurchaseDataDto();
             dto.comment(dataDto.getNote())
