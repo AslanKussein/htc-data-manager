@@ -1,10 +1,7 @@
 package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import kz.dilau.htcdatamanager.domain.dictionary.City;
-import kz.dilau.htcdatamanager.domain.dictionary.District;
-import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
-import kz.dilau.htcdatamanager.domain.dictionary.YardType;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.web.dto.ApplicationPurchaseDataDto;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
@@ -62,7 +59,8 @@ public class ApplicationPurchaseData extends AApplicationData {
     private Set<IdItem> applicationFlags = new HashSet<>();
 
     public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, PurchaseInfoDto infoDto,
-                                   City city, District district, MaterialOfConstruction materialOfConstruction, YardType yardType) {
+                                   City city, District district, MaterialOfConstruction materialOfConstruction,
+                                   YardType yardType, Sewerage sewerage, HeatingSystem heatingSystem) {
         this.city = city;
         this.district = district;
         this.mortgage = dataDto.getMortgage();
@@ -78,7 +76,7 @@ public class ApplicationPurchaseData extends AApplicationData {
                 .map(IdItem::new)
                 .collect(Collectors.toSet());
         if (nonNull(infoDto)) {
-            this.purchaseInfo = new PurchaseInfo(infoDto, dataDto.getObjectPricePeriod(), materialOfConstruction, yardType);
+            this.purchaseInfo = new PurchaseInfo(infoDto, dataDto.getObjectPricePeriod(), materialOfConstruction, yardType, sewerage, heatingSystem);
         }
     }
 
