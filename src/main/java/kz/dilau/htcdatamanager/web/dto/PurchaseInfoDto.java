@@ -47,6 +47,10 @@ public class PurchaseInfoDto extends AGeneralCharacteristicsDto {
     protected Boolean atelier;
     @ApiModelProperty(value = "Санузел раздельный")
     protected Boolean separateBathroom;
+    @ApiModelProperty(value = "Канализация")
+    protected Long sewerageId;
+    @ApiModelProperty(value = "Отопление")
+    protected Long heatingSystemId;
 
     public PurchaseInfoDto(PurchaseInfo info) {
         if (nonNull(info)) {
@@ -66,6 +70,8 @@ public class PurchaseInfoDto extends AGeneralCharacteristicsDto {
             this.concierge = info.getConcierge();
             this.wheelchair = info.getWheelchair();
             this.yardTypeId = info.getYardTypeId();
+            this.sewerageId = info.getSewerageId();
+            this.heatingSystemId = info.getHeatingSystemId();
             this.playground = info.getPlayground();
             this.atelier = info.getAtelier();
             this.separateBathroom = info.getSeparateBathroom();

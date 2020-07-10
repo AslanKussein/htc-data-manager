@@ -28,7 +28,9 @@ public class EntityMappingTool {
             PurchaseInfoDto infoDto = dto.getPurchaseInfoDto();
             return new PurchaseInfo(infoDto, dto.getPurchaseDataDto().getObjectPricePeriod(),
                     entityService.mapEntity(MaterialOfConstruction.class, infoDto.getMaterialOfConstructionId()),
-                    entityService.mapEntity(YardType.class, infoDto.getYardTypeId()));
+                    entityService.mapEntity(YardType.class, infoDto.getYardTypeId()),
+                    entityService.mapEntity(Sewerage.class, infoDto.getSewerageId()),
+                    entityService.mapEntity(HeatingSystem.class, infoDto.getHeatingSystemId()));
         }
         return null;
     }

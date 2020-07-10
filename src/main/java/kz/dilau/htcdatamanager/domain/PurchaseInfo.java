@@ -1,7 +1,9 @@
 package kz.dilau.htcdatamanager.domain;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import kz.dilau.htcdatamanager.domain.dictionary.HeatingSystem;
 import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
+import kz.dilau.htcdatamanager.domain.dictionary.Sewerage;
 import kz.dilau.htcdatamanager.domain.dictionary.YardType;
 import kz.dilau.htcdatamanager.web.dto.PurchaseInfoDto;
 import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
@@ -10,9 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -87,6 +87,16 @@ public class PurchaseInfo extends AGeneralCharacteristics {
     private Boolean atelier;//студия
     @Column(name = "separate_bathroom")
     private Boolean separateBathroom;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sewerage_id")
+    private Sewerage sewerage;
+    @Column(name = "sewerage_id", insertable = false, updatable = false)
+    private Long sewerageId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "heating_system_id")
+    private HeatingSystem heatingSystem;
+    @Column(name = "heating_system_id", insertable = false, updatable = false)
+    private Long heatingSystemId;
 
     @Type(type = "jsonb")
     @Column(name = "parking_types", columnDefinition = "jsonb")
@@ -109,7 +119,8 @@ public class PurchaseInfo extends AGeneralCharacteristics {
         return typesOfElevator;
     }
 
-    public PurchaseInfo(PurchaseInfoDto dto, BigDecimalPeriod objectPrice, MaterialOfConstruction materialOfConstruction, YardType yardType) {
+    public PurchaseInfo(PurchaseInfoDto dto, BigDecimalPeriod objectPrice, MaterialOfConstruction materialOfConstruction,
+                        YardType yardType, Sewerage sewerage, HeatingSystem heatingSystem) {
         if (nonNull(objectPrice)) {
             this.objectPriceFrom = objectPrice.getFrom();
             this.objectPriceTo = objectPrice.getTo();
@@ -183,6 +194,8 @@ public class PurchaseInfo extends AGeneralCharacteristics {
         }
         this.materialOfConstruction = materialOfConstruction;
         this.yardType = yardType;
+        this.sewerage = sewerage;
+        this.heatingSystem = heatingSystem;
     }
 
 
