@@ -530,8 +530,8 @@ public class ContractServiceImpl implements ContractService {
             UserInfoDto userInfoDto,
             Application application,
             ContractFormDto dto,
-            InputStream logoImage,
-            InputStream footerImage) {
+            String logoImagePath,
+            String footerImagePath) {
         Map<String, Object> pars = new HashMap<>();
         City city = null;
         District district = null;
@@ -539,6 +539,7 @@ public class ContractServiceImpl implements ContractService {
 
         RealProperty realProperty = null;
         RealPropertyMetadata realPropertyMetadata = null;
+        String locale;
 
         if (application.getOperationType().isBuy()) {
             city = isNull(purchaseData) ? null : purchaseData.getCity();
@@ -555,12 +556,16 @@ public class ContractServiceImpl implements ContractService {
         }
 
         for (String par : tpl.getParList()) {
+            locale = "ru";
+            if (par.substring(par.length() - 2).equals("KZ")) {
+                locale = "kk";
+            }
             switch (par) {
                 case "logoImage":
-                    pars.put(par, logoImage);
+                    pars.put(par, nonNull(logoImagePath) ? getLogo(logoImagePath) : null);
                     break;
                 case "footerImage":
-                    pars.put(par, footerImage);
+                    pars.put(par, nonNull(footerImagePath) ? getLogo(footerImagePath) : null);
                     break;
                 case "city":
                 case "cityRU":
@@ -601,16 +606,27 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, userInfoDto.getFullname());
                     break;
                 case "objectFullAddress":
+                case "objectFullAddressRU":
                     pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
+                    break;
+                case "objectFullAddressKZ":
+                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameKz() : "");
                     break;
                 case "objectRCName":
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getResidentialComplex()) ? realProperty.getBuilding().getResidentialComplex().getHouseName() : "");
                     break;
                 case "objectRegion":
+                case "objectRegionRU":
                     pars.put(par, nonNull(district) ? district.getMultiLang().getNameRu() : "");
+                    break;
+                case "objectRegionKZ":
+                    pars.put(par, nonNull(district) ? district.getMultiLang().getNameKz() : "");
                     break;
                 case "objectType":
                     pars.put(par, application.getObjectType().getMultiLang().getNameRu());
+                    break;
+                case "objectTypeKZ":
+                    pars.put(par, application.getObjectType().getMultiLang().getNameKz());
                     break;
                 case "objectRoomCount":
                     if (application.getOperationType().isBuy()) {
@@ -622,10 +638,6 @@ public class ContractServiceImpl implements ContractService {
                 case "objectBathroomType":
                 case "objectBathroomTypeRU":
                 case "objectBathroomTypeKZ":
-                    String locale = "ru";
-                    if (par.equals("objectBathroomTypeKZ")) {
-                        locale = "kz";
-                    }
                     if (application.getOperationType().isSell()) {
                         if (nonNull(realPropertyMetadata.getSeparateBathroom())) {
                             pars.put(par, realPropertyMetadata.getSeparateBathroom() ? getTmplMsg("template.contract.bathroomtype.split", locale) : getTmplMsg("template.contract.bathroomtype.single", locale));
@@ -656,8 +668,10 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getCadastralNumber()) ? realProperty.getCadastralNumber() : "");
                     break;
                 case "objectCollaterial":
+                case "objectCollaterialRU":
+                case "objectCollaterialKZ":
                     if (nonNull(sellData)) {
-                        pars.put(par, nonNull(sellData.getEncumbrance()) && sellData.getEncumbrance() ? getTmplMsg("template.contract.yes", "ru") : getTmplMsg("template.contract.no", "ru"));
+                        pars.put(par, nonNull(sellData.getEncumbrance()) && sellData.getEncumbrance() ? getTmplMsg("template.contract.collaterial.yes", locale) : getTmplMsg("template.contract.collaterial.no", locale));
                     } else {
                         pars.put(par, "");
                     }
@@ -704,10 +718,23 @@ public class ContractServiceImpl implements ContractService {
                         ev = eventService.getViewBySourceApp(dto.getApplicationId());
                     }
                     if (ev.isEmpty()) {
-                        ev.add(new JasperActViewDto("", "", ""));
+                        ev.add(new JasperActViewDto("1", "", ""));
+                    }
+                    if (ev.size() < 20) {
+                        while (ev.size() < 20)
+                            ev.add(new JasperActViewDto(String.valueOf(ev.size() + 1), "", ""));
                     }
                     JRBeanCollectionDataSource parDS = new JRBeanCollectionDataSource(ev);
                     pars.put(par, parDS);
+                    break;
+
+                case "payTypeRU":
+                case "payTypeKZ":
+                    if (nonNull(sellData) && nonNull(sellData.getMortgage())) {
+                        pars.put(par, sellData.getMortgage() ? getTmplMsg("template.paytype.mortgage", locale) : getTmplMsg("template.paytype.cash", locale));
+                    } else {
+                        pars.put(par, "");
+                    }
                     break;
                 default:
                     pars.put(par, "");
@@ -736,18 +763,18 @@ public class ContractServiceImpl implements ContractService {
             ApplicationSellData sellData = application.getApplicationSellData();
             List<ContractTempaleDto> templateList = contractForm.getTemplateList();
 
-            InputStream logoImage = null;
-            InputStream footerImage = null;
+            String logoImagePath = null;
+            String footerImagePath = null;
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
             ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
             ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
-                logoImage = getLogo(logoPath.getTemplate());
+                logoImagePath = logoPath.getTemplate();
             }
             if (nonNull(logoFooterPath) && nonNull(logoFooterPath.getTemplate())) {
-                footerImage = getLogo(logoFooterPath.getTemplate());
+                footerImagePath = logoFooterPath.getTemplate();
             }
 
             if (templateList.isEmpty()) {
@@ -767,8 +794,8 @@ public class ContractServiceImpl implements ContractService {
                             userInfoDto,
                             application,
                             dto,
-                            logoImage,
-                            footerImage
+                            logoImagePath,
+                            footerImagePath
                     );
                     JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
                     JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
