@@ -10,7 +10,7 @@ import javax.persistence.Transient;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static java.util.Objects.nonNull;
+import static kz.dilau.htcdatamanager.util.StringUtils.mapFullName;
 
 @Data
 @NoArgsConstructor
@@ -60,6 +60,6 @@ public class ProfileClientDto {
 
     @Transient
     public String getFullname() {
-        return nonNull(this.patronymic) ? this.surname + " " + this.firstName + " " + this.patronymic : this.surname + " " + this.firstName;
+        return mapFullName(this.surname, this.firstName, this.patronymic);
     }
 }

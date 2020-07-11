@@ -29,6 +29,8 @@ public class CompleteTargetApplicationDto {
     private String agentLogin;
     @ApiModelProperty(value = "ФИО агента, на кого назначена заявка")
     private String agentFullname;
+    @ApiModelProperty(value = "Телефон агента, на кого назначена заявка")
+    private String agentPhone;
     @ApiModelProperty(value = "Цена объекта(млн тг)")
     private BigDecimal objectPrice;
     @ApiModelProperty(value = "Количество комнат")
