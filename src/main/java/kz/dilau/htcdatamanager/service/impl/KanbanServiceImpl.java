@@ -235,6 +235,7 @@ public class KanbanServiceImpl implements KanbanService {
                 .createDate(application.getCreatedDate())
                 .agentLogin(application.getCurrentAgent())
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
+                .agentPhone(nonNull(agentDto) ? agentDto.getPhone() : "")
                 .status(DictionaryMappingTool.mapMultilangSystemDictionary(application.getApplicationStatus()))
                 .build();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
