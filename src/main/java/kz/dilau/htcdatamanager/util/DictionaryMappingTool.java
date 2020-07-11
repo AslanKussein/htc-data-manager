@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.util;
 
 import kz.dilau.htcdatamanager.domain.Building;
+import kz.dilau.htcdatamanager.domain.base.BaseSystemDictionary;
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
@@ -19,6 +20,21 @@ public class DictionaryMappingTool {
 
         return DictionaryMultilangItemDto.builder()
                 .id((Long) dictionary.getId())
+                .name(MultiLangText.builder()
+                        .nameKz(dictionary.getMultiLang().getNameKz())
+                        .nameRu(dictionary.getMultiLang().getNameRu())
+                        .nameEn(dictionary.getMultiLang().getNameEn())
+                        .build())
+                .build();
+    }
+    public static DictionaryMultilangItemDto mapMultilangSystemDictionary(BaseSystemDictionary dictionary) {
+        if (isNull(dictionary)) {
+            return DictionaryMultilangItemDto.NULL_OBJECT;
+        }
+
+        return DictionaryMultilangItemDto.builder()
+                .id((Long) dictionary.getId())
+                .code(dictionary.getCode())
                 .name(MultiLangText.builder()
                         .nameKz(dictionary.getMultiLang().getNameKz())
                         .nameRu(dictionary.getMultiLang().getNameRu())

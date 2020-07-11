@@ -231,11 +231,11 @@ public class KanbanServiceImpl implements KanbanService {
     private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application, UserInfoDto agentDto) {
         CompleteTargetApplicationDto dto = CompleteTargetApplicationDto.builder()
                 .id(application.getId())
-                .operationType(DictionaryMappingTool.mapMultilangDictionary(application.getOperationType()))
+                .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
                 .createDate(application.getCreatedDate())
                 .agentLogin(application.getCurrentAgent())
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
-                .status(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()))
+                .status(DictionaryMappingTool.mapMultilangSystemDictionary(application.getApplicationStatus()))
                 .build();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
             ApplicationSellData data = application.getApplicationSellData();
@@ -272,9 +272,9 @@ public class KanbanServiceImpl implements KanbanService {
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
                 .clientLogin(application.getClientLogin())
                 .clientFullname(nonNull(clientDto) ? clientDto.getFullname() : "")
-                .operationType(DictionaryMappingTool.mapMultilangDictionary(application.getOperationType()))
-                .objectType(DictionaryMappingTool.mapMultilangDictionary(application.getObjectType()))
-                .status(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()))
+                .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
+                .objectType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getObjectType()))
+                .status(DictionaryMappingTool.mapMultilangSystemDictionary(application.getApplicationStatus()))
                 .contractGuid(nonNull(application.getContract()) ? application.getContract().getGuid() : null)
                 .depositGuid(nonNull(application.getDeposit()) ? application.getDeposit().getGuid() : nonNull(application.getSellDeposit()) ? application.getSellDeposit().getGuid() : null)
                 .build();
