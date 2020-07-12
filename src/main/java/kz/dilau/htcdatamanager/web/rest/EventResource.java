@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.EventService;
+import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class EventResource {
     private final EventService eventService;
 
     @PostMapping
-    ResponseEntity<Long> addEvent(@RequestBody EventDto event) {
+    public ResponseEntity<Long> addEvent(@RequestBody EventDto event) {
         Long result = eventService.addEvent(event);
         return ResponseEntity.ok(result);
     }
@@ -26,6 +27,12 @@ public class EventResource {
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
         EventDto event = eventService.getEventById(id);
         return ResponseEntity.ok(event);
+    }
+
+    @GetMapping("/getContractsInfo/{applicationId}")
+    public ResponseEntity<ApplicationContractInfoDto> getContractsInfo(@PathVariable("applicationId") Long applicationId) {
+        ApplicationContractInfoDto info = eventService.getContractsInfo(applicationId);
+        return ResponseEntity.ok(info);
     }
 
     @PutMapping("/{id}")
