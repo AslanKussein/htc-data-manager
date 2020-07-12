@@ -14,12 +14,14 @@ import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -325,7 +327,13 @@ public class KanbanServiceImpl implements KanbanService {
 
     private ApplicationStatus getPrevStatus(Application application) {
         if (nonNull(application) && nonNull(application.getStatusHistoryList()) && !application.getStatusHistoryList().isEmpty() && application.getStatusHistoryList().size() > 1) {
-            return application.getStatusHistoryList().get(application.getStatusHistoryList().size() - 2).getApplicationStatus();
+            List<ApplicationStatusHistory> statusHistoryList = application.getStatusHistoryList();
+            statusHistoryList.sort(Comparator.comparing(ApplicationStatusHistory::getId, Comparator.reverseOrder()));
+            for (val history : statusHistoryList) {
+                if (!(history.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED) || history.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS))) {
+                    return history.getApplicationStatus();
+                }
+            }
         }
         return null;
     }
