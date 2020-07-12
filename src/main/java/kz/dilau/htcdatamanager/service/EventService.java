@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service;
 
+import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 
@@ -19,4 +20,6 @@ public interface EventService {
     List<JasperActViewDto> getViewbyTargetApp(Long appId);
 
     List<JasperActViewDto> getViewBySourceApp(Long appId);
+
+    ApplicationContractInfoDto getContractsInfo(Long applicationId);
 }
