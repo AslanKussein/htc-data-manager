@@ -2,13 +2,13 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.RealProperty;
-import kz.dilau.htcdatamanager.domain.base.MultiLang;
 import kz.dilau.htcdatamanager.service.ApplicationFullViewService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.NotesService;
-import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
-import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.ApplicationFullViewDto;
+import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
+import kz.dilau.htcdatamanager.web.dto.ContractFormFullDto;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ApplicationFullViewServiceImpl implements ApplicationFullViewService {
     private final ApplicationService applicationService;
-    private final NotesService notesService;
 
     @Override
     public ApplicationFullViewDto getById(Long id) {
@@ -37,9 +36,9 @@ public class ApplicationFullViewServiceImpl implements ApplicationFullViewServic
         dto.setContractDto(new ContractFormFullDto(application.getContract()));
         if (application.getApplicationSellData() != null) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
-            RealPropertyDto realPropertyDto = new RealPropertyDto(realProperty);
-            realPropertyDto.setNotesCount(notesService.getCountByRealPropertyId(realProperty.getId()));
-            dto.setRealPropertyDto(realPropertyDto);
+            if (realProperty != null) {
+                dto.setRealPropertyDto(new RealPropertyDto(realProperty));
+            }
             dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
         }
 
