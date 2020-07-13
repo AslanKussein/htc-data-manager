@@ -4,7 +4,6 @@ import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.service.ApplicationFullViewService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.NotesService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationFullViewDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
 import kz.dilau.htcdatamanager.web.dto.ContractFormFullDto;
