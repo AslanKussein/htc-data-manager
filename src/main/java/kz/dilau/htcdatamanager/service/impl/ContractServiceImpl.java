@@ -83,6 +83,10 @@ public class ContractServiceImpl implements ContractService {
         return nonNull(authorName) && nonNull(application) && (authorName.equalsIgnoreCase(application.getCreatedBy()) || nonNull(application.getCurrentAgent()) && authorName.equalsIgnoreCase(application.getCurrentAgent()));
     }
 
+    private boolean isClient(String authorName, Application application) {
+        return nonNull(authorName) && nonNull(application.getClientLogin()) && authorName.equalsIgnoreCase(application.getClientLogin());
+    }
+
     @Override
     public FileInfoDto generateContract(String token, ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
@@ -287,6 +291,10 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createRequiredIsEmpty("applicationId");
         }
 
+        if (isNull(clientAppContractRequestDto.getToSave())) {
+            throw BadRequestException.createRequiredIsEmpty("toSave");
+        }
+
         String currentUser = getAuthorName();
 
         Application currentApp = applicationService.getApplicationById(clientAppContractRequestDto.getApplicationId());
@@ -299,7 +307,7 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createChangeStatus(currentApp.getApplicationStatus().getCode(), status.getCode());
         }
 
-        if (!hasPermission(currentUser, currentApp)) {
+        if (!isClient(currentUser, currentApp)) {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
 
@@ -334,7 +342,7 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(contractForm.getCode())) {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
-        String nextNumb = getContractNextNumb(contractForm.getCode());
+        String nextNumb =  (clientAppContractRequestDto.getToSave()) ? getContractNextNumb(contractForm.getCode()) : "KP-XXXXXXZZZZ";
 
         ContractFormDto dto = new ContractFormDto();
         dto.setContractNumber(nextNumb);
