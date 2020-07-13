@@ -12,26 +12,25 @@ import static java.util.Objects.nonNull;
 
 @Getter
 @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "ContractFormDto", description = "Модель формирования договора ОУ")
 public class ContractFormDto {
     @NonNull
     @ApiModelProperty(value = "ID заявки", required = true)
-    private Long applicationId;
+    protected Long applicationId;
     @ApiModelProperty(value = "Срок действия договора", required = true)
-    private ZonedDateTime contractPeriod;
+    protected ZonedDateTime contractPeriod;
     @ApiModelProperty(value = "Номер договора")
-    private String contractNumber;
+    protected String contractNumber;
     @ApiModelProperty(value = "Сумма по договору", required = true)
-    private BigDecimal contractSum;
+    protected BigDecimal contractSum;
     @ApiModelProperty(value = "Комиссия", required = true)
-    private BigDecimal commission;
+    protected BigDecimal commission;
     @ApiModelProperty(value = "Тип договора")
-    private Long contractTypeId;
+    protected Long contractTypeId;
     @ApiModelProperty(value = "Идентификатор прикрепленного документа")
-    private String guid;
+    protected String guid;
 
     public ContractFormDto(ApplicationContract contract) {
         if (nonNull(contract)) {
