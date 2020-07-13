@@ -60,7 +60,9 @@ public class CompleteApplicationDto {
     @ApiModelProperty(value = "УРЛ договора аванса/задатка")
     private String depositGuid;
     @ApiModelProperty(value = "Комиссия")
-    private long commission;
+    private BigDecimal commission;
+    @ApiModelProperty(value = "Сумма аванса/задатка")
+    private BigDecimal depositSum;
 
     public Set<String> getPhotoIdList() {
         if (isNull(photoIdList)) {

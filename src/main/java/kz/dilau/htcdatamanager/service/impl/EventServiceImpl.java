@@ -13,6 +13,7 @@ import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
@@ -197,6 +198,16 @@ public class EventServiceImpl implements EventService {
         }
 
         return lst;
+    }
+
+    @Override
+    public ApplicationContractInfoDto getContractsInfo(Long applicationId) {
+        Application application = applicationService.getApplicationById(applicationId);
+        return ApplicationContractInfoDto.builder()
+                .applicationId(application.getId())
+                .contractStatus(nonNull(application.getContract()) ? DictionaryMappingTool.mapMultilangSystemDictionary(application.getContract().getContractStatus()) : null)
+                .hasDepositContract(nonNull(application.getDeposit()) || nonNull(application.getSellDeposit()))
+                .build();
     }
 
     @Override

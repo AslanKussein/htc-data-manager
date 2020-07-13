@@ -392,9 +392,9 @@ public class ContractServiceImpl implements ContractService {
             InputStream footerImage = null;
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
-            List<ContractTempaleDto> templateList = contractForm.getTemplateList();
-            ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
-            ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
+            List<ContractTemplateDto> templateList = contractForm.getTemplateList();
+            ContractTemplateDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
+            ContractTemplateDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
                 logoImage = getLogo(logoPath.getTemplate());
@@ -406,7 +406,7 @@ public class ContractServiceImpl implements ContractService {
             if (templateList.isEmpty()) {
                 throw BadRequestException.createTemplateException("error.application.contract");
             }
-            for (ContractTempaleDto tpl : templateList) {
+            for (ContractTemplateDto tpl : templateList) {
                 if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
                     continue;
                 }
@@ -440,7 +440,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private Map<String, Object> getBindParAvans(String nextNumb,
-                                                ContractTempaleDto tpl,
+                                                ContractTemplateDto tpl,
                                                 DepositFormDto formDto,
                                                 ProfileClientDto buyerDto,
                                                 ProfileClientDto sellerDto,
@@ -531,7 +531,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     private Map<String, Object> getBindPars(
-            ContractTempaleDto tpl,
+            ContractTemplateDto tpl,
             ApplicationPurchaseData purchaseData,
             ApplicationSellData sellData,
             ProfileClientDto clientDto,
@@ -769,14 +769,14 @@ public class ContractServiceImpl implements ContractService {
 
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
             ApplicationSellData sellData = application.getApplicationSellData();
-            List<ContractTempaleDto> templateList = contractForm.getTemplateList();
+            List<ContractTemplateDto> templateList = contractForm.getTemplateList();
 
             String logoImagePath = null;
             String footerImagePath = null;
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
-            ContractTempaleDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
-            ContractTempaleDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
+            ContractTemplateDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
+            ContractTemplateDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
                 logoImagePath = logoPath.getTemplate();
@@ -788,7 +788,7 @@ public class ContractServiceImpl implements ContractService {
             if (templateList.isEmpty()) {
                 throw BadRequestException.createTemplateException("error.application.contract");
             }
-            for (ContractTempaleDto tpl : templateList) {
+            for (ContractTemplateDto tpl : templateList) {
                 if (tpl.getName().equals(ContractTemplateType.LOGO.name()) || tpl.getName().equals(ContractTemplateType.FOOTER_LOGO.name())) {
                     continue;
                 }
@@ -821,7 +821,7 @@ public class ContractServiceImpl implements ContractService {
         }
     }
 
-    private ContractTempaleDto getTemplateByName(String name, List<ContractTempaleDto> templateList) {
+    private ContractTemplateDto getTemplateByName(String name, List<ContractTemplateDto> templateList) {
         return templateList.stream()
                 .filter(t -> t.getName().equals(name))
                 .findFirst()
@@ -832,7 +832,7 @@ public class ContractServiceImpl implements ContractService {
         return getClass().getResourceAsStream(path);
     }
 
-    private InputStream getJrxml(ContractTempaleDto tpl) {
+    private InputStream getJrxml(ContractTemplateDto tpl) {
         return new ByteArrayInputStream(tpl.getTemplate().getBytes(StandardCharsets.UTF_8));
     }
 

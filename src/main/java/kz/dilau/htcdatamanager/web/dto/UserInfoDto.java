@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.util.List;
 
+import static kz.dilau.htcdatamanager.util.StringUtils.mapFullName;
+
 @Data
 public class UserInfoDto {
     private Long id;
@@ -17,6 +19,6 @@ public class UserInfoDto {
     private OrganizationDto organizationDto;
 
     public String getFullname() {
-        return surname + " " + name;
+        return mapFullName(this.surname, this.name, null);
     }
 }

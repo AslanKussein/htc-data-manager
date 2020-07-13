@@ -17,9 +17,9 @@ public class StringUtils {
         return null;
     }
 
-    public static String mapFullName(String name, String surname, String middlename) {
-        return (isNull(name) ? EMPTY_STRING : name) +
-                (isNull(surname) ? EMPTY_STRING : SPACE + surname) +
+    public static String mapFullName(String surname, String name, String middlename) {
+        return (isNull(surname) ? EMPTY_STRING : surname) +
+                (isNull(name) ? EMPTY_STRING : SPACE + name) +
                 (isNull(middlename) ? EMPTY_STRING : SPACE + middlename);
     }
 }

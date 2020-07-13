@@ -14,12 +14,14 @@ import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.Objects.isNull;
@@ -231,11 +233,12 @@ public class KanbanServiceImpl implements KanbanService {
     private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application, UserInfoDto agentDto) {
         CompleteTargetApplicationDto dto = CompleteTargetApplicationDto.builder()
                 .id(application.getId())
-                .operationType(DictionaryMappingTool.mapMultilangDictionary(application.getOperationType()))
+                .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
                 .createDate(application.getCreatedDate())
                 .agentLogin(application.getCurrentAgent())
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
-                .status(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()))
+                .agentPhone(nonNull(agentDto) ? agentDto.getPhone() : "")
+                .status(DictionaryMappingTool.mapMultilangSystemDictionary(application.getApplicationStatus()))
                 .build();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
             ApplicationSellData data = application.getApplicationSellData();
@@ -272,16 +275,16 @@ public class KanbanServiceImpl implements KanbanService {
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
                 .clientLogin(application.getClientLogin())
                 .clientFullname(nonNull(clientDto) ? clientDto.getFullname() : "")
-                .operationType(DictionaryMappingTool.mapMultilangDictionary(application.getOperationType()))
-                .objectType(DictionaryMappingTool.mapMultilangDictionary(application.getObjectType()))
-                .status(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()))
+                .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
+                .objectType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getObjectType()))
+                .status(DictionaryMappingTool.mapMultilangSystemDictionary(application.getApplicationStatus()))
                 .contractGuid(nonNull(application.getContract()) ? application.getContract().getGuid() : null)
                 .depositGuid(nonNull(application.getDeposit()) ? application.getDeposit().getGuid() : nonNull(application.getSellDeposit()) ? application.getSellDeposit().getGuid() : null)
+                .commission(nonNull(application.getContract()) ? application.getContract().getCommission() : null)
                 .build();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
             ApplicationSellData sellData = application.getApplicationSellData();
             result.setObjectPrice(sellData.getObjectPrice());
-            result.setCommission(contractService.getCommission(sellData.getObjectPrice().intValue(), application.getObjectTypeId()));
             if (nonNull(sellData.getRealProperty())) {
                 RealProperty realProperty = sellData.getRealProperty();
                 if (nonNull(sellData.getRealProperty().getBuilding())) {
@@ -313,7 +316,7 @@ public class KanbanServiceImpl implements KanbanService {
                 result.setObjectPricePeriod(new BigDecimalPeriod(purchaseData.getPurchaseInfo().getObjectPriceFrom(), purchaseData.getPurchaseInfo().getObjectPriceTo()));
                 result.setNumberOfRoomsPeriod(new IntegerPeriod(purchaseData.getPurchaseInfo().getNumberOfRoomsFrom(), purchaseData.getPurchaseInfo().getNumberOfRoomsTo()));
             }
-
+            result.setDepositSum(nonNull(application.getDeposit()) ? application.getDeposit().getPayedSum() : null);
         }
         ApplicationStatusHistory statusHistory = application.getLastStatusHistory();
         if (statusHistory.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
@@ -324,7 +327,13 @@ public class KanbanServiceImpl implements KanbanService {
 
     private ApplicationStatus getPrevStatus(Application application) {
         if (nonNull(application) && nonNull(application.getStatusHistoryList()) && !application.getStatusHistoryList().isEmpty() && application.getStatusHistoryList().size() > 1) {
-            return application.getStatusHistoryList().get(application.getStatusHistoryList().size() - 2).getApplicationStatus();
+            List<ApplicationStatusHistory> statusHistoryList = application.getStatusHistoryList();
+            statusHistoryList.sort(Comparator.comparing(ApplicationStatusHistory::getId, Comparator.reverseOrder()));
+            for (val history : statusHistoryList) {
+                if (!(history.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED) || history.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS))) {
+                    return history.getApplicationStatus();
+                }
+            }
         }
         return null;
     }

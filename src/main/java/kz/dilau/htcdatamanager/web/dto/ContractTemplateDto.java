@@ -15,10 +15,10 @@ import static java.util.Objects.nonNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "ContractTempaleDto", description = "Модель формы договора")
-public class ContractTempaleDto {
+@ApiModel(value = "ContractTemplateDto", description = "Модель формы договора")
+public class ContractTemplateDto {
 
-    @ApiModelProperty(value = "Наимаенование")
+    @ApiModelProperty(value = "Наименование")
     private String name;
 
     @ApiModelProperty(value = "Шаблон")
