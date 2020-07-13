@@ -3,42 +3,46 @@ package kz.dilau.htcdatamanager.service.impl;
 import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.domain.base.MultiLang;
-import kz.dilau.htcdatamanager.service.ApplicationForNotificationService;
+import kz.dilau.htcdatamanager.service.ApplicationFullViewService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.DictionaryCacheService;
 import kz.dilau.htcdatamanager.service.NotesService;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDto;
-import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
-import kz.dilau.htcdatamanager.web.dto.ApplicationForNotificationDto;
-import kz.dilau.htcdatamanager.web.dto.ContractFormForNotificationDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class ApplicationForNotificationServiceImpl implements ApplicationForNotificationService {
+public class ApplicationFullViewServiceImpl implements ApplicationFullViewService {
     private final ApplicationService applicationService;
     private final NotesService notesService;
-    private final DictionaryCacheService dictionaryCacheService;
 
     @Override
-    public ApplicationForNotificationDto getById(Long id) {
+    public ApplicationFullViewDto getById(Long id) {
         Application application = applicationService.getApplicationById(id);
         return mapToApplicationDto(application);
     }
 
-    private ApplicationForNotificationDto mapToApplicationDto(Application application) {
-        ApplicationForNotificationDto dto = new ApplicationForNotificationDto();
+    private ApplicationFullViewDto mapToApplicationDto(Application application) {
+        ApplicationFullViewDto dto = new ApplicationFullViewDto();
 
+        dto.setId(application.getId());
+        dto.setOperationTypeId(application.getOperationTypeId());
+        dto.setObjectTypeId(application.getObjectTypeId());
         dto.setClientLogin(application.getClientLogin());
         dto.setAgent(application.getCurrentAgent());
-        dto.setId(application.getId());
-        dto.setContract(new ContractFormForNotificationDto(application.getContract()));
-        dto.setId(application.getId());
+        dto.setIsReserved(application.isReservedRealProperty());
+        dto.setApplicationStatusId(application.getApplicationStatus().getId());
+        dto.setContractDto(new ContractFormFullDto(application.getContract()));
         if (application.getApplicationSellData() != null) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
-            dto.setAddress(DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()));
+            RealPropertyDto realPropertyDto = new RealPropertyDto(realProperty);
+            realPropertyDto.setNotesCount(notesService.getCountByRealPropertyId(realProperty.getId()));
+            dto.setRealPropertyDto(realPropertyDto);
+            dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
         }
+
         return dto;
     }
 
