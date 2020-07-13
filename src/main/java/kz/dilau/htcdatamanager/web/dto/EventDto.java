@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 import static java.util.Objects.nonNull;
@@ -34,7 +35,7 @@ public class EventDto {
     private Boolean isTargetReserved = false;
 
     @ApiModelProperty(value = "Дата и время события", required = true)
-    private Date eventDate;
+    private ZonedDateTime eventDate;
 
     @ApiModelProperty(value = "Описание события")
     private String description;
