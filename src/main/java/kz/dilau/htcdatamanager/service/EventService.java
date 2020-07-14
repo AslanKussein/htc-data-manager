@@ -1,12 +1,13 @@
 package kz.dilau.htcdatamanager.service;
 
+import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 
 import java.util.List;
 
 public interface EventService {
-    Long addEvent(EventDto event);
+    Long saveEvent(EventDto event, boolean fromClient);
 
     EventDto getEventById(Long id);
 
@@ -19,4 +20,6 @@ public interface EventService {
     List<JasperActViewDto> getViewbyTargetApp(Long appId);
 
     List<JasperActViewDto> getViewBySourceApp(Long appId);
+
+    ApplicationContractInfoDto getContractsInfo(Long applicationId);
 }

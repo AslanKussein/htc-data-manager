@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.EventType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.EntityRemovedException;
@@ -13,6 +14,7 @@ import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
+import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
@@ -21,9 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -38,9 +42,21 @@ public class EventServiceImpl implements EventService {
     private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
 
-    @Override
+    private void setStatusHistoryAndSaveApplication(Application application, Long statusId) {
+        if (!application.getApplicationStatus().getId().equals(statusId)) {
+            ApplicationStatus status = entityService.mapEntity(ApplicationStatus.class, statusId);
+            application.setApplicationStatus(status);
+            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
+                    .application(application)
+                    .applicationStatus(status)
+                    .build();
+            application.getStatusHistoryList().add(statusHistory);
+            applicationRepository.save(application);
+        }
+    }
+
     @Transactional
-    public Long addEvent(EventDto dto) {
+    public Long saveEvent(EventDto dto, boolean fromClient) {
         Event event = Event.builder()
                 .eventDate(dto.getEventDate())
                 .eventType(entityService.mapRequiredEntity(EventType.class, dto.getEventTypeId()))
@@ -64,7 +80,20 @@ public class EventServiceImpl implements EventService {
                 throw BadRequestException.createTemplateException("error.event.date.duplicate");
             }
             if (isNull(sourceApplication.getContract())) {
-                throw BadRequestException.createTemplateException("error.empty.contract");
+                if (fromClient) {
+                    sourceApplication.setContract(ApplicationContract.builder()
+                            .application(sourceApplication)
+                            .contractStatus(entityService.mapEntity(ContractStatus.class, ContractStatus.MISSING))
+                            .build());
+                    ApplicationStatus applicationStatus = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.CONTRACT);
+                    sourceApplication.getStatusHistoryList().add(ApplicationStatusHistory.builder()
+                            .application(sourceApplication)
+                            .applicationStatus(applicationStatus)
+                            .build());
+                    sourceApplication.setApplicationStatus(applicationStatus);
+                } else {
+                    throw BadRequestException.createTemplateException("error.empty.contract");
+                }
             }
             setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.DEMO);
             setStatusHistoryAndSaveApplication(targetApplication, ApplicationStatus.DEMO);
@@ -72,19 +101,6 @@ public class EventServiceImpl implements EventService {
             setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.MEETING);
         }
         return eventRepository.save(event).getId();
-    }
-
-    private void setStatusHistoryAndSaveApplication(Application application, Long statusId) {
-        if (!application.getApplicationStatus().getId().equals(statusId)) {
-            ApplicationStatus status = entityService.mapEntity(ApplicationStatus.class, statusId);
-            application.setApplicationStatus(status);
-            ApplicationStatusHistory statusHistory = ApplicationStatusHistory.builder()
-                    .application(application)
-                    .applicationStatus(status)
-                    .build();
-            application.getStatusHistoryList().add(statusHistory);
-            applicationRepository.save(application);
-        }
     }
 
     @Override
@@ -104,7 +120,7 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private String getViewInfo(List<ProfileClientDto> dto,Application appSource) {
+    private String getViewInfo(List<ProfileClientDto> dto, Application appSource) {
         return dto
                 .stream()
                 .filter(l -> l.getPhoneNumber().equals(appSource.getClientLogin()))
@@ -139,7 +155,7 @@ public class EventServiceImpl implements EventService {
             //ListResponse<UserInfoDto> dto = keycloakService.readUserInfos(logins);
             System.out.println(profileClientDtoList);
             int idx = 0;
-            for ( Event t : elst) {
+            for (Event t : elst) {
                 idx++;
                 lst.add(
                         new JasperActViewDto(String.valueOf(idx),
@@ -162,6 +178,7 @@ public class EventServiceImpl implements EventService {
 
         return lst;
     }
+
     @Override
     public List<JasperActViewDto> getViewBySourceApp(Long appId) {
         SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy");
@@ -181,14 +198,14 @@ public class EventServiceImpl implements EventService {
 
 
             int idx = 0;
-            for ( Event t : elst) {
+            for (Event t : elst) {
                 idx++;
                 lst.add(
                         new JasperActViewDto(String.valueOf(idx),
-                                sdfDate.format(t.getEventDate()),profileClientDtoList
+                                sdfDate.format(t.getEventDate()), profileClientDtoList
                                 .stream()
                                 .filter(l -> l.getPhoneNumber().equals(t.getTargetApplication().getClientLogin()))
-                                .map( x -> x.getFullname())
+                                .map(x -> x.getFullname())
                                 .findFirst()
                                 .orElse("")
                         )
@@ -197,6 +214,16 @@ public class EventServiceImpl implements EventService {
         }
 
         return lst;
+    }
+
+    @Override
+    public ApplicationContractInfoDto getContractsInfo(Long applicationId) {
+        Application application = applicationService.getApplicationById(applicationId);
+        return ApplicationContractInfoDto.builder()
+                .applicationId(application.getId())
+                .contractStatus(nonNull(application.getContract()) ? DictionaryMappingTool.mapMultilangSystemDictionary(application.getContract().getContractStatus()) : null)
+                .hasDepositContract(nonNull(application.getDeposit()) || nonNull(application.getSellDeposit()))
+                .build();
     }
 
     @Override

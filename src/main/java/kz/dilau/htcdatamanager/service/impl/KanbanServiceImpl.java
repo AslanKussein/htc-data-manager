@@ -272,19 +272,21 @@ public class KanbanServiceImpl implements KanbanService {
         CompleteApplicationDto result = CompleteApplicationDto.builder()
                 .id(application.getId())
                 .agentLogin(application.getCurrentAgent())
+                .agentId(nonNull(agentDto) ? agentDto.getId() : null)
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
                 .clientLogin(application.getClientLogin())
+                .clientId(nonNull(clientDto) ? clientDto.getId() : null)
                 .clientFullname(nonNull(clientDto) ? clientDto.getFullname() : "")
                 .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
                 .objectType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getObjectType()))
                 .status(DictionaryMappingTool.mapMultilangSystemDictionary(application.getApplicationStatus()))
                 .contractGuid(nonNull(application.getContract()) ? application.getContract().getGuid() : null)
                 .depositGuid(nonNull(application.getDeposit()) ? application.getDeposit().getGuid() : nonNull(application.getSellDeposit()) ? application.getSellDeposit().getGuid() : null)
+                .commission(nonNull(application.getContract()) ? application.getContract().getCommission() : null)
                 .build();
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData())) {
             ApplicationSellData sellData = application.getApplicationSellData();
             result.setObjectPrice(sellData.getObjectPrice());
-            result.setCommission(contractService.getCommission(sellData.getObjectPrice().intValue(), application.getObjectTypeId()));
             if (nonNull(sellData.getRealProperty())) {
                 RealProperty realProperty = sellData.getRealProperty();
                 if (nonNull(sellData.getRealProperty().getBuilding())) {
@@ -316,7 +318,7 @@ public class KanbanServiceImpl implements KanbanService {
                 result.setObjectPricePeriod(new BigDecimalPeriod(purchaseData.getPurchaseInfo().getObjectPriceFrom(), purchaseData.getPurchaseInfo().getObjectPriceTo()));
                 result.setNumberOfRoomsPeriod(new IntegerPeriod(purchaseData.getPurchaseInfo().getNumberOfRoomsFrom(), purchaseData.getPurchaseInfo().getNumberOfRoomsTo()));
             }
-
+            result.setDepositSum(nonNull(application.getDeposit()) ? application.getDeposit().getPayedSum() : null);
         }
         ApplicationStatusHistory statusHistory = application.getLastStatusHistory();
         if (statusHistory.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
