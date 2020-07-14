@@ -29,10 +29,14 @@ public class CompleteApplicationDto {
     private DictionaryMultilangItemDto objectType;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agentLogin;
+    @ApiModelProperty(value = "ID агента, на кого назначена заявка")
+    private Long agentId;
     @ApiModelProperty(value = "ФИО агента, на кого назначена заявка")
     private String agentFullname;
     @ApiModelProperty(value = "Логин Клиента")
     private String clientLogin;
+    @ApiModelProperty(value = "ID Клиента")
+    private Long clientId;
     @ApiModelProperty(value = "ФИО Клиента")
     private String clientFullname;
     @ApiModelProperty(value = "Цена объекта(млн тг)")
