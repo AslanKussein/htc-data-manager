@@ -19,7 +19,13 @@ public class EventResource {
 
     @PostMapping
     public ResponseEntity<Long> addEvent(@RequestBody EventDto event) {
-        Long result = eventService.addEvent(event);
+        Long result = eventService.saveEvent(event, false);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/addFromClientApp")
+    public ResponseEntity<Long> addFromClientApp(@RequestBody EventDto event) {
+        Long result = eventService.saveEvent(event, true);
         return ResponseEntity.ok(result);
     }
 

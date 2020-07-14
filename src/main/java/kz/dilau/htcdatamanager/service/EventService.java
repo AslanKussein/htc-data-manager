@@ -7,7 +7,7 @@ import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 import java.util.List;
 
 public interface EventService {
-    Long addEvent(EventDto event);
+    Long saveEvent(EventDto event, boolean fromClient);
 
     EventDto getEventById(Long id);
 
