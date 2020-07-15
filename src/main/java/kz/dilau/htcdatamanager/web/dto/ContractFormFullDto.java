@@ -1,8 +1,10 @@
 package kz.dilau.htcdatamanager.web.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.ApplicationContract;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static java.util.Objects.nonNull;
@@ -12,7 +14,20 @@ import static java.util.Objects.nonNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContractFormFullDto extends ContractFormDto {
+public class ContractFormFullDto  {
+    protected Long applicationId;
+    @ApiModelProperty(value = "Срок действия договора")
+    protected ZonedDateTime contractPeriod;
+    @ApiModelProperty(value = "Номер договора")
+    protected String contractNumber;
+    @ApiModelProperty(value = "Сумма по договору")
+    protected BigDecimal contractSum;
+    @ApiModelProperty(value = "Комиссия")
+    protected BigDecimal commission;
+    @ApiModelProperty(value = "Тип договора")
+    protected Long contractTypeId;
+    @ApiModelProperty(value = "Идентификатор прикрепленного документа")
+    protected String guid;
 
     protected ZonedDateTime createdDate;
 

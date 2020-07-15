@@ -43,6 +43,8 @@ public class ApplicationFullViewDto {
     private String agent;
     @ApiModelProperty(value = "Логин Клиента")
     private String clientLogin;
+    @ApiModelProperty(value = "Автор")
+    private String createdBy;
 
     @ApiModelProperty(value = "Признак бронирования")
     private Boolean isReserved;
