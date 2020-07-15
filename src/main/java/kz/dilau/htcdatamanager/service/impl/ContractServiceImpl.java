@@ -105,10 +105,10 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(dto.getContractPeriod())) {
             throw BadRequestException.createRequiredIsEmpty("contractPeriod");
         }
-       /* ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
+        ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
         if (nonNull(applicationContract))
             throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
-*/
+        
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
