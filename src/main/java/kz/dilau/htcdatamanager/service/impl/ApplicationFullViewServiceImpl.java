@@ -29,6 +29,7 @@ public class ApplicationFullViewServiceImpl implements ApplicationFullViewServic
         dto.setOperationTypeId(application.getOperationTypeId());
         dto.setObjectTypeId(application.getObjectTypeId());
         dto.setClientLogin(application.getClientLogin());
+        dto.setCreatedBy(application.getCreatedBy());
         dto.setAgent(application.getCurrentAgent());
         dto.setIsReserved(application.isReservedRealProperty());
         dto.setApplicationStatusId(application.getApplicationStatus().getId());
