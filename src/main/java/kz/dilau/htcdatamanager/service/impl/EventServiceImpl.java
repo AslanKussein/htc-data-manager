@@ -26,9 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,23 +60,19 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     public Long saveEvent(EventDto dto, boolean fromClient) {
-        if (isNull(dto.getEventDate())) {
-            throw BadRequestException.createRequiredIsEmpty("EventDate");
-        }
-        ZonedDateTime eventDate = ZonedDateTime.from(dto.getEventDate()).toInstant().atZone(ZoneId.systemDefault());
         Event event = Event.builder()
-                .eventDate(eventDate)
+                .eventDate(dto.getEventDate())
                 .eventType(entityService.mapRequiredEntity(EventType.class, dto.getEventTypeId()))
                 .description(dto.getDescription())
                 .build();
         Application sourceApplication = applicationService.getApplicationById(dto.getSourceApplicationId());
         event.setSourceApplication(sourceApplication);
-        if (eventRepository.existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(sourceApplication.getId(), eventDate)) {
+        if (eventRepository.existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(sourceApplication.getId(), dto.getEventDate())) {
             throw BadRequestException.createTemplateException("error.event.date.duplicate");
         }
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
-            DatePeriod period = DatePeriod.builder().from(dto.getEventDate().atStartOfDay(ZoneOffset.UTC).with(LocalTime.MIN))
-                    .to(dto.getEventDate().atStartOfDay(ZoneOffset.UTC).with(LocalTime.MAX)).build();
+            DatePeriod period = DatePeriod.builder().from(dto.getEventDate().toLocalDate().atStartOfDay(ZoneOffset.UTC).with(LocalTime.MIN))
+                    .to(dto.getEventDate().toLocalDate().atStartOfDay(ZoneOffset.UTC).with(LocalTime.MAX)).build();
             if (eventRepository.countBySourceApplicationIdAndEventDateBetween(dto.getSourceApplicationId(), period.getFrom(), period.getTo()) >= dataProperties.getMaxEventDemoPerDay()) {
                 throw BadRequestException.createTemplateExceptionWithParam("error.max.event.demo.per.day", dto.getSourceApplicationId().toString());
             }
@@ -90,7 +84,7 @@ public class EventServiceImpl implements EventService {
             if (sourceApplication.getOperationType().getId().equals(targetApplication.getOperationType().getId())) {
                 throw BadRequestException.createTemplateException("error.operation.type.in.target.application");
             }
-            if (eventRepository.existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(targetApplication.getId(), eventDate)) {
+            if (eventRepository.existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(targetApplication.getId(), dto.getEventDate())) {
                 throw BadRequestException.createTemplateException("error.event.date.duplicate");
             }
             if (isNull(sourceApplication.getContract())) {
@@ -243,7 +237,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Long updateEvent(String token, Long id, EventDto dto) {
         Event event = getById(id);
-        event.setEventDate(nonNull(dto.getEventDate()) ? ZonedDateTime.from(dto.getEventDate()).toInstant().atZone(ZoneId.systemDefault()) : null);
+        event.setEventDate(dto.getEventDate());
         event.setDescription(dto.getDescription());
         return eventRepository.save(event).getId();
     }
