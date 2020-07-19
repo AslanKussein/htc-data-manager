@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class EventServiceImpl implements EventService {
         if (isNull(dto.getEventDate())) {
             throw BadRequestException.createRequiredIsEmpty("EventDate");
         }
-        ZonedDateTime eventDate = ZonedDateTime.from(dto.getEventDate());
+        ZonedDateTime eventDate = ZonedDateTime.from(dto.getEventDate()).toInstant().atZone(ZoneId.systemDefault());
         Event event = Event.builder()
                 .eventDate(eventDate)
                 .eventType(entityService.mapRequiredEntity(EventType.class, dto.getEventTypeId()))
@@ -242,7 +243,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Long updateEvent(String token, Long id, EventDto dto) {
         Event event = getById(id);
-        event.setEventDate(nonNull(dto.getEventDate()) ? ZonedDateTime.from(dto.getEventDate()) : null);
+        event.setEventDate(nonNull(dto.getEventDate()) ? ZonedDateTime.from(dto.getEventDate()).toInstant().atZone(ZoneId.systemDefault()) : null);
         event.setDescription(dto.getDescription());
         return eventRepository.save(event).getId();
     }
