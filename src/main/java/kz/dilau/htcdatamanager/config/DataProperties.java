@@ -24,4 +24,5 @@ public class DataProperties {
     private int maxApplicationCountForOneRealProperty;
     private BigDecimal commissionForHouse;
     private List<CommissionRange> commissionRangeList;
+    private int maxEventDemoPerDay;
 }

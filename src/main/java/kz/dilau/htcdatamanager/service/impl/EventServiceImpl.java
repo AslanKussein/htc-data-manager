@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.ContractStatus;
@@ -17,17 +18,19 @@ import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
+import kz.dilau.htcdatamanager.web.dto.common.DatePeriod;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -41,6 +44,7 @@ public class EventServiceImpl implements EventService {
     private final ApplicationRepository applicationRepository;
     private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
+    private final DataProperties dataProperties;
 
     private void setStatusHistoryAndSaveApplication(Application application, Long statusId) {
         if (!application.getApplicationStatus().getId().equals(statusId)) {
@@ -57,17 +61,26 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     public Long saveEvent(EventDto dto, boolean fromClient) {
+        if (isNull(dto.getEventDate())) {
+            throw BadRequestException.createRequiredIsEmpty("EventDate");
+        }
+        ZonedDateTime eventDate = ZonedDateTime.from(dto.getEventDate());
         Event event = Event.builder()
-                .eventDate(dto.getEventDate())
+                .eventDate(eventDate)
                 .eventType(entityService.mapRequiredEntity(EventType.class, dto.getEventTypeId()))
                 .description(dto.getDescription())
                 .build();
         Application sourceApplication = applicationService.getApplicationById(dto.getSourceApplicationId());
         event.setSourceApplication(sourceApplication);
-        if (eventRepository.existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(sourceApplication.getId(), dto.getEventDate())) {
+        if (eventRepository.existsBySourceApplicationIdAndEventDateAndIsRemovedFalse(sourceApplication.getId(), eventDate)) {
             throw BadRequestException.createTemplateException("error.event.date.duplicate");
         }
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
+            DatePeriod period = DatePeriod.builder().from(dto.getEventDate().atStartOfDay(ZoneOffset.UTC).with(LocalTime.MIN))
+                    .to(dto.getEventDate().atStartOfDay(ZoneOffset.UTC).with(LocalTime.MAX)).build();
+            if (eventRepository.countBySourceApplicationIdAndEventDateBetween(dto.getSourceApplicationId(), period.getFrom(), period.getTo()) >= dataProperties.getMaxEventDemoPerDay()) {
+                throw BadRequestException.createTemplateExceptionWithParam("error.max.event.demo.per.day", dto.getSourceApplicationId().toString());
+            }
             if (isNull(dto.getTargetApplicationId())) {
                 throw BadRequestException.createRequiredIsEmpty("targetApplicationId");
             }
@@ -76,7 +89,7 @@ public class EventServiceImpl implements EventService {
             if (sourceApplication.getOperationType().getId().equals(targetApplication.getOperationType().getId())) {
                 throw BadRequestException.createTemplateException("error.operation.type.in.target.application");
             }
-            if (eventRepository.existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(targetApplication.getId(), dto.getEventDate())) {
+            if (eventRepository.existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(targetApplication.getId(), eventDate)) {
                 throw BadRequestException.createTemplateException("error.event.date.duplicate");
             }
             if (isNull(sourceApplication.getContract())) {
@@ -229,7 +242,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Long updateEvent(String token, Long id, EventDto dto) {
         Event event = getById(id);
-        event.setEventDate(dto.getEventDate());
+        event.setEventDate(nonNull(dto.getEventDate()) ? ZonedDateTime.from(dto.getEventDate()) : null);
         event.setDescription(dto.getDescription());
         return eventRepository.save(event).getId();
     }
