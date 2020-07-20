@@ -26,7 +26,7 @@ public class SwaggerConfiguration {
                 .securityContexts(Collections.singletonList(securityContext()))
                 .securitySchemes(Collections.singletonList(new ApiKey(Constants.AUTHORIZATION_PREFIX, HttpHeaders.AUTHORIZATION, Constants.AUTHORIZATION_PREFIX + " ")))
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("kz.dilau.htcdatamanager"))
+                .apis(RequestHandlerSelectors.basePackage("kz.dilau"))
                 .build();
     }
 

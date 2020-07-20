@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -14,6 +13,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     boolean existsByTargetApplicationIdAndEventDateAndIsRemovedFalse(Long targetApplicationId, ZonedDateTime date);
 
+    int countBySourceApplicationIdAndEventDateBetween(Long sourceApplicationId, ZonedDateTime from, ZonedDateTime to);
+
     List<Event> findByTargetApplicationIdAndEventTypeId(Long app, Long et);
+
     List<Event> findBySourceApplicationIdAndEventTypeId(Long app, Long et);
 }
