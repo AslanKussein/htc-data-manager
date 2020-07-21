@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
@@ -94,5 +96,12 @@ public class ApplicationResource {
     @GetMapping("/approveReserve/{applicationId}")
     public ResponseEntity<Long> approveReserve(@PathVariable("applicationId") Long applicationId) {
         return ResponseEntity.ok(applicationService.approveReserve(applicationId));
+    }
+
+    @GetMapping("/getOperationsByAppId/{applicationId}")
+    public ResponseEntity<List<String>> getOperationsByAppId(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                             @PathVariable("applicationId") Long applicationId) {
+        List<String> result = applicationService.getOperationsByAppId(token, applicationId);
+        return ResponseEntity.ok(result);
     }
 }

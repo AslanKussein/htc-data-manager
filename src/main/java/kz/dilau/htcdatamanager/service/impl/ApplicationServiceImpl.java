@@ -547,4 +547,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationRepository.save(application);
         return application.getId();
     }
+
+    @Override
+    public List<String> getOperationsByAppId(String token, Long applicationId) {
+        Application application = getApplicationById(applicationId);
+        return getOperationList(token, application);
+    }
 }
