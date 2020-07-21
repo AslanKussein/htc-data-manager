@@ -139,9 +139,12 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         Application targetApplication = applicationService.getApplicationById(targetApplicationId);
         Application application = applicationService.getApplicationById(id);
 
-        if (nonNull(application.getApplicationPurchaseData())
-                && nonNull(application.getApplicationPurchaseData().getCity())) {
-            if (isNullOrEmpty(application.getCurrentAgent())) {
+        if ((nonNull(application.getApplicationPurchaseData())
+                && nonNull(application.getApplicationPurchaseData().getCity()))) {
+            if (isNullOrEmpty(application.getCurrentAgent()) ||
+                    (!isNullOrEmpty(application.getCurrentAgent()) && isNullOrEmpty(targetApplication.getCurrentAgent())
+                            && !application.getCurrentAgent().equals(targetApplication.getCurrentAgent()))
+            ) {
                 application.setCurrentAgent(targetApplication.getCurrentAgent());
                 application = applicationRepository.save(application);
             }
