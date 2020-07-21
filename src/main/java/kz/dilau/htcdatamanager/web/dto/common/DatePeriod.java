@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static java.util.Objects.isNull;
 
@@ -14,13 +15,13 @@ import static java.util.Objects.isNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DatePeriod {
-    private Date from;
-    private Date to;
+    private ZonedDateTime from;
+    private ZonedDateTime to;
 
-    public Date getFrom() {
+    public ZonedDateTime getFrom() {
         if (isNull(from)) {
             try {
-                from = new SimpleDateFormat("dd.MM.yyyy").parse("01.01.1900");
+                from = new SimpleDateFormat("dd.MM.yyyy").parse("01.01.1900").toInstant().atZone(ZoneId.systemDefault());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -28,10 +29,10 @@ public class DatePeriod {
         return from;
     }
 
-    public Date getTo() {
+    public ZonedDateTime getTo() {
         if (isNull(to)) {
             try {
-                to = new SimpleDateFormat("dd.MM.yyyy").parse("01.01.4000");
+                to = new SimpleDateFormat("dd.MM.yyyy").parse("01.01.4000").toInstant().atZone(ZoneId.systemDefault());
             } catch (ParseException e) {
                 e.printStackTrace();
             }

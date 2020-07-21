@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -52,6 +53,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String CLIENTS_BY_LOGINS = "/getList";
     private static final String GET_CONTRACT_FORM = "/api/organizations/getContractForm";
     private static final String UPLOAD_FILE_ENDPOINT = "/api/upload";
+    private static final String DOWNLOAD_FILE_ENDPOINT = "/api/download";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -313,7 +315,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     public FileInfoDto uploadFile(String token, byte[] pFile, String pFilename) {
         HttpHeaders headers = new HttpHeaders();
         //headers.setBearerAuth(token);
-        headers.set("Authorization", token);
+        headers.set(HttpHeaders.AUTHORIZATION, token);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         String url = dataProperties.getKeycloakFileManagerUrl() + UPLOAD_FILE_ENDPOINT;
@@ -326,6 +328,25 @@ public class KeycloakServiceImpl implements KeycloakService {
         HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
         return restTemplate
                 .postForObject(uriBuilder.toUriString(), requestEntity, FileInfoDto.class);
+    }
+
+
+
+    public Resource getFile(String token, String uuid) {
+        HttpHeaders headers = new HttpHeaders();
+        String url = dataProperties.getKeycloakFileManagerUrl() + DOWNLOAD_FILE_ENDPOINT + "/" + uuid;
+
+        headers.set(HttpHeaders.AUTHORIZATION, token);
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        ResponseEntity<Resource> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.GET,
+                request,
+                Resource.class
+        );
+        return response.getBody();
     }
 
     @Override

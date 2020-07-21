@@ -87,24 +87,26 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
         }
         if (!isSell(application)) {
             ApplicationSellDataDto sellData = application.getSellDataDto();
-            dto.comment(sellData.getNote())
-                    .description(sellData.getDescription())
-                    .mortgage(sellData.getMortgage())
-                    .probabilityOfBidding(sellData.getProbabilityOfBidding())
-                    .objectPrice(sellData.getObjectPrice())
-                    .theSizeOfTrades(sellData.getTheSizeOfTrades())
-                    .encumbrance(sellData.getEncumbrance())
-                    .sharedOwnershipProperty(sellData.getSharedOwnershipProperty())
-                    .exchange(sellData.getExchange());
-            if (nonNull(sellData.getPossibleReasonForBiddingIdList())) {
-                dto.possibleReasonForBiddingIdList(sellData.getPossibleReasonForBiddingIdList().stream()
-                        .filter(aLong -> aLong != 0)
-                        .map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
-            }
-            if (nonNull(sellData.getApplicationFlagIdList())) {
-                dto.applicationFlagIdList(sellData.getApplicationFlagIdList().stream()
-                        .filter(aLong -> aLong != 0)
-                        .map(idItem -> applicationFlagRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+            if (nonNull(sellData)) {
+                dto.comment(sellData.getNote())
+                        .description(sellData.getDescription())
+                        .mortgage(sellData.getMortgage())
+                        .probabilityOfBidding(sellData.getProbabilityOfBidding())
+                        .objectPrice(sellData.getObjectPrice())
+                        .theSizeOfTrades(sellData.getTheSizeOfTrades())
+                        .encumbrance(sellData.getEncumbrance())
+                        .sharedOwnershipProperty(sellData.getSharedOwnershipProperty())
+                        .exchange(sellData.getExchange());
+                if (nonNull(sellData.getPossibleReasonForBiddingIdList())) {
+                    dto.possibleReasonForBiddingIdList(sellData.getPossibleReasonForBiddingIdList().stream()
+                            .filter(aLong -> aLong != 0)
+                            .map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+                }
+                if (nonNull(sellData.getApplicationFlagIdList())) {
+                    dto.applicationFlagIdList(sellData.getApplicationFlagIdList().stream()
+                            .filter(aLong -> aLong != 0)
+                            .map(idItem -> applicationFlagRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+                }
             }
             fillRealProperty(dto, application);
         }

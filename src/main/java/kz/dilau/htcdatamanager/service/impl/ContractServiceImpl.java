@@ -102,10 +102,13 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(dto.getCommission()) || dto.getCommission().compareTo(BigDecimal.ZERO) != 1) {
             throw BadRequestException.createRequiredIsEmpty("comission");
         }
+        if (isNull(dto.getContractPeriod())) {
+            throw BadRequestException.createRequiredIsEmpty("contractPeriod");
+        }
         ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
         if (nonNull(applicationContract))
             throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
-
+        
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
@@ -118,6 +121,8 @@ public class ContractServiceImpl implements ContractService {
                 contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
             } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
                 contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.EXCLUSIVE.name());
+            } else if (dto.getContractTypeId().equals(ContractType.SUPER_EXCLUSIVE)) {
+                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.SUPER_EXCLUSIVE.name());
             } else {
                 throw BadRequestException.createTemplateException("error.contract.form.not.found");
             }
@@ -669,6 +674,9 @@ public class ContractServiceImpl implements ContractService {
                 case "objectLivingArea":
                     pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getLivingArea()) ? realPropertyMetadata.getLivingArea().toString() : "");
                     break;
+                case "objectLandArea":
+                    pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getLandArea()) ? realPropertyMetadata.getLandArea().toString() : "");
+                    break;
                 case "objectReadyYear":
                     pars.put(par, nonNull(realPropertyMetadata) && nonNull(realPropertyMetadata.getGeneralCharacteristics()) && nonNull(realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction()) ? realPropertyMetadata.getGeneralCharacteristics().getYearOfConstruction().toString() : "");
                     break;
@@ -711,7 +719,11 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(sellData) ? String.valueOf(sellData.getObjectPrice().floatValue() * 0.03) : "");
                     break;
                 case "objectMaxPrice":
-                    pars.put(par, nonNull(purchaseInfo) ? purchaseInfo.getObjectPriceTo().toString() : "");
+                    if (nonNull(purchaseInfo)) {
+                        pars.put(par, nonNull(purchaseInfo.getObjectPriceTo()) ? purchaseInfo.getObjectPriceTo().toString() : "");
+                    } else {
+                        pars.put(par, nonNull(sellData.getObjectPrice()) ? sellData.getObjectPrice().toString() : "");
+                    }
                     break;
                 case "docNumb":
                 case "contractNumber":
@@ -735,11 +747,27 @@ public class ContractServiceImpl implements ContractService {
                     JRBeanCollectionDataSource parDS = new JRBeanCollectionDataSource(ev);
                     pars.put(par, parDS);
                     break;
-
                 case "payTypeRU":
                 case "payTypeKZ":
                     if (nonNull(sellData) && nonNull(sellData.getMortgage())) {
                         pars.put(par, sellData.getMortgage() ? getTmplMsg("template.paytype.mortgage", locale) : getTmplMsg("template.paytype.cash", locale));
+                    } else {
+                        pars.put(par, "");
+                    }
+                    break;
+                case "expireDate":
+                    pars.put(par, nonNull(dto.getContractPeriod()) ? dtfDate.format(dto.getContractPeriod()) : "");
+                    break;
+                case "houseCondition":
+                case "houseConditionRU":
+                case "houseConditionKZ":
+                    if (nonNull(realPropertyMetadata)
+                            && nonNull(realPropertyMetadata.getGeneralCharacteristics())
+                            && nonNull(realPropertyMetadata.getGeneralCharacteristics().getHouseCondition())
+                    ) {
+                        pars.put(par, locale.equals("ru")  ?
+                                realPropertyMetadata.getGeneralCharacteristics().getHouseCondition().getMultiLang().getNameRu().toLowerCase():
+                                realPropertyMetadata.getGeneralCharacteristics().getHouseCondition().getMultiLang().getNameKz().toLowerCase());
                     } else {
                         pars.put(par, "");
                     }

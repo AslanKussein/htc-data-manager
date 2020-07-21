@@ -218,15 +218,20 @@ public class ApplicationServiceImpl implements ApplicationService {
         return applicationRepository.save(application).getId();
     }
 
+    public boolean checkOperation(List<String> operations, String operation) {
+        return isNull(operations) || operations.contains(operation);
+    }
+
     @Transactional
     public Long saveApplication(String token, Application application, ApplicationDto dto) {
-        List<String> operations = getOperationList(token, application);
+        List<String> operations = null;
         RealPropertyMetadata metadata = null;
         RealPropertyFile realPropertyFile = null;
         OperationType operationType;
         ApplicationSource applicationSource;
         if (nonNull(application.getId())) {
             operationType = application.getOperationType();
+            operations = getOperationList(token, application);
         } else {
             operationType = entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId());
 //            if (operationType.getCode().equals(OperationType.SELL) && realPropertyService.existsByCadastralNumber(dto.getRealPropertyRequestDto().getCadastralNumber())) {
@@ -256,9 +261,9 @@ public class ApplicationServiceImpl implements ApplicationService {
             application.setObjectType(entityService.mapRequiredEntity(ObjectType.class, dto.getObjectTypeId()));
         }
         if (operationType.isBuy() && nonNull(dto.getPurchaseDataDto())) {
-            if (operations.contains(UPDATE + PURCHASE_DEAL_INFO)) {
+            if (checkOperation(operations, UPDATE + PURCHASE_DEAL_INFO)) {
                 ApplicationPurchaseData purchaseData = entityMappingTool.convertApplicationPurchaseData(dto);
-                if (operations.contains(UPDATE + PURCHASE_OBJECT_INFO)) {
+                if (checkOperation(operations, UPDATE + PURCHASE_OBJECT_INFO)) {
                     PurchaseInfo info = entityMappingTool.convertPurchaseInfo(dto);
                     if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData()) &&
                             nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
@@ -273,14 +278,14 @@ public class ApplicationServiceImpl implements ApplicationService {
                 application.setApplicationPurchaseData(purchaseData);
             }
         } else if (operationType.isSell()) {
-            if (nonNull(dto.getSellDataDto()) && operations.contains(UPDATE + SALE_DEAL_INFO)) {
+            if (nonNull(dto.getSellDataDto()) && checkOperation(operations, UPDATE + SALE_DEAL_INFO)) {
                 ApplicationSellDataDto dataDto = dto.getSellDataDto();
                 if (isNull(dataDto.getObjectPrice())) {
                     throw BadRequestException.createRequiredIsEmpty("ObjectPrice");
                 }
                 ApplicationSellData sellData = new ApplicationSellData(dataDto);
                 RealPropertyDto realPropertyDto = dto.getRealPropertyDto();
-                if (operations.contains(UPDATE + SALE_OBJECT_DATA) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
+                if (checkOperation(operations, UPDATE + SALE_OBJECT_DATA) && nonNull(realPropertyDto) && nonNull(realPropertyDto.getBuildingDto())) {
                     RealProperty realProperty = null;
                     Building building = buildingService.getByPostcode(realPropertyDto.getBuildingDto().getPostcode());
                     realPropertyFile = new RealPropertyFile(realPropertyDto);
@@ -294,7 +299,7 @@ public class ApplicationServiceImpl implements ApplicationService {
                     if (isNull(realProperty)) {
                         realProperty = new RealProperty(realPropertyDto, building);
                     }
-                    if (operations.contains(UPDATE + SALE_OBJECT_INFO)) {
+                    if (checkOperation(operations, UPDATE + SALE_OBJECT_INFO)) {
                         metadata = entityMappingTool.convertRealPropertyMetadata(realPropertyDto);
                         if (nonNull(realProperty.getId())) {
                             List<ApplicationSellData> actualSellDataList = realProperty.getActualSellDataList();
