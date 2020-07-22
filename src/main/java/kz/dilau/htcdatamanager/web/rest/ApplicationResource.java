@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
 import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
 import kz.dilau.htcdatamanager.web.dto.MetadataWithApplicationsDto;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -99,9 +100,9 @@ public class ApplicationResource {
     }
 
     @GetMapping("/getOperationsByAppId/{applicationId}")
-    public ResponseEntity<List<String>> getOperationsByAppId(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
-                                                             @PathVariable("applicationId") Long applicationId) {
-        List<String> result = applicationService.getOperationsByAppId(token, applicationId);
+    public ResponseEntity<ListResponse<String>> getOperationsByAppId(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                                     @PathVariable("applicationId") Long applicationId) {
+        ListResponse<String> result = applicationService.getOperationsByAppId(token, applicationId);
         return ResponseEntity.ok(result);
     }
 }

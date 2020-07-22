@@ -5,6 +5,7 @@ import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
 import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
 import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
 import kz.dilau.htcdatamanager.web.dto.MetadataWithApplicationsDto;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -41,5 +42,5 @@ public interface ApplicationService {
 
     Long approveReserve(Long applicationId);
 
-    List<String> getOperationsByAppId(String token, Long applicationId);
+    ListResponse<String> getOperationsByAppId(String token, Long applicationId);
 }

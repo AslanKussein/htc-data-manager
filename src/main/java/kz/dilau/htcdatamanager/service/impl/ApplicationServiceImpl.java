@@ -549,8 +549,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public List<String> getOperationsByAppId(String token, Long applicationId) {
+    public ListResponse<String> getOperationsByAppId(String token, Long applicationId) {
         Application application = getApplicationById(applicationId);
-        return getOperationList(token, application);
+        return new ListResponse(getOperationList(token, application));
     }
 }
