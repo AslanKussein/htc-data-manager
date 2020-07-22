@@ -6,10 +6,12 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.List;
 
 public class ApplicationSpecifications {
+    public static Specification<Application> clientLoginEquals(String value) {
+        return (root, cq, cb) -> cb.equal(cb.lower(root.get("clientLogin")), value.toLowerCase());
+    }
 
-
-    public static Specification<Application> clientLoginEquals(String clientLogin) {
-        return (root, cq, cb) -> cb.equal(root.get("clientLogin"), clientLogin);
+    public static Specification<Application> currentAgentEquals(String value) {
+        return (root, cq, cb) -> cb.equal(cb.lower(root.get("currentAgent")), value.toLowerCase());
     }
 
     public static Specification<Application> isRemovedEquals(Boolean value) {
