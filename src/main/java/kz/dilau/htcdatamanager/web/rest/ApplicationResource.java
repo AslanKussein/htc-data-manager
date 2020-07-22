@@ -3,16 +3,17 @@ package kz.dilau.htcdatamanager.web.rest;
 import io.swagger.annotations.ApiParam;
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
-import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
-import kz.dilau.htcdatamanager.web.dto.MetadataWithApplicationsDto;
+import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.security.Principal;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -94,5 +95,19 @@ public class ApplicationResource {
     @GetMapping("/approveReserve/{applicationId}")
     public ResponseEntity<Long> approveReserve(@PathVariable("applicationId") Long applicationId) {
         return ResponseEntity.ok(applicationService.approveReserve(applicationId));
+    }
+
+    @GetMapping("/getOperationsByAppId/{applicationId}")
+    public ResponseEntity<ListResponse<String>> getOperationsByAppId(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                                     @PathVariable("applicationId") Long applicationId) {
+        ListResponse<String> result = applicationService.getOperationsByAppId(token, applicationId);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/hasActualAppByClient")
+    public ResponseEntity<ResultDto> hasActualAppByClient(@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                                          @RequestParam("clientLogin") String clientLogin) {
+        ResultDto result = applicationService.hasActualAppByClient(principal.getName(), clientLogin);
+        return ResponseEntity.ok(result);
     }
 }
