@@ -16,8 +16,8 @@ public class BadRequestException extends DetailedException {
         return new BadRequestException(BundleMessageUtil.getLocaledValue(name));
     }
 
-    public static BadRequestException createTemplateExceptionWithParam(String name, String param) {
-        return new BadRequestException(BundleMessageUtil.getLocaledValue(name, param));
+    public static BadRequestException createTemplateExceptionWithParam(String name, Object... params) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue(name, params));
     }
 
     public static BadRequestException createRequiredIsEmpty(String name) {
