@@ -134,9 +134,9 @@ public class KanbanServiceImpl implements KanbanService {
                 if (nonNull(sellApplicationId) && !sellApplicationId.equals(dto.getTargetApplicationId())) {
                     throw BadRequestException.createTemplateException("error.target.application.exist");
                 }
-//                if (isNull(sellApplicationId) && targetApplication.isReservedRealProperty()) {
-//                    throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", dto.getTargetApplicationId().toString());
-//                }
+                if (isNull(sellApplicationId) && targetApplication.isReservedRealProperty()) {
+                    throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", dto.getTargetApplicationId().toString());
+                }
                 application.setTargetApplication(targetApplication);
             }
         } else {
