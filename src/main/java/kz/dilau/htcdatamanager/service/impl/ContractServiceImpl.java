@@ -722,7 +722,7 @@ public class ContractServiceImpl implements ContractService {
                     if (nonNull(purchaseInfo)) {
                         pars.put(par, nonNull(purchaseInfo.getObjectPriceTo()) ? purchaseInfo.getObjectPriceTo().toString() : "");
                     } else {
-                        pars.put(par, nonNull(sellData.getObjectPrice()) ? sellData.getObjectPrice().toString() : "");
+                        pars.put(par, nonNull(sellData) && nonNull(sellData.getObjectPrice()) ? sellData.getObjectPrice().toString() : "");
                     }
                     break;
                 case "docNumb":
