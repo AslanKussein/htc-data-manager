@@ -30,11 +30,7 @@ public class KafkaProducer {
     public void sendMessage(String topic, Map<String, Object> event) {
         try {
             ListenableFuture<SendResult<Long, Map<String, Object>>> future;
-            if ((topic == null) || topic.isEmpty()) {
-                future = kafkaTemplate.sendDefault(event);
-            } else {
-                future = kafkaTemplate.send(topic, event);
-            }
+            future = kafkaTemplate.send(topic, event);
             future.get();
         } catch (InterruptedException e) {
             log.error(e.getMessage(), e);
