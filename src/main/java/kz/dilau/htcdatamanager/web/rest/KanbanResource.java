@@ -69,8 +69,8 @@ public class KanbanResource {
 
     @ApiOperation(value = "Получение связанной заявки по договору аванса/задатка")
     @GetMapping("/getTargetApplication/{applicationId}")
-    public ResponseEntity<Long> getTargetApplication(@PathVariable("applicationId") Long applicationId) {
-        Long result = kanbanService.getTargetApplication(applicationId);
+    public ResponseEntity<CompleteTargetApplicationDto> getTargetApplication(@PathVariable("applicationId") Long applicationId) {
+        CompleteTargetApplicationDto result = kanbanService.getTargetApplication(applicationId);
         return ResponseEntity.ok(result);
     }
 }

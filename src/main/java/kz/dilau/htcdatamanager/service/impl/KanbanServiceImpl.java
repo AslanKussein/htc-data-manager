@@ -204,19 +204,21 @@ public class KanbanServiceImpl implements KanbanService {
         if (application.isReservedRealProperty()) {
             throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", applicationId.toString());
         }
-        UserInfoDto agentDto = null;
-        if (nonNull(application.getCurrentAgent())) {
-            agentDto = keycloakService.readUserInfo(application.getCurrentAgent());
-        }
-        return mapToTargetApplicationDto(application, agentDto);
+        return mapToTargetApplicationDto(application);
     }
 
     @Override
-    public Long getTargetApplication(Long applicationId) {
+    public CompleteTargetApplicationDto getTargetApplication(Long applicationId) {
         Application application = applicationService.getApplicationById(applicationId);
         String author = getAuthorName();
         if (nonNull(author) && (application.getCreatedBy().equalsIgnoreCase(author) || nonNull(application.getCurrentAgent()) && application.getCurrentAgent().equalsIgnoreCase(author))) {
-            return getTargetApplication(application);
+            Long sellApplicationId = getTargetApplication(application);
+            if (nonNull(sellApplicationId)) {
+                Application targetApplication = applicationService.getApplicationById(sellApplicationId);
+                return mapToTargetApplicationDto(targetApplication);
+            } else {
+                return null;
+            }
         } else {
             throw BadRequestException.createTemplateException("error.has.not.permission");
         }
@@ -230,7 +232,11 @@ public class KanbanServiceImpl implements KanbanService {
         }
     }
 
-    private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application, UserInfoDto agentDto) {
+    private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application) {
+        UserInfoDto agentDto = null;
+        if (nonNull(application.getCurrentAgent())) {
+            agentDto = keycloakService.readUserInfo(application.getCurrentAgent());
+        }
         CompleteTargetApplicationDto dto = CompleteTargetApplicationDto.builder()
                 .id(application.getId())
                 .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
