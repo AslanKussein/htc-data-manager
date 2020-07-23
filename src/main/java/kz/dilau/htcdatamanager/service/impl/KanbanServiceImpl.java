@@ -212,10 +212,11 @@ public class KanbanServiceImpl implements KanbanService {
         Application application = applicationService.getApplicationById(applicationId);
         String author = getAuthorName();
         if (nonNull(author) && (application.getCreatedBy().equalsIgnoreCase(author) || nonNull(application.getCurrentAgent()) && application.getCurrentAgent().equalsIgnoreCase(author))) {
-            Long sellApplicationId = getTargetApplication(application);
-            if (nonNull(sellApplicationId)) {
-                Application targetApplication = applicationService.getApplicationById(sellApplicationId);
-                return mapToTargetApplicationDto(targetApplication);
+            if (nonNull(application.getTargetApplication())) {
+                return mapToTargetApplicationDto(application.getTargetApplication());
+            }
+            if (application.getOperationType().isBuy() && nonNull(application.getDeposit()) && nonNull(application.getDeposit().getSellApplication())) {
+                return mapToTargetApplicationDto(application.getDeposit().getSellApplication());
             } else {
                 return null;
             }
