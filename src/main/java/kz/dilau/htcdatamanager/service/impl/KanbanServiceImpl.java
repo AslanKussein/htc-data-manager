@@ -210,18 +210,13 @@ public class KanbanServiceImpl implements KanbanService {
     @Override
     public CompleteTargetApplicationDto getTargetApplication(Long applicationId) {
         Application application = applicationService.getApplicationById(applicationId);
-        String author = getAuthorName();
-        if (nonNull(author) && (application.getCreatedBy().equalsIgnoreCase(author) || nonNull(application.getCurrentAgent()) && application.getCurrentAgent().equalsIgnoreCase(author))) {
-            if (nonNull(application.getTargetApplication())) {
-                return mapToTargetApplicationDto(application.getTargetApplication());
-            }
-            if (application.getOperationType().isBuy() && nonNull(application.getDeposit()) && nonNull(application.getDeposit().getSellApplication())) {
-                return mapToTargetApplicationDto(application.getDeposit().getSellApplication());
-            } else {
-                return null;
-            }
+        if (nonNull(application.getTargetApplication())) {
+            return mapToTargetApplicationDto(application.getTargetApplication());
+        }
+        if (application.getOperationType().isBuy() && nonNull(application.getDeposit()) && nonNull(application.getDeposit().getSellApplication())) {
+            return mapToTargetApplicationDto(application.getDeposit().getSellApplication());
         } else {
-            throw BadRequestException.createTemplateException("error.has.not.permission");
+            return null;
         }
     }
 
