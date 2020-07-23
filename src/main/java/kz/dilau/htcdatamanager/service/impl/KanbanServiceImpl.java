@@ -78,9 +78,9 @@ public class KanbanServiceImpl implements KanbanService {
                 application.getDeposit().setGuid(dto.getDepositGuid());
             }
         }
+        ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
         if (application.getApplicationStatus().getId().equals(ApplicationStatus.DEMO) || application.getOperationType().isBuy() &&
                 application.getApplicationStatus().getId().equals(ApplicationStatus.DEPOSIT)) {
-            ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
             application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
                     .applicationStatus(applicationStatus)
                     .application(application)
@@ -89,19 +89,19 @@ public class KanbanServiceImpl implements KanbanService {
             application = applicationRepository.save(application);
             return application.getId();
         } else {
-            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
+            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", applicationStatus.getMultiLang().getNameRu(), application.getApplicationStatus().getMultiLang().getNameRu());
         }
     }
 
     @Override
     public Long confirmComplete(ConfirmDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
-            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
-        }
         ApplicationStatus applicationStatus;
         if (dto.isApprove()) {
             applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.SUCCESS);
+            if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
+                throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", applicationStatus.getMultiLang().getNameRu(), application.getApplicationStatus().getMultiLang().getNameRu());
+            }
             application.setConfirmDocGuid(dto.getGuid());
         } else {
             applicationStatus = getPrevStatus(application);
@@ -160,12 +160,12 @@ public class KanbanServiceImpl implements KanbanService {
     @Override
     public Long confirmCloseDeal(ConfirmDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
-            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
-        }
         ApplicationStatus applicationStatus;
         if (dto.isApprove()) {
             applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FAILED);
+            if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
+                throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", applicationStatus.getMultiLang().getNameRu(), application.getApplicationStatus().getMultiLang().getNameRu());
+            }
             if (nonNull(application.getTargetApplication()) && application.getTargetApplication().isReservedRealProperty() &&
                     nonNull(application.getTargetApplication().getApplicationSellData()) && nonNull(application.getTargetApplication().getApplicationSellData().getRealProperty())) {
                 Application target = application.getTargetApplication();
