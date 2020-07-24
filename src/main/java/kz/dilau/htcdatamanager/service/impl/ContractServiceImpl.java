@@ -25,10 +25,12 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -60,6 +62,7 @@ public class ContractServiceImpl implements ContractService {
     private final DataProperties dataProperties;
     private final EventService eventService;
     private final DepositNumbRepository depositNumbRepository;
+    private final SettingsService settingsService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -108,21 +111,23 @@ public class ContractServiceImpl implements ContractService {
         ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
         if (nonNull(applicationContract))
             throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
-        
+
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
         byte[] result;
 
+        String contractFormType;
+
         if (application.getOperationType().isBuy()) {
-            contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.BUY.name());
+            contractFormType = ContractFormType.BUY.name();
         } else if (nonNull(dto.getContractTypeId())) {
             if (dto.getContractTypeId().equals(ContractType.STANDARD)) {
-                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.STANDARD.name());
+                contractFormType = ContractFormType.STANDARD.name();
             } else if (dto.getContractTypeId().equals(ContractType.EXCLUSIVE)) {
-                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.EXCLUSIVE.name());
+                contractFormType = ContractFormType.EXCLUSIVE.name();
             } else if (dto.getContractTypeId().equals(ContractType.SUPER_EXCLUSIVE)) {
-                contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.SUPER_EXCLUSIVE.name());
+                contractFormType = ContractFormType.SUPER_EXCLUSIVE.name();
             } else {
                 throw BadRequestException.createTemplateException("error.contract.form.not.found");
             }
@@ -130,6 +135,7 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
+        contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), contractFormType);
         result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
         FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
@@ -393,8 +399,8 @@ public class ContractServiceImpl implements ContractService {
                                       UserInfoDto userInfo,
                                       ContractFormTemplateDto contractForm) {
         try {
-            InputStream logoImage = null;
-            InputStream footerImage = null;
+            String logoImage = null;
+            String footerImage = null;
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
             List<ContractTemplateDto> templateList = contractForm.getTemplateList();
@@ -402,10 +408,10 @@ public class ContractServiceImpl implements ContractService {
             ContractTemplateDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
-                logoImage = getLogo(logoPath.getTemplate());
+                logoImage = getImageBase64(logoPath.getTemplate());
             }
             if (nonNull(logoFooterPath) && nonNull(logoFooterPath.getTemplate())) {
-                footerImage = getLogo(logoFooterPath.getTemplate());
+                footerImage = getImageBase64(logoFooterPath.getTemplate());
             }
 
             if (templateList.isEmpty()) {
@@ -452,8 +458,8 @@ public class ContractServiceImpl implements ContractService {
                                                 Application appBuy,
                                                 Application appSell,
                                                 UserInfoDto userInfoDto,
-                                                InputStream logoImage,
-                                                InputStream footerImage) {
+                                                String logoImageBase64,
+                                                String footerImageBase64) {
         Map<String, Object> pars = new HashMap<>();
 
         RealProperty realProperty = null;
@@ -467,10 +473,10 @@ public class ContractServiceImpl implements ContractService {
         for (String par : tpl.getParList()) {
             switch (par) {
                 case "logoImage":
-                    pars.put(par, logoImage);
+                    pars.put(par, logoImageBase64);
                     break;
                 case "footerImage":
-                    pars.put(par, footerImage);
+                    pars.put(par, footerImageBase64);
                     break;
                 case "city":
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getCity()) ? realProperty.getBuilding().getCity().getMultiLang().getNameRu() : "");
@@ -483,7 +489,7 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nextNumb);
                     break;
                 case "contractNumber":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) ? appBuy.getContract().getContractNumber() : "");
+                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) && nonNull(appBuy.getContract().getContractNumber()) ? appBuy.getContract().getContractNumber() : "");
                     break;
                 case "contractDate":
                     if (nonNull(appBuy) && nonNull(appBuy.getContract())) {
@@ -496,13 +502,13 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract())&& nonNull(appBuy.getContract().getCommission()) ? appBuy.getContract().getCommission().toString() : "");
                     break;
                 case "buyerFullname":
-                    pars.put(par, buyerDto.getFullname());
+                    pars.put(par, nonNull(buyerDto) ? buyerDto.getFullname() : "");
                     break;
                 case "sellerFullname":
                     pars.put(par, nonNull(sellerDto) ? sellerDto.getFullname() : "");
                     break;
                 case "agentFullname":
-                    pars.put(par, userInfoDto.getFullname());
+                    pars.put(par, nonNull(userInfoDto) ? userInfoDto.getFullname() : "");
                     break;
                 case "handselAmount":
                     pars.put(par, nonNull(formDto.getPayedSum()) ? formDto.getPayedSum().toString() : "");
@@ -511,7 +517,7 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(appSell) && nonNull(appSell.getApplicationSellData()) && nonNull(appSell.getApplicationSellData().getObjectPrice()) ? appSell.getApplicationSellData().getObjectPrice().toString() : "");
                     break;
                 case "objectFullAddress":
-                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
                     break;
                 case "objectRCName":
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getResidentialComplex()) ? realProperty.getBuilding().getResidentialComplex().getHouseName() : "");
@@ -543,8 +549,8 @@ public class ContractServiceImpl implements ContractService {
             UserInfoDto userInfoDto,
             Application application,
             ContractFormDto dto,
-            String logoImagePath,
-            String footerImagePath) {
+            String logoImageBase64,
+            String footerImageBase64) {
         Map<String, Object> pars = new HashMap<>();
         City city = null;
         District district = null;
@@ -575,10 +581,10 @@ public class ContractServiceImpl implements ContractService {
             }
             switch (par) {
                 case "logoImage":
-                    pars.put(par, nonNull(logoImagePath) ? getLogo(logoImagePath) : null);
+                    pars.put(par, logoImageBase64);
                     break;
                 case "footerImage":
-                    pars.put(par, nonNull(footerImagePath) ? getLogo(footerImagePath) : null);
+                    pars.put(par, footerImageBase64);
                     break;
                 case "city":
                 case "cityRU":
@@ -799,18 +805,18 @@ public class ContractServiceImpl implements ContractService {
             ApplicationSellData sellData = application.getApplicationSellData();
             List<ContractTemplateDto> templateList = contractForm.getTemplateList();
 
-            String logoImagePath = null;
-            String footerImagePath = null;
+            String logoImageBase64 = null;
+            String footerImageBase64= null;
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
             ContractTemplateDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
             ContractTemplateDto logoFooterPath = getTemplateByName(ContractTemplateType.FOOTER_LOGO.name(), templateList);
 
             if (nonNull(logoPath) && nonNull(logoPath.getTemplate())) {
-                logoImagePath = logoPath.getTemplate();
+                logoImageBase64 = getImageBase64(logoPath.getTemplate());
             }
             if (nonNull(logoFooterPath) && nonNull(logoFooterPath.getTemplate())) {
-                footerImagePath = logoFooterPath.getTemplate();
+                footerImageBase64 = getImageBase64(logoFooterPath.getTemplate());
             }
 
             if (templateList.isEmpty()) {
@@ -830,8 +836,8 @@ public class ContractServiceImpl implements ContractService {
                             userInfoDto,
                             application,
                             dto,
-                            logoImagePath,
-                            footerImagePath
+                            logoImageBase64,
+                            footerImageBase64
                     );
                     JasperReport jr = JasperCompileManager.compileReport(getJrxml(tpl));
                     JasperPrint jp = JasperFillManager.fillReport(jr, pars, new JREmptyDataSource());
@@ -856,8 +862,30 @@ public class ContractServiceImpl implements ContractService {
                 .orElse(null);
     }
 
-    private InputStream getLogo(String path) {
-        return getClass().getResourceAsStream(path);
+    private String getImageBase64(String path) {
+        if (isNull(path)) {
+            throw BadRequestException.createRequiredIsEmpty("path");
+        }
+        SettingsDto dto = settingsService.getSettings(path);
+        if (isNull(dto) || isNull(dto.getVal())) {
+            throw BadRequestException.createRequiredIsEmpty(path);
+        }
+
+        Resource img = keycloakService.getFile(dto.getVal());
+
+        if (isNull(img)) {
+            throw NotFoundException.resourceNotFound(path);
+        }
+
+        byte[] bytes;
+        try {
+            bytes = IOUtils.toByteArray(img.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw BadRequestException.createRequiredIsEmpty(path);
+        }
+
+        return Base64.encodeBase64String(bytes);
     }
 
     private InputStream getJrxml(ContractTemplateDto tpl) {

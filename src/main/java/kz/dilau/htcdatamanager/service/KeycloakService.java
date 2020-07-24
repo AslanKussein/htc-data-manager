@@ -30,5 +30,5 @@ public interface KeycloakService {
 
     FileInfoDto uploadFile(String token, byte[] pFile, String pFilename);
 
-    Resource getFile(String token, String uuid);
+    Resource getFile(String uuid);
 }

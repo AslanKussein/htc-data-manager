@@ -63,4 +63,8 @@ public class NotFoundException extends DetailedException {
     public static NotFoundException createFavoritesNotFoundByRealPropertyId(Long realPropertyId) {
         return new NotFoundException(BundleMessageUtil.getLocaledValue("error.favorite.not.found", realPropertyId));
     }
+
+    public static NotFoundException resourceNotFound(String name) {
+        return new NotFoundException(BundleMessageUtil.getLocaledValue("error.resource.not.found.in.file.manager", name));
+    }
 }
