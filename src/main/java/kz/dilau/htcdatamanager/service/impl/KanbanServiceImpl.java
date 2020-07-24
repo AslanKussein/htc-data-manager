@@ -19,10 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -236,6 +233,7 @@ public class KanbanServiceImpl implements KanbanService {
         CompleteTargetApplicationDto dto = CompleteTargetApplicationDto.builder()
                 .id(application.getId())
                 .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
+                .objectType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getObjectType()))
                 .createDate(application.getCreatedDate())
                 .agentLogin(application.getCurrentAgent())
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
@@ -254,6 +252,10 @@ public class KanbanServiceImpl implements KanbanService {
                 }
                 if (nonNull(data.getRealProperty().getBuilding())) {
                     dto.setDistrict(DictionaryMappingTool.mapMultilangDictionary(data.getRealProperty().getBuilding().getDistrict()));
+                }
+                RealPropertyFile file = data.getRealProperty().getFileByStatus(MetadataStatus.APPROVED);
+                if (nonNull(file) && !file.getFilesMap().isEmpty()) {
+                    dto.setPhotos(new HashMap<>(file.getFilesMap()));
                 }
             }
         } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())) {
