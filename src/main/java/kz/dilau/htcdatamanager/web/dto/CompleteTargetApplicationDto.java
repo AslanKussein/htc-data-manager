@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
@@ -9,6 +10,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,6 +24,8 @@ public class CompleteTargetApplicationDto {
     private Long id;
     @ApiModelProperty(value = "Вид операции")
     private DictionaryMultilangItemDto operationType;
+    @ApiModelProperty(value = "Тип объекта")
+    private DictionaryMultilangItemDto objectType;
     @ApiModelProperty(value = "Дата создания")
     private ZonedDateTime createDate;
     @ApiModelProperty(value = "Район")
@@ -49,5 +54,7 @@ public class CompleteTargetApplicationDto {
     private BigDecimalPeriod totalAreaPeriod;
     @ApiModelProperty(value = "Этаж ОТ и ДО")
     private IntegerPeriod floorPeriod;
+    @ApiModelProperty(value = "Фотографии объекта")
+    private Map<RealPropertyFileType, Set<String>> photos;
 
 }
