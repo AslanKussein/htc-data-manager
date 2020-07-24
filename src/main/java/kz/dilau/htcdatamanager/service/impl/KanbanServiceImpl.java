@@ -19,10 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -78,9 +75,9 @@ public class KanbanServiceImpl implements KanbanService {
                 application.getDeposit().setGuid(dto.getDepositGuid());
             }
         }
+        ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
         if (application.getApplicationStatus().getId().equals(ApplicationStatus.DEMO) || application.getOperationType().isBuy() &&
                 application.getApplicationStatus().getId().equals(ApplicationStatus.DEPOSIT)) {
-            ApplicationStatus applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.CLOSE_TRANSACTION);
             application.getStatusHistoryList().add(ApplicationStatusHistory.builder()
                     .applicationStatus(applicationStatus)
                     .application(application)
@@ -89,19 +86,19 @@ public class KanbanServiceImpl implements KanbanService {
             application = applicationRepository.save(application);
             return application.getId();
         } else {
-            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
+            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", applicationStatus.getMultiLang().getNameRu(), application.getApplicationStatus().getMultiLang().getNameRu());
         }
     }
 
     @Override
     public Long confirmComplete(ConfirmDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
-            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
-        }
         ApplicationStatus applicationStatus;
         if (dto.isApprove()) {
             applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.SUCCESS);
+            if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
+                throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", applicationStatus.getMultiLang().getNameRu(), application.getApplicationStatus().getMultiLang().getNameRu());
+            }
             application.setConfirmDocGuid(dto.getGuid());
         } else {
             applicationStatus = getPrevStatus(application);
@@ -160,12 +157,12 @@ public class KanbanServiceImpl implements KanbanService {
     @Override
     public Long confirmCloseDeal(ConfirmDealDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
-        if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
-            throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", application.getApplicationStatus().getMultiLang().getNameRu());
-        }
         ApplicationStatus applicationStatus;
         if (dto.isApprove()) {
             applicationStatus = entityService.mapEntity(ApplicationStatus.class, ApplicationStatus.FAILED);
+            if (!application.getApplicationStatus().getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
+                throw BadRequestException.createTemplateExceptionWithParam("error.complete.deal.from.status", applicationStatus.getMultiLang().getNameRu(), application.getApplicationStatus().getMultiLang().getNameRu());
+            }
             if (nonNull(application.getTargetApplication()) && application.getTargetApplication().isReservedRealProperty() &&
                     nonNull(application.getTargetApplication().getApplicationSellData()) && nonNull(application.getTargetApplication().getApplicationSellData().getRealProperty())) {
                 Application target = application.getTargetApplication();
@@ -204,21 +201,19 @@ public class KanbanServiceImpl implements KanbanService {
         if (application.isReservedRealProperty()) {
             throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", applicationId.toString());
         }
-        UserInfoDto agentDto = null;
-        if (nonNull(application.getCurrentAgent())) {
-            agentDto = keycloakService.readUserInfo(application.getCurrentAgent());
-        }
-        return mapToTargetApplicationDto(application, agentDto);
+        return mapToTargetApplicationDto(application);
     }
 
     @Override
-    public Long getTargetApplication(Long applicationId) {
+    public CompleteTargetApplicationDto getTargetApplication(Long applicationId) {
         Application application = applicationService.getApplicationById(applicationId);
-        String author = getAuthorName();
-        if (nonNull(author) && (application.getCreatedBy().equalsIgnoreCase(author) || nonNull(application.getCurrentAgent()) && application.getCurrentAgent().equalsIgnoreCase(author))) {
-            return getTargetApplication(application);
+        if (nonNull(application.getTargetApplication())) {
+            return mapToTargetApplicationDto(application.getTargetApplication());
+        }
+        if (application.getOperationType().isBuy() && nonNull(application.getDeposit()) && nonNull(application.getDeposit().getSellApplication())) {
+            return mapToTargetApplicationDto(application.getDeposit().getSellApplication());
         } else {
-            throw BadRequestException.createTemplateException("error.has.not.permission");
+            return null;
         }
     }
 
@@ -230,10 +225,15 @@ public class KanbanServiceImpl implements KanbanService {
         }
     }
 
-    private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application, UserInfoDto agentDto) {
+    private CompleteTargetApplicationDto mapToTargetApplicationDto(Application application) {
+        UserInfoDto agentDto = null;
+        if (nonNull(application.getCurrentAgent())) {
+            agentDto = keycloakService.readUserInfo(application.getCurrentAgent());
+        }
         CompleteTargetApplicationDto dto = CompleteTargetApplicationDto.builder()
                 .id(application.getId())
                 .operationType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getOperationType()))
+                .objectType(DictionaryMappingTool.mapMultilangSystemDictionary(application.getObjectType()))
                 .createDate(application.getCreatedDate())
                 .agentLogin(application.getCurrentAgent())
                 .agentFullname(nonNull(agentDto) ? agentDto.getFullname() : "")
@@ -252,6 +252,10 @@ public class KanbanServiceImpl implements KanbanService {
                 }
                 if (nonNull(data.getRealProperty().getBuilding())) {
                     dto.setDistrict(DictionaryMappingTool.mapMultilangDictionary(data.getRealProperty().getBuilding().getDistrict()));
+                }
+                RealPropertyFile file = data.getRealProperty().getFileByStatus(MetadataStatus.APPROVED);
+                if (nonNull(file) && !file.getFilesMap().isEmpty()) {
+                    dto.setPhotos(new HashMap<>(file.getFilesMap()));
                 }
             }
         } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())) {
