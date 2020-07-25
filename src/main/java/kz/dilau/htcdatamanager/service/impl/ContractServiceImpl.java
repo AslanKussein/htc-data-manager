@@ -91,10 +91,10 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public String generateContract(String token, ContractFormDto dto) {
+    public FileInfoDto generateContract(String token, ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (!hasPermission(getAuthorName(), application)) {
-            //throw BadRequestException.createTemplateException("error.has.not.permission");
+            throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         if (isNull(dto.getContractNumber()) || dto.getContractNumber().length() == 0) {
             throw BadRequestException.createRequiredIsEmpty("contractNumber");
@@ -108,10 +108,10 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(dto.getContractPeriod())) {
             throw BadRequestException.createRequiredIsEmpty("contractPeriod");
         }
-        /*ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
+        ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
         if (nonNull(applicationContract))
             throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
-*/
+
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
@@ -135,13 +135,13 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
-        contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), contractFormType);
+        contractForm = getContractForm(2L/*userInfoDto.getOrganizationDto().getId()*/, contractFormType);
         result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
-        //FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
-        //saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
+        FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
+        saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
 
-        return Base64.encodeBase64String(result);
+        return fileInfoDto;
     }
 
     private ProfileClientDto getClientDtobyLogin(String clientLogin) {
@@ -517,7 +517,10 @@ public class ContractServiceImpl implements ContractService {
                     pars.put(par, nonNull(appSell) && nonNull(appSell.getApplicationSellData()) && nonNull(appSell.getApplicationSellData().getObjectPrice()) ? appSell.getApplicationSellData().getObjectPrice().toString() : "");
                     break;
                 case "objectFullAddress":
-                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) ? DictionaryMappingTool.mapFullAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) ? DictionaryMappingTool.mapFullAddressToMultiLang(realProperty.getBuilding()).getNameRu() : "");
+                    break;
+                case "objectAddress":
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
                     break;
                 case "objectRCName":
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getResidentialComplex()) ? realProperty.getBuilding().getResidentialComplex().getHouseName() : "");
@@ -624,14 +627,25 @@ public class ContractServiceImpl implements ContractService {
                 case "agentFullname":
                     pars.put(par, userInfoDto.getFullname());
                     break;
+                case "objectHouseNumber":
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getHouseNumber()) ? realProperty.getBuilding().getHouseNumber() : "" + (nonNull(realProperty.getBuilding().getHouseNumberFraction()) ? "/" + realProperty.getBuilding().getHouseNumberFraction() : ""));
+                    break;
+                case "objectApartmentNumber":
+                    pars.put(par, nonNull(realProperty) && nonNull(realProperty.getApartmentNumber()) ? realProperty.getApartmentNumber() : "");
+                    break;
                 case "objectFullAddress":
                 case "objectFullAddressRU":
-                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapFullAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
-                    break;
-                case "objectStreet":
+                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapFullAddressToMultiLang(realProperty.getBuilding()).getNameRu() : "");
                     break;
                 case "objectFullAddressKZ":
-                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapFullAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameKz() : "");
+                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapFullAddressToMultiLang(realProperty.getBuilding()).getNameKz() : "");
+                    break;
+                case "objectAddress":
+                case "objectAddressRU":
+                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameRu() : "");
+                    break;
+                case "objectAddressKZ":
+                    pars.put(par, nonNull(realProperty) ? DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()).getNameKz() : "");
                     break;
                 case "objectRCName":
                     pars.put(par, nonNull(realProperty) && nonNull(realProperty.getBuilding()) && nonNull(realProperty.getBuilding().getResidentialComplex()) ? realProperty.getBuilding().getResidentialComplex().getHouseName() : "");

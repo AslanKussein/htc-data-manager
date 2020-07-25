@@ -67,7 +67,7 @@ public class DictionaryMappingTool {
         return result;
     }
 
-    public static MultiLangText mapFullAddressToMultiLang(Building building, String apartmentNumber) {
+    public static MultiLangText mapFullAddressToMultiLang(Building building) {
         if (isNull(building)) {
             return MultiLangText.NULL_OBJECT;
         }

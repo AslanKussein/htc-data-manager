@@ -25,7 +25,7 @@ public class ContractResource {
     }
 
     @PostMapping("/generateContract")
-    public ResponseEntity<String> generateContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody ContractFormDto dto) {
+    public ResponseEntity<FileInfoDto> generateContract(@ApiIgnore @RequestHeader(AUTHORIZATION) String token, @RequestBody ContractFormDto dto) {
         return ResponseEntity.ok(contractService.generateContract(token, dto));
     }
 
