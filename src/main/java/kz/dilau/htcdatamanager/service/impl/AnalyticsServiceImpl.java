@@ -19,17 +19,21 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private final AnalyticsRepository analyticsRepository;
 
     @Override
-    public ResultDto saveAnalytics(AnalyticsDto analyticsDto) {
-        RealPropertyAnalytics analytics = analyticsRepository.findByBuildingIdOrDistrictIdAndHouseClassId(
-                analyticsDto.getBuildingId(), analyticsDto.getDistrictId(), analyticsDto.getHouseClassId());
+    public ResultDto saveAnalytics(AnalyticsDto dto) {
+        RealPropertyAnalytics analytics = null;
+        if (nonNull(dto.getBuildingId())) {
+            analytics = analyticsRepository.findByBuildingId(dto.getBuildingId());
+        } else if (nonNull(dto.getDistrictId()) && nonNull(dto.getHouseClassId())) {
+            analytics = analyticsRepository.findByDistrictIdAndHouseClassId(dto.getDistrictId(), dto.getHouseClassId());
+        }
         if (isNull(analytics)) {
             analytics = RealPropertyAnalytics.builder()
-                    .buildingId(analyticsDto.getBuildingId())
-                    .districtId(analyticsDto.getDistrictId())
-                    .houseClassId(analyticsDto.getHouseClassId())
+                    .buildingId(dto.getBuildingId())
+                    .districtId(dto.getDistrictId())
+                    .houseClassId(dto.getHouseClassId())
                     .build();
         }
-        analytics.setAveragePrice(analyticsDto.getAveragePrice());
+        analytics.setAveragePrice(dto.getAveragePrice());
         analyticsRepository.save(analytics);
         return ResultDto.builder()
                 .success(true)
@@ -44,8 +48,10 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             if (nonNull(building.getResidentialComplex()) && nonNull(building.getResidentialComplex().getGeneralCharacteristics())) {
                 houseClassId = building.getResidentialComplex().getGeneralCharacteristics().getHouseClassId();
             }
-            RealPropertyAnalytics analytics = analyticsRepository.findByBuildingIdOrDistrictIdAndHouseClassId(
-                    building.getId(), building.getDistrictId(), houseClassId);
+            RealPropertyAnalytics analytics = analyticsRepository.findByBuildingId(building.getId());
+            if (isNull(analytics)) {
+                analytics = analyticsRepository.findByDistrictIdAndHouseClassId(building.getDistrictId(), houseClassId);
+            }
             return new AnalyticsDto(analytics);
         }
         return null;
