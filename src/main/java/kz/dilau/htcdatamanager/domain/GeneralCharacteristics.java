@@ -2,10 +2,7 @@ package kz.dilau.htcdatamanager.domain;
 
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import kz.dilau.htcdatamanager.domain.dictionary.HouseCondition;
-import kz.dilau.htcdatamanager.domain.dictionary.MaterialOfConstruction;
-import kz.dilau.htcdatamanager.domain.dictionary.PropertyDeveloper;
-import kz.dilau.htcdatamanager.domain.dictionary.YardType;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.web.dto.GeneralCharacteristicsDto;
 import lombok.*;
 import org.hibernate.annotations.Type;
@@ -37,6 +34,10 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
     private Long propertyDeveloperId;
     @Column(name = "housing_class")
     private String housingClass;
+    @Column(name = "house_class_id")
+    private HouseClass houseClass;
+    @Column(name = "house_class_id", insertable = false, updatable = false)
+    private Long houseClassId;
     @Column(name = "year_of_construction")
     private Integer yearOfConstruction;
     @Column(name = "number_of_floors")
@@ -60,9 +61,10 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
     @Column(name = "types_of_elevator", columnDefinition = "jsonb")
     private Set<IdItem> typesOfElevator = new HashSet<>();
 
-    public GeneralCharacteristics(GeneralCharacteristicsDto dto,
+    public GeneralCharacteristics(GeneralCharacteristicsDto dto, HouseClass houseClass,
                                   PropertyDeveloper propertyDeveloper, HouseCondition houseCondition,
                                   MaterialOfConstruction materialOfConstruction, YardType yardType) {
+        this.houseClass = houseClass;
         this.propertyDeveloper = propertyDeveloper;
         this.houseCondition = houseCondition;
         this.housingClass = dto.getHousingClass();

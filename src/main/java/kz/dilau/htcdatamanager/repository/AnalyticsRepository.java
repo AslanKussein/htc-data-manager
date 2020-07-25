@@ -4,5 +4,5 @@ import kz.dilau.htcdatamanager.domain.RealPropertyAnalytics;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnalyticsRepository extends JpaRepository<RealPropertyAnalytics, Long> {
-    RealPropertyAnalytics findByBuildingIdAndDistrictId(Long buildingId, Long districtId);
+    RealPropertyAnalytics findByBuildingIdOrDistrictIdAndHouseClassId(Long buildingId, Long districtId, Long houseClassId);
 }

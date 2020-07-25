@@ -27,4 +27,7 @@ public class RealPropertyAnalytics extends BaseEntity<Long> {
 
     @Column(name = "district_id")
     private Long districtId;
+
+    @Column(name = "house_class_id")
+    private Long houseClassId;
 }

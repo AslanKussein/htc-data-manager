@@ -47,6 +47,8 @@ public class ResidentialComplexDto {
     private Long materialOfConstructionId;
     @ApiModelProperty(value = "Класс жилья")
     private String housingClass;
+    @ApiModelProperty(value = "Класс жилья")
+    private Long houseClassId;
     @ApiModelProperty(value = "Состояние жилья")
     private Long housingConditionId;
     @ApiModelProperty(value = "Тип лифта(список)")
@@ -72,6 +74,7 @@ public class ResidentialComplexDto {
             this.ceilingHeight = gc.getCeilingHeight();
             this.concierge = gc.getConcierge();
             this.housingClass = gc.getHousingClass();
+            this.houseClassId = gc.getHouseClassId();
             if (nonNull(gc.getHouseCondition())) {
                 this.housingConditionId = gc.getHouseCondition().getId();
             }

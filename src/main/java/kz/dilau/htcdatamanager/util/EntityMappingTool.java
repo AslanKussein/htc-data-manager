@@ -54,6 +54,7 @@ public class EntityMappingTool {
         return new RealPropertyMetadata(realPropertyDto,
                 entityService.mapEntity(Sewerage.class, realPropertyDto.getSewerageId()),
                 entityService.mapEntity(HeatingSystem.class, realPropertyDto.getHeatingSystemId()),
+                nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseClass.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseClassId()) : null,
                 nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(PropertyDeveloper.class, realPropertyDto.getGeneralCharacteristicsDto().getPropertyDeveloperId()) : null,
                 nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(HouseCondition.class, realPropertyDto.getGeneralCharacteristicsDto().getHouseConditionId()) : null,
                 nonNull(realPropertyDto.getGeneralCharacteristicsDto()) ? entityService.mapEntity(MaterialOfConstruction.class, realPropertyDto.getGeneralCharacteristicsDto().getMaterialOfConstructionId()) : null,
