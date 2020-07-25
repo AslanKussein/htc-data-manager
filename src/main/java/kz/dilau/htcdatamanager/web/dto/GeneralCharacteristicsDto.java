@@ -24,6 +24,8 @@ public class GeneralCharacteristicsDto extends AGeneralCharacteristicsDto {
     private Long propertyDeveloperId;
     @ApiModelProperty(name = "housingClass", value = "Класс жилья")
     private String housingClass;
+    @ApiModelProperty(name = "houseClassId", value = "Класс жилья")
+    private Long houseClassId;
     @ApiModelProperty(name = "yearOfConstruction", value = "Год постройки")
     private Integer yearOfConstruction;//residentialComplex
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
@@ -41,6 +43,7 @@ public class GeneralCharacteristicsDto extends AGeneralCharacteristicsDto {
         if (nonNull(generalCharacteristics)) {
             this.propertyDeveloperId = generalCharacteristics.getPropertyDeveloperId();
             this.housingClass = generalCharacteristics.getHousingClass();
+            this.houseClassId = generalCharacteristics.getHouseClassId();
             this.yearOfConstruction = generalCharacteristics.getYearOfConstruction();
             this.numberOfFloors = generalCharacteristics.getNumberOfFloors();
             this.numberOfApartments = generalCharacteristics.getNumberOfApartments();
