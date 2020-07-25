@@ -56,7 +56,8 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             RealPropertyAnalytics analytics = analyticsRepository.findByBuildingId(building.getId());
             if (isNull(analytics)) {
                 Long houseClassId = null;
-                if (nonNull(building.getResidentialComplex()) && nonNull(building.getResidentialComplex().getGeneralCharacteristics())) {
+                if (nonNull(building.getResidentialComplex()) && nonNull(building.getResidentialComplex().getGeneralCharacteristics())
+                        && nonNull(building.getResidentialComplex().getGeneralCharacteristics().getHouseClass())) {
                     houseClassId = building.getResidentialComplex().getGeneralCharacteristics().getHouseClassId();
                 } else {
                     RealPropertyMetadata metadata = application.getApplicationSellData().getRealProperty().getMetadataByStatus(MetadataStatus.APPROVED);
