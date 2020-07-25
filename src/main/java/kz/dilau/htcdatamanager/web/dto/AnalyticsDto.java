@@ -19,13 +19,10 @@ public class AnalyticsDto {
     @NonNull
     @ApiModelProperty(value = "Средняя цена за квадратный метр")
     private BigDecimal averagePrice;
-    @NonNull
     @ApiModelProperty(value = "ID района")
     private Long districtId;
-    @NonNull
     @ApiModelProperty(value = "ID здания")
     private Long buildingId;
-    @NonNull
     @ApiModelProperty(value = "ID класса жилья")
     private Long houseClassId;
 

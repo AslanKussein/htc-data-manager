@@ -20,11 +20,15 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     public ResultDto saveAnalytics(AnalyticsDto dto) {
-        RealPropertyAnalytics analytics = null;
+        RealPropertyAnalytics analytics;
         if (nonNull(dto.getBuildingId())) {
             analytics = analyticsRepository.findByBuildingId(dto.getBuildingId());
-        } else if (nonNull(dto.getDistrictId()) && nonNull(dto.getHouseClassId())) {
+        } else if (nonNull(dto.getDistrictId())) {
             analytics = analyticsRepository.findByDistrictIdAndHouseClassId(dto.getDistrictId(), dto.getHouseClassId());
+        } else {
+            return ResultDto.builder()
+                    .success(false)
+                    .build();
         }
         if (isNull(analytics)) {
             analytics = RealPropertyAnalytics.builder()
