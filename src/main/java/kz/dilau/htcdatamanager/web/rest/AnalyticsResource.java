@@ -6,10 +6,7 @@ import kz.dilau.htcdatamanager.web.dto.AnalyticsDto;
 import kz.dilau.htcdatamanager.web.dto.ResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RequiredArgsConstructor
@@ -22,6 +19,12 @@ public class AnalyticsResource {
     @PostMapping
     public ResponseEntity<ResultDto> saveAnalytics(@RequestBody AnalyticsDto dto) {
         ResultDto result = analyticsService.saveAnalytics(dto);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{appId}")
+    public ResponseEntity<AnalyticsDto> getAnalytics(@PathVariable("appId") Long appId) {
+        AnalyticsDto result = analyticsService.getAnalytics(appId);
         return ResponseEntity.ok(result);
     }
 }
