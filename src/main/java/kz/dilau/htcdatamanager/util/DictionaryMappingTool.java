@@ -67,6 +67,26 @@ public class DictionaryMappingTool {
         return result;
     }
 
+    public static MultiLangText mapFullAddressToMultiLang(Building building, String apartmentNumber) {
+        if (isNull(building)) {
+            return MultiLangText.NULL_OBJECT;
+        }
+        MultiLangText result = concatMultiLangWithMultiLang(mapDictionaryToText(building.getCity()),
+                mapDictionaryToText(building.getDistrict()), ", ");
+        if (nonNull(building.getResidentialComplex()) && nonNull(building.getResidentialComplex().getHouseName())) {
+            result = concatStringWithMultiLang(result, building.getResidentialComplex().getHouseName(),", ");
+        }
+        result = concatMultiLangWithMultiLang(result, mapDictionaryToText(building.getStreet()), ", ");
+
+        if (nonNull(building.getHouseNumber()))  {
+            result = concatStringWithMultiLang(result, building.getHouseNumber() , " ");
+        } else {
+            result = concatStringWithMultiLang(result, (nonNull(building.getHouseNumberFraction()) ? "/" + building.getHouseNumberFraction() : "") , " ");
+        }
+
+        return result;
+    }
+
 
     public static MultiLangText mapAddressToMultiLang(OldGeneralCharacteristics generalCharacteristics, String apartmentNumber) {
         if (isNull(generalCharacteristics)) {

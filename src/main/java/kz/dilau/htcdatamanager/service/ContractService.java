@@ -6,7 +6,7 @@ import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 public interface ContractService {
     ContractFormDto getContractForm(String token, Long applicationId);
 
-    FileInfoDto generateContract(String token, ContractFormDto dto);
+    String generateContract(String token, ContractFormDto dto);
 
     FileInfoDto generateDepositContract(String token, DepositFormDto dto);
 
