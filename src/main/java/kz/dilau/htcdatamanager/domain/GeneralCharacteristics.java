@@ -34,7 +34,8 @@ public class GeneralCharacteristics extends AGeneralCharacteristics {
     private Long propertyDeveloperId;
     @Column(name = "housing_class")
     private String housingClass;
-    @Column(name = "house_class_id")
+    @ManyToOne
+    @JoinColumn(name = "house_class_id")
     private HouseClass houseClass;
     @Column(name = "house_class_id", insertable = false, updatable = false)
     private Long houseClassId;
