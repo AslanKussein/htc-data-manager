@@ -5,4 +5,6 @@ import kz.dilau.htcdatamanager.web.dto.ResultDto;
 
 public interface AnalyticsService {
     ResultDto saveAnalytics(AnalyticsDto analyticsDto);
+
+    AnalyticsDto getAnalytics(Long appId);
 }
