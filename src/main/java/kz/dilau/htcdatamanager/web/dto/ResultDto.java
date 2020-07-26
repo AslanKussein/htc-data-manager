@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.web.dto.common;
+package kz.dilau.htcdatamanager.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class IntegerPeriod {
-    private Integer from;
-    private Integer to;
+@NoArgsConstructor
+public class ResultDto {
+    private boolean success = true;
 }

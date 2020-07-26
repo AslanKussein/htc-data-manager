@@ -106,7 +106,9 @@ public class EventServiceImpl implements EventService {
             setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.DEMO);
             setStatusHistoryAndSaveApplication(targetApplication, ApplicationStatus.DEMO);
         } else if (dto.getEventTypeId().equals(EventType.MEETING)) {
-            setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.MEETING);
+            if (isNull(sourceApplication.getContract()) && isNull(sourceApplication.getDeposit())) {
+                setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.MEETING);
+            }
         }
         return eventRepository.save(event).getId();
     }

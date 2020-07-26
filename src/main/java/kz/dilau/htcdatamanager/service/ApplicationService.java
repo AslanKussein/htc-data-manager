@@ -1,10 +1,8 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.web.dto.ApplicationDto;
-import kz.dilau.htcdatamanager.web.dto.ApplicationLightDto;
-import kz.dilau.htcdatamanager.web.dto.AssignmentDto;
-import kz.dilau.htcdatamanager.web.dto.MetadataWithApplicationsDto;
+import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -40,4 +38,8 @@ public interface ApplicationService {
     String getAppointmentAgent(String agent);
 
     Long approveReserve(Long applicationId);
+
+    ListResponse<String> getOperationsByAppId(String token, Long applicationId);
+
+    ResultDto hasActualAppByClient(String agentLogin, String clientLogin);
 }

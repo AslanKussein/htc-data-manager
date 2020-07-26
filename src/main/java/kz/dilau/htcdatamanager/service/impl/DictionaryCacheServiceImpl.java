@@ -50,6 +50,7 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
     private List<MetadataStatus> metadataStatusList;
     private List<ApplicationFlag> applicationFlagList;
     private List<ContractType> contractTypeList;
+    private List<HouseClass> houseClassList;
 
     public void clearDictionaries() {
         allDictList = null;
@@ -73,6 +74,7 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
         metadataStatusList = null;
         applicationFlagList = null;
         contractTypeList = null;
+        houseClassList = null;
     }
 
     public List<AllDict> getAllDictList(DictionaryFilterDto filterDto) {
@@ -304,6 +306,17 @@ public class DictionaryCacheServiceImpl implements DictionaryCacheService {
             }
         }
         return contractTypeList;
+    }
+
+    public List<HouseClass> getHouseClassList(DictionaryFilterDto filterDto) {
+        if (nonNull(filterDto) && nonNull(filterDto.getPageableDto())) {
+            return loadDictionariesFromDatabase(filterDto.getDictionaryName(), filterDto.getPageableDto());
+        } else {
+            if (isNull(houseClassList)) {
+                houseClassList = loadDictionariesFromDatabase(filterDto.getDictionaryName());
+            }
+        }
+        return houseClassList;
     }
 
     public List<BaseCustomDictionary> getDictionary(String dictionaryName) {

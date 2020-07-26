@@ -33,6 +33,7 @@ public final class Constants {
     public static final String APPLICATIONS_CLIENT_PAY = "/api/applications-client-pay";
     public static final String SETTINGS_ENDPOINT = "/api/settings";
     public static final String APPLICATION_FULL_VIEW_REST_ENDPOINT = "/api/application-full-view";
+    public static final String ANALYTICS_REST_ENDPOINT = "/api/analytics";
 
 
     private Constants() {

@@ -17,5 +17,5 @@ public interface KanbanService {
 
     CompleteTargetApplicationDto targetApplicationInfo(Long applicationId);
 
-    Long getTargetApplication(Long applicationId);
+    CompleteTargetApplicationDto getTargetApplication(Long applicationId);
 }

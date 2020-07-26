@@ -547,4 +547,22 @@ public class ApplicationServiceImpl implements ApplicationService {
         applicationRepository.save(application);
         return application.getId();
     }
+
+    @Override
+    public ListResponse<String> getOperationsByAppId(String token, Long applicationId) {
+        Application application = getApplicationById(applicationId);
+        return new ListResponse(getOperationList(token, application));
+    }
+
+    @Override
+    public ResultDto hasActualAppByClient(String agentLogin, String clientLogin) {
+        Specification<Application> specification = ApplicationSpecifications.isRemovedEquals(false)
+                .and(ApplicationSpecifications.clientLoginEquals(clientLogin)
+                        .and(ApplicationSpecifications.currentAgentEquals(agentLogin)
+                                .and(ApplicationSpecifications.applicationStatusIdNotIn(ApplicationStatus.CLOSED_STATUSES))));
+        List<Application> applications = applicationRepository.findAll(specification);
+        return ResultDto.builder()
+                .success(!applications.isEmpty())
+                .build();
+    }
 }

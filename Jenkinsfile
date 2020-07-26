@@ -39,7 +39,7 @@ pipeline {
                                   SERVICES=$(docker service ls --filter name=${SERVICE_NAME} --quiet | wc -l)
                                   if [ "$SERVICES" -eq 0 ]; then
                                     docker service create --with-registry-auth --replicas 1 \
-                                    --network consul-nw --network datamanager-db-nw --network service-nw --network traefik-nw --network logstash-nw \
+                                    --network consul-nw --network datamanager-db-nw --network service-nw --network traefik-nw --network logstash-nw --network kafkazoo-nw \
                                     --constraint node.role==worker \
                                     --env consul_host=consul \
                                     --env logstash_url=logstash-log:5044 \

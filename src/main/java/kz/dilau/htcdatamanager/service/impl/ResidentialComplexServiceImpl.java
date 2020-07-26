@@ -92,6 +92,7 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
                 .ceilingHeight(dto.getCeilingHeight())
                 .propertyDeveloper(entityService.mapEntity(PropertyDeveloper.class, dto.getPropertyDeveloperId()))
                 .housingClass(dto.getHousingClass())
+                .houseClass(entityService.mapEntity(HouseClass.class, dto.getHouseClassId()))
                 .houseCondition(entityService.mapEntity(HouseCondition.class, dto.getHousingConditionId()))
                 .numberOfFloors(dto.getNumberOfFloors())
                 .numberOfApartments(dto.getNumberOfApartments())

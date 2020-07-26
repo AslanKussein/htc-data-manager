@@ -14,6 +14,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.nonNull;
+
 @Getter
 @Setter
 @Builder
@@ -29,6 +31,8 @@ public class GeneralCharacteristicsClientViewDto extends AGeneralCharacteristics
     private Long propertyDeveloperId;
     @ApiModelProperty(name = "housingClass", value = "Класс жилья")
     private String housingClass;
+    @ApiModelProperty(name = "houseClassId", value = "Класс жилья")
+    private Long houseClassId;
     @ApiModelProperty(name = "yearOfConstruction", value = "Год постройки")
     private Integer yearOfConstruction;//residentialComplex
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
@@ -43,25 +47,27 @@ public class GeneralCharacteristicsClientViewDto extends AGeneralCharacteristics
     private DictionaryDto houseCondition;
 
     public GeneralCharacteristicsClientViewDto(GeneralCharacteristics generalCharacteristics) {
-        this.propertyDeveloperId = generalCharacteristics.getPropertyDeveloperId();
-        this.housingClass = generalCharacteristics.getHousingClass();
-        this.yearOfConstruction = generalCharacteristics.getYearOfConstruction();
-        this.numberOfFloors = generalCharacteristics.getNumberOfFloors();
-        this.numberOfApartments = generalCharacteristics.getNumberOfApartments();
-        this.apartmentsOnTheSite = generalCharacteristics.getApartmentsOnTheSite();
-        this.ceilingHeight = generalCharacteristics.getCeilingHeight();
-        if (generalCharacteristics.getHouseCondition() != null) {
-            HouseCondition hCondition = generalCharacteristics.getHouseCondition();
-            this.houseCondition = fillDictionaryDto(hCondition.getId(), hCondition.getMultiLang());
+        if (nonNull(generalCharacteristics)) {
+            this.propertyDeveloperId = generalCharacteristics.getPropertyDeveloperId();
+            this.housingClass = generalCharacteristics.getHousingClass();
+            this.houseClassId = generalCharacteristics.getHouseClassId();
+            this.yearOfConstruction = generalCharacteristics.getYearOfConstruction();
+            this.numberOfFloors = generalCharacteristics.getNumberOfFloors();
+            this.numberOfApartments = generalCharacteristics.getNumberOfApartments();
+            this.apartmentsOnTheSite = generalCharacteristics.getApartmentsOnTheSite();
+            this.ceilingHeight = generalCharacteristics.getCeilingHeight();
+            if (generalCharacteristics.getHouseCondition() != null) {
+                HouseCondition hCondition = generalCharacteristics.getHouseCondition();
+                this.houseCondition = fillDictionaryDto(hCondition.getId(), hCondition.getMultiLang());
+            }
+            this.materialOfConstructionId = generalCharacteristics.getMaterialOfConstructionId();
+            this.concierge = generalCharacteristics.getConcierge();
+            this.wheelchair = generalCharacteristics.getWheelchair();
+            this.yardTypeId = generalCharacteristics.getYardTypeId();
+            this.playground = generalCharacteristics.getPlayground();
+            this.typeOfElevatorList = generalCharacteristics.getTypesOfElevator().stream().map(IdItem::getId).collect(Collectors.toList());
+            this.parkingTypeIds = generalCharacteristics.getParkingTypes().stream().map(IdItem::getId).collect(Collectors.toList());
         }
-        this.materialOfConstructionId = generalCharacteristics.getMaterialOfConstructionId();
-        this.concierge = generalCharacteristics.getConcierge();
-        this.wheelchair = generalCharacteristics.getWheelchair();
-        this.yardTypeId = generalCharacteristics.getYardTypeId();
-        this.playground = generalCharacteristics.getPlayground();
-        this.typeOfElevatorList = generalCharacteristics.getTypesOfElevator().stream().map(IdItem::getId).collect(Collectors.toList());
-        this.parkingTypeIds = generalCharacteristics.getParkingTypes().stream().map(IdItem::getId).collect(Collectors.toList());
-
     }
 
 
