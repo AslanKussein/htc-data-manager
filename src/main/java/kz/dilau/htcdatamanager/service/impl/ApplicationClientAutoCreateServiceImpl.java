@@ -142,7 +142,7 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         if ((nonNull(application.getApplicationPurchaseData())
                 && nonNull(application.getApplicationPurchaseData().getCity()))) {
             if (isNullOrEmpty(application.getCurrentAgent()) ||
-                    (!isNullOrEmpty(application.getCurrentAgent()) && isNullOrEmpty(targetApplication.getCurrentAgent())
+                    (!isNullOrEmpty(application.getCurrentAgent()) && !isNullOrEmpty(targetApplication.getCurrentAgent())
                             && !application.getCurrentAgent().equals(targetApplication.getCurrentAgent()))
             ) {
                 application.setCurrentAgent(targetApplication.getCurrentAgent());
