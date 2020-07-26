@@ -53,7 +53,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String CLIENTS_BY_LOGINS = "/getList";
     private static final String GET_CONTRACT_FORM = "/api/organizations/getContractForm";
     private static final String UPLOAD_FILE_ENDPOINT = "/api/upload";
-    private static final String DOWNLOAD_FILE_ENDPOINT = "/api/download";
+    private static final String DOWNLOAD_FILE_ENDPOINT = "/open-api/download";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -332,11 +332,9 @@ public class KeycloakServiceImpl implements KeycloakService {
 
 
 
-    public Resource getFile(String token, String uuid) {
+    public Resource getFile(String uuid) {
         HttpHeaders headers = new HttpHeaders();
         String url = dataProperties.getKeycloakFileManagerUrl() + DOWNLOAD_FILE_ENDPOINT + "/" + uuid;
-
-        headers.set(HttpHeaders.AUTHORIZATION, token);
         HttpEntity<Object> request = new HttpEntity<>(headers);
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
