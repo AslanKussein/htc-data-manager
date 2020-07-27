@@ -19,11 +19,13 @@ public class FavoritesDto {
     private RealPropertyClientDto realPropertyDto;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Timestamp createDate;
+    private String deviceUuid;
 
 
     public FavoritesDto(Favorites rc) {
         this.clientLogin = rc.getClientLogin();
         this.realPropertyDto = new RealPropertyClientDto(rc.getRealProperty());
         this.createDate = rc.getCreateDate();
+        this.deviceUuid = rc.getDeviceUuid();
     }
 }

@@ -2,9 +2,11 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import kz.dilau.htcdatamanager.config.DataProperties;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.DetailedException;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.client.ClientDeviceDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 @Service
@@ -54,6 +57,8 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String GET_CONTRACT_FORM = "/api/organizations/getContractForm";
     private static final String UPLOAD_FILE_ENDPOINT = "/api/upload";
     private static final String DOWNLOAD_FILE_ENDPOINT = "/open-api/download";
+    private static final String PROFILE_CONFIG_ENDPOINT = "/api/profile-config";
+    private static final String PROFILE_CONFIG_OPEN_ENDPOINT = "/open-api/profile-config";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -343,6 +348,27 @@ public class KeycloakServiceImpl implements KeycloakService {
                 HttpMethod.GET,
                 request,
                 Resource.class
+        );
+        return response.getBody();
+    }
+
+    @Override
+    public List<ClientDeviceDto> getDevices(String token, String deviceUuid) {
+        if (isNull(token) && isNull(deviceUuid)) {
+            throw BadRequestException.createRequiredIsEmpty("deviceUuid");
+        }
+        HttpHeaders headers = new HttpHeaders();
+        if (nonNull(token)) {
+            headers.add(HttpHeaders.AUTHORIZATION, token);
+        }
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        String url = dataProperties.getKeycloakUserManagerUrl() + (isNull(token) ? PROFILE_CONFIG_OPEN_ENDPOINT : PROFILE_CONFIG_ENDPOINT) + "/getDevice" + (nonNull(deviceUuid) ? "/" +deviceUuid : "");
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        ResponseEntity<List<ClientDeviceDto>> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<List<ClientDeviceDto>>() {}
         );
         return response.getBody();
     }
