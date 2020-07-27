@@ -66,7 +66,10 @@ public class FavoritesServiceImpl implements FavoritesService {
                 }
                 lstUuids.add(d.getDeviceUuid());
             }
+        } else {
+            if (nonNull(deviceUuid)) throw BadRequestException.createTemplateException("error.has.not.permission");
         }
+
         return lstUuids;
     }
 
