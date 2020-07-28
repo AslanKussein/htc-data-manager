@@ -39,19 +39,24 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public FavoritesDto getByRealPropertyId(String token, String clientLogin, String deviceUuid ,Long realPropertyId) {
-        Favorites favorites = getFavoritesByClientLoginAndRealPropertyId(token, clientLogin, deviceUuid, realPropertyId);
-        return new FavoritesDto(favorites);
+        List<Favorites> favorites = getFavoritesByClientLoginAndRealPropertyId(token, clientLogin, deviceUuid, realPropertyId);
+        return new FavoritesDto(favorites.get(0));
     }
 
-    private Favorites getFavoritesByClientLoginAndRealPropertyId(String token, String clientLogin, String deviceUuid, Long realPropertyId) {
+    private List<Favorites> getFavoritesByClientLoginAndRealPropertyId(String token, String clientLogin, String deviceUuid, Long realPropertyId) {
         List<String> uuids = getDeviceUuids(token, clientLogin , deviceUuid) ;
-        Specification<Favorites> specs = FavoriteSpecifications.filter(clientLogin, Boolean.FALSE, uuids, realPropertyId);
+        Specification<Favorites> specs;
+        if (nonNull(deviceUuid)) {
+            specs = FavoriteSpecifications.filter(clientLogin, Boolean.TRUE, uuids, realPropertyId);
+        } else {
+            specs = FavoriteSpecifications.filter(clientLogin, Boolean.FALSE, uuids, realPropertyId);
+        }
 
-        Optional<Favorites> favoritesOptional = favoritesRepository.findOne(specs);
-        if (!favoritesOptional.isPresent()) {
+        List<Favorites> favoritesOptional = favoritesRepository.findAll(specs);
+        if (favoritesOptional.isEmpty()) {
             throw NotFoundException.createFavoritesNotFoundByRealPropertyId(realPropertyId);
         }
-        return favoritesOptional.get();
+        return favoritesOptional;
     }
 
     private List<String> getDeviceUuids(String token, String clientLogin , String deviceUuid){
@@ -103,8 +108,8 @@ public class FavoritesServiceImpl implements FavoritesService {
         Favorites favorites;
 
         try {
-            favorites = getFavoritesByClientLoginAndRealPropertyId(token, clientLogin, deviceUuid, realPropertyId);
-            return new FavoritesDto(favorites);
+            List<Favorites> flist = getFavoritesByClientLoginAndRealPropertyId(token, clientLogin, deviceUuid, realPropertyId);
+            return new FavoritesDto(flist.get(0));
         }catch (NotFoundException e){
             favorites = new Favorites();
         }
@@ -124,9 +129,11 @@ public class FavoritesServiceImpl implements FavoritesService {
 
     @Override
     public void deleteByRealPropertyId(String token,String clientLogin, String deviceUuid, Long realPropertyId) {
-        Favorites favorites = getFavoritesByClientLoginAndRealPropertyId(token, clientLogin, deviceUuid, realPropertyId);
+        List<Favorites> favorites = getFavoritesByClientLoginAndRealPropertyId(token, clientLogin, deviceUuid, realPropertyId);
 
-        favoritesRepository.delete(favorites);
+        for (Favorites f : favorites) {
+            favoritesRepository.delete(f);
+        }
     }
 
 
