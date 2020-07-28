@@ -23,7 +23,7 @@ public final class Constants {
     public static final String POST_REST_ENDPOINT = "/api/kaz-post";
     public static final String CREDIT_PROGRAMM_REST_ENDPOINT = "/api/credit-programm";
     public static final String CREDIT_PROGRAMM_OPEN_REST_ENDPOINT = "/open-api/credit-programm";
-    public static final String FAVORITES_REST_ENDPOINT = "/api/favorites";
+    public static final String FAVORITES_REST_ENDPOINT = "/favorites";
     public static final String KEYCLOAK_REST_ENDPOINT = "/api/keycloak";
     public static final String CONTRACTS_REST_ENDPOINT = "/api/contracts";
     public static final String APPLICATION_VIEW_REST_ENDPOINT = "/api/application-view";
