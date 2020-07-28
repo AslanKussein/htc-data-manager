@@ -9,10 +9,7 @@ import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
-import kz.dilau.htcdatamanager.service.ApplicationClientService;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.BuildingService;
-import kz.dilau.htcdatamanager.service.EntityService;
+import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.*;
@@ -42,7 +39,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     private final EntityMappingTool entityMappingTool;
     private final RealPropertyMetadataRepository metadataRepository;
     private final ApplicationService applicationService;
-    private final KeycloakServiceImpl keycloakService;
+    private final KeycloakService keycloakService;
 
 
     @Override

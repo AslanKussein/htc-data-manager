@@ -34,4 +34,6 @@ public interface KeycloakService {
     Resource getFile(String uuid);
 
     List<ClientDeviceDto> getDevices(String token, String deviceUuid);
+
+    void saveClient(ProfileClientDto p);
 }

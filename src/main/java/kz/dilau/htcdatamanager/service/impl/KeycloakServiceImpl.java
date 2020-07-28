@@ -353,20 +353,13 @@ public class KeycloakServiceImpl implements KeycloakService {
         return response.getBody();
     }
 
-    public ResponseEntity saveClient(ProfileClientDto p) {
+    @Override
+    public void saveClient(ProfileClientDto p) {
         HttpHeaders headers = new HttpHeaders();
         String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_OPEN_ENDPOINT;
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         HttpEntity<Object> request = new HttpEntity<>(p, headers);
-        /*ResponseEntity<Void> response = restTemplate.exchange(
-                uriBuilder.toUriString(),
-                HttpMethod.POST,
-                request,
-                new ParameterizedTypeReference<ResponseEntity>() {}
-        );*/
-        ResponseEntity<Void> response = restTemplate
-                .postForObject(uriBuilder.toUriString(), request, ResponseEntity.class);
-        return response;
+        restTemplate.postForObject(uriBuilder.toUriString(), request, ResponseEntity.class);
     }
 
     @Override
