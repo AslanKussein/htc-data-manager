@@ -164,7 +164,8 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     .street(nonNull(buildingDto.getStreetId()) ? streetRepository.getOne(buildingDto.getStreetId()).getMultiLang() : null)
                     .fullAddress(realProperty.getAddress())
                     .latitude(buildingDto.getLatitude())
-                    .longitude(buildingDto.getLongitude());
+                    .longitude(buildingDto.getLongitude())
+                    .houseNumber(buildingDto.getHouseNumber());
             if (nonNull(buildingDto.getResidentialComplexId())) {
                 Optional<ResidentialComplex> residentialComplex = residentialComplexRepository.findById(buildingDto.getResidentialComplexId());
                 residentialComplex.ifPresent(complex -> dto.residenceComplex(complex.getHouseName()));
@@ -177,7 +178,10 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     text.setNameKz(address.getBody().getAddressKaz());
                     dto.fullAddress(text);
                 }
+                dto.postcode(buildingDto.getPostcode());
             }
+            dto.latitude(buildingDto.getLatitude())
+                    .longitude(buildingDto.getLongitude());
         }
         dto.numberOfRooms(realProperty.getNumberOfRooms())
                 .floor(realProperty.getFloor())
