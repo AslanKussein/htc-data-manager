@@ -51,7 +51,6 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     @Override
     public Long update(String token, Long id, ApplicationClientDTO input) {
         Application application = applicationService.getApplicationById(id);
-        input.setClientLogin(getAuthorName());
         return saveApplication(application, input);
     }
 
