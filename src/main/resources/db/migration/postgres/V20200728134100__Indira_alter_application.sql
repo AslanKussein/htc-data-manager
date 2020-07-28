@@ -1,0 +1,1 @@
+alter table htc_dm_application add device_uuid varchar(255);

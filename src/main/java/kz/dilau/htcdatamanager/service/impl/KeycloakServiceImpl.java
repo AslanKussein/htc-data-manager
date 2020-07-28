@@ -59,6 +59,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String DOWNLOAD_FILE_ENDPOINT = "/open-api/download";
     private static final String PROFILE_CONFIG_ENDPOINT = "/api/profile-config";
     private static final String PROFILE_CONFIG_OPEN_ENDPOINT = "/open-api/profile-config";
+    private static final String PROFILE_CLIENT_OPEN_ENDPOINT = "/open-api/profile-client";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -350,6 +351,22 @@ public class KeycloakServiceImpl implements KeycloakService {
                 Resource.class
         );
         return response.getBody();
+    }
+
+    public ResponseEntity saveClient(ProfileClientDto p) {
+        HttpHeaders headers = new HttpHeaders();
+        String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_OPEN_ENDPOINT;
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
+        HttpEntity<Object> request = new HttpEntity<>(p, headers);
+        /*ResponseEntity<Void> response = restTemplate.exchange(
+                uriBuilder.toUriString(),
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<ResponseEntity>() {}
+        );*/
+        ResponseEntity<Void> response = restTemplate
+                .postForObject(uriBuilder.toUriString(), request, ResponseEntity.class);
+        return response;
     }
 
     @Override

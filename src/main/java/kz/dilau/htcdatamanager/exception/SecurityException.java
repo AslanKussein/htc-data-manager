@@ -13,6 +13,6 @@ public class SecurityException extends DetailedException {
     }
 
     public static SecurityException createPermissionNotFound() {
-        return new SecurityException(BundleMessageUtil.getLocaledValue("error.permission.notFound"));
+        return new SecurityException(BundleMessageUtil.getLocaledValue("error.has.not.permission"));
     }
 }

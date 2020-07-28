@@ -76,6 +76,9 @@ public class Application extends AuditableBaseEntity<String, Long> {
     @Column(name = "confirm_doc_guid")
     private String confirmDocGuid;
 
+    @Column(name = "device_uuid")
+    private String deviceUuid;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "target_application_id")
     private Application targetApplication;
