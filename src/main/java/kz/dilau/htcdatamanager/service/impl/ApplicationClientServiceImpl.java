@@ -4,25 +4,22 @@ import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
+import kz.dilau.htcdatamanager.exception.SecurityException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
-import kz.dilau.htcdatamanager.service.ApplicationClientService;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.BuildingService;
-import kz.dilau.htcdatamanager.service.EntityService;
+import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
-import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
-import kz.dilau.htcdatamanager.web.dto.client.ApplicationSellDataClientDto;
-import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
-import kz.dilau.htcdatamanager.web.dto.client.RealPropertyClientDto;
+import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
+import kz.dilau.htcdatamanager.web.dto.client.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +39,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     private final EntityMappingTool entityMappingTool;
     private final RealPropertyMetadataRepository metadataRepository;
     private final ApplicationService applicationService;
+    private final KeycloakService keycloakService;
 
 
     @Override
@@ -65,6 +63,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public Long save(String token, ApplicationClientDTO dto) {
+        dto.setClientLogin(getAuthorName());
         return saveApplication(new Application(), dto);
     }
 
@@ -86,7 +85,8 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         } else {
             operationType = entityService.mapRequiredEntity(OperationType.class, dto.getOperationTypeId());
 
-            application.setClientLogin(getAuthorName());
+            application.setClientLogin(dto.getClientLogin());
+            if (nonNull(dto.getDeviceUuid())) application.setDeviceUuid(dto.getDeviceUuid());
             application.setOperationType(operationType);
 
             ApplicationStatus status = entityService.mapRequiredEntity(ApplicationStatus.class, ApplicationStatus.FIRST_CONTACT);
@@ -188,4 +188,55 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         return list.stream().map(ApplicationClientDTO::new).collect(Collectors.toList());
     }
 
+    @Override
+    public Long save(ClientApplicationCreateDTO dto) {
+        if (isNull(dto.getApplication())) throw BadRequestException.createRequiredIsEmpty("application");
+        if (isNull(dto.getClientName())) throw  BadRequestException.createRequiredIsEmpty("clientName");
+        if (isNull(dto.getDeviceUuid())) throw BadRequestException.createRequiredIsEmpty("deviceUuid");
+        if (isNull(dto.getPhoneNumber())) throw BadRequestException.createRequiredIsEmpty("phoneNumber");
+
+        List<String> logins = new ArrayList<>();
+        logins.add(dto.getPhoneNumber());
+        List<ProfileClientDto> profileList = keycloakService.readClientInfoByLogins(logins);
+
+        if (profileList.isEmpty() || isNull(profileList.get(0)) || isNull(profileList.get(0).getPhoneNumber())) {
+            ProfileClientDto newClient  = new ProfileClientDto();
+            newClient.setFirstName(dto.getClientName());
+            newClient.setPhoneNumber(dto.getPhoneNumber());
+
+            try {
+                keycloakService.saveClient(newClient);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw BadRequestException.createUserError();
+            }
+        }
+
+        List<ClientDeviceDto> deviceDto = keycloakService.getDevices(null, dto.getDeviceUuid());
+
+        if (deviceDto.isEmpty() || isNull(deviceDto.get(0))) {
+            throw BadRequestException.deviceNotFound(dto.getDeviceUuid());
+        }
+
+        if (nonNull(deviceDto.get(0).getClientLogin())) {
+            throw BadRequestException.authoriationRequired(deviceDto.get(0).getClientLogin());
+        }
+
+        dto.getApplication().setClientLogin(dto.getPhoneNumber());
+        dto.getApplication().setDeviceUuid(dto.getDeviceUuid());
+
+        Application app;
+
+        if (nonNull(dto.getApplication().getId())) {
+            app = applicationService.getApplicationById(dto.getApplication().getId());
+            if (!app.getClientLogin().equals(dto.getPhoneNumber())) {
+                throw SecurityException.createPermissionNotFound();
+            }
+        } else {
+            app = new Application();
+        }
+        saveApplication(app, dto.getApplication());
+
+        return app.getId();
+    }
 }

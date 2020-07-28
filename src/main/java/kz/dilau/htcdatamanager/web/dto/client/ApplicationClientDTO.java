@@ -27,6 +27,8 @@ public class ApplicationClientDTO {
     private Long objectTypeId;
     @ApiModelProperty(name = "clientLogin", value = "Логин Клиента")
     private String clientLogin;
+    @ApiModelProperty(name = "deviceUuid", value = "Устройство с которого сохранили")
+    private String deviceUuid;
     @ApiModelProperty(name = "sellDataClientDto", value = "Общая информация о сделке продажи объекта")
     private ApplicationSellDataClientDto sellDataClientDto;
     @ApiModelProperty(name = "purchaseInfoClientDto", value = "Модель параметров по операции Покупка ")
@@ -47,5 +49,6 @@ public class ApplicationClientDTO {
                 && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
             this.setPurchaseInfoClientDto(new PurchaseInfoClientDto(application.getApplicationPurchaseData()));
         }
+        if (nonNull(application.getDeviceUuid())) this.deviceUuid = application.getDeviceUuid();
     }
 }

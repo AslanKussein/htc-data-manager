@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
+import kz.dilau.htcdatamanager.web.dto.client.ClientApplicationCreateDTO;
 
 import java.util.List;
 
@@ -14,5 +15,7 @@ public interface ApplicationClientService {
     Long save(String token, ApplicationClientDTO dto);
 
     List<ApplicationClientDTO> getAllMyAppByOperationTypeId(final String clientLogin, String token, Long operationTypeId);
+
+    Long save(ClientApplicationCreateDTO dto);
 }
 

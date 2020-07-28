@@ -78,4 +78,16 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException applicationDuplicateContractNumber(Long appId) {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.contract.number.duplicate", appId));
     }
+
+    public static BadRequestException deviceNotFound(String uuid) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.device.not.found", uuid));
+    }
+
+    public static BadRequestException authoriationRequired(String phoneNumber) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.must.authorized", phoneNumber));
+    }
+
+    public static BadRequestException createUserError() {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.create.client.failed"));
+    }
 }
