@@ -1,6 +1,7 @@
 package kz.dilau.htcdatamanager.service;
 
 import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.client.ClientDeviceDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import org.springframework.core.io.Resource;
 
@@ -31,4 +32,8 @@ public interface KeycloakService {
     FileInfoDto uploadFile(String token, byte[] pFile, String pFilename);
 
     Resource getFile(String uuid);
+
+    List<ClientDeviceDto> getDevices(String token, String deviceUuid);
+
+    void saveClient(ProfileClientDto p);
 }

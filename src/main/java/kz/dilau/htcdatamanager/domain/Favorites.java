@@ -18,6 +18,7 @@ import static kz.dilau.htcdatamanager.config.Constants.TABLE_NAME_PREFIX;
 @Table(name = TABLE_NAME_PREFIX + "favorites")
 public class Favorites extends BaseEntity<Long> {
 
+    @Column(name = "client_login")
     private String clientLogin;
 
     @ToString.Exclude
@@ -30,5 +31,8 @@ public class Favorites extends BaseEntity<Long> {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
     private Timestamp createDate;
+
+    @Column(name = "device_uuid")
+    private String deviceUuid;
 
 }

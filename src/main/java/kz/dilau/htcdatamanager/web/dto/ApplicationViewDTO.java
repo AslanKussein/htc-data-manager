@@ -144,6 +144,8 @@ public class ApplicationViewDTO {
     private String residenceComplex;
     @ApiModelProperty(name = "apartmentNumber", value = "Номер квартиры", dataType = "string")
     private String apartmentNumber;
+    @ApiModelProperty(name = "houseNumber", value = "Номер дома", dataType = "string")
+    private String houseNumber;
     @ApiModelProperty(name = "photoIdList", value = "Список ID фотографии")
     private Set<String> photoIdList;
     @ApiModelProperty(name = "housingPlanImageIdList", value = "Список ID фотографии")
@@ -152,4 +154,6 @@ public class ApplicationViewDTO {
     private Set<String> virtualTourImageIdList;
     @ApiModelProperty(value = "Список доступных операций по текущей заявке")
     private List<String> operationList;
+    @ApiModelProperty(value = "Код почты")
+    private String postcode;
 }

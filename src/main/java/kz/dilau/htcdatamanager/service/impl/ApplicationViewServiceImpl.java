@@ -179,6 +179,7 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     .street(nonNull(buildingDto.getStreetId()) ? DictionaryMappingTool.mapDictionaryToText(streetRepository.getOne(buildingDto.getStreetId())) : null)
                     .fullAddress(realProperty.getAddress())
                     .latitude(buildingDto.getLatitude())
+                    .houseNumber(buildingDto.getHouseNumber())
                     .longitude(buildingDto.getLongitude());
             if (nonNull(buildingDto.getDistrictId())) {
                 List<MultiLangText> districts = new ArrayList<>();
@@ -197,7 +198,10 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     text.setNameKz(address.getBody().getAddressKaz());
                     dto.fullAddress(text);
                 }
+                dto.postcode(buildingDto.getPostcode());
             }
+            dto.latitude(buildingDto.getLatitude())
+                    .longitude(buildingDto.getLongitude());
         }
         dto.numberOfRooms(realProperty.getNumberOfRooms())
                 .floor(realProperty.getFloor())

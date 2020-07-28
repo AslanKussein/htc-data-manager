@@ -10,8 +10,33 @@ import javax.persistence.criteria.Subquery;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.nonNull;
+
 public class FavoriteSpecifications {
 
+    public static Specification<Favorites> filter(String clientLogin,
+                                                  Boolean strictDevice,
+                                                  List<String> deviceUuids,
+                                                  Long realPropertyId) {
+
+        Specification<Favorites> specification = FavoriteSpecifications.isRemovedEquals(false);
+
+        if (nonNull(clientLogin)) {
+            if (nonNull(strictDevice) && strictDevice) {
+                specification = specification.and(FavoriteSpecifications.deviceUuidIn(deviceUuids));
+            } else {
+                Specification<Favorites> specInner = FavoriteSpecifications.clientLoginEquals(clientLogin);
+                specification = specification.and(specInner.or(FavoriteSpecifications.deviceUuidIn(deviceUuids)));
+            }
+        } else {
+            specification = specification.and(FavoriteSpecifications.deviceUuidIn(deviceUuids));
+        }
+
+        if (nonNull(realPropertyId)) {
+            specification = specification.and(FavoriteSpecifications.realPropertyIdEquals(realPropertyId));
+        }
+        return specification;
+    }
 
     public static Specification<Favorites> clientLoginEquals(String clientLogin) {
         return (root, cq, cb) -> cb.equal(root.get("clientLogin"), clientLogin);
@@ -34,5 +59,13 @@ public class FavoriteSpecifications {
             predicates.add(cb.exists(dataCQ.where(dataPredicates.toArray(new Predicate[]{}))));
             return cb.and(predicates.toArray(new Predicate[]{}));
         };
+    }
+
+    public static Specification<Favorites> deviceUuidEquals(String uuid) {
+        return (root, cq, cb) -> cb.equal(root.get("deviceUuid"), uuid);
+    }
+
+    public static Specification<Favorites> deviceUuidIn(List<String> uuids) {
+        return (root, cq, cb) -> root.get("deviceUuid").in( uuids);
     }
 }
