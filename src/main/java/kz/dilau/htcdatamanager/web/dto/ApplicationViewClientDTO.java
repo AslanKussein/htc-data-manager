@@ -2,7 +2,6 @@ package kz.dilau.htcdatamanager.web.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import kz.dilau.htcdatamanager.domain.base.MultiLang;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
@@ -25,13 +24,13 @@ public class ApplicationViewClientDTO {
     @ApiModelProperty(value = "Дата создания заявки")
     private ZonedDateTime createdDate;
     @ApiModelProperty(name = "operationType", value = "операции")
-    private MultiLang operationType;
+    private MultiLangText operationType;
     @ApiModelProperty(value = "Это продать")
     private Boolean isSell;
     @ApiModelProperty(value = "Это квартира")
     private Boolean isFlat;
     @ApiModelProperty(name = "objectType", value = "объект")
-    private MultiLang objectType;
+    private MultiLangText objectType;
     @ApiModelProperty(name = "objectPrice", value = "цена объекта")
     private BigDecimal objectPrice;
     @ApiModelProperty(name = "objectPricePeriod", value = "цена объекта период")
@@ -78,32 +77,32 @@ public class ApplicationViewClientDTO {
     private Boolean atelier;
     @ApiModelProperty(name = "separateBathroom", value = "Санузел раздельный")
     private Boolean separateBathroom;
-    @ApiModelProperty(name = "district", value = "Район")
-    private MultiLang district;
+    @ApiModelProperty(name = "districts", value = "Районы")
+    private List<MultiLangText> districts;
     @ApiModelProperty(name = "numberOfFloors", value = "Этажность дома")
     private Integer numberOfFloors;
     @ApiModelProperty(name = "apartmentsOnTheSite", value = "Количество квартир на площадке")
     private Integer apartmentsOnTheSite;
     @ApiModelProperty(name = "materialOfConstruction", value = "Материал постройки")
-    private MultiLang materialOfConstruction;
+    private MultiLangText materialOfConstruction;
     @ApiModelProperty(name = "yearOfConstruction", value = "Год постройки")
     private Integer yearOfConstruction;
     @ApiModelProperty(name = "yearOfConstructionPeriod", value = "Год постройки")
     private IntegerPeriod yearOfConstructionPeriod;
     @ApiModelProperty(name = "typeOfElevatorList", value = "Тип лифта(мультивыбор)")
-    private List<MultiLang> typeOfElevatorList;
+    private List<MultiLangText> typeOfElevatorList;
     @ApiModelProperty(name = "concierge", value = "Консьерж")
     private Boolean concierge;
     @ApiModelProperty(name = "wheelchair", value = "Колясочная")
     private Boolean wheelchair;
     @ApiModelProperty(name = "yardType", value = "Двор(закрытый/открытый)", dataType = "string", allowableValues = "PRIVATE, OPEN")
-    private MultiLang yardType;
+    private MultiLangText yardType;
     @ApiModelProperty(name = "playground", value = "Детская площадка")
     private Boolean playground;
     @ApiModelProperty(value = "типа парковки")
-    private List<MultiLang> parkingTypes;
+    private List<MultiLangText> parkingTypes;
     @ApiModelProperty(value = "Состояние")
-    private MultiLang houseCondition;
+    private MultiLangText houseCondition;
     @ApiModelProperty(name = "mortgage", value = "ипотека")
     private Boolean mortgage;
     @ApiModelProperty(name = "encumbrance", value = "Обременение")

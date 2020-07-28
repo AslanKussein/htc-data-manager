@@ -565,7 +565,8 @@ public class ContractServiceImpl implements ContractService {
 
         if (application.getOperationType().isBuy()) {
             city = isNull(purchaseData) ? null : purchaseData.getCity();
-            district = isNull(purchaseData) ? null : purchaseData.getDistrict();
+            IdItem idItem = isNull(purchaseData) || purchaseData.getDistricts().isEmpty() ? null : purchaseData.getDistricts().stream().findFirst().orElse(null);
+            district = isNull(idItem) ? null : entityService.mapEntity(District.class, idItem.getId());
             purchaseInfo = isNull(purchaseData) ? null : purchaseData.getPurchaseInfo();
         } else {
             realProperty = isNull(sellData) ? null : sellData.getRealProperty();

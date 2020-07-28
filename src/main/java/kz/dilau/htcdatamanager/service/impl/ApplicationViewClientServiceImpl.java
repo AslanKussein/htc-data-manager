@@ -1,24 +1,28 @@
 package kz.dilau.htcdatamanager.service.impl;
 
-import kz.dilau.htcdatamanager.domain.Application;
-import kz.dilau.htcdatamanager.domain.RealProperty;
-import kz.dilau.htcdatamanager.domain.RealPropertyFile;
-import kz.dilau.htcdatamanager.domain.RealPropertyMetadata;
+import kz.dilau.htcdatamanager.domain.*;
+import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
+import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
+import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
-import kz.dilau.htcdatamanager.repository.dictionary.*;
 import kz.dilau.htcdatamanager.service.ApplicationViewClientService;
+import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
-import kz.dilau.htcdatamanager.web.dto.*;
+import kz.dilau.htcdatamanager.web.dto.ApplicationViewClientDTO;
+import kz.dilau.htcdatamanager.web.dto.KazPostDTO;
+import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
+import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.web.rest.KazPostResource;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -29,15 +33,7 @@ import static java.util.Objects.nonNull;
 public class ApplicationViewClientServiceImpl implements ApplicationViewClientService {
 
     private final ApplicationRepository applicationRepository;
-    private final OperationTypeRepository operationTypeRepository;
-    private final ObjectTypeRepository objectTypeRepository;
-    private final DistrictRepository districtRepository;
-    private final ResidentialComplexRepository residentialComplexRepository;
-    private final MaterialOfConstructionRepository materialOfConstructionRepository;
-    private final TypeOfElevatorRepository typeOfElevatorRepository;
-    private final ParkingTypeRepository parkingTypeRepository;
-    private final YardTypeRepository yardTypeRepository;
-    private final HouseConditionRepository houseConditionRepository;
+    private final EntityService entityService;
     private final KazPostResource kazPostResource;
 
     @Override
@@ -58,20 +54,32 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
         ApplicationViewClientDTO.ApplicationViewClientDTOBuilder dto = ApplicationViewClientDTO.builder()
                 .id(application.getId())
                 .createdDate(application.getCreatedDate())
-                .operationType(nonNull(application.getOperationTypeId()) ? operationTypeRepository.getOne(application.getOperationTypeId()).getMultiLang() : null)
-                .objectType(nonNull(application.getObjectTypeId()) ? objectTypeRepository.getOne(application.getObjectTypeId()).getMultiLang() : null)
+                .operationType(DictionaryMappingTool.mapDictionaryToText(application.getOperationType()))
+                .objectType(DictionaryMappingTool.mapDictionaryToText(application.getObjectType()))
                 .isSell(isSell(application))
                 .isFlat(isFlat(application));
         if (isSell(application)) {
-            ApplicationPurchaseDataDto dataDto = new ApplicationPurchaseDataDto(application.getApplicationPurchaseData());
-            dto.comment(dataDto.getNote())
-                    .mortgage(dataDto.getMortgage())
-                    .objectPricePeriod(dataDto.getObjectPricePeriod())
-                    .district(nonNull(dataDto.getDistrictId()) ? districtRepository.getOne(dataDto.getDistrictId()).getMultiLang() : null)
-                    .probabilityOfBidding(dataDto.getProbabilityOfBidding());
+            ApplicationPurchaseData applicationPurchaseData = application.getApplicationPurchaseData();
+            dto.comment(applicationPurchaseData.getNote())
+                    .mortgage(applicationPurchaseData.getMortgage())
+                    .probabilityOfBidding(applicationPurchaseData.getProbabilityOfBidding());
+            if (nonNull(applicationPurchaseData.getPurchaseInfo())) {
+                PurchaseInfo purchaseInfo = applicationPurchaseData.getPurchaseInfo();
+                dto.objectPricePeriod(new BigDecimalPeriod(purchaseInfo.getObjectPriceFrom(), purchaseInfo.getObjectPriceTo()));
+            }
+            if (!applicationPurchaseData.getDistricts().isEmpty()) {
+                List<MultiLangText> districts = new ArrayList<>();
+                for (val item : applicationPurchaseData.getDistricts()) {
+                    District district = entityService.mapEntity(District.class, item.getId());
+                    if (nonNull(district)) {
+                        districts.add(DictionaryMappingTool.mapDictionaryToText(district));
+                    }
+                }
+                dto.districts(districts);
+            }
         }
         if (!isSell(application)) {
-            ApplicationSellDataDto sellData = new ApplicationSellDataDto(application.getApplicationSellData());
+            ApplicationSellData sellData = application.getApplicationSellData();
             dto.comment(sellData.getNote())
                     .mortgage(sellData.getMortgage())
                     .probabilityOfBidding(sellData.getProbabilityOfBidding())
@@ -82,38 +90,34 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
 
             fillRealProperty(dto, application);
         }
-        if (isSell(application)) {
-            PurchaseInfoDto purchaseInfoDto = new PurchaseInfoDto(application.getApplicationPurchaseData().getPurchaseInfo());
-            dto.numberOfRoomsPeriod(purchaseInfoDto.getNumberOfRoomsPeriod())
-                    .floorPeriod(purchaseInfoDto.getFloorPeriod())
-                    .totalAreaPeriod(purchaseInfoDto.getTotalAreaPeriod())
-                    .livingAreaPeriod(purchaseInfoDto.getLivingAreaPeriod())
-                    .kitchenAreaPeriod(purchaseInfoDto.getKitchenAreaPeriod())
-                    .balconyAreaPeriod(purchaseInfoDto.getBalconyAreaPeriod())
-                    .ceilingHeightPeriod(purchaseInfoDto.getCeilingHeightPeriod())
-                    .numberOfBedroomsPeriod(purchaseInfoDto.getNumberOfBedroomsPeriod())
-                    .yearOfConstructionPeriod(purchaseInfoDto.getYearOfConstructionPeriod())
-                    .concierge(purchaseInfoDto.getConcierge())
-                    .wheelchair(purchaseInfoDto.getWheelchair())
-                    .playground(purchaseInfoDto.getPlayground())
-                    .numberOfFloorsPeriod(purchaseInfoDto.getNumberOfFloorsPeriod())
-                    .yearOfConstructionPeriod(purchaseInfoDto.getYearOfConstructionPeriod())
-                    .atelier(purchaseInfoDto.getAtelier())
-                    .separateBathroom(purchaseInfoDto.getSeparateBathroom());
-            if (nonNull(purchaseInfoDto.getMaterialOfConstructionId())) {
-                dto.materialOfConstruction(materialOfConstructionRepository.getOne(purchaseInfoDto.getMaterialOfConstructionId()).getMultiLang());
+        if (isSell(application) && nonNull(application.getApplicationPurchaseData()) && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
+            PurchaseInfo purchaseInfo = application.getApplicationPurchaseData().getPurchaseInfo();
+            dto.numberOfRoomsPeriod(new IntegerPeriod(purchaseInfo.getNumberOfRoomsFrom(), purchaseInfo.getNumberOfRoomsTo()))
+                    .floorPeriod(new IntegerPeriod(purchaseInfo.getFloorFrom(), purchaseInfo.getFloorTo()))
+                    .totalAreaPeriod(new BigDecimalPeriod(purchaseInfo.getTotalAreaFrom(), purchaseInfo.getTotalAreaTo()))
+                    .livingAreaPeriod(new BigDecimalPeriod(purchaseInfo.getLivingAreaFrom(), purchaseInfo.getLivingAreaTo()))
+                    .kitchenAreaPeriod(new BigDecimalPeriod(purchaseInfo.getKitchenAreaFrom(), purchaseInfo.getKitchenAreaTo()))
+                    .balconyAreaPeriod(new BigDecimalPeriod(purchaseInfo.getBalconyAreaFrom(), purchaseInfo.getBalconyAreaTo()))
+                    .ceilingHeightPeriod(new BigDecimalPeriod(purchaseInfo.getCeilingHeightFrom(), purchaseInfo.getCeilingHeightTo()))
+                    .numberOfBedroomsPeriod(new IntegerPeriod(purchaseInfo.getNumberOfBedroomsFrom(), purchaseInfo.getNumberOfBedroomsTo()))
+                    .yearOfConstructionPeriod(new IntegerPeriod(purchaseInfo.getYearOfConstructionFrom(), purchaseInfo.getYearOfConstructionTo()))
+                    .concierge(purchaseInfo.getConcierge())
+                    .wheelchair(purchaseInfo.getWheelchair())
+                    .playground(purchaseInfo.getPlayground())
+                    .atelier(purchaseInfo.getAtelier())
+                    .separateBathroom(purchaseInfo.getSeparateBathroom())
+                    .materialOfConstruction(DictionaryMappingTool.mapDictionaryToText(purchaseInfo.getMaterialOfConstruction()))
+                    .yardType(DictionaryMappingTool.mapDictionaryToText(purchaseInfo.getYardType()));
+            if (!purchaseInfo.getTypesOfElevator().isEmpty()) {
+                dto.typeOfElevatorList(purchaseInfo.getTypesOfElevator().stream()
+                        .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
+                        .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(TypeOfElevator.class, aLong.getId())))
+                        .collect(Collectors.toList()));
             }
-            if (nonNull(purchaseInfoDto.getYardTypeId())) {
-                dto.yardType(nonNull(purchaseInfoDto.getYardTypeId()) ? yardTypeRepository.getOne(purchaseInfoDto.getYardTypeId()).getMultiLang() : null);
-            }
-            if (nonNull(purchaseInfoDto.getParkingTypeIds())) {
-                dto.parkingTypes(purchaseInfoDto.getParkingTypeIds().stream()
-                        .filter(aLong -> aLong != 0)
-                        .map(aLong -> parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
-            }
-            if (nonNull(purchaseInfoDto.getTypeOfElevatorList())) {
-                dto.typeOfElevatorList(purchaseInfoDto.getTypeOfElevatorList().stream()
-                        .filter(aLong -> aLong != 0).map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
+            if (!purchaseInfo.getParkingTypes().isEmpty()) {
+                dto.parkingTypes(purchaseInfo.getParkingTypes().stream()
+                        .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
+                        .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(ParkingType.class, aLong.getId())))
                         .collect(Collectors.toList()));
             }
         }
@@ -123,19 +127,19 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
 
     private void fillRealProperty(ApplicationViewClientDTO.ApplicationViewClientDTOBuilder dto, Application application) {
         RealProperty realProperty = application.getApplicationSellData().getRealProperty();
-        if (isNull(realProperty)) {
+        if (isNull(realProperty) || isNull(realProperty.getBuilding())) {
             return;
         }
-
-        BuildingDto buildingDto = new BuildingDto(realProperty.getBuilding());
-        dto.district(nonNull(buildingDto.getDistrictId()) ? districtRepository.getOne(buildingDto.getDistrictId()).getMultiLang() : null)
-                .fullAddress(DictionaryMappingTool.mapAddressToMultiLang(realProperty.getBuilding(), realProperty.getApartmentNumber()));
-        if (nonNull(buildingDto.getResidentialComplexId())) {
-            Optional<ResidentialComplex> residentialComplex = residentialComplexRepository.findById(buildingDto.getResidentialComplexId());
-            residentialComplex.ifPresent(complex -> dto.residenceComplex(complex.getHouseName()));
+        Building building = realProperty.getBuilding();
+        List<MultiLangText> districts = new ArrayList<>();
+        districts.add(DictionaryMappingTool.mapDictionaryToText(building.getDistrict()));
+        dto.districts(districts)
+                .fullAddress(DictionaryMappingTool.mapAddressToMultiLang(building, realProperty.getApartmentNumber()));
+        if (nonNull(building.getResidentialComplex())) {
+            dto.residenceComplex(building.getResidentialComplex().getHouseName());
         }
-        if (nonNull(buildingDto.getPostcode())) {
-            ResponseEntity<KazPostDTO> address = kazPostResource.getPostData(buildingDto.getPostcode());
+        if (nonNull(building.getPostcode())) {
+            ResponseEntity<KazPostDTO> address = kazPostResource.getPostData(building.getPostcode());
             if (nonNull(address) && nonNull(address.getBody())) {
                 MultiLangText text = new MultiLangText();
                 text.setNameRu(address.getBody().getAddressRus());
@@ -163,31 +167,28 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
                     .virtualTourImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
         }
 
-        GeneralCharacteristicsDto generalCharacteristicsDto = new GeneralCharacteristicsDto(metadata.getGeneralCharacteristics());
-        dto.ceilingHeight(generalCharacteristicsDto.getCeilingHeight())
-                .numberOfFloors(generalCharacteristicsDto.getNumberOfFloors())
-                .apartmentsOnTheSite(generalCharacteristicsDto.getApartmentsOnTheSite())
-                .yearOfConstruction(generalCharacteristicsDto.getYearOfConstruction())
-                .concierge(generalCharacteristicsDto.getConcierge())
-                .playground(generalCharacteristicsDto.getPlayground())
-                .wheelchair(generalCharacteristicsDto.getWheelchair());
-        if (nonNull(generalCharacteristicsDto.getMaterialOfConstructionId())) {
-            dto.materialOfConstruction(materialOfConstructionRepository.getOne(generalCharacteristicsDto.getMaterialOfConstructionId()).getMultiLang());
-        }
-        if (nonNull(generalCharacteristicsDto.getTypeOfElevatorList())) {
-            dto.typeOfElevatorList(generalCharacteristicsDto.getTypeOfElevatorList().stream()
-                    .filter(aLong -> aLong != 0).map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
+        GeneralCharacteristics generalCharacteristics = metadata.getGeneralCharacteristics();
+        dto.ceilingHeight(generalCharacteristics.getCeilingHeight())
+                .numberOfFloors(generalCharacteristics.getNumberOfFloors())
+                .apartmentsOnTheSite(generalCharacteristics.getApartmentsOnTheSite())
+                .yearOfConstruction(generalCharacteristics.getYearOfConstruction())
+                .concierge(generalCharacteristics.getConcierge())
+                .playground(generalCharacteristics.getPlayground())
+                .wheelchair(generalCharacteristics.getWheelchair())
+                .materialOfConstruction(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getMaterialOfConstruction()))
+                .yardType(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getYardType()))
+                .houseCondition(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getHouseCondition()));
+        if (!generalCharacteristics.getTypesOfElevator().isEmpty()) {
+            dto.typeOfElevatorList(generalCharacteristics.getTypesOfElevator().stream()
+                    .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
+                    .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(TypeOfElevator.class, aLong.getId())))
                     .collect(Collectors.toList()));
         }
-        if (nonNull(generalCharacteristicsDto.getYardTypeId())) {
-            dto.yardType(yardTypeRepository.getOne(generalCharacteristicsDto.getYardTypeId()).getMultiLang());
-        }
-        if (nonNull(generalCharacteristicsDto.getParkingTypeIds())) {
-            dto.parkingTypes(generalCharacteristicsDto.getParkingTypeIds().stream().filter(aLong -> aLong != 0)
-                    .map(aLong -> parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
-        }
-        if (nonNull(generalCharacteristicsDto.getHouseConditionId())) {
-            dto.houseCondition(houseConditionRepository.getOne(generalCharacteristicsDto.getHouseConditionId()).getMultiLang());
+        if (!generalCharacteristics.getParkingTypes().isEmpty()) {
+            dto.parkingTypes(generalCharacteristics.getParkingTypes().stream()
+                    .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
+                    .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(ParkingType.class, aLong.getId())))
+                    .collect(Collectors.toList()));
         }
     }
 }

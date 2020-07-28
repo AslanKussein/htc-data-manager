@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
 import kz.dilau.htcdatamanager.repository.dictionary.*;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ApplicationViewService;
+import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.web.rest.KazPostResource;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -60,8 +63,8 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 .id(application.getId())
                 .clientLogin(application.getClientLogin())
                 .agent(application.getAgent())
-                .operationType(nonNull(application.getOperationTypeId()) ? operationTypeRepository.getOne(application.getOperationTypeId()).getMultiLang() : null)
-                .objectType(nonNull(application.getObjectTypeId()) ? objectTypeRepository.getOne(application.getObjectTypeId()).getMultiLang() : null)
+                .operationType(nonNull(application.getOperationTypeId()) ? DictionaryMappingTool.mapDictionaryToText(operationTypeRepository.getOne(application.getOperationTypeId())) : null)
+                .objectType(nonNull(application.getObjectTypeId()) ? DictionaryMappingTool.mapDictionaryToText(objectTypeRepository.getOne(application.getObjectTypeId())) : null)
                 .isSell(isSell(application))
                 .isFlat(isFlat(application))
                 .operationList(application.getOperationList());
@@ -70,19 +73,26 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
             dto.comment(dataDto.getNote())
                     .mortgage(dataDto.getMortgage())
                     .objectPricePeriod(dataDto.getObjectPricePeriod())
-                    .city(nonNull(dataDto.getCityId()) ? cityRepository.getOne(dataDto.getCityId()).getMultiLang() : null)
-                    .district(nonNull(dataDto.getDistrictId()) ? districtRepository.getOne(dataDto.getDistrictId()).getMultiLang() : null)
+                    .city(nonNull(dataDto.getCityId()) ? DictionaryMappingTool.mapDictionaryToText(cityRepository.getOne(dataDto.getCityId())) : null)
                     .probabilityOfBidding(dataDto.getProbabilityOfBidding())
                     .theSizeOfTrades(dataDto.getTheSizeOfTrades());
+            if (nonNull(dataDto.getDistricts())) {
+                dto.districts(dataDto.getDistricts().stream()
+                        .filter(aLong -> aLong != 0)
+                        .map(idItem -> DictionaryMappingTool.mapDictionaryToText(districtRepository.getOne(idItem)))
+                        .collect(Collectors.toList()));
+            }
             if (nonNull(dataDto.getPossibleReasonForBiddingIdList())) {
                 dto.possibleReasonForBiddingIdList(dataDto.getPossibleReasonForBiddingIdList().stream()
                         .filter(aLong -> aLong != 0)
-                        .map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+                        .map(idItem -> DictionaryMappingTool.mapDictionaryToText(possibleReasonForBiddingRepository.getOne(idItem)))
+                        .collect(Collectors.toList()));
             }
             if (nonNull(dataDto.getApplicationFlagIdList())) {
                 dto.applicationFlagIdList(dataDto.getApplicationFlagIdList().stream()
                         .filter(aLong -> aLong != 0)
-                        .map(aLong -> applicationFlagRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
+                        .map(aLong -> DictionaryMappingTool.mapDictionaryToText(applicationFlagRepository.getOne(aLong)))
+                        .collect(Collectors.toList()));
             }
         }
         if (!isSell(application)) {
@@ -100,12 +110,14 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 if (nonNull(sellData.getPossibleReasonForBiddingIdList())) {
                     dto.possibleReasonForBiddingIdList(sellData.getPossibleReasonForBiddingIdList().stream()
                             .filter(aLong -> aLong != 0)
-                            .map(idItem -> possibleReasonForBiddingRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+                            .map(idItem -> DictionaryMappingTool.mapDictionaryToText(possibleReasonForBiddingRepository.getOne(idItem)))
+                            .collect(Collectors.toList()));
                 }
                 if (nonNull(sellData.getApplicationFlagIdList())) {
                     dto.applicationFlagIdList(sellData.getApplicationFlagIdList().stream()
                             .filter(aLong -> aLong != 0)
-                            .map(idItem -> applicationFlagRepository.getOne(idItem).getMultiLang()).collect(Collectors.toList()));
+                            .map(idItem -> DictionaryMappingTool.mapDictionaryToText(applicationFlagRepository.getOne(idItem)))
+                            .collect(Collectors.toList()));
                 }
             }
             fillRealProperty(dto, application);
@@ -132,19 +144,21 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                         .separateBathroom(purchaseInfoDto.getSeparateBathroom())
                         .landAreaPeriod(purchaseInfoDto.getLandAreaPeriod());
                 if (nonNull(purchaseInfoDto.getMaterialOfConstructionId())) {
-                    dto.materialOfConstruction(materialOfConstructionRepository.getOne(purchaseInfoDto.getMaterialOfConstructionId()).getMultiLang());
+                    dto.materialOfConstruction(DictionaryMappingTool.mapDictionaryToText(materialOfConstructionRepository.getOne(purchaseInfoDto.getMaterialOfConstructionId())));
                 }
                 if (nonNull(purchaseInfoDto.getYardTypeId())) {
-                    dto.yardType(nonNull(purchaseInfoDto.getYardTypeId()) ? yardTypeRepository.getOne(purchaseInfoDto.getYardTypeId()).getMultiLang() : null);
+                    dto.yardType(nonNull(purchaseInfoDto.getYardTypeId()) ? DictionaryMappingTool.mapDictionaryToText(yardTypeRepository.getOne(purchaseInfoDto.getYardTypeId())) : null);
                 }
                 if (nonNull(purchaseInfoDto.getParkingTypeIds())) {
                     dto.parkingTypes(purchaseInfoDto.getParkingTypeIds().stream()
                             .filter(aLong -> aLong != 0)
-                            .map(aLong -> parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
+                            .map(aLong -> DictionaryMappingTool.mapDictionaryToText(parkingTypeRepository.getOne(aLong)))
+                            .collect(Collectors.toList()));
                 }
                 if (nonNull(purchaseInfoDto.getTypeOfElevatorList())) {
                     dto.typeOfElevatorList(purchaseInfoDto.getTypeOfElevatorList().stream()
-                            .filter(aLong -> aLong != 0).map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
+                            .filter(aLong -> aLong != 0)
+                            .map(aLong -> DictionaryMappingTool.mapDictionaryToText(typeOfElevatorRepository.getOne(aLong)))
                             .collect(Collectors.toList()));
                 }
             }
@@ -161,12 +175,16 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
 
         BuildingDto buildingDto = realProperty.getBuildingDto();
         if (nonNull(buildingDto)) {
-            dto.city(nonNull(buildingDto.getCityId()) ? cityRepository.getOne(buildingDto.getCityId()).getMultiLang() : null)
-                    .district(nonNull(buildingDto.getDistrictId()) ? districtRepository.getOne(buildingDto.getDistrictId()).getMultiLang() : null)
-                    .street(nonNull(buildingDto.getStreetId()) ? streetRepository.getOne(buildingDto.getStreetId()).getMultiLang() : null)
+            dto.city(nonNull(buildingDto.getCityId()) ? DictionaryMappingTool.mapDictionaryToText(cityRepository.getOne(buildingDto.getCityId())) : null)
+                    .street(nonNull(buildingDto.getStreetId()) ? DictionaryMappingTool.mapDictionaryToText(streetRepository.getOne(buildingDto.getStreetId())) : null)
                     .fullAddress(realProperty.getAddress())
                     .latitude(buildingDto.getLatitude())
                     .longitude(buildingDto.getLongitude());
+            if (nonNull(buildingDto.getDistrictId())) {
+                List<MultiLangText> districts = new ArrayList<>();
+                districts.add(DictionaryMappingTool.mapDictionaryToText(districtRepository.getOne(buildingDto.getDistrictId())));
+                dto.districts(districts);
+            }
             if (nonNull(buildingDto.getResidentialComplexId())) {
                 Optional<ResidentialComplex> residentialComplex = residentialComplexRepository.findById(buildingDto.getResidentialComplexId());
                 residentialComplex.ifPresent(complex -> dto.residenceComplex(complex.getHouseName()));
@@ -195,8 +213,8 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 .photoIdList(realProperty.getPhotoIdList())
                 .housingPlanImageIdList(realProperty.getHousingPlanImageIdList())
                 .virtualTourImageIdList(realProperty.getVirtualTourImageIdList())
-                .heatingSystem(nonNull(realProperty.getHeatingSystemId()) ? heatingSystemRepository.getOne(realProperty.getHeatingSystemId()).getMultiLang() : null)
-                .sewerage(nonNull(realProperty.getSewerageId()) ? sewerageRepository.getOne(realProperty.getSewerageId()).getMultiLang() : null);
+                .heatingSystem(nonNull(realProperty.getHeatingSystemId()) ? DictionaryMappingTool.mapDictionaryToText(heatingSystemRepository.getOne(realProperty.getHeatingSystemId())) : null)
+                .sewerage(nonNull(realProperty.getSewerageId()) ? DictionaryMappingTool.mapDictionaryToText(sewerageRepository.getOne(realProperty.getSewerageId())) : null);
 
         if (nonNull(realProperty.getGeneralCharacteristicsDto())) {
             dto.ceilingHeight(realProperty.getGeneralCharacteristicsDto().getCeilingHeight())
@@ -207,22 +225,25 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     .playground(realProperty.getGeneralCharacteristicsDto().getPlayground())
                     .wheelchair(realProperty.getGeneralCharacteristicsDto().getWheelchair());
             if (nonNull(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId())) {
-                dto.materialOfConstruction(materialOfConstructionRepository.getOne(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId()).getMultiLang());
+                dto.materialOfConstruction(DictionaryMappingTool.mapDictionaryToText(materialOfConstructionRepository.getOne(realProperty.getGeneralCharacteristicsDto().getMaterialOfConstructionId())));
             }
             if (nonNull(realProperty.getGeneralCharacteristicsDto().getTypeOfElevatorList())) {
                 dto.typeOfElevatorList(realProperty.getGeneralCharacteristicsDto().getTypeOfElevatorList().stream()
-                        .filter(aLong -> aLong != 0).map(aLong -> typeOfElevatorRepository.getOne(aLong).getMultiLang())
+                        .filter(aLong -> aLong != 0)
+                        .map(aLong -> DictionaryMappingTool.mapDictionaryToText(typeOfElevatorRepository.getOne(aLong)))
                         .collect(Collectors.toList()));
             }
             if (nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId())) {
-                dto.yardType(nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId()) ? yardTypeRepository.getOne(realProperty.getGeneralCharacteristicsDto().getYardTypeId()).getMultiLang() : null);
+                dto.yardType(nonNull(realProperty.getGeneralCharacteristicsDto().getYardTypeId()) ? DictionaryMappingTool.mapDictionaryToText(yardTypeRepository.getOne(realProperty.getGeneralCharacteristicsDto().getYardTypeId())) : null);
             }
             if (nonNull(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds())) {
-                dto.parkingTypes(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds().stream().filter(aLong -> aLong != 0)
-                        .map(aLong -> parkingTypeRepository.getOne(aLong).getMultiLang()).collect(Collectors.toList()));
+                dto.parkingTypes(realProperty.getGeneralCharacteristicsDto().getParkingTypeIds().stream()
+                        .filter(aLong -> aLong != 0)
+                        .map(aLong -> DictionaryMappingTool.mapDictionaryToText(parkingTypeRepository.getOne(aLong)))
+                        .collect(Collectors.toList()));
             }
             if (nonNull(realProperty.getGeneralCharacteristicsDto().getHouseConditionId())) {
-                dto.houseCondition(houseConditionRepository.getOne(realProperty.getGeneralCharacteristicsDto().getHouseConditionId()).getMultiLang());
+                dto.houseCondition(DictionaryMappingTool.mapDictionaryToText(houseConditionRepository.getOne(realProperty.getGeneralCharacteristicsDto().getHouseConditionId())));
             }
         }
 

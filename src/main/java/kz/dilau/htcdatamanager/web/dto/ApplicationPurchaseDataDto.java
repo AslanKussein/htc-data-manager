@@ -7,6 +7,7 @@ import kz.dilau.htcdatamanager.domain.IdItem;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import lombok.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
@@ -22,8 +23,8 @@ public class ApplicationPurchaseDataDto extends AApplicationDataDto {
     private BigDecimalPeriod objectPricePeriod;
     @ApiModelProperty(value = "ID города", required = true)
     private Long cityId;
-    @ApiModelProperty(value = "ID района")
-    private Long districtId;
+    @ApiModelProperty(value = "ID районов")
+    private List<Long> districts;
 
     public ApplicationPurchaseDataDto(ApplicationPurchaseData purchaseData) {
         if (nonNull(purchaseData)) {
@@ -47,7 +48,12 @@ public class ApplicationPurchaseDataDto extends AApplicationDataDto {
             }
             this.note = purchaseData.getNote();
             this.cityId = purchaseData.getCityId();
-            this.districtId = purchaseData.getDistrictId();
+            if (!purchaseData.getDistricts().isEmpty()) {
+                this.districts = purchaseData.getDistricts()
+                        .stream()
+                        .map(IdItem::getId)
+                        .collect(Collectors.toList());
+            }
         }
     }
 }

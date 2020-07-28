@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,8 +29,8 @@ public class CompleteTargetApplicationDto {
     private DictionaryMultilangItemDto objectType;
     @ApiModelProperty(value = "Дата создания")
     private ZonedDateTime createDate;
-    @ApiModelProperty(value = "Район")
-    private DictionaryMultilangItemDto district;
+    @ApiModelProperty(value = "Районы при покупке")
+    private List<DictionaryMultilangItemDto> districts;
     @ApiModelProperty(value = "Логин агента, на кого назначена заявка")
     private String agentLogin;
     @ApiModelProperty(value = "ФИО агента, на кого назначена заявка")
