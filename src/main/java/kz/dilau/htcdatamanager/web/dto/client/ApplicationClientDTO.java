@@ -49,5 +49,6 @@ public class ApplicationClientDTO {
                 && nonNull(application.getApplicationPurchaseData().getPurchaseInfo())) {
             this.setPurchaseInfoClientDto(new PurchaseInfoClientDto(application.getApplicationPurchaseData()));
         }
+        if (nonNull(application.getDeviceUuid())) this.deviceUuid = application.getDeviceUuid();
     }
 }
