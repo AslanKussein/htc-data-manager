@@ -179,8 +179,8 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                     .street(nonNull(buildingDto.getStreetId()) ? DictionaryMappingTool.mapDictionaryToText(streetRepository.getOne(buildingDto.getStreetId())) : null)
                     .fullAddress(realProperty.getAddress())
                     .latitude(buildingDto.getLatitude())
-                    .houseNumber(buildingDto.getHouseNumber())
-                    .longitude(buildingDto.getLongitude());
+                    .longitude(buildingDto.getLongitude())
+                    .houseNumber(buildingDto.getHouseNumber());
             if (nonNull(buildingDto.getDistrictId())) {
                 List<MultiLangText> districts = new ArrayList<>();
                 districts.add(DictionaryMappingTool.mapDictionaryToText(districtRepository.getOne(buildingDto.getDistrictId())));
@@ -200,8 +200,6 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
                 }
                 dto.postcode(buildingDto.getPostcode());
             }
-            dto.latitude(buildingDto.getLatitude())
-                    .longitude(buildingDto.getLongitude());
         }
         dto.numberOfRooms(realProperty.getNumberOfRooms())
                 .floor(realProperty.getFloor())
