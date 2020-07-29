@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.*;
 import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
+import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
@@ -10,6 +11,7 @@ import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
+import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -251,7 +254,9 @@ public class KanbanServiceImpl implements KanbanService {
                     dto.setTotalArea(metadata.getTotalArea());
                 }
                 if (nonNull(data.getRealProperty().getBuilding())) {
-                    dto.setDistrict(DictionaryMappingTool.mapMultilangDictionary(data.getRealProperty().getBuilding().getDistrict()));
+                    List<DictionaryMultilangItemDto> districts = new ArrayList<>();
+                    districts.add(DictionaryMappingTool.mapMultilangDictionary(data.getRealProperty().getBuilding().getDistrict()));
+                    dto.setDistricts(districts);
                 }
                 RealPropertyFile file = data.getRealProperty().getFileByStatus(MetadataStatus.APPROVED);
                 if (nonNull(file) && !file.getFilesMap().isEmpty()) {
@@ -260,7 +265,9 @@ public class KanbanServiceImpl implements KanbanService {
             }
         } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())) {
             ApplicationPurchaseData data = application.getApplicationPurchaseData();
-            dto.setDistrict(DictionaryMappingTool.mapMultilangDictionary(data.getDistrict()));
+            dto.setDistricts(data.getDistricts().stream()
+                    .map(item -> DictionaryMappingTool.mapMultilangDictionary(entityService.mapEntity(District.class, item.getId())))
+                    .collect(Collectors.toList()));
             if (nonNull(data.getPurchaseInfo())) {
                 PurchaseInfo info = data.getPurchaseInfo();
                 dto.setObjectPricePeriod(new BigDecimalPeriod(info.getObjectPriceFrom(), info.getObjectPriceTo()));
@@ -316,7 +323,13 @@ public class KanbanServiceImpl implements KanbanService {
             }
         } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())) {
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
-            MultiLangText text = DictionaryMappingTool.concatMultiLangWithMultiLang(DictionaryMappingTool.mapDictionaryToText(purchaseData.getCity()), DictionaryMappingTool.mapDictionaryToText(purchaseData.getDistrict()), ", ");
+            MultiLangText text = DictionaryMappingTool.mapDictionaryToText(purchaseData.getCity());
+            if (!purchaseData.getDistricts().isEmpty()) {
+                IdItem idItem = purchaseData.getDistricts().stream().findFirst().orElse(null);
+                if (nonNull(idItem)) {
+                    text = DictionaryMappingTool.concatMultiLangWithMultiLang(text, DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(District.class, idItem.getId())), ", ");
+                }
+            }
             result.setAddress(text);
             if (nonNull(purchaseData.getPurchaseInfo())) {
                 result.setObjectPricePeriod(new BigDecimalPeriod(purchaseData.getPurchaseInfo().getObjectPriceFrom(), purchaseData.getPurchaseInfo().getObjectPriceTo()));

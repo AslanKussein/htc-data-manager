@@ -3,12 +3,14 @@ package kz.dilau.htcdatamanager.web.dto.client;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.ApplicationPurchaseData;
+import kz.dilau.htcdatamanager.domain.IdItem;
 import kz.dilau.htcdatamanager.domain.PurchaseInfo;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.*;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -32,8 +34,8 @@ public class PurchaseInfoClientDto {
     private Long dataId;
     @ApiModelProperty(value = "ID города", required = true)
     private Long cityId;
-    @ApiModelProperty(value = "ID района")
-    private Long districtId;
+    @ApiModelProperty(value = "ID районов")
+    private List<Long> districts;
     @ApiModelProperty(name = "objectPricePeriod", value = "Цена объекта от и до(млн тг)")
     private BigDecimalPeriod objectPricePeriod;
     @ApiModelProperty(value = "Количество комнат от и до")
@@ -61,7 +63,10 @@ public class PurchaseInfoClientDto {
             }
             this.probabilityOfBidding = data.getProbabilityOfBidding();
             this.cityId = data.getCityId();
-            this.districtId = data.getDistrictId();
+            this.districts = data.getDistricts()
+                    .stream()
+                    .map(IdItem::getId)
+                    .collect(Collectors.toList());
             this.mortgage = data.getMortgage();
             this.note = data.getNote();
         }

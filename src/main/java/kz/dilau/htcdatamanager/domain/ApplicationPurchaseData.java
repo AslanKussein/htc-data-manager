@@ -37,12 +37,14 @@ public class ApplicationPurchaseData extends AApplicationData {
     private City city;
     @Column(name = "city_id", insertable = false, updatable = false)
     private Long cityId;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "district_id")
-    private District district;
-    @Column(name = "district_id", insertable = false, updatable = false)
-    private Long districtId;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = TABLE_NAME_PREFIX + "purchase_data_districts",
+            joinColumns = @JoinColumn(name = "purchase_data_id"),
+            inverseJoinColumns = @JoinColumn(name = "district_id")
+    )
+    private Set<IdItem> districts = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "purchase_info_id")
@@ -59,10 +61,13 @@ public class ApplicationPurchaseData extends AApplicationData {
     private Set<IdItem> applicationFlags = new HashSet<>();
 
     public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, PurchaseInfoDto infoDto,
-                                   City city, District district, MaterialOfConstruction materialOfConstruction,
+                                   City city, MaterialOfConstruction materialOfConstruction,
                                    YardType yardType, Sewerage sewerage, HeatingSystem heatingSystem) {
         this.city = city;
-        this.district = district;
+        this.districts = dataDto.getDistricts()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
         this.mortgage = dataDto.getMortgage();
         this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
         this.theSizeOfTrades = dataDto.getTheSizeOfTrades();
@@ -80,10 +85,12 @@ public class ApplicationPurchaseData extends AApplicationData {
         }
     }
 
-    public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, City city, District district) {
+    public ApplicationPurchaseData(ApplicationPurchaseDataDto dataDto, City city) {
         this.city = city;
-        this.district = district;
-        this.mortgage = dataDto.getMortgage();
+        this.districts = dataDto.getDistricts()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
         this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
         this.theSizeOfTrades = dataDto.getTheSizeOfTrades();
         this.note = dataDto.getNote();
@@ -98,9 +105,12 @@ public class ApplicationPurchaseData extends AApplicationData {
     }
 
 
-    public ApplicationPurchaseData(Application application, PurchaseInfoClientDto dataDto, PurchaseInfo purchaseInfo, City city, District district) {
+    public ApplicationPurchaseData(Application application, PurchaseInfoClientDto dataDto, PurchaseInfo purchaseInfo, City city) {
         this.city = city;
-        this.district = district;
+        this.districts = dataDto.getDistricts()
+                .stream()
+                .map(IdItem::new)
+                .collect(Collectors.toSet());
         this.mortgage = dataDto.getMortgage();
         this.probabilityOfBidding = dataDto.getProbabilityOfBidding();
         this.note = dataDto.getNote();
@@ -114,6 +124,13 @@ public class ApplicationPurchaseData extends AApplicationData {
     public ApplicationPurchaseData(Application application, String note) {
         this.application = application;
         this.note = note;
+    }
+
+    public Set<IdItem> getDistricts() {
+        if (isNull(districts)) {
+            districts = new HashSet<>();
+        }
+        return districts;
     }
 
     public Set<IdItem> getPossibleReasonsForBidding() {

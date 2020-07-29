@@ -20,6 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Objects.nonNull;
 
@@ -106,7 +109,9 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
                 }
                 if (nonNull(realProperty.getBuilding())) {
                     purchaseData.setCity(realProperty.getBuilding().getCity());
-                    purchaseData.setDistrict(realProperty.getBuilding().getDistrict());
+                    Set<IdItem> districts = new HashSet<>();
+                    districts.add(new IdItem(realProperty.getBuilding().getDistrictId()));
+                    purchaseData.setDistricts(districts);
                 }
             }
 
