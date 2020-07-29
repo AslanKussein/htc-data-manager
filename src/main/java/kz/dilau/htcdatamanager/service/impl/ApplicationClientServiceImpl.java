@@ -223,7 +223,6 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         }
 
         dto.getApplication().setClientLogin(dto.getPhoneNumber());
-        dto.getApplication().setDeviceUuid(dto.getApplication().getDeviceUuid());
 
         Application app;
 
