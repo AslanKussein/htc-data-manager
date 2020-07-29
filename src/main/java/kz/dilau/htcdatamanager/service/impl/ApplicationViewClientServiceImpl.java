@@ -68,14 +68,9 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
                 dto.objectPricePeriod(new BigDecimalPeriod(purchaseInfo.getObjectPriceFrom(), purchaseInfo.getObjectPriceTo()));
             }
             if (!applicationPurchaseData.getDistricts().isEmpty()) {
-                List<MultiLangText> districts = new ArrayList<>();
-                for (val item : applicationPurchaseData.getDistricts()) {
-                    District district = entityService.mapEntity(District.class, item.getId());
-                    if (nonNull(district)) {
-                        districts.add(DictionaryMappingTool.mapDictionaryToText(district));
-                    }
-                }
-                dto.districts(districts);
+                dto.districts(applicationPurchaseData.getDistricts().stream()
+                        .map(DictionaryMappingTool::mapDictionaryToText)
+                        .collect(Collectors.toList()));
             }
         }
         if (!isSell(application)) {

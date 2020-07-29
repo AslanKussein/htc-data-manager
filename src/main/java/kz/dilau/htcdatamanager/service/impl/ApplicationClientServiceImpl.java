@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -108,8 +109,12 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
             if (nonNull(application.getId()) && nonNull(application.getApplicationPurchaseData())) {
                 purchaseData.setDataId(application.getApplicationPurchaseData().getId());
             }
+            Set<District> districts = null;
+            if (nonNull(purchaseData.getDistricts()) && !purchaseData.getDistricts().isEmpty()) {
+                districts = purchaseData.getDistricts().stream().map(item -> entityService.mapRequiredEntity(District.class, item)).collect(Collectors.toSet());
+            }
             application.setApplicationPurchaseData(new ApplicationPurchaseData(application, purchaseData, info,
-                    entityService.mapRequiredEntity(City.class, purchaseData.getCityId())));
+                    entityService.mapRequiredEntity(City.class, purchaseData.getCityId()), districts));
 
         } else if (operationType.isSell()) {
             if (nonNull(dto.getSellDataClientDto())) {

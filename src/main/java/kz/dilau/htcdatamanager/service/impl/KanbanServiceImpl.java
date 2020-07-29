@@ -266,7 +266,7 @@ public class KanbanServiceImpl implements KanbanService {
         } else if (application.getOperationType().isBuy() && nonNull(application.getApplicationPurchaseData())) {
             ApplicationPurchaseData data = application.getApplicationPurchaseData();
             dto.setDistricts(data.getDistricts().stream()
-                    .map(item -> DictionaryMappingTool.mapMultilangDictionary(entityService.mapEntity(District.class, item.getId())))
+                    .map(DictionaryMappingTool::mapMultilangDictionary)
                     .collect(Collectors.toList()));
             if (nonNull(data.getPurchaseInfo())) {
                 PurchaseInfo info = data.getPurchaseInfo();
@@ -325,9 +325,9 @@ public class KanbanServiceImpl implements KanbanService {
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
             MultiLangText text = DictionaryMappingTool.mapDictionaryToText(purchaseData.getCity());
             if (!purchaseData.getDistricts().isEmpty()) {
-                IdItem idItem = purchaseData.getDistricts().stream().findFirst().orElse(null);
-                if (nonNull(idItem)) {
-                    text = DictionaryMappingTool.concatMultiLangWithMultiLang(text, DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(District.class, idItem.getId())), ", ");
+                District district = purchaseData.getDistricts().stream().findFirst().orElse(null);
+                if (nonNull(district)) {
+                    text = DictionaryMappingTool.concatMultiLangWithMultiLang(text, DictionaryMappingTool.mapDictionaryToText(district), ", ");
                 }
             }
             result.setAddress(text);
