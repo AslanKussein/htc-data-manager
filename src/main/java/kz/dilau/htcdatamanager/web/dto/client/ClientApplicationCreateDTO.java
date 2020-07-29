@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @ApiModel("Запрос на создание заявки КП")
 public class ClientApplicationCreateDTO {
-    @ApiModelProperty("ID устройства")
-    private String deviceUuid;
-
     @ApiModelProperty("тело заявки")
     private ApplicationClientDTO application;
 
