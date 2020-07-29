@@ -37,9 +37,14 @@ public class ApplicationPurchaseData extends AApplicationData {
     private City city;
     @Column(name = "city_id", insertable = false, updatable = false)
     private Long cityId;
-    @Type(type = "jsonb")
-    @Column(name = "districts", columnDefinition = "jsonb")
-    private Set<IdItem> districts;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = TABLE_NAME_PREFIX + "purchase_data_districts",
+            joinColumns = @JoinColumn(name = "purchase_data_id"),
+            inverseJoinColumns = @JoinColumn(name = "district_id")
+    )
+    private Set<IdItem> districts = new HashSet<>();
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "purchase_info_id")
