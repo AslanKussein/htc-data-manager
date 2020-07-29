@@ -196,7 +196,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     public Long save(ClientApplicationCreateDTO dto) {
         if (isNull(dto.getApplication())) throw BadRequestException.createRequiredIsEmpty("application");
         if (isNull(dto.getClientName())) throw  BadRequestException.createRequiredIsEmpty("clientName");
-        if (isNull(dto.getDeviceUuid())) throw BadRequestException.createRequiredIsEmpty("deviceUuid");
+        if (isNull(dto.getApplication().getDeviceUuid())) throw BadRequestException.createRequiredIsEmpty("deviceUuid");
         if (isNull(dto.getPhoneNumber())) throw BadRequestException.createRequiredIsEmpty("phoneNumber");
 
         List<String> logins = new ArrayList<>();
@@ -216,10 +216,10 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
             }
         }
 
-        List<ClientDeviceDto> deviceDto = keycloakService.getDevices(null, dto.getDeviceUuid());
+        List<ClientDeviceDto> deviceDto = keycloakService.getDevices(null, dto.getApplication().getDeviceUuid());
 
         if (deviceDto.isEmpty() || isNull(deviceDto.get(0))) {
-            throw BadRequestException.deviceNotFound(dto.getDeviceUuid());
+            throw BadRequestException.deviceNotFound(dto.getApplication().getDeviceUuid());
         }
 
         if (nonNull(deviceDto.get(0).getClientLogin())) {
@@ -227,7 +227,6 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         }
 
         dto.getApplication().setClientLogin(dto.getPhoneNumber());
-        dto.getApplication().setDeviceUuid(dto.getDeviceUuid());
 
         Application app;
 
