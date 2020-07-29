@@ -9,6 +9,10 @@ import kz.dilau.htcdatamanager.web.dto.client.PurchaseInfoClientDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
@@ -18,7 +22,11 @@ public class EntityMappingTool {
 
     public ApplicationPurchaseData convertApplicationPurchaseData(ApplicationDto dto) {
         ApplicationPurchaseDataDto dataDto = dto.getPurchaseDataDto();
-        return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()));
+        Set<District> districts = null;
+        if (nonNull(dataDto.getDistricts()) && !dataDto.getDistricts().isEmpty()) {
+            districts = dataDto.getDistricts().stream().map(item -> entityService.mapRequiredEntity(District.class, item)).collect(Collectors.toSet());
+        }
+        return new ApplicationPurchaseData(dataDto, entityService.mapRequiredEntity(City.class, dataDto.getCityId()), districts);
     }
 
 

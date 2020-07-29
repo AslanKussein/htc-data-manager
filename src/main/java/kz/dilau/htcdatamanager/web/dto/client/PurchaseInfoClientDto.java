@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.ApplicationPurchaseData;
 import kz.dilau.htcdatamanager.domain.IdItem;
 import kz.dilau.htcdatamanager.domain.PurchaseInfo;
+import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import lombok.*;
@@ -65,7 +66,7 @@ public class PurchaseInfoClientDto {
             this.cityId = data.getCityId();
             this.districts = data.getDistricts()
                     .stream()
-                    .map(IdItem::getId)
+                    .map(District::getId)
                     .collect(Collectors.toList());
             this.mortgage = data.getMortgage();
             this.note = data.getNote();

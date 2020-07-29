@@ -1,10 +1,7 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.domain.*;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationSource;
-import kz.dilau.htcdatamanager.domain.dictionary.ApplicationStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
-import kz.dilau.htcdatamanager.domain.dictionary.OperationType;
+import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyFileRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
@@ -109,8 +106,8 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
                 }
                 if (nonNull(realProperty.getBuilding())) {
                     purchaseData.setCity(realProperty.getBuilding().getCity());
-                    Set<IdItem> districts = new HashSet<>();
-                    districts.add(new IdItem(realProperty.getBuilding().getDistrictId()));
+                    Set<District> districts = new HashSet<>();
+                    districts.add(realProperty.getBuilding().getDistrict());
                     purchaseData.setDistricts(districts);
                 }
             }

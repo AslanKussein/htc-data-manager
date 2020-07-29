@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.ApplicationPurchaseData;
 import kz.dilau.htcdatamanager.domain.IdItem;
+import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import lombok.*;
 
@@ -51,7 +52,7 @@ public class ApplicationPurchaseDataDto extends AApplicationDataDto {
             if (!purchaseData.getDistricts().isEmpty()) {
                 this.districts = purchaseData.getDistricts()
                         .stream()
-                        .map(IdItem::getId)
+                        .map(District::getId)
                         .collect(Collectors.toList());
             }
         }

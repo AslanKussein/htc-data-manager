@@ -25,12 +25,12 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -353,7 +353,7 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(contractForm.getCode())) {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
-        String nextNumb =  (clientAppContractRequestDto.getToSave()) ? getContractNextNumb(contractForm.getCode()) : "KP-XXXXXXZZZZ";
+        String nextNumb = (clientAppContractRequestDto.getToSave()) ? getContractNextNumb(contractForm.getCode()) : "KP-XXXXXXZZZZ";
 
         ContractFormDto dto = new ContractFormDto();
         dto.setContractNumber(nextNumb);
@@ -499,7 +499,7 @@ public class ContractServiceImpl implements ContractService {
                     }
                     break;
                 case "comissionAmount":
-                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract())&& nonNull(appBuy.getContract().getCommission()) ? appBuy.getContract().getCommission().toString() : "");
+                    pars.put(par, nonNull(appBuy) && nonNull(appBuy.getContract()) && nonNull(appBuy.getContract().getCommission()) ? appBuy.getContract().getCommission().toString() : "");
                     break;
                 case "buyerFullname":
                     pars.put(par, nonNull(buyerDto) ? buyerDto.getFullname() : "");
@@ -565,8 +565,7 @@ public class ContractServiceImpl implements ContractService {
 
         if (application.getOperationType().isBuy()) {
             city = isNull(purchaseData) ? null : purchaseData.getCity();
-            IdItem idItem = isNull(purchaseData) || purchaseData.getDistricts().isEmpty() ? null : purchaseData.getDistricts().stream().findFirst().orElse(null);
-            district = isNull(idItem) ? null : entityService.mapEntity(District.class, idItem.getId());
+            district = purchaseData.getDistricts().stream().findFirst().orElse(null);
             purchaseInfo = isNull(purchaseData) ? null : purchaseData.getPurchaseInfo();
         } else {
             realProperty = isNull(sellData) ? null : sellData.getRealProperty();
@@ -788,8 +787,8 @@ public class ContractServiceImpl implements ContractService {
                             && nonNull(realPropertyMetadata.getGeneralCharacteristics())
                             && nonNull(realPropertyMetadata.getGeneralCharacteristics().getHouseCondition())
                     ) {
-                        pars.put(par, locale.equals("ru")  ?
-                                realPropertyMetadata.getGeneralCharacteristics().getHouseCondition().getMultiLang().getNameRu().toLowerCase():
+                        pars.put(par, locale.equals("ru") ?
+                                realPropertyMetadata.getGeneralCharacteristics().getHouseCondition().getMultiLang().getNameRu().toLowerCase() :
                                 realPropertyMetadata.getGeneralCharacteristics().getHouseCondition().getMultiLang().getNameKz().toLowerCase());
                     } else {
                         pars.put(par, "");
@@ -823,7 +822,7 @@ public class ContractServiceImpl implements ContractService {
             List<ContractTemplateDto> templateList = contractForm.getTemplateList();
 
             String logoImageBase64 = null;
-            String footerImageBase64= null;
+            String footerImageBase64 = null;
             List<JasperPrint> jasperPrintList = new ArrayList<>();
 
             ContractTemplateDto logoPath = getTemplateByName(ContractTemplateType.LOGO.name(), templateList);
