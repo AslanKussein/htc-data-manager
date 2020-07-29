@@ -10,6 +10,7 @@ import kz.dilau.htcdatamanager.service.NotesService;
 import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.NotesDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
+import kz.dilau.htcdatamanager.web.dto.notification.CreateNotificationDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +40,7 @@ public class NotesServiceImpl implements NotesService {
 
         notes = notesRepository.save(notes);
 
+        CreateNotificationDto notificationDto = new CreateNotificationDto();
         return new NotesDto(notes);
     }
 
