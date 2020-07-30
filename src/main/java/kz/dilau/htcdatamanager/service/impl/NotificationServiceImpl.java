@@ -46,7 +46,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     private Map<String, Object> introspect(CreateNotificationDto obj) throws Exception {
-        Map<String, Object> result = new HashMap<String, Object>();
+        Map<String, Object> result = new HashMap<>();
         BeanInfo info = Introspector.getBeanInfo(obj.getClass());
         for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
             Method reader = pd.getReadMethod();
