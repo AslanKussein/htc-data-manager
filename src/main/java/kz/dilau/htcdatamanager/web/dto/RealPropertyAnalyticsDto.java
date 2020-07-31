@@ -16,7 +16,6 @@ import static java.util.Objects.nonNull;
 @NoArgsConstructor
 @ApiModel(value = "RealPropertyAnalyticsDto", description = "Модель аналитики цены объекта недвижимости")
 public class RealPropertyAnalyticsDto {
-    @NonNull
     @ApiModelProperty(value = "Средняя цена за квадратный метр")
     private BigDecimal averagePrice;
     @ApiModelProperty(value = "ID района")
