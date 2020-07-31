@@ -8,6 +8,7 @@ import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.service.ApplicationClientAutoCreateService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.EntityService;
+import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
     private final RealPropertyMetadataRepository metadataRepository;
     private final RealPropertyFileRepository fileRepository;
     private final ApplicationService applicationService;
+    private final KafkaProducer kafkaProducer;
 
 
     private String getAuthorName() {
@@ -46,9 +48,7 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
     }
 
     @Transactional
-    ApplicationClientDTO saveApplication(Application targetApplication, Application application) {
-
-
+    public ApplicationClientDTO saveApplication(Application targetApplication, Application application) {
         application.setObjectType(targetApplication.getObjectType());
         application.setClientLogin(getAuthorName());
         application.setOperationType(entityService.mapEntity(OperationType.class, 1L));
@@ -126,7 +126,9 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
         ApplicationSource applicationSource = entityService.mapRequiredEntity(ApplicationSource.class, ApplicationSource.CA);
         application.setApplicationSource(applicationSource);
         application = applicationRepository.save(application);
-
+        if (nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendRatingAgentAnalytics(application.getCurrentAgent());
+        }
         return new ApplicationClientDTO(application);
     }
 
@@ -145,9 +147,12 @@ public class ApplicationClientAutoCreateServiceImpl implements ApplicationClient
                 && nonNull(application.getApplicationPurchaseData().getCity()))) {
             if (isNullOrEmpty(application.getCurrentAgent()) ||
                     (!isNullOrEmpty(application.getCurrentAgent()) && !isNullOrEmpty(targetApplication.getCurrentAgent())
-                            && !application.getCurrentAgent().equals(targetApplication.getCurrentAgent()))
-            ) {
+                            && !application.getCurrentAgent().equals(targetApplication.getCurrentAgent()))) {
+                if (nonNull(application.getCurrentAgent())) {
+                    kafkaProducer.sendRatingAgentAnalytics(application.getCurrentAgent());
+                }
                 application.setCurrentAgent(targetApplication.getCurrentAgent());
+                kafkaProducer.sendRatingAgentAnalytics(application.getCurrentAgent());
                 application = applicationRepository.save(application);
             }
             return new ApplicationClientDTO(application);
