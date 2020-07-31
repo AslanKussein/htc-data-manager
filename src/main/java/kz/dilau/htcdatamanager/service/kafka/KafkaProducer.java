@@ -6,17 +6,16 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Service
 @Slf4j
 public class KafkaProducer {
 
-    private final KafkaTemplate<Long, Map<String, Object>> kafkaTemplate;
+    private final KafkaTemplate<Long, String> kafkaTemplate;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    public KafkaProducer(KafkaTemplate<Long, Map<String, Object>> kafkaTemplate) {
+    public KafkaProducer(KafkaTemplate<Long, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
@@ -24,12 +23,12 @@ public class KafkaProducer {
     // @Autowired
     // private KafkaProducer kafkaProducer;
     // ...
-    // Map<String, Object> event;
+    // String event;
     // kafkaProducer.sendMessage(topic, event);
 
-    public void sendMessage(String topic, Map<String, Object> event) {
+    public void sendMessage(String topic, String event) {
         try {
-            ListenableFuture<SendResult<Long, Map<String, Object>>> future;
+            ListenableFuture<SendResult<Long, String>> future;
             future = kafkaTemplate.send(topic, event);
             future.get();
         } catch (InterruptedException e) {
