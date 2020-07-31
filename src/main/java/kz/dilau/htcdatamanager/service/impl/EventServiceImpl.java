@@ -14,6 +14,7 @@ import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
@@ -44,6 +45,7 @@ public class EventServiceImpl implements EventService {
     private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
     private final DataProperties dataProperties;
+    private final KafkaProducer kafkaProducer;
 
     private void setStatusHistoryAndSaveApplication(Application application, Long statusId) {
         if (!application.getApplicationStatus().getId().equals(statusId)) {
@@ -110,7 +112,11 @@ public class EventServiceImpl implements EventService {
                 setStatusHistoryAndSaveApplication(sourceApplication, ApplicationStatus.MEETING);
             }
         }
-        return eventRepository.save(event).getId();
+        event = eventRepository.save(event);
+        if (dto.getEventTypeId().equals(EventType.DEMO) && nonNull(sourceApplication.getCurrentAgent())) {
+            kafkaProducer.sendRatingAgentAnalytics(sourceApplication.getCurrentAgent());
+        }
+        return event.getId();
     }
 
     @Override
@@ -255,6 +261,10 @@ public class EventServiceImpl implements EventService {
     public Long deleteEventById(String token, Long id) {
         Event event = getById(id);
         event.setIsRemoved(true);
-        return eventRepository.save(event).getId();
+        event = eventRepository.save(event);
+        if (event.getEventType().getId().equals(EventType.DEMO) && nonNull(event.getSourceApplication()) && nonNull(event.getSourceApplication().getCurrentAgent())) {
+            kafkaProducer.sendRatingAgentAnalytics(event.getSourceApplication().getCurrentAgent());
+        }
+        return event.getId();
     }
 }

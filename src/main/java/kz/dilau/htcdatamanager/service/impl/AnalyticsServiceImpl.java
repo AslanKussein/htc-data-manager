@@ -5,7 +5,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
 import kz.dilau.htcdatamanager.repository.AnalyticsRepository;
 import kz.dilau.htcdatamanager.service.AnalyticsService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.web.dto.AnalyticsDto;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyAnalyticsDto;
 import kz.dilau.htcdatamanager.web.dto.ResultDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private final ApplicationService applicationService;
 
     @Override
-    public ResultDto saveAnalytics(AnalyticsDto dto) {
+    public ResultDto saveAnalytics(RealPropertyAnalyticsDto dto) {
         RealPropertyAnalytics analytics;
         if (nonNull(dto.getBuildingId())) {
             analytics = analyticsRepository.findByBuildingId(dto.getBuildingId());
@@ -48,7 +48,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     }
 
     @Override
-    public AnalyticsDto getAnalytics(Long appId) {
+    public RealPropertyAnalyticsDto getAnalytics(Long appId) {
         Application application = applicationService.getApplicationById(appId);
         if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData()) &&
                 nonNull(application.getApplicationSellData().getRealProperty()) && nonNull(application.getApplicationSellData().getRealProperty().getBuilding())) {
@@ -67,7 +67,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 }
                 analytics = analyticsRepository.findByDistrictIdAndHouseClassId(building.getDistrictId(), houseClassId);
             }
-            return new AnalyticsDto(analytics);
+            return new RealPropertyAnalyticsDto(analytics);
         }
         return null;
     }

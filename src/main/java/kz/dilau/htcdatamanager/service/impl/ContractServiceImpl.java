@@ -12,6 +12,7 @@ import kz.dilau.htcdatamanager.repository.ApplicationDepositRepository;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.DepositNumbRepository;
 import kz.dilau.htcdatamanager.service.*;
+import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.BundleMessageUtil;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
@@ -63,6 +64,7 @@ public class ContractServiceImpl implements ContractService {
     private final EventService eventService;
     private final DepositNumbRepository depositNumbRepository;
     private final SettingsService settingsService;
+    private final KafkaProducer kafkaProducer;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -140,7 +142,9 @@ public class ContractServiceImpl implements ContractService {
 
         FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
         saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
-
+        if (nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendContractAgentAnalytics(application.getCurrentAgent());
+        }
         return fileInfoDto;
     }
 
@@ -240,7 +244,9 @@ public class ContractServiceImpl implements ContractService {
 
         FileInfoDto fileInfoDto = uploadToFM(token, result, nextNumb + ".pdf");
         saveAppDepostit(dto, application, sellApplication, nextNumb, fileInfoDto.getUuid());
-
+        if (nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendDepositAgentAnalytics(application.getCurrentAgent());
+        }
         return fileInfoDto;
     }
 
@@ -368,6 +374,9 @@ public class ContractServiceImpl implements ContractService {
             saveAppDepostit(clientAppContractRequestDto, currentApp, sellApp, nextNumb, fileInfoDto.getUuid());
             responseDto.setSourceStr(fileInfoDto.getUuid());
             responseDto.setSourceType("guid");
+            if (nonNull(currentApp.getCurrentAgent())) {
+                kafkaProducer.sendDepositAgentAnalytics(currentApp.getCurrentAgent());
+            }
             //todo какое то уведомление нужно отправить агенту продавца
         } else {
             responseDto.setSourceStr(Base64.encodeBase64String(baos));

@@ -10,6 +10,7 @@ import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
 import kz.dilau.htcdatamanager.service.*;
+import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.*;
@@ -41,6 +42,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     private final RealPropertyMetadataRepository metadataRepository;
     private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
+    private final KafkaProducer kafkaProducer;
 
 
     @Override
@@ -174,6 +176,10 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         application = applicationRepository.save(application);
         if (nonNull(metadata)) {
             metadataRepository.save(metadata);
+        }
+        kafkaProducer.sendRealPropertyAnalytics(application);
+        if (nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         }
         return application.getId();
     }
