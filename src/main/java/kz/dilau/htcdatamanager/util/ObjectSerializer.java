@@ -9,8 +9,14 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 @UtilityClass
 public class ObjectSerializer {
@@ -36,5 +42,24 @@ public class ObjectSerializer {
         } catch (JAXBException e) {
             throw new IllegalArgumentException(String.format("Could not parse %s from string\n%s\n%s", requiredClass.getName(), str, e.getMessage()), e);
         }
+    }
+
+    public static Map<String, Object> introspect(Object obj) {
+        Map<String, Object> result = new HashMap<>();
+        BeanInfo info = null;
+        try {
+            info = Introspector.getBeanInfo(obj.getClass());
+            for (PropertyDescriptor pd : info.getPropertyDescriptors()) {
+                Method reader = pd.getReadMethod();
+                if (reader != null) {
+                    if (!pd.getName().equals("class")) {
+                        result.put(pd.getName(), reader.invoke(obj));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

@@ -367,13 +367,13 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     @Override
     public ResultDto sendRealPropertyAnalyticsMessage(RealPropertyAnalyticsDto realPropertyAnalyticsDto) {
-        kafkaProducer.sendMessage(dataProperties.getTopicRealProperty(), ObjectSerializer.serialize(realPropertyAnalyticsDto));
+        kafkaProducer.sendMessage(dataProperties.getTopicRealProperty(), ObjectSerializer.introspect(realPropertyAnalyticsDto));
         return new ResultDto();
     }
 
     @Override
     public ResultDto sendAgentAnalyticsMessage(AgentAnalyticsDto agentAnalyticsDto) {
-        kafkaProducer.sendMessage(dataProperties.getTopicAnalyticAgent(), ObjectSerializer.serialize(agentAnalyticsDto));
+        kafkaProducer.sendMessage(dataProperties.getTopicAnalyticAgent(), ObjectSerializer.introspect(agentAnalyticsDto));
         return new ResultDto();
     }
 
