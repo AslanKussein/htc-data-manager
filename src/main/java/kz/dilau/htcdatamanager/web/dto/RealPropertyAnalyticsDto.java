@@ -14,8 +14,8 @@ import static java.util.Objects.nonNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel(value = "AnalyticsDto", description = "Модель аналитики цены объекта недвижимости")
-public class AnalyticsDto {
+@ApiModel(value = "RealPropertyAnalyticsDto", description = "Модель аналитики цены объекта недвижимости")
+public class RealPropertyAnalyticsDto {
     @NonNull
     @ApiModelProperty(value = "Средняя цена за квадратный метр")
     private BigDecimal averagePrice;
@@ -26,7 +26,7 @@ public class AnalyticsDto {
     @ApiModelProperty(value = "ID класса жилья")
     private Long houseClassId;
 
-    public AnalyticsDto(RealPropertyAnalytics analytics) {
+    public RealPropertyAnalyticsDto(RealPropertyAnalytics analytics) {
         if (nonNull(analytics)) {
             this.averagePrice = analytics.getAveragePrice();
             this.buildingId = analytics.getBuildingId();

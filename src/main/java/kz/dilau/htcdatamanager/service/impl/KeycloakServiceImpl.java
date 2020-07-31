@@ -5,6 +5,7 @@ import kz.dilau.htcdatamanager.config.DataProperties;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.DetailedException;
 import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.client.ClientDeviceDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
@@ -63,6 +64,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
+    private final KafkaProducer kafkaProducer;
 
     private ConcurrentMap<String, TokenInfo> tokenMap = new ConcurrentHashMap<>();
 
@@ -360,6 +362,22 @@ public class KeycloakServiceImpl implements KeycloakService {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         HttpEntity<Object> request = new HttpEntity<>(p, headers);
         restTemplate.postForObject(uriBuilder.toUriString(), request, ResponseEntity.class);
+    }
+
+    @Override
+    public ResultDto sendRealPropertyAnalyticsMessage(RealPropertyAnalyticsDto realPropertyAnalyticsDto) {
+        Map<String, Object> eventMap = new HashMap<>();
+        eventMap.put("analyticsDto", realPropertyAnalyticsDto);
+        kafkaProducer.sendMessage(dataProperties.getTopicRealProperty(), eventMap);
+        return new ResultDto();
+    }
+
+    @Override
+    public ResultDto sendAgentAnalyticsMessage(AgentAnalyticsDto agentAnalyticsDto) {
+        Map<String, Object> eventMap = new HashMap<>();
+        eventMap.put("analyticsDto", agentAnalyticsDto);
+        kafkaProducer.sendMessage(dataProperties.getTopicAnalyticAgent(), eventMap);
+        return new ResultDto();
     }
 
     @Override
