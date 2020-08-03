@@ -45,7 +45,7 @@ public class NotesServiceImpl implements NotesService {
 
         if (nonNull(notes.getRealProperty())) {
             for (ApplicationSellData sellData : notes.getRealProperty().getSellDataList()) {
-                notificationService.createNotesNoification(sellData.getApplication().getId(), notesDto.getText());
+                notificationService.createNotesNotification(sellData.getApplication().getId(), notesDto.getText());
             }
         }
         return new NotesDto(notes);

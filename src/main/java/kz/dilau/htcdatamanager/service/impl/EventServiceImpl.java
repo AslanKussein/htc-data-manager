@@ -10,10 +10,7 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.EventRepository;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.EntityService;
-import kz.dilau.htcdatamanager.service.EventService;
-import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
@@ -46,6 +43,7 @@ public class EventServiceImpl implements EventService {
     private final KeycloakService keycloakService;
     private final DataProperties dataProperties;
     private final KafkaProducer kafkaProducer;
+    private final NotificationService notificationService;
 
     private void setStatusHistoryAndSaveApplication(Application application, Long statusId) {
         if (!application.getApplicationStatus().getId().equals(statusId)) {
@@ -115,6 +113,11 @@ public class EventServiceImpl implements EventService {
         event = eventRepository.save(event);
         if (dto.getEventTypeId().equals(EventType.DEMO) && nonNull(sourceApplication.getCurrentAgent())) {
             kafkaProducer.sendRatingAgentAnalytics(sourceApplication.getCurrentAgent());
+        }
+        if (dto.getEventTypeId().equals(EventType.DEMO)) {
+            notificationService.createBookingViewNotification(sourceApplication.getId(), event.getId());
+        } else if (dto.getEventTypeId().equals(EventType.MEETING)) {
+            notificationService.createIpotekaNotification(sourceApplication.getId(), event.getId());
         }
         return event.getId();
     }
