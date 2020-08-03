@@ -20,6 +20,7 @@ import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -66,6 +67,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final KeycloakService keycloakService;
     private final RealPropertyMetadataRepository metadataRepository;
     private final RealPropertyFileRepository fileRepository;
+    private final KafkaProducer kafkaProducer;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -209,13 +211,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(application.getCurrentAgent()) && application.getCurrentAgent().equals(dto.getAgent())) {
             throw BadRequestException.createReassignToSameAgent();
         }
+        String oldAgent = application.getCurrentAgent();
         application.setCurrentAgent(dto.getAgent());
         Assignment assignment = Assignment.builder()
                 .application(application)
                 .agent(dto.getAgent())
                 .build();
         application.getAssignmentList().add(assignment);
-        return applicationRepository.save(application).getId();
+        application = applicationRepository.save(application);
+        if (nonNull(oldAgent)) {
+            kafkaProducer.sendAllAgentAnalytics(oldAgent);
+        }
+        kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
+        return application.getId();
     }
 
     public boolean checkOperation(List<String> operations, String operation) {
@@ -367,6 +375,10 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(realPropertyFile) && !realPropertyFile.getFilesMap().isEmpty()) {
             fileRepository.save(realPropertyFile);
         }
+        kafkaProducer.sendRealPropertyAnalytics(application);
+        if (nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
+        }
         return application.getId();
     }
 
@@ -380,7 +392,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Long deleteById(String token, Long id) {
         Application application = getApplicationById(id);
         application.setIsRemoved(true);
-        return applicationRepository.save(application).getId();
+        application = applicationRepository.save(application);
+        kafkaProducer.sendRealPropertyAnalytics(application);
+        return application.getId();
     }
 
     @Override
@@ -472,6 +486,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         } else {
             throw NotFoundException.createEntityNotFoundById("RealPropertyMetadata", statusId);
         }
+        kafkaProducer.sendRealPropertyAnalytics(application);
         return applicationId;
     }
 

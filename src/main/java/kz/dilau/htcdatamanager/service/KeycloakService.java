@@ -36,4 +36,8 @@ public interface KeycloakService {
     List<ClientDeviceDto> getDevices(String token, String deviceUuid);
 
     void saveClient(ProfileClientDto p);
+
+    ResultDto sendRealPropertyAnalyticsMessage(RealPropertyAnalyticsDto realPropertyAnalyticsDto);
+
+    ResultDto sendAgentAnalyticsMessage(AgentAnalyticsDto agentAnalyticsDto);
 }

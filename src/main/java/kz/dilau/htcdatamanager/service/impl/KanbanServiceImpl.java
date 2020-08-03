@@ -8,6 +8,7 @@ import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.service.*;
+import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
@@ -36,6 +37,7 @@ public class KanbanServiceImpl implements KanbanService {
     private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
     private final ContractService contractService;
+    private final KafkaProducer kafkaProducer;
 
     private static final String CHOOSE_GROUP_AGENT = "CHOOSE_GROUP_AGENT";
     private static final List<String> AGENT_GROUP = Arrays.asList("AGENT_GROUP");
@@ -112,6 +114,12 @@ public class KanbanServiceImpl implements KanbanService {
                 .build());
         application.setApplicationStatus(applicationStatus);
         applicationRepository.save(application);
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.SUCCESS)) {
+            kafkaProducer.sendRealPropertyAnalytics(application);
+            if (nonNull(application.getCurrentAgent())) {
+                kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
+            }
+        }
         return application.getId();
     }
 
@@ -154,6 +162,9 @@ public class KanbanServiceImpl implements KanbanService {
                 .build());
         application.setApplicationStatus(applicationStatus);
         applicationRepository.save(application);
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED) && nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
+        }
         return application.getId();
     }
 
@@ -181,6 +192,9 @@ public class KanbanServiceImpl implements KanbanService {
                 .build());
         application.setApplicationStatus(applicationStatus);
         applicationRepository.save(application);
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED) && nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
+        }
         return application.getId();
     }
 

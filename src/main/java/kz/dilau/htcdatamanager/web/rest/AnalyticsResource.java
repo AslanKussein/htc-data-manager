@@ -2,7 +2,7 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.AnalyticsService;
-import kz.dilau.htcdatamanager.web.dto.AnalyticsDto;
+import kz.dilau.htcdatamanager.web.dto.RealPropertyAnalyticsDto;
 import kz.dilau.htcdatamanager.web.dto.ResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +17,15 @@ public class AnalyticsResource {
 
     @ApiIgnore
     @PostMapping
-    public ResponseEntity<ResultDto> saveAnalytics(@RequestBody AnalyticsDto dto) {
+    public ResponseEntity<ResultDto> saveAnalytics(@RequestBody RealPropertyAnalyticsDto dto) {
         ResultDto result = analyticsService.saveAnalytics(dto);
         return ResponseEntity.ok(result);
     }
 
+    @ApiIgnore
     @GetMapping("/{appId}")
-    public ResponseEntity<AnalyticsDto> getAnalytics(@PathVariable("appId") Long appId) {
-        AnalyticsDto result = analyticsService.getAnalytics(appId);
+    public ResponseEntity<RealPropertyAnalyticsDto> getAnalytics(@PathVariable("appId") Long appId) {
+        RealPropertyAnalyticsDto result = analyticsService.getAnalytics(appId);
         return ResponseEntity.ok(result);
     }
 }

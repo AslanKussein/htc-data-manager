@@ -2,9 +2,7 @@ package kz.dilau.htcdatamanager.web.rest;
 
 import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.KeycloakService;
-import kz.dilau.htcdatamanager.web.dto.ContractFormTemplateDto;
-import kz.dilau.htcdatamanager.web.dto.RoleDto;
-import kz.dilau.htcdatamanager.web.dto.UserInfoDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.rest.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +35,15 @@ public class KeycloakResource {
     public ResponseEntity<ContractFormTemplateDto> getContractForm(@PathVariable("id") Long id,
                                                                    @PathVariable("contractType") String contractType) {
         return ResponseEntity.ok(keycloakService.getContractForm(id, contractType));
+    }
+
+    @PostMapping("/sendRealPropertyAnalyticsMessage")
+    public ResponseEntity<ResultDto> sendRealPropertyAnalyticsMessage(@RequestBody RealPropertyAnalyticsDto realPropertyAnalyticsDto) {
+        return ResponseEntity.ok(keycloakService.sendRealPropertyAnalyticsMessage(realPropertyAnalyticsDto));
+    }
+
+    @PostMapping("/sendAgentAnalyticsMessage")
+    public ResponseEntity<ResultDto> sendAgentAnalyticsMessage(@RequestBody AgentAnalyticsDto agentAnalyticsDto) {
+        return ResponseEntity.ok(keycloakService.sendAgentAnalyticsMessage(agentAnalyticsDto));
     }
 }
