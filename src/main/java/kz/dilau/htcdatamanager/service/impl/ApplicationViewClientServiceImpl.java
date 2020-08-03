@@ -154,36 +154,36 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
                     .numberOfBedrooms(metadata.getNumberOfBedrooms())
                     .atelier(metadata.getAtelier())
                     .separateBathroom(metadata.getSeparateBathroom());
+
+            GeneralCharacteristics generalCharacteristics = metadata.getGeneralCharacteristics();
+            dto.ceilingHeight(generalCharacteristics.getCeilingHeight())
+                    .numberOfFloors(generalCharacteristics.getNumberOfFloors())
+                    .apartmentsOnTheSite(generalCharacteristics.getApartmentsOnTheSite())
+                    .yearOfConstruction(generalCharacteristics.getYearOfConstruction())
+                    .concierge(generalCharacteristics.getConcierge())
+                    .playground(generalCharacteristics.getPlayground())
+                    .wheelchair(generalCharacteristics.getWheelchair())
+                    .materialOfConstruction(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getMaterialOfConstruction()))
+                    .yardType(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getYardType()))
+                    .houseCondition(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getHouseCondition()));
+            if (!generalCharacteristics.getTypesOfElevator().isEmpty()) {
+                dto.typeOfElevatorList(generalCharacteristics.getTypesOfElevator().stream()
+                        .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
+                        .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(TypeOfElevator.class, aLong.getId())))
+                        .collect(Collectors.toList()));
+            }
+            if (!generalCharacteristics.getParkingTypes().isEmpty()) {
+                dto.parkingTypes(generalCharacteristics.getParkingTypes().stream()
+                        .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
+                        .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(ParkingType.class, aLong.getId())))
+                        .collect(Collectors.toList()));
+            }
         }
         RealPropertyFile realPropertyFile = realProperty.getFileByStatus(MetadataStatus.APPROVED);
         if (nonNull(realPropertyFile)) {
             dto.photoIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.PHOTO))
                     .housingPlanImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.HOUSING_PLAN))
                     .virtualTourImageIdList(realPropertyFile.getFilesMap().get(RealPropertyFileType.VIRTUAL_TOUR));
-        }
-
-        GeneralCharacteristics generalCharacteristics = metadata.getGeneralCharacteristics();
-        dto.ceilingHeight(generalCharacteristics.getCeilingHeight())
-                .numberOfFloors(generalCharacteristics.getNumberOfFloors())
-                .apartmentsOnTheSite(generalCharacteristics.getApartmentsOnTheSite())
-                .yearOfConstruction(generalCharacteristics.getYearOfConstruction())
-                .concierge(generalCharacteristics.getConcierge())
-                .playground(generalCharacteristics.getPlayground())
-                .wheelchair(generalCharacteristics.getWheelchair())
-                .materialOfConstruction(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getMaterialOfConstruction()))
-                .yardType(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getYardType()))
-                .houseCondition(DictionaryMappingTool.mapDictionaryToText(generalCharacteristics.getHouseCondition()));
-        if (!generalCharacteristics.getTypesOfElevator().isEmpty()) {
-            dto.typeOfElevatorList(generalCharacteristics.getTypesOfElevator().stream()
-                    .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
-                    .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(TypeOfElevator.class, aLong.getId())))
-                    .collect(Collectors.toList()));
-        }
-        if (!generalCharacteristics.getParkingTypes().isEmpty()) {
-            dto.parkingTypes(generalCharacteristics.getParkingTypes().stream()
-                    .filter(aLong -> nonNull(aLong) && nonNull(aLong.getId()))
-                    .map(aLong -> DictionaryMappingTool.mapDictionaryToText(entityService.mapEntity(ParkingType.class, aLong.getId())))
-                    .collect(Collectors.toList()));
         }
     }
 }
