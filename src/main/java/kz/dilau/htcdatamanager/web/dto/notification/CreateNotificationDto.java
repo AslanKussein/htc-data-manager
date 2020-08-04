@@ -13,4 +13,20 @@ public class CreateNotificationDto {
     private Long eventId;
     private String commentText;
 
+    public CreateNotificationDto(Long notificationTypeId, Long applicationId) {
+        this.notificationTypeId = notificationTypeId;
+        this.applicationId = applicationId;
+    }
+
+    public CreateNotificationDto(Long notificationTypeId, Long applicationId, Long eventId) {
+        this.notificationTypeId = notificationTypeId;
+        this.applicationId = applicationId;
+        this.eventId = eventId;
+    }
+
+    public CreateNotificationDto(Long notificationTypeId, Long applicationId, String commentText) {
+        this.notificationTypeId = notificationTypeId;
+        this.applicationId = applicationId;
+        this.commentText = commentText;
+    }
 }
