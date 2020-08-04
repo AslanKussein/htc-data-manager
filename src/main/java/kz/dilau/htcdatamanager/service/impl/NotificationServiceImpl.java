@@ -15,9 +15,6 @@ import static kz.dilau.htcdatamanager.util.ObjectSerializer.introspect;
 @Service
 public class NotificationServiceImpl implements NotificationService {
 
-
-    private final DataProperties dataProperties;
-
     private final Long NOTIF_TYPE_NOTE_ADD = 1L;// Добавление комментария
     private final Long NOTIF_TYPE_NOTE_RESPONSE = 2L;//	Добавление ответа
     private final Long NOTIF_TYPE_APP_BUY_CREATE = 3L;// Создание заявки купить в КП
@@ -28,6 +25,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final Long NOTIF_TYPE_OPERATION_BUY_NOW = 8L;//	Выполнение операции "Купить сейчас"
 
     private final KafkaProducer kafkaProducer;
+    private final DataProperties dataProperties;
 
     @Override
     public void createNotesNotification(Long applicationId, String commentText) {
