@@ -2,11 +2,15 @@ package kz.dilau.htcdatamanager.util;
 
 import kz.dilau.htcdatamanager.domain.Building;
 import kz.dilau.htcdatamanager.domain.base.BaseSystemDictionary;
+import kz.dilau.htcdatamanager.domain.dictionary.District;
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.domain.old.OldGeneralCharacteristics;
 import kz.dilau.htcdatamanager.domain.base.BaseCustomDictionary;
 import lombok.experimental.UtilityClass;
+
+import java.util.List;
+import java.util.Set;
 
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -64,6 +68,19 @@ public class DictionaryMappingTool {
         result = concatMultiLangWithMultiLang(result, mapDictionaryToText(building.getStreet()), ", ");
         result = concatStringWithMultiLang(result,
                 nonNull(building.getHouseNumber())?building.getHouseNumber():"" + (nonNull(building.getHouseNumberFraction()) ? "/" + building.getHouseNumberFraction() : "") + " " + apartmentNumber, " ");
+        return result;
+    }
+
+    public static MultiLangText mapToDistrictsTxt(Set<District> dlist) {
+        MultiLangText result = null;
+
+        for (District d: dlist) {
+            if (isNull(result)) {
+                result = mapDictionaryToText(d);
+            } else {
+                result = concatMultiLangWithMultiLang(result, mapDictionaryToText(d), ", ");
+            }
+        }
         return result;
     }
 

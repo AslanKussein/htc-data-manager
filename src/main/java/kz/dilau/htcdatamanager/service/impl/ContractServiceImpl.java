@@ -17,6 +17,7 @@ import kz.dilau.htcdatamanager.util.BundleMessageUtil;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
+import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +98,7 @@ public class ContractServiceImpl implements ContractService {
     public FileInfoDto generateContract(String token, ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (!hasPermission(getAuthorName(), application)) {
-            throw BadRequestException.createTemplateException("error.has.not.permission");
+            //throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         if (isNull(dto.getContractNumber()) || dto.getContractNumber().length() == 0) {
             throw BadRequestException.createRequiredIsEmpty("contractNumber");
@@ -111,10 +112,10 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(dto.getContractPeriod())) {
             throw BadRequestException.createRequiredIsEmpty("contractPeriod");
         }
-        ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
+        /*ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
         if (nonNull(applicationContract))
             throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
-
+*/
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
@@ -138,14 +139,14 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
-        contractForm = getContractForm(2L/*userInfoDto.getOrganizationDto().getId()*/, contractFormType);
+        contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), contractFormType);
         result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
         FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
-        saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
-        if (nonNull(application.getCurrentAgent())) {
-            kafkaProducer.sendContractAgentAnalytics(application.getCurrentAgent());
-        }
+        //saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
+        //if (nonNull(application.getCurrentAgent())) {
+        //    kafkaProducer.sendContractAgentAnalytics(application.getCurrentAgent());
+        //}
         return fileInfoDto;
     }
 
@@ -571,7 +572,7 @@ public class ContractServiceImpl implements ContractService {
             String footerImageBase64) {
         Map<String, Object> pars = new HashMap<>();
         City city = null;
-        District district = null;
+        MultiLangText district = null;
         PurchaseInfo purchaseInfo = null;
 
         RealProperty realProperty = null;
@@ -580,7 +581,8 @@ public class ContractServiceImpl implements ContractService {
 
         if (application.getOperationType().isBuy()) {
             city = isNull(purchaseData) ? null : purchaseData.getCity();
-            district = purchaseData.getDistricts().stream().findFirst().orElse(null);
+            district = DictionaryMappingTool.mapToDistrictsTxt(purchaseData.getDistricts());
+            //district = purchaseData.getDistricts().stream().findFirst().orElse(null);
             purchaseInfo = isNull(purchaseData) ? null : purchaseData.getPurchaseInfo();
         } else {
             realProperty = isNull(sellData) ? null : sellData.getRealProperty();
@@ -588,7 +590,7 @@ public class ContractServiceImpl implements ContractService {
 
             if (nonNull(realProperty) && nonNull(realProperty.getBuilding())) {
                 city = realProperty.getBuilding().getCity();
-                district = realProperty.getBuilding().getDistrict();
+                district = DictionaryMappingTool.mapDictionaryToText(realProperty.getBuilding().getDistrict());
             }
         }
 
@@ -667,10 +669,10 @@ public class ContractServiceImpl implements ContractService {
                     break;
                 case "objectRegion":
                 case "objectRegionRU":
-                    pars.put(par, nonNull(district) ? district.getMultiLang().getNameRu() : "");
+                    pars.put(par, nonNull(district) ? district.getNameRu() : "");
                     break;
                 case "objectRegionKZ":
-                    pars.put(par, nonNull(district) ? district.getMultiLang().getNameKz() : "");
+                    pars.put(par, nonNull(district) ? district.getNameKz() : "");
                     break;
                 case "objectType":
                     pars.put(par, application.getObjectType().getMultiLang().getNameRu());
