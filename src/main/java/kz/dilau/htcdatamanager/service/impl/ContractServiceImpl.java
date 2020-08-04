@@ -65,6 +65,7 @@ public class ContractServiceImpl implements ContractService {
     private final DepositNumbRepository depositNumbRepository;
     private final SettingsService settingsService;
     private final KafkaProducer kafkaProducer;
+    private final NotificationService notificationService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -378,6 +379,11 @@ public class ContractServiceImpl implements ContractService {
                 kafkaProducer.sendDepositAgentAnalytics(currentApp.getCurrentAgent());
             }
             //todo какое то уведомление нужно отправить агенту продавца
+            if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BUY_THREE_PRC) ){
+                notificationService.createBuyNowNotification(sellApp.getId());
+            } else  if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING) ){
+                notificationService.createBookingPropertyNotification(sellApp.getId());
+            }
         } else {
             responseDto.setSourceStr(Base64.encodeBase64String(baos));
             responseDto.setSourceType("base64");

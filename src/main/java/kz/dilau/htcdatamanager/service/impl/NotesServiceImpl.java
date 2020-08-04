@@ -1,5 +1,6 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.domain.ApplicationSellData;
 import kz.dilau.htcdatamanager.domain.Notes;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
@@ -7,23 +8,26 @@ import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.NotesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.service.NotesService;
+import kz.dilau.htcdatamanager.service.NotificationService;
 import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.NotesDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @RequiredArgsConstructor
 @Service
 public class NotesServiceImpl implements NotesService {
     private final NotesRepository notesRepository;
     private final RealPropertyRepository realPropertyRepository;
+
+    private final NotificationService notificationService;
 
     @Override
     public NotesDto createNote(String login, NotesDto notesDto) {
@@ -39,6 +43,11 @@ public class NotesServiceImpl implements NotesService {
 
         notes = notesRepository.save(notes);
 
+        if (nonNull(notes.getRealProperty())) {
+            for (ApplicationSellData sellData : notes.getRealProperty().getSellDataList()) {
+                notificationService.createNotesNotification(sellData.getApplication().getId(), notesDto.getText());
+            }
+        }
         return new NotesDto(notes);
     }
 

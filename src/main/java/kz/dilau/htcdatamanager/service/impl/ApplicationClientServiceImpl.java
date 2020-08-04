@@ -43,6 +43,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     private final ApplicationService applicationService;
     private final KeycloakService keycloakService;
     private final KafkaProducer kafkaProducer;
+    private final NotificationService notificationService;
 
 
     @Override
@@ -80,6 +81,9 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     }
 
     private Long saveApplication(Application application, ApplicationClientDTO dto) {
+
+        boolean isNewApplication = isNull(application.getId());
+
         RealPropertyMetadata metadata = null;
         OperationType operationType;
         ApplicationSource applicationSource;
@@ -181,6 +185,14 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         if (nonNull(application.getCurrentAgent())) {
             kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         }
+
+        if (isNewApplication) {
+            if (operationType.isBuy()) {
+                notificationService.createBuyApplicationNotification(application.getId());
+            } else if (operationType.isSell()) {
+                notificationService.createSellApplicationNotification(application.getId());
+            }
+        }
         return application.getId();
     }
 
@@ -201,7 +213,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     @Override
     public Long save(ClientApplicationCreateDTO dto) {
         if (isNull(dto.getApplication())) throw BadRequestException.createRequiredIsEmpty("application");
-        if (isNull(dto.getClientName())) throw  BadRequestException.createRequiredIsEmpty("clientName");
+        if (isNull(dto.getClientName())) throw BadRequestException.createRequiredIsEmpty("clientName");
         if (isNull(dto.getApplication().getDeviceUuid())) throw BadRequestException.createRequiredIsEmpty("deviceUuid");
         if (isNull(dto.getPhoneNumber())) throw BadRequestException.createRequiredIsEmpty("phoneNumber");
 
@@ -210,7 +222,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         List<ProfileClientDto> profileList = keycloakService.readClientInfoByLogins(logins);
 
         if (profileList.isEmpty() || isNull(profileList.get(0)) || isNull(profileList.get(0).getPhoneNumber())) {
-            ProfileClientDto newClient  = new ProfileClientDto();
+            ProfileClientDto newClient = new ProfileClientDto();
             newClient.setFirstName(dto.getClientName());
             newClient.setPhoneNumber(dto.getPhoneNumber());
 
