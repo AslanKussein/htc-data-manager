@@ -115,9 +115,9 @@ public class EventServiceImpl implements EventService {
             kafkaProducer.sendRatingAgentAnalytics(sourceApplication.getCurrentAgent());
         }
         if (dto.getEventTypeId().equals(EventType.DEMO)) {
-            notificationService.createBookingViewNotification(sourceApplication.getId(), event.getId());
+            notificationService.createBookingViewNotification(dto.getTargetApplicationId(), event.getId());
         } else if (dto.getEventTypeId().equals(EventType.MEETING)) {
-            notificationService.createIpotekaNotification(sourceApplication.getId(), event.getId());
+            notificationService.createIpotekaNotification(dto.getTargetApplicationId(), event.getId());
         }
         return event.getId();
     }
