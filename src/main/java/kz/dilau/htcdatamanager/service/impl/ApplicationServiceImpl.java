@@ -585,8 +585,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public List<ApplicationDto> getApplicationListByPostcode (String postcode) {
-        List<Application> applications = applicationRepository.findAllByPostcode(postcode);
-        System.out.println(applications);
+        Specification<Application> specification = ApplicationSpecifications.isRemovedEquals(false)
+                .and(ApplicationSpecifications.applicationsByPostCode(postcode));
+        List<Application> applications = applicationRepository.findAll(specification);
         return applications.stream().map(ApplicationDto::new).collect(Collectors.toList());
     }
 }

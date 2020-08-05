@@ -34,4 +34,8 @@ public class ApplicationSpecifications {
         return (root, cq, cb) -> cb.not(root.get("applicationStatus").get("id").in(idList));
     }
 
+    public static Specification<Application> applicationsByPostCode(String value) {
+        return (root, cq, cb) -> cb.equal(root.get("applicationSellData").get("realProperty").get("building").get("postcode"),value);
+    }
+
 }
