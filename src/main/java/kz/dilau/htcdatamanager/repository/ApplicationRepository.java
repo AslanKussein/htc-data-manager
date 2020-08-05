@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -24,6 +25,14 @@ public interface ApplicationRepository extends JpaRepository<Application, Long>,
             "where a.isRemoved = false and f.metadataStatusId = :metadataStatusId")
     Page<Application> findAllFileByMetadataStatus(@Param("metadataStatusId") Long metadataStatusId,
                                                   Pageable pageable);
+
+
+    @Query(value = "select a from Application a " +
+            "join ApplicationSellData f on f.application.id = a.id " +
+            "join RealProperty p  on f.realProperty.id = p.id " +
+            "join Building b on p.buildingId = b.id " +
+             "where a.isRemoved = false and b.postcode = :postcode")
+    List<Application> findAllByPostcode(@Param("postcode") String postcode);
 
     Optional<Application> findByIdAndIsRemovedFalse(Long id);
 
