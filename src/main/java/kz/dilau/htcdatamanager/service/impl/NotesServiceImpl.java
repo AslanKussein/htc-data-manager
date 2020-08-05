@@ -41,11 +41,20 @@ public class NotesServiceImpl implements NotesService {
         notes.setText(notesDto.getText());
         notes.setRealProperty(realProperty.get());
 
+        if (nonNull(notesDto.getQuestionId())) {
+            Notes question = getNotesById(notesDto.getQuestionId());
+            notes.setQuestionId(question.getId());
+        }
+
         notes = notesRepository.save(notes);
 
         if (nonNull(notes.getRealProperty())) {
             for (ApplicationSellData sellData : notes.getRealProperty().getSellDataList()) {
-                notificationService.createNotesNotification(sellData.getApplication().getId(), notesDto.getText());
+                if (nonNull(notesDto.getQuestionId())) {
+                    notificationService.createNotesAnswerNotification(sellData.getApplication().getId(), notesDto.getId());
+                } else {
+                    notificationService.createNotesNotification(sellData.getApplication().getId(), notesDto.getId());
+                }
             }
         }
         return new NotesDto(notes);
@@ -62,8 +71,16 @@ public class NotesServiceImpl implements NotesService {
         if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
+
+
         Notes notes = getNotesById(id);
         notes.setText(notesDto.getText());
+
+        if (nonNull(notesDto.getQuestionId())) {
+            Notes question = getNotesById(notesDto.getQuestionId());
+            notes.setQuestionId(question.getId());
+        }
+
         notes = notesRepository.save(notes);
 
         return new NotesDto(notes);

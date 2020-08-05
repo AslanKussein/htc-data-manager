@@ -28,9 +28,22 @@ public class NotificationServiceImpl implements NotificationService {
     private final DataProperties dataProperties;
 
     @Override
-    public void createNotesNotification(Long applicationId, String commentText) {
+    public void createNotesNotification(Long applicationId, Long notesId) {
         try {
-            CreateNotificationDto dto = new CreateNotificationDto(NOTIF_TYPE_NOTE_ADD, applicationId, commentText);
+            CreateNotificationDto dto = new CreateNotificationDto(NOTIF_TYPE_NOTE_ADD, applicationId);
+            dto.setNotesId(notesId);
+
+            kafkaProducer.sendMessage(dataProperties.getTopicNotification(), introspect(dto));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void createNotesAnswerNotification(Long applicationId, Long notesId) {
+        try {
+            CreateNotificationDto dto = new CreateNotificationDto(NOTIF_TYPE_NOTE_RESPONSE, applicationId);
+            dto.setNotesId(notesId);
 
             kafkaProducer.sendMessage(dataProperties.getTopicNotification(), introspect(dto));
         } catch (Exception e) {
