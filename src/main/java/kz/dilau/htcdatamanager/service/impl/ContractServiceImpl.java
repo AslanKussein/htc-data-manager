@@ -98,7 +98,7 @@ public class ContractServiceImpl implements ContractService {
     public FileInfoDto generateContract(String token, ContractFormDto dto) {
         Application application = applicationService.getApplicationById(dto.getApplicationId());
         if (!hasPermission(getAuthorName(), application)) {
-            //throw BadRequestException.createTemplateException("error.has.not.permission");
+            throw BadRequestException.createTemplateException("error.has.not.permission");
         }
         if (isNull(dto.getContractNumber()) || dto.getContractNumber().length() == 0) {
             throw BadRequestException.createRequiredIsEmpty("contractNumber");
@@ -112,10 +112,10 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(dto.getContractPeriod())) {
             throw BadRequestException.createRequiredIsEmpty("contractPeriod");
         }
-        /*ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
+        ApplicationContract applicationContract = contractRepository.findByContractNumber(dto.getContractNumber()).orElse(null);
         if (nonNull(applicationContract))
             throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
-*/
+
         ProfileClientDto clientDto = getClientDto(application);
         UserInfoDto userInfoDto = getUserInfo(application);
         ContractFormTemplateDto contractForm;
@@ -143,10 +143,10 @@ public class ContractServiceImpl implements ContractService {
         result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
         FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
-        //saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
-        //if (nonNull(application.getCurrentAgent())) {
-        //    kafkaProducer.sendContractAgentAnalytics(application.getCurrentAgent());
-        //}
+        saveContract(dto, application, entityService.mapEntity(ContractStatus.class, ContractStatus.GENERATED), fileInfoDto.getUuid());
+        if (nonNull(application.getCurrentAgent())) {
+            kafkaProducer.sendContractAgentAnalytics(application.getCurrentAgent());
+        }
         return fileInfoDto;
     }
 
@@ -590,7 +590,7 @@ public class ContractServiceImpl implements ContractService {
 
             if (nonNull(realProperty) && nonNull(realProperty.getBuilding())) {
                 city = realProperty.getBuilding().getCity();
-                district = DictionaryMappingTool.mapDictionaryToText(realProperty.getBuilding().getDistrict());
+                district = nonNull(realProperty.getBuilding().getDistrict()) ? DictionaryMappingTool.mapDictionaryToText(realProperty.getBuilding().getDistrict()) : null;
             }
         }
 
