@@ -30,12 +30,16 @@ public class NotesDto {
     @NotNull
     private Long realPropertyId;
 
+    @ApiModelProperty(value = "ID Комментария на который ответили")
+    private Long questionId;
+
     public NotesDto(Notes notes) {
         this.id = notes.getId();
         this.createdBy = notes.getCreatedBy();
         this.text = notes.getText();
         this.crDate = ZonedDateTime.ofInstant(notes.getCreatedDate().toInstant(), ZoneId.systemDefault());
         this.realPropertyId = notes.getRealProperty().getId();
+        this.questionId = notes.getQuestionId();
     }
 
 }

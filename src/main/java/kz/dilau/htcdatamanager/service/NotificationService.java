@@ -3,7 +3,9 @@ package kz.dilau.htcdatamanager.service;
 
 public interface NotificationService {
 
-    void createNotesNotification(Long applicationId, String commentText);
+    void createNotesNotification(Long applicationId, Long notesId);
+
+    void createNotesAnswerNotification(Long applicationId, Long notesId);
 
     void createBuyApplicationNotification(Long applicationId);
 

@@ -22,6 +22,8 @@ public class Notes extends AuditableBaseEntity<String, Long> {
     @JoinColumn(name = "real_property_id")
     private RealProperty realProperty;
 
+    private Long questionId;
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
