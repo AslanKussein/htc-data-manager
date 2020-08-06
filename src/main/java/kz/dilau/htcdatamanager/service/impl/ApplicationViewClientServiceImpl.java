@@ -6,6 +6,9 @@ import kz.dilau.htcdatamanager.domain.dictionary.MetadataStatus;
 import kz.dilau.htcdatamanager.domain.dictionary.ParkingType;
 import kz.dilau.htcdatamanager.domain.dictionary.TypeOfElevator;
 import kz.dilau.htcdatamanager.domain.enums.RealPropertyFileType;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
+import kz.dilau.htcdatamanager.exception.SecurityException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.service.ApplicationViewClientService;
 import kz.dilau.htcdatamanager.service.EntityService;
@@ -40,6 +43,21 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
     public ApplicationViewClientDTO getByIdForClient(Long id) {
         Application application = applicationRepository.getOne(id);
         return mapToApplicationDto(application);
+    }
+
+    @Override
+    public ApplicationViewClientDTO getByIdForClientDevice(String deviceUuid, Long id) {
+        Application application = applicationRepository.findById(id).orElse(null);
+        ApplicationViewClientDTO result;
+        if (nonNull(application)) {
+            if (isNull(deviceUuid) || isNull(application.getDeviceUuid()) || !application.getDeviceUuid().equals(deviceUuid)) {
+                throw SecurityException.createPermissionNotFound();
+            }
+            result = mapToApplicationDto(application);
+        } else {
+            throw NotFoundException.createApplicationById(id);
+        }
+        return result;
     }
 
     private Boolean isSell(Application application) {
