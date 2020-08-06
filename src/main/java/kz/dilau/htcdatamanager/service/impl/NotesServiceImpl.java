@@ -43,6 +43,12 @@ public class NotesServiceImpl implements NotesService {
 
         if (nonNull(notesDto.getQuestionId())) {
             Notes question = getNotesById(notesDto.getQuestionId());
+            Notes note = getNotesByQuestionId(notesDto.getQuestionId());
+            if(nonNull(note)) {
+                if(isNull(notesDto.getId()) || !notesDto.getId().equals(note.getId())) {
+                    throw BadRequestException.notesAnswerDuplicate(notesDto.getQuestionId());
+                }
+            }
             notes.setQuestionId(question.getId());
         }
 
@@ -78,6 +84,12 @@ public class NotesServiceImpl implements NotesService {
 
         if (nonNull(notesDto.getQuestionId())) {
             Notes question = getNotesById(notesDto.getQuestionId());
+            Notes note = getNotesByQuestionId(notesDto.getQuestionId());
+            if(nonNull(note)) {
+                if(isNull(notesDto.getId()) || !notesDto.getId().equals(note.getId())) {
+                    throw BadRequestException.notesAnswerDuplicate(notesDto.getQuestionId());
+                }
+            }
             notes.setQuestionId(question.getId());
         }
 
@@ -92,6 +104,14 @@ public class NotesServiceImpl implements NotesService {
             throw NotFoundException.createNotesById(id);
         }
         return notesOptional.get();
+    }
+
+    private Notes getNotesByQuestionId(Long questionId) {
+        Optional<Notes> notesOptional = notesRepository.findByQuestionIdAndIsRemovedFalse(questionId);
+        if (notesOptional.isPresent()) {
+            return notesOptional.get();
+        }
+        return null;
     }
 
     @Override
