@@ -339,8 +339,7 @@ public class KanbanServiceImpl implements KanbanService {
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
             MultiLangText text = DictionaryMappingTool.mapDictionaryToText(purchaseData.getCity());
             if (!purchaseData.getDistricts().isEmpty()) {
-                District district = purchaseData.getDistricts().stream().findFirst().orElse(null);
-                if (nonNull(district)) {
+                for (val district : purchaseData.getDistricts()) {
                     text = DictionaryMappingTool.concatMultiLangWithMultiLang(text, DictionaryMappingTool.mapDictionaryToText(district), ", ");
                 }
             }
