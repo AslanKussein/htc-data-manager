@@ -90,4 +90,8 @@ public class BadRequestException extends DetailedException {
     public static BadRequestException createUserError() {
         return new BadRequestException(BundleMessageUtil.getLocaledValue("error.create.client.failed"));
     }
+
+    public static BadRequestException notesAnswerDuplicate(Long id) {
+        return new BadRequestException(BundleMessageUtil.getLocaledValue("error.notes.answer.duplicate", id));
+    }
 }
