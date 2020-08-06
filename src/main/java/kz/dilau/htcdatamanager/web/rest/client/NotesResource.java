@@ -50,4 +50,10 @@ public class NotesResource {
         NotesDto result = notesService.deleteNote(principal.getName(), id);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<NotesDto> getById(@PathVariable("id") Long id) {
+        NotesDto dto = notesService.getById(id);
+        return ResponseEntity.ok(dto);
+    }
 }
