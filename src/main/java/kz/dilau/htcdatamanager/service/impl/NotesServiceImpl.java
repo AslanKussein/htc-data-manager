@@ -110,4 +110,9 @@ public class NotesServiceImpl implements NotesService {
     public Integer getCountByRealPropertyId(Long realPropertyId) {
         return notesRepository.countByRealProperty_IdAndIsRemovedFalse(realPropertyId);
     }
+
+    @Override
+    public NotesDto getById(Long id) {
+        return new NotesDto(getNotesById(id));
+    }
 }

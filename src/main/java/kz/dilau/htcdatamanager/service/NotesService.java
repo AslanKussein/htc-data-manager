@@ -19,4 +19,6 @@ public interface NotesService {
 
     Integer getCountByRealPropertyId(Long id);
 
+    NotesDto getById(Long id);
+
 }
