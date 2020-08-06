@@ -380,9 +380,9 @@ public class ContractServiceImpl implements ContractService {
             }
             //todo какое то уведомление нужно отправить агенту продавца
             if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BUY_THREE_PRC) ){
-                notificationService.createBuyNowNotification(sellApp.getId());
+                notificationService.createBuyNowNotification(clientAppContractRequestDto.getSellApplicationId());
             } else  if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING) ){
-                notificationService.createBookingPropertyNotification(sellApp.getId());
+                notificationService.createBookingPropertyNotification(clientAppContractRequestDto.getSellApplicationId());
             }
         } else {
             responseDto.setSourceStr(Base64.encodeBase64String(baos));
