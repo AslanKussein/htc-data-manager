@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.util.Objects.nonNull;
+
 @RequiredArgsConstructor
 @Service
 public class ApplicationClientViewServiceImpl implements ApplicationClientViewService {
@@ -48,7 +50,7 @@ public class ApplicationClientViewServiceImpl implements ApplicationClientViewSe
             realPropertyDto.setNotesCount(notesService.getCountByRealPropertyId(realProperty.getId()));
             dto.setRealPropertyDto(realPropertyDto);
             dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
-            if (!realPropertyDto.getGeneralCharacteristicsDto().getParkingTypeIds().isEmpty()) {
+            if (nonNull(realPropertyDto.getGeneralCharacteristicsDto())&&!realPropertyDto.getGeneralCharacteristicsDto().getParkingTypeIds().isEmpty()) {
                 List<DictionaryDto> parkingTypeList = new ArrayList<>();
                 for (Long parkingId : realPropertyDto.getGeneralCharacteristicsDto().getParkingTypeIds()) {
                     BaseCustomDictionary aDictionaryItem = dictionaryCacheService.loadDictionaryByIdFromDatabase("ParkingType", parkingId);
