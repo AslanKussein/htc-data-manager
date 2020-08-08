@@ -9,18 +9,26 @@ import lombok.Setter;
 public class CreateNotificationDto {
 
     private Long notificationTypeId;
-    private Long applicationId;
+    private Long sellApplicationId;
+    private Long buyApplicationId;
     private Long eventId;
     private Long notesId;
 
-    public CreateNotificationDto(Long notificationTypeId, Long applicationId) {
+    public CreateNotificationDto(Long notificationTypeId, Long sellApplicationId) {
         this.notificationTypeId = notificationTypeId;
-        this.applicationId = applicationId;
+        this.sellApplicationId = sellApplicationId;
     }
 
-    public CreateNotificationDto(Long notificationTypeId, Long applicationId, Long eventId) {
+    public CreateNotificationDto(Long notificationTypeId, Long sellApplicationId, Long buyApplicationId) {
         this.notificationTypeId = notificationTypeId;
-        this.applicationId = applicationId;
+        this.sellApplicationId = sellApplicationId;
+        this.buyApplicationId = buyApplicationId;
+    }
+
+    public CreateNotificationDto(Long notificationTypeId, Long sellApplicationId, Long buyApplicationId, Long eventId) {
+        this.notificationTypeId = notificationTypeId;
+        this.sellApplicationId = sellApplicationId;
+        this.buyApplicationId = buyApplicationId;
         this.eventId = eventId;
     }
 
