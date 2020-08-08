@@ -28,7 +28,7 @@ public class ApplicationDepositDto {
     @NonNull
     @ApiModelProperty(value = "Тип договора", required = true)
     private Long payTypeId;
-    private ZonedDateTime printDate;
+    private ZonedDateTime createdDate;
 
 
     public ApplicationDepositDto(ApplicationDeposit deposit) {
@@ -37,7 +37,7 @@ public class ApplicationDepositDto {
             this.sellApplicationId = deposit.getSellApplicationId();
             this.payedSum = deposit.getPayedSum();
             this.payTypeId = deposit.getPayTypeId();
-            this.printDate = deposit.getPrintDate();
+            this.createdDate = deposit.getCreatedDate();
         }
     }
 }
