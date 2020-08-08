@@ -31,7 +31,7 @@ public class ApplicationFullViewServiceImpl implements ApplicationFullViewServic
         dto.setIsReserved(application.isReservedRealProperty());
         dto.setApplicationStatusId(application.getApplicationStatus().getId());
         dto.setContractDto(new ContractFormFullDto(application.getContract()));
-        dto.setDepositFormDto(new DepositFormDto(application.getDeposit()));
+        dto.setApplicationDepositDto(new ApplicationDepositDto(application.getDeposit()));
         if (application.getApplicationSellData() != null) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
             if (realProperty != null) {

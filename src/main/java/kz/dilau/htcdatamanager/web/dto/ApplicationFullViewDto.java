@@ -33,7 +33,7 @@ public class ApplicationFullViewDto {
     @ApiModelProperty(value = "Идентификационные данные сделки")
     private ContractFormFullDto contractDto;
 
-    private DepositFormDto depositFormDto;
+    private ApplicationDepositDto applicationDepositDto;
 
     @ApiModelProperty(value = "Общая информация об объекте продажи")
     private RealPropertyDto realPropertyDto;
