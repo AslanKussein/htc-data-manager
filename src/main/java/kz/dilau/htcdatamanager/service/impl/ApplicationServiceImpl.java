@@ -17,6 +17,7 @@ import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
+import kz.dilau.htcdatamanager.web.dto.common.PageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -579,5 +580,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         return ResultDto.builder()
                 .success(!applications.isEmpty())
                 .build();
+    }
+
+
+    @Override
+    public List<ApplicationDto> getApplicationListByPostcode (String postcode) {
+        Specification<Application> specification = ApplicationSpecifications.isRemovedEquals(false)
+                .and(ApplicationSpecifications.applicationsByPostCode(postcode));
+        List<Application> applications = applicationRepository.findAll(specification);
+        return applications.stream().map(ApplicationDto::new).collect(Collectors.toList());
     }
 }

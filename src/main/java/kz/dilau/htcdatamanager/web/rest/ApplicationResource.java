@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
+import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
@@ -108,6 +109,12 @@ public class ApplicationResource {
     public ResponseEntity<ResultDto> hasActualAppByClient(@ApiIgnore @AuthenticationPrincipal final Principal principal,
                                                           @RequestParam("clientLogin") String clientLogin) {
         ResultDto result = applicationService.hasActualAppByClient(principal.getName(), clientLogin);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/getApplicationsByPostCode/{postcode}")
+    public ResponseEntity<List<ApplicationDto>> getApplicationListByPostcode(@PathVariable("postcode") String postcode) {
+       List<ApplicationDto> result = applicationService.getApplicationListByPostcode(postcode);
         return ResponseEntity.ok(result);
     }
 }
