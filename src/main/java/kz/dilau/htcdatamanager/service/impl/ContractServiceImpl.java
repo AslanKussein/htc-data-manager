@@ -379,11 +379,11 @@ public class ContractServiceImpl implements ContractService {
             if (nonNull(currentApp.getCurrentAgent())) {
                 kafkaProducer.sendDepositAgentAnalytics(currentApp.getCurrentAgent());
             }
-            //todo какое то уведомление нужно отправить агенту продавца
-            if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BUY_THREE_PRC) ){
-                notificationService.createBuyNowNotification(clientAppContractRequestDto.getSellApplicationId());
-            } else  if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING) ){
-                notificationService.createBookingPropertyNotification(clientAppContractRequestDto.getSellApplicationId());
+            //уведомление агенту продавца
+            if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BUY_THREE_PRC)) {
+                notificationService.createBuyNowNotification(clientAppContractRequestDto.getSellApplicationId(), currentApp.getId());
+            } else if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING)) {
+                notificationService.createBookingPropertyNotification(clientAppContractRequestDto.getSellApplicationId(), currentApp.getId());
             }
         } else {
             responseDto.setSourceStr(Base64.encodeBase64String(baos));

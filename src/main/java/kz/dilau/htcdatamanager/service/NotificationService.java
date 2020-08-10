@@ -15,9 +15,9 @@ public interface NotificationService {
 
     void createBookingViewNotification(Long applicationId, Long eventId);
 
-    void createBookingPropertyNotification(Long applicationId);
+    void createBookingPropertyNotification(Long sellApplicationId, Long buyApplicationId);
 
-    void createBuyNowNotification(Long applicationId);
+    void createBuyNowNotification(Long sellApplicationId, Long buyApplicationId);
 
 
 }
