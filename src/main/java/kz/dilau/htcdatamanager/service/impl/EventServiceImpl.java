@@ -15,6 +15,7 @@ import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
+import kz.dilau.htcdatamanager.web.dto.EventViewDto;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.common.DatePeriod;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
@@ -123,8 +124,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventDto getEventById(Long id) {
-        return new EventDto(getById(id));
+    public EventViewDto getEventById(Long id) {
+        return new EventViewDto(getById(id));
     }
 
     private Event getById(Long id) {
