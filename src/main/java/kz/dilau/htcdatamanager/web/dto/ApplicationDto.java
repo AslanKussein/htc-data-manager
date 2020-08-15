@@ -79,5 +79,6 @@ public class ApplicationDto {
         this.setStatus(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()));
         this.setComment(application.getApplicationSellData().getNote());
         this.setPhone(application.getCurrentAgent());
-    }
+        this.setPrice(application.getApplicationSellData().getObjectPrice().toString());
+        this.setFullname(application.getCurrentAgent());}
 }
