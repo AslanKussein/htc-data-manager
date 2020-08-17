@@ -19,31 +19,31 @@ import static java.util.Objects.nonNull;
 @ApiModel(value = "EventDto", description = "Модель создания события")
 public class EventDto {
     @ApiModelProperty(value = "ID события")
-    private Long id;
+    protected Long id;
 
     @ApiModelProperty(value = "ID заявки инициатора", required = true)
-    private Long sourceApplicationId;
+    protected Long sourceApplicationId;
 
     @ApiModelProperty(value = "Признак брони недвижимости в заявке инициатора")
-    private Boolean isSourceReserved = false;
+    protected Boolean isSourceReserved = false;
 
     @ApiModelProperty(value = "Выбранная заявка")
-    private Long targetApplicationId;
+    protected Long targetApplicationId;
 
     @ApiModelProperty(value = "Признак брони недвижимости в выбранной заявке")
-    private Boolean isTargetReserved = false;
+    protected Boolean isTargetReserved = false;
 
     @ApiModelProperty(value = "Дата и время события", required = true)
-    private ZonedDateTime eventDate;
+    protected ZonedDateTime eventDate;
 
     @ApiModelProperty(value = "Описание события")
-    private String description;
+    protected String description;
 
     @ApiModelProperty(value = "ID Вида события", required = true)
-    private Long eventTypeId;
+    protected Long eventTypeId;
 
     @ApiModelProperty(value = "Комментарий (Результат события)")
-    private String comment;
+    protected String comment;
 
     public EventDto(Event event) {
         this.id = event.getId();

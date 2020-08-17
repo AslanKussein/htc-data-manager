@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
+import kz.dilau.htcdatamanager.web.dto.EventViewDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,8 @@ public class EventResource {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
-        EventDto event = eventService.getEventById(id);
+    public ResponseEntity<EventViewDto> getEventById(@PathVariable Long id) {
+        EventViewDto event = eventService.getEventById(id);
         return ResponseEntity.ok(event);
     }
 
