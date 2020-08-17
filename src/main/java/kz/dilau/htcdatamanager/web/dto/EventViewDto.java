@@ -12,7 +12,6 @@ import java.time.ZonedDateTime;
 import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.util.DictionaryMappingTool.mapMultilangDictionary;
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "EventViewDto" )

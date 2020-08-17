@@ -45,4 +45,19 @@ public class EventDto {
     @ApiModelProperty(value = "Комментарий (Результат события)")
     protected String comment;
 
+    public EventDto(Event event) {
+        this.id = event.getId();
+        this.eventDate = event.getEventDate();
+        this.eventTypeId = event.getEventType().getId();
+        if (nonNull(event.getSourceApplication())) {
+            this.sourceApplicationId = event.getSourceApplication().getId();
+            this.isSourceReserved = event.getSourceApplication().isReservedRealProperty();
+        }
+        if (nonNull(event.getTargetApplication())) {
+            this.targetApplicationId = event.getTargetApplication().getId();
+            this.isTargetReserved = event.getTargetApplication().isReservedRealProperty();
+        }
+        this.description = event.getDescription();
+        this.comment = event.getComment();
+    }
 }
