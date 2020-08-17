@@ -78,6 +78,8 @@ public class ApplicationDto {
         this.setCreationDate(application.getCreatedDate());
         this.setStatus(DictionaryMappingTool.mapMultilangDictionary(application.getApplicationStatus()));
         this.setComment(application.getApplicationSellData().getNote());
-        this.setPhone(application.getCurrentAgent());
-    }
+        this.setPhone(application.getClientLogin());
+        this.setPrice(application.getApplicationSellData().getObjectPrice().toString());
+        this.setId(application.getId());
+        this.setFullname(application.getCurrentAgent());}
 }
