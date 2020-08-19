@@ -8,8 +8,9 @@ import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.ObjectSerializer;
 import kz.dilau.htcdatamanager.web.dto.*;
-import kz.dilau.htcdatamanager.web.dto.client.ClientDeviceDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
+import kz.dilau.htcdatamanager.web.dto.user.UserDeviceDto;
+import kz.dilau.htcdatamanager.web.dto.user.UserInfoDto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -380,7 +381,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     @Override
-    public List<ClientDeviceDto> getDevices(String token, String deviceUuid) {
+    public List<UserDeviceDto> getDevices(String token, String deviceUuid) {
         if (isNull(token) && isNull(deviceUuid)) {
             throw BadRequestException.createRequiredIsEmpty("deviceUuid");
         }
@@ -391,11 +392,11 @@ public class KeycloakServiceImpl implements KeycloakService {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         String url = dataProperties.getKeycloakUserManagerUrl() + (isNull(token) ? PROFILE_CONFIG_OPEN_ENDPOINT : PROFILE_CONFIG_ENDPOINT) + "/getDevice" + (nonNull(deviceUuid) ? "/" +deviceUuid : "");
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
-        ResponseEntity<List<ClientDeviceDto>> response = restTemplate.exchange(
+        ResponseEntity<List<UserDeviceDto>> response = restTemplate.exchange(
                 uriBuilder.toUriString(),
                 HttpMethod.GET,
                 request,
-                new ParameterizedTypeReference<List<ClientDeviceDto>>() {}
+                new ParameterizedTypeReference<List<UserDeviceDto>>() {}
         );
         return response.getBody();
     }
