@@ -5,20 +5,18 @@ import io.swagger.annotations.ApiModelProperty;
 import kz.dilau.htcdatamanager.domain.Event;
 import kz.dilau.htcdatamanager.service.dictionary.DictionaryDao;
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 
 import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.util.DictionaryMappingTool.mapMultilangDictionary;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "EventViewDto" )
+@Getter
+@Setter
 public class EventViewDto extends  EventDto{
 
     private DictionaryMultilangItemDto eventType;
