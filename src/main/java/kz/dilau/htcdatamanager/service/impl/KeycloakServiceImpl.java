@@ -360,6 +360,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Override
     public void saveClient(ProfileClientDto p) {
         HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(getUserManagerToken());
         String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_REST_ENDPOINT;
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         HttpEntity<Object> request = new HttpEntity<>(p, headers);
