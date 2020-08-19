@@ -6,6 +6,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.SecurityException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.repository.FavoritesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +46,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     private final KeycloakService keycloakService;
     private final KafkaProducer kafkaProducer;
     private final NotificationService notificationService;
+    private final FavoritesRepository favoritesRepository;
 
 
     @Override
@@ -259,5 +262,33 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         saveApplication(app, dto.getApplication());
 
         return app.getId();
+    }
+
+    @Override
+    @Transactional
+    public void replaceDeviceLink(String token, String login, String deviceUuid) {
+        if (isNull(login)) throw BadRequestException.createRequiredIsEmpty("login");
+        if (isNull(deviceUuid)) throw BadRequestException.createRequiredIsEmpty("deviceUuid");
+
+        List<ClientDeviceDto> deviceDtos = keycloakService.getDevices(null, deviceUuid);
+        if (!deviceDtos.isEmpty()) {
+            if (isNull(deviceDtos.get(0).getClientLogin()) || deviceDtos.get(0).getClientLogin().toLowerCase().equals(login.toLowerCase())) {
+                List<Application> apps = applicationRepository.findAllByDeviceUuidEquals(deviceUuid);
+                if (!apps.isEmpty()) {
+                    apps.forEach(a -> a.setDeviceUuid(null));
+                    applicationRepository.saveAll(apps);
+                }
+
+                List<Favorites> favorites = favoritesRepository.findAllByClientLoginIsNullAndDeviceUuidEquals(deviceUuid);
+                if (!favorites.isEmpty()) {
+                    favorites.forEach(e -> {
+                        e.setClientLogin(login);
+                        e.setDeviceUuid(null);
+                    });
+                    favoritesRepository.saveAll(favorites);
+                }
+                keycloakService.replaceUMDeviceLink(token, deviceUuid);
+            }
+        }
     }
 }

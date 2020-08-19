@@ -16,7 +16,6 @@ import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.util.DictionaryMappingTool.mapMultilangDictionary;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "EventViewDto" )

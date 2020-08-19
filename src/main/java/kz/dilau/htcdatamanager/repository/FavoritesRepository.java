@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface FavoritesRepository extends PagingAndSortingRepository<Favorites, Long>, JpaSpecificationExecutor<Favorites> {
 
-
+List<Favorites> findAllByClientLoginIsNullAndDeviceUuidEquals(String device);
  }

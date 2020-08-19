@@ -40,4 +40,6 @@ public interface KeycloakService {
     ResultDto sendRealPropertyAnalyticsMessage(RealPropertyAnalyticsDto realPropertyAnalyticsDto);
 
     ResultDto sendAgentAnalyticsMessage(AgentAnalyticsDto agentAnalyticsDto);
+
+    ResultDto replaceUMDeviceLink(String token, String deviceUuid);
 }
