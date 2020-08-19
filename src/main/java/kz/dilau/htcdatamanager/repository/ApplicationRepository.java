@@ -28,4 +28,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long>,
 
     Optional<Application> findByIdAndIsRemovedFalse(Long id);
 
+    List<Application> findAllByDeviceUuidEquals(String deviceUuid);
+
 }

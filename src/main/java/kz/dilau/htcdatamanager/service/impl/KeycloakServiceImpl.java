@@ -62,6 +62,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String PROFILE_CONFIG_ENDPOINT = "/api/profile-config";
     private static final String PROFILE_CONFIG_OPEN_ENDPOINT = "/open-api/profile-config";
     private static final String PROFILE_CLIENT_OPEN_ENDPOINT = "/open-api/profile-client";
+    private static final String REPLACE_DEVICE_LINK = "/api/profile-config/replaceDeviceLink/{deviceUuid}";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -359,7 +360,8 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Override
     public void saveClient(ProfileClientDto p) {
         HttpHeaders headers = new HttpHeaders();
-        String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_OPEN_ENDPOINT;
+        headers.setBearerAuth(getUserManagerToken());
+        String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_REST_ENDPOINT;
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         HttpEntity<Object> request = new HttpEntity<>(p, headers);
         restTemplate.postForObject(uriBuilder.toUriString(), request, ResponseEntity.class);
@@ -426,5 +428,31 @@ public class KeycloakServiceImpl implements KeycloakService {
         } catch (RestClientException rce) {
             throw new DetailedException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), rce.getMessage());
         }
+    }
+
+    @Override
+    public ResultDto replaceUMDeviceLink(String token, String deviceUuid) {
+        if (isNull(deviceUuid)) {
+            throw BadRequestException.createRequiredIsEmpty("deviceUuid");
+        }
+        if (isNull(token)) {
+            throw BadRequestException.createRequiredIsEmpty("token");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, token);
+
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        String url = dataProperties.getKeycloakUserManagerUrl() + REPLACE_DEVICE_LINK;
+        ResponseEntity<ResultDto> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<ResultDto>() {
+                },
+                deviceUuid
+        );
+
+        return response.getBody();
     }
 }
