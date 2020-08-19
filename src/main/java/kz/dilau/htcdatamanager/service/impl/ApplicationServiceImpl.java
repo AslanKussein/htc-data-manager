@@ -9,10 +9,7 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.*;
 import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.BuildingService;
-import kz.dilau.htcdatamanager.service.EntityService;
-import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
@@ -69,6 +66,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final RealPropertyMetadataRepository metadataRepository;
     private final RealPropertyFileRepository fileRepository;
     private final KafkaProducer kafkaProducer;
+
+    private final NotificationService notificationService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -223,6 +222,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(oldAgent)) {
             kafkaProducer.sendAllAgentAnalytics(oldAgent);
         }
+        notificationService.createApplicationAssignedNotification(application.getId());
+
         kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         return application.getId();
     }

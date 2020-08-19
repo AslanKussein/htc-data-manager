@@ -19,5 +19,7 @@ public interface NotificationService {
 
     void createBuyNowNotification(Long sellApplicationId, Long buyApplicationId);
 
+    void  createApplicationAssignedNotification(Long applicationId) ;
+
 
 }
