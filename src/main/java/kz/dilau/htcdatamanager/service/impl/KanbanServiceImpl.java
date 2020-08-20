@@ -40,6 +40,7 @@ public class KanbanServiceImpl implements KanbanService {
     private final ContractService contractService;
     private final KafkaProducer kafkaProducer;
     private final NotificationService notificationService;
+    private final EventService eventService;
 
     private static final String CHOOSE_GROUP_AGENT = "CHOOSE_GROUP_AGENT";
     private static final List<String> AGENT_GROUP = Arrays.asList("AGENT_GROUP");
@@ -117,7 +118,7 @@ public class KanbanServiceImpl implements KanbanService {
         application.setApplicationStatus(applicationStatus);
         applicationRepository.save(application);
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.SUCCESS)) {
-            notificationService.createCompletedEventRelatedApplication(application);
+            createCompletedEventRelatedApplication(application);
             notificationService.createCompletedLinkedTicketApplication(application);
             kafkaProducer.sendRealPropertyAnalytics(application);
             if (nonNull(application.getCurrentAgent())) {
@@ -130,6 +131,14 @@ public class KanbanServiceImpl implements KanbanService {
         }
 
         return application.getId();
+    }
+
+    private void createCompletedEventRelatedApplication (Application application) {
+        List<Event> eventList = eventService.getBySourceApplicationId(application.getId());
+
+        for (Event event : eventList) {
+            notificationService.createCompletedEventRelatedApplication(event);
+        }
     }
 
     @Override
@@ -210,7 +219,7 @@ public class KanbanServiceImpl implements KanbanService {
             kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         }
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED)) {
-            notificationService.createCompletedEventRelatedApplication(application);
+            createCompletedEventRelatedApplication(application);
             notificationService.createCompletedLinkedTicketApplication(application);
         }
         return application.getId();

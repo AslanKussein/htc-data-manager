@@ -40,8 +40,6 @@ public class NotificationServiceImpl implements NotificationService {
     private final KafkaProducer kafkaProducer;
     private final DataProperties dataProperties;
 
-    private final EventService eventService;
-
     @Override
     public void createNotesNotification(Long sellApplicationId, Long notesId) {
         CreateNotificationDto dto = CreateNotificationDto.builder()
@@ -154,19 +152,16 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void createCompletedEventRelatedApplication(Application application) {
+    public void createCompletedEventRelatedApplication(Event event) {
 
-        List<Event> eventList = eventService.getBySourceApplicationId(application.getId());
 
-        for (Event event : eventList) {
-            CreateNotificationDto dto = CreateNotificationDto.builder()
-                    .notificationTypeId(NOTIF_TYPE_OPERATION_COMPLETED_EVENT_RELATED_TICKET)
-                    .eventId(event.getId())
-                    .applicationId1(application.getId())
-                    .applicationId2(event.getTargetApplicationId())
-                    .build();
-            sendMessage(dto);
-        }
+        CreateNotificationDto dto = CreateNotificationDto.builder()
+                .notificationTypeId(NOTIF_TYPE_OPERATION_COMPLETED_EVENT_RELATED_TICKET)
+                .eventId(event.getId())
+                .applicationId1(event.getSourceApplicationId())
+                .applicationId2(event.getTargetApplicationId())
+                .build();
+        sendMessage(dto);
 
     }
 
