@@ -18,4 +18,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByTargetApplicationIdAndEventTypeId(Long app, Long et);
 
     List<Event> findBySourceApplicationIdAndEventTypeId(Long app, Long et);
+
+    List<Event> findBySourceApplicationId(Long app);
 }
