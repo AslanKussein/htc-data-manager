@@ -1,4 +1,4 @@
-package kz.dilau.htcdatamanager.web.dto.client;
+package kz.dilau.htcdatamanager.web.dto.user;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -8,13 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClientDeviceDto {
-
-    @ApiModelProperty(value = "ID устройства")
-    private String deviceUuid;
-
-    @ApiModelProperty(value = "логин клиента")
-    private String clientLogin;
+public class DeviceDto {
+    @ApiModelProperty(value = "UUID")
+    private String uuid;
 
     @ApiModelProperty(value = "платформа")
     private String platform;

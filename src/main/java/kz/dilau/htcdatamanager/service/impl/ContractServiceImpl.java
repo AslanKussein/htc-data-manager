@@ -19,6 +19,7 @@ import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
+import kz.dilau.htcdatamanager.web.dto.user.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -117,7 +118,7 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.applicationDuplicateContractNumber(applicationContract.getApplicationId());
 
         ProfileClientDto clientDto = getClientDto(application);
-        UserInfoDto userInfoDto = getUserInfo(application);
+        UserInfoDto userInfoDto = getAgentInfo(application);
         ContractFormTemplateDto contractForm;
         byte[] result;
 
@@ -139,7 +140,7 @@ public class ContractServiceImpl implements ContractService {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
 
-        contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), contractFormType);
+        contractForm = getContractForm(userInfoDto.getEmployeeData().getOrganizationId(), contractFormType);
         result = printContract(application, dto, clientDto, userInfoDto, contractForm);
 
         FileInfoDto fileInfoDto = uploadToFM(token, result, dto.getContractNumber() + ".pdf");
@@ -175,7 +176,7 @@ public class ContractServiceImpl implements ContractService {
         return clientDto;
     }
 
-    private UserInfoDto getUserInfo(Application application) {
+    private UserInfoDto getAgentInfo(Application application) {
         if (isNull(application.getCurrentAgent())) {
             throw BadRequestException.applicationAgentNotDefined(application.getId());
         }
@@ -183,7 +184,7 @@ public class ContractServiceImpl implements ContractService {
         if (isNull(userInfo)) {
             throw BadRequestException.createTemplateException("error.user.not.found");
         }
-        if (isNull(userInfo.getOrganizationDto())) {
+        if (isNull(userInfo.getEmployeeData()) || isNull(userInfo.getEmployeeData().getOrganizationId())) {
             throw BadRequestException.applicationAdentOrgNotDefined(application.getId());
         }
         return userInfo;
@@ -217,7 +218,7 @@ public class ContractServiceImpl implements ContractService {
                 throw BadRequestException.createTemplateExceptionWithParam("error.application.to.sell.deposit", dto.getSellApplicationId().toString());
             }
         }
-        UserInfoDto userInfoDto = getUserInfo(application);
+        UserInfoDto userInfoDto = getAgentInfo(application);
         ContractFormTemplateDto contractForm;
         byte[] result;
 
@@ -229,9 +230,9 @@ public class ContractServiceImpl implements ContractService {
         }
 
         if (dto.getPayTypeId().equals(PayType.DEPOSIT)) {
-            contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.DEPOSIT.name());
+            contractForm = getContractForm(userInfoDto.getEmployeeData().getOrganizationId(), ContractFormType.DEPOSIT.name());
         } else if (dto.getPayTypeId().equals(PayType.PREPAYMENT)) {
-            contractForm = getContractForm(userInfoDto.getOrganizationDto().getId(), ContractFormType.PREPAYMENT.name());
+            contractForm = getContractForm(userInfoDto.getEmployeeData().getOrganizationId(), ContractFormType.PREPAYMENT.name());
         } else {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");
         }
@@ -343,16 +344,16 @@ public class ContractServiceImpl implements ContractService {
         }
 
         ProfileClientDto ClientDto = getClientDtobyLogin(currentUser);
-        UserInfoDto userInfoDto = getUserInfo(currentApp);
+        UserInfoDto userInfoDto = getAgentInfo(currentApp);
 
         ContractFormTemplateDto contractForm;
         if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BUY_THREE_PRC)) {
             contractForm = keycloakService.getContractForm(
-                    userInfoDto.getOrganizationDto().getId(),
+                    userInfoDto.getEmployeeData().getOrganizationId(),
                     ContractFormType.KP_BUY.name());
         } else if (clientAppContractRequestDto.getPayTypeId().equals(PayType.BOOKING)) {
             contractForm = keycloakService.getContractForm(
-                    userInfoDto.getOrganizationDto().getId(),
+                    userInfoDto.getEmployeeData().getOrganizationId(),
                     ContractFormType.KP_BOOKING.name());
         } else {
             throw BadRequestException.createTemplateException("error.contract.type.not.defined");

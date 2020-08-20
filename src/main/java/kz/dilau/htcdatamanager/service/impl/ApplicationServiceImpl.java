@@ -18,6 +18,7 @@ import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
 import kz.dilau.htcdatamanager.web.dto.common.PageDto;
+import kz.dilau.htcdatamanager.web.dto.user.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

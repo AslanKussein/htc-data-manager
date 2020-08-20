@@ -15,6 +15,7 @@ import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.*;
+import kz.dilau.htcdatamanager.web.dto.user.UserDeviceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
@@ -237,14 +238,14 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
             }
         }
 
-        List<ClientDeviceDto> deviceDto = keycloakService.getDevices(null, dto.getApplication().getDeviceUuid());
+        List<UserDeviceDto> deviceDto = keycloakService.getDevices(null, dto.getApplication().getDeviceUuid());
 
         if (deviceDto.isEmpty() || isNull(deviceDto.get(0))) {
             throw BadRequestException.deviceNotFound(dto.getApplication().getDeviceUuid());
         }
 
-        if (nonNull(deviceDto.get(0).getClientLogin())) {
-            throw BadRequestException.authoriationRequired(deviceDto.get(0).getClientLogin());
+        if (nonNull(deviceDto.get(0).getLogin())) {
+            throw BadRequestException.authoriationRequired(deviceDto.get(0).getLogin());
         }
 
         dto.getApplication().setClientLogin(dto.getPhoneNumber());
@@ -270,9 +271,9 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         if (isNull(login)) throw BadRequestException.createRequiredIsEmpty("login");
         if (isNull(deviceUuid)) throw BadRequestException.createRequiredIsEmpty("deviceUuid");
 
-        List<ClientDeviceDto> deviceDtos = keycloakService.getDevices(null, deviceUuid);
+        List<UserDeviceDto> deviceDtos = keycloakService.getDevices(null, deviceUuid);
         if (!deviceDtos.isEmpty()) {
-            if (isNull(deviceDtos.get(0).getClientLogin()) || deviceDtos.get(0).getClientLogin().toLowerCase().equals(login.toLowerCase())) {
+            if (isNull(deviceDtos.get(0).getLogin()) || deviceDtos.get(0).getLogin().toLowerCase().equals(login.toLowerCase())) {
                 List<Application> apps = applicationRepository.findAllByDeviceUuidEquals(deviceUuid);
                 if (!apps.isEmpty()) {
                     apps.forEach(a -> a.setDeviceUuid(null));
