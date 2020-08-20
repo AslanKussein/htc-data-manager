@@ -38,6 +38,7 @@ public class KanbanServiceImpl implements KanbanService {
     private final KeycloakService keycloakService;
     private final ContractService contractService;
     private final KafkaProducer kafkaProducer;
+    private final NotificationService notificationService;
 
     private static final String CHOOSE_GROUP_AGENT = "CHOOSE_GROUP_AGENT";
     private static final List<String> AGENT_GROUP = Arrays.asList("AGENT_GROUP");
@@ -115,11 +116,18 @@ public class KanbanServiceImpl implements KanbanService {
         application.setApplicationStatus(applicationStatus);
         applicationRepository.save(application);
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.SUCCESS)) {
+            notificationService.createCompletedEventRelatedApplication(applicationStatus.getId());
+            notificationService.createCompletedLinkedTicketApplication(applicationStatus.getId());
             kafkaProducer.sendRealPropertyAnalytics(application);
             if (nonNull(application.getCurrentAgent())) {
                 kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
             }
         }
+
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
+            notificationService.createApplicationDealClosingApproval(applicationStatus.getId(), getAuthorName());
+        }
+
         return application.getId();
     }
 
@@ -165,6 +173,11 @@ public class KanbanServiceImpl implements KanbanService {
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED) && nonNull(application.getCurrentAgent())) {
             kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         }
+
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
+            notificationService.createApplicationDealClosingApproval(applicationStatus.getId(), getAuthorName());
+        }
+
         return application.getId();
     }
 
@@ -194,6 +207,10 @@ public class KanbanServiceImpl implements KanbanService {
         applicationRepository.save(application);
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED) && nonNull(application.getCurrentAgent())) {
             kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
+        }
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED)) {
+            notificationService.createCompletedEventRelatedApplication(applicationStatus.getId());
+            notificationService.createCompletedLinkedTicketApplication(applicationStatus.getId());
         }
         return application.getId();
     }

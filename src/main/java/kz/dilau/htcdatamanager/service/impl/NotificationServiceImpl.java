@@ -132,4 +132,38 @@ public class NotificationServiceImpl implements NotificationService {
         sendMessage(dto);
     }
 
+    @Override
+    public void createApplicationDealClosingApproval(Long applicationId1, String statusChangedAgent) {
+
+        CreateNotificationDto dto = CreateNotificationDto.builder()
+                .notificationTypeId(NOTIF_TYPE_OPERATION_DEAL_CLOSING_APPROVAL)
+                .applicationId1(applicationId1)
+                .statusChangedAgent(statusChangedAgent)
+                .build();
+
+        sendMessage(dto);
+    }
+
+    @Override
+    public void createCompletedEventRelatedApplication(Long applicationId1) {
+
+        CreateNotificationDto dto = CreateNotificationDto.builder()
+                .notificationTypeId(NOTIF_TYPE_OPERATION_COMPLETED_EVENT_RELATED_TICKET)
+                .applicationId1(applicationId1)
+                .build();
+
+        sendMessage(dto);
+    }
+
+    @Override
+    public void createCompletedLinkedTicketApplication(Long applicationId1) {
+
+        CreateNotificationDto dto = CreateNotificationDto.builder()
+                .notificationTypeId(NOTIF_TYPE_OPERATION_LINKED_TICKET_COMPLETED)
+                .applicationId1(applicationId1)
+                .build();
+
+        sendMessage(dto);
+    }
+
 }

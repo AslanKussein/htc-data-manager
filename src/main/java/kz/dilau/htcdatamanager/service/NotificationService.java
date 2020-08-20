@@ -19,7 +19,12 @@ public interface NotificationService {
 
     void createBuyNowNotification(Long sellApplicationId, Long buyApplicationId);
 
-    void  createApplicationAssignedNotification(Long applicationId) ;
+    void createApplicationAssignedNotification(Long applicationId);
 
+    void createApplicationDealClosingApproval(Long applicationId1, String statusChangedAgent);
+
+    void createCompletedEventRelatedApplication(Long applicationId1);
+
+    void createCompletedLinkedTicketApplication(Long applicationId1);
 
 }
