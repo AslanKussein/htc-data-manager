@@ -17,6 +17,7 @@ public class CreateNotificationDto {
     private Long notesId;
 
     private Long applicationId1;
+    private Long applicationId2;
     private String statusChangedAgent;
 
 }

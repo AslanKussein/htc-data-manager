@@ -117,8 +117,8 @@ public class KanbanServiceImpl implements KanbanService {
         application.setApplicationStatus(applicationStatus);
         applicationRepository.save(application);
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.SUCCESS)) {
-            notificationService.createCompletedEventRelatedApplication(applicationStatus.getId());
-            notificationService.createCompletedLinkedTicketApplication(applicationStatus.getId());
+            notificationService.createCompletedEventRelatedApplication(application);
+            notificationService.createCompletedLinkedTicketApplication(application);
             kafkaProducer.sendRealPropertyAnalytics(application);
             if (nonNull(application.getCurrentAgent())) {
                 kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
@@ -126,7 +126,7 @@ public class KanbanServiceImpl implements KanbanService {
         }
 
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
-            notificationService.createApplicationDealClosingApproval(applicationStatus.getId(), getAuthorName());
+            notificationService.createApplicationDealClosingApproval(application.getId(), getAuthorName());
         }
 
         return application.getId();
@@ -176,7 +176,7 @@ public class KanbanServiceImpl implements KanbanService {
         }
 
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
-            notificationService.createApplicationDealClosingApproval(applicationStatus.getId(), getAuthorName());
+            notificationService.createApplicationDealClosingApproval(application.getId(), getAuthorName());
         }
 
         return application.getId();
@@ -210,8 +210,8 @@ public class KanbanServiceImpl implements KanbanService {
             kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         }
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED)) {
-            notificationService.createCompletedEventRelatedApplication(applicationStatus.getId());
-            notificationService.createCompletedLinkedTicketApplication(applicationStatus.getId());
+            notificationService.createCompletedEventRelatedApplication(application);
+            notificationService.createCompletedLinkedTicketApplication(application);
         }
         return application.getId();
     }

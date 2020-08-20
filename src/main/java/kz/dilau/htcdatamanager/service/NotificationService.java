@@ -1,6 +1,8 @@
 package kz.dilau.htcdatamanager.service;
 
 
+import kz.dilau.htcdatamanager.domain.Application;
+
 public interface NotificationService {
 
     void createNotesNotification(Long applicationId, Long notesId);
@@ -23,8 +25,8 @@ public interface NotificationService {
 
     void createApplicationDealClosingApproval(Long applicationId1, String statusChangedAgent);
 
-    void createCompletedEventRelatedApplication(Long applicationId1);
+    void createCompletedEventRelatedApplication(Application applicationId1);
 
-    void createCompletedLinkedTicketApplication(Long applicationId1);
+    void createCompletedLinkedTicketApplication(Application application);
 
 }

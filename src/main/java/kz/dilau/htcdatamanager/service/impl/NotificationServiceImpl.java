@@ -1,6 +1,10 @@
 package kz.dilau.htcdatamanager.service.impl;
 
 import kz.dilau.htcdatamanager.config.DataProperties;
+import kz.dilau.htcdatamanager.domain.Application;
+import kz.dilau.htcdatamanager.domain.Event;
+import kz.dilau.htcdatamanager.service.ApplicationService;
+import kz.dilau.htcdatamanager.service.EventService;
 import kz.dilau.htcdatamanager.service.NotificationService;
 import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.web.dto.notification.CreateNotificationDto;
@@ -8,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static java.util.Objects.nonNull;
 import static kz.dilau.htcdatamanager.util.ObjectSerializer.introspect;
 
 @Slf4j
@@ -32,6 +39,9 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final KafkaProducer kafkaProducer;
     private final DataProperties dataProperties;
+
+    private final EventService eventService;
+    private final ApplicationService applicationService;
 
     @Override
     public void createNotesNotification(Long sellApplicationId, Long notesId) {
@@ -145,25 +155,34 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public void createCompletedEventRelatedApplication(Long applicationId1) {
+    public void createCompletedEventRelatedApplication(Application application) {
 
-        CreateNotificationDto dto = CreateNotificationDto.builder()
-                .notificationTypeId(NOTIF_TYPE_OPERATION_COMPLETED_EVENT_RELATED_TICKET)
-                .applicationId1(applicationId1)
-                .build();
+        List<Event> eventList = eventService.getBySourceApplicationId(application.getId());
 
-        sendMessage(dto);
+        for (Event event : eventList) {
+            CreateNotificationDto dto = CreateNotificationDto.builder()
+                    .notificationTypeId(NOTIF_TYPE_OPERATION_COMPLETED_EVENT_RELATED_TICKET)
+                    .eventId(event.getId())
+                    .applicationId1(application.getId())
+                    .applicationId2(event.getTargetApplicationId())
+                    .build();
+            sendMessage(dto);
+        }
+
     }
 
     @Override
-    public void createCompletedLinkedTicketApplication(Long applicationId1) {
+    public void createCompletedLinkedTicketApplication(Application application) {
 
-        CreateNotificationDto dto = CreateNotificationDto.builder()
-                .notificationTypeId(NOTIF_TYPE_OPERATION_LINKED_TICKET_COMPLETED)
-                .applicationId1(applicationId1)
-                .build();
+        if (nonNull(application.getTargetApplication())) {
+            CreateNotificationDto dto = CreateNotificationDto.builder()
+                    .notificationTypeId(NOTIF_TYPE_OPERATION_LINKED_TICKET_COMPLETED)
+                    .applicationId1(application.getId())
+                    .applicationId2(application.getTargetApplication().getId())
+                    .build();
+            sendMessage(dto);
+        }
 
-        sendMessage(dto);
     }
 
 }

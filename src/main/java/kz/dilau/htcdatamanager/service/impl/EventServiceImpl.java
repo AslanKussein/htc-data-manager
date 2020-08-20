@@ -271,4 +271,10 @@ public class EventServiceImpl implements EventService {
         }
         return event.getId();
     }
+
+
+
+    private List<Event> getBySourceApplicationId(Long applicationId) {
+        return eventRepository.findBySourceApplicationId(applicationId);
+    }
 }
