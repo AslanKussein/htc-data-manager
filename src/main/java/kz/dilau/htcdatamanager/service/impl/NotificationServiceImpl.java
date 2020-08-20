@@ -41,7 +41,6 @@ public class NotificationServiceImpl implements NotificationService {
     private final DataProperties dataProperties;
 
     private final EventService eventService;
-    private final ApplicationService applicationService;
 
     @Override
     public void createNotesNotification(Long sellApplicationId, Long notesId) {
