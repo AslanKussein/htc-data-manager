@@ -274,7 +274,9 @@ public class EventServiceImpl implements EventService {
 
 
 
-    private List<Event> getBySourceApplicationId(Long applicationId) {
+
+    @Override
+    public List<Event> getBySourceApplicationId(Long applicationId) {
         return eventRepository.findBySourceApplicationId(applicationId);
     }
 }
