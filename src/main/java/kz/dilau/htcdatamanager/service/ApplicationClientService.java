@@ -17,5 +17,7 @@ public interface ApplicationClientService {
     List<ApplicationClientDTO> getAllMyAppByOperationTypeId(final String clientLogin, String token, Long operationTypeId);
 
     Long save(ClientApplicationCreateDTO dto);
+
+    void replaceDeviceLink(String token, String login, String deviceUuid);
 }
 

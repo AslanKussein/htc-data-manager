@@ -2,6 +2,7 @@ package kz.dilau.htcdatamanager.web.rest.client;
 
 import io.swagger.annotations.ApiModel;
 import kz.dilau.htcdatamanager.service.ApplicationClientService;
+import kz.dilau.htcdatamanager.web.dto.ResultDto;
 import kz.dilau.htcdatamanager.web.dto.client.ApplicationClientDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -59,5 +60,13 @@ public class ApplicationClientResource {
                                            @PathVariable("id") Long id) {
         Long result = applicationClientService.deleteById(token, id);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/replaceDeviceLink/{deviceUuid}")
+    public ResponseEntity<ResultDto> replaceDeviceLink (@ApiIgnore @AuthenticationPrincipal final Principal principal,
+                                              @ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                              @PathVariable("deviceUuid") String deviceUuid) {
+        applicationClientService.replaceDeviceLink(token, principal.getName(), deviceUuid);
+        return ResponseEntity.ok(new ResultDto());
     }
 }
