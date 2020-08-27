@@ -14,4 +14,10 @@ public interface ResidentialComplexRepository extends PagingAndSortingRepository
 
     @Query(value = "select r from ResidentialComplex r where r.isRemoved = false")
     Page<ResidentialComplex> findPageByRemovedFalse(Pageable pageable);
+
+    List<ResidentialComplex> findByHouseNameContainingIgnoreCaseAndIsRemovedFalse(String houseName);
+
+
+
+
 }

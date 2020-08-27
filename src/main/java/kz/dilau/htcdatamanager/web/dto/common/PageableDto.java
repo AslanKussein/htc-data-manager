@@ -25,4 +25,5 @@ public class PageableDto {
 
     @ApiModelProperty(notes = "Направление сортировки", required = false)
     private Sort.Direction direction = Sort.Direction.DESC;
+
 }

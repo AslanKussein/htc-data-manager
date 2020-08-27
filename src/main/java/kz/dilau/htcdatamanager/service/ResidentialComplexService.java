@@ -20,4 +20,6 @@ public interface ResidentialComplexService {
     ResidentialComplexDto deleteById(String token, Long id);
 
     ResidentialComplexDto getByPostcode(String postcode);
+
+    PageDto<ResidentialComplexDto> getByHouseName(String postcode);
 }
