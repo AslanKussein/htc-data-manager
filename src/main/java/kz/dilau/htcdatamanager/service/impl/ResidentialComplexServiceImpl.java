@@ -18,6 +18,7 @@ import kz.dilau.htcdatamanager.web.dto.common.PageDto;
 import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -148,6 +149,15 @@ public class ResidentialComplexServiceImpl implements ResidentialComplexService 
         } else {
             return null;
         }
+    }
+
+    @Override
+    public PageDto<ResidentialComplexDto> getByHouseName(String houseName) {
+        List<ResidentialComplexDto> residentialComplexDtoList = new ArrayList<>();
+        List<ResidentialComplex> residentialComplexList = residentialComplexRepository.findByHouseNameContainingIgnoreCaseAndIsRemovedFalse(houseName);
+        Page<ResidentialComplex> residentialComplexPage=  new PageImpl<>(residentialComplexList);
+        residentialComplexList.forEach(item -> residentialComplexDtoList.add(new ResidentialComplexDto(item)));
+        return new PageDto(residentialComplexPage, residentialComplexDtoList);
     }
 
     private ResidentialComplex getResidentialComplexById(Long id) {
