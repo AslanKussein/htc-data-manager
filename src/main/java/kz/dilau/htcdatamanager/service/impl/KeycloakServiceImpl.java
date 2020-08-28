@@ -365,7 +365,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_REST_ENDPOINT;
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         HttpEntity<Object> request = new HttpEntity<>(p, headers);
-        restTemplate.postForObject(uriBuilder.toUriString(), request, ResponseEntity.class);
+        restTemplate.postForObject(uriBuilder.toUriString(), request, ProfileClientDto.class);
     }
 
     @Override
