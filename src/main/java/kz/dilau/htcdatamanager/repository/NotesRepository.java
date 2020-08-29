@@ -15,4 +15,6 @@ public interface NotesRepository extends JpaRepository<Notes, Long> {
 
     Integer countByRealProperty_IdAndIsRemovedFalse(Long id);
 
+    Optional<Notes> findByQuestionIdAndIsRemovedFalse(Long id);
+
 }

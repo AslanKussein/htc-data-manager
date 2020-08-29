@@ -12,9 +12,8 @@ import kz.dilau.htcdatamanager.service.FavoritesService;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.PageableUtils;
 import kz.dilau.htcdatamanager.web.dto.FavoritesDto;
-import kz.dilau.htcdatamanager.web.dto.client.ClientDeviceDto;
 import kz.dilau.htcdatamanager.web.dto.client.FavoritFilterDto;
-import kz.dilau.htcdatamanager.web.dto.common.PageableDto;
+import kz.dilau.htcdatamanager.web.dto.user.UserDeviceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
@@ -60,16 +59,16 @@ public class FavoritesServiceImpl implements FavoritesService {
     }
 
     private List<String> getDeviceUuids(String token, String clientLogin , String deviceUuid){
-        List<ClientDeviceDto> lst = keycloakService.getDevices(token, deviceUuid);
+        List<UserDeviceDto> lst = keycloakService.getDevices(token, deviceUuid);
         List<String> lstUuids = new ArrayList<>();
         if (!lst.isEmpty()) {
-            for (ClientDeviceDto d : lst) {
+            for (UserDeviceDto d : lst) {
                 if (nonNull(deviceUuid) && nonNull(clientLogin)) {
-                    if (nonNull(d.getClientLogin()) && !d.getClientLogin().toLowerCase().equals(clientLogin.toLowerCase()))  {
+                    if (nonNull(d.getLogin()) && !d.getLogin().toLowerCase().equals(clientLogin.toLowerCase()))  {
                         throw BadRequestException.createTemplateException("error.has.not.permission");
                     }
                 }
-                lstUuids.add(d.getDeviceUuid());
+                lstUuids.add(d.getDevice().getUuid());
             }
         } else {
             if (nonNull(deviceUuid)) throw BadRequestException.createTemplateException("error.has.not.permission");

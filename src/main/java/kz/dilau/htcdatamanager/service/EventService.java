@@ -1,7 +1,9 @@
 package kz.dilau.htcdatamanager.service;
 
+import kz.dilau.htcdatamanager.domain.Event;
 import kz.dilau.htcdatamanager.web.dto.ApplicationContractInfoDto;
 import kz.dilau.htcdatamanager.web.dto.EventDto;
+import kz.dilau.htcdatamanager.web.dto.EventViewDto;
 import kz.dilau.htcdatamanager.web.dto.jasper.JasperActViewDto;
 
 import java.util.List;
@@ -9,7 +11,7 @@ import java.util.List;
 public interface EventService {
     Long saveEvent(EventDto event, boolean fromClient);
 
-    EventDto getEventById(Long id);
+    EventViewDto getEventById(Long id);
 
     Long updateEvent(String token, Long id, EventDto event);
 
@@ -22,4 +24,6 @@ public interface EventService {
     List<JasperActViewDto> getViewBySourceApp(Long appId);
 
     ApplicationContractInfoDto getContractsInfo(Long applicationId);
+
+    List<Event> getBySourceApplicationId(Long applicationId);
 }

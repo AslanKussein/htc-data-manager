@@ -31,6 +31,8 @@ public interface ApplicationService {
 
     Page<ApplicationDto> getNotApprovedFiles(Pageable pageable);
 
+    List<ApplicationDto> getApplicationListByPostcode(String postcode);
+
     Long approveMetadata(Long applicationId, Long statusId);
 
     List<String> getOperationList(String token, Application application);

@@ -32,6 +32,12 @@ public class ResidentialComplexResource {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/byHouseName/{houseName}")
+    public ResponseEntity<PageDto<ResidentialComplexDto>> getByHouseName(@PathVariable("houseName") String houseName) {
+        PageDto<ResidentialComplexDto> page = residentialComplexService.getByHouseName(houseName);
+        return ResponseEntity.ok(page);
+    }
+
     @GetMapping
     public ResponseEntity<List<ResidentialComplexDto>> getAll() {
         List<ResidentialComplexDto> list = residentialComplexService.getAll();

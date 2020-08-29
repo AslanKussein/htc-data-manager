@@ -41,11 +41,26 @@ public class NotesServiceImpl implements NotesService {
         notes.setText(notesDto.getText());
         notes.setRealProperty(realProperty.get());
 
+        if (nonNull(notesDto.getQuestionId())) {
+            Notes question = getNotesById(notesDto.getQuestionId());
+            Notes note = getNotesByQuestionId(notesDto.getQuestionId());
+            if(nonNull(note)) {
+                if(isNull(notesDto.getId()) || !notesDto.getId().equals(note.getId())) {
+                    throw BadRequestException.notesAnswerDuplicate(notesDto.getQuestionId());
+                }
+            }
+            notes.setQuestionId(question.getId());
+        }
+
         notes = notesRepository.save(notes);
 
         if (nonNull(notes.getRealProperty())) {
             for (ApplicationSellData sellData : notes.getRealProperty().getSellDataList()) {
-                notificationService.createNotesNotification(sellData.getApplication().getId(), notesDto.getText());
+                if (nonNull(notesDto.getQuestionId())) {
+                    notificationService.createNotesAnswerNotification(sellData.getApplication().getId(), notes.getId());
+                } else {
+                    notificationService.createNotesNotification(sellData.getApplication().getId(), notes.getId());
+                }
             }
         }
         return new NotesDto(notes);
@@ -62,8 +77,22 @@ public class NotesServiceImpl implements NotesService {
         if (isNull(id)) {
             throw BadRequestException.idMustNotBeNull();
         }
+
+
         Notes notes = getNotesById(id);
         notes.setText(notesDto.getText());
+
+        if (nonNull(notesDto.getQuestionId())) {
+            Notes question = getNotesById(notesDto.getQuestionId());
+            Notes note = getNotesByQuestionId(notesDto.getQuestionId());
+            if(nonNull(note)) {
+                if(isNull(notesDto.getId()) || !notesDto.getId().equals(note.getId())) {
+                    throw BadRequestException.notesAnswerDuplicate(notesDto.getQuestionId());
+                }
+            }
+            notes.setQuestionId(question.getId());
+        }
+
         notes = notesRepository.save(notes);
 
         return new NotesDto(notes);
@@ -75,6 +104,14 @@ public class NotesServiceImpl implements NotesService {
             throw NotFoundException.createNotesById(id);
         }
         return notesOptional.get();
+    }
+
+    private Notes getNotesByQuestionId(Long questionId) {
+        Optional<Notes> notesOptional = notesRepository.findByQuestionIdAndIsRemovedFalse(questionId);
+        if (notesOptional.isPresent()) {
+            return notesOptional.get();
+        }
+        return null;
     }
 
     @Override
@@ -92,5 +129,10 @@ public class NotesServiceImpl implements NotesService {
     @Override
     public Integer getCountByRealPropertyId(Long realPropertyId) {
         return notesRepository.countByRealProperty_IdAndIsRemovedFalse(realPropertyId);
+    }
+
+    @Override
+    public NotesDto getById(Long id) {
+        return new NotesDto(getNotesById(id));
     }
 }

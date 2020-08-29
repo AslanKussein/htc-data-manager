@@ -6,6 +6,7 @@ import kz.dilau.htcdatamanager.domain.dictionary.*;
 import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.SecurityException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.repository.FavoritesRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyMetadataRepository;
 import kz.dilau.htcdatamanager.repository.RealPropertyRepository;
 import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
@@ -14,12 +15,14 @@ import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.ProfileClientDto;
 import kz.dilau.htcdatamanager.web.dto.client.*;
+import kz.dilau.htcdatamanager.web.dto.user.UserDeviceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +47,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
     private final KeycloakService keycloakService;
     private final KafkaProducer kafkaProducer;
     private final NotificationService notificationService;
+    private final FavoritesRepository favoritesRepository;
 
 
     @Override
@@ -234,14 +238,14 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
             }
         }
 
-        List<ClientDeviceDto> deviceDto = keycloakService.getDevices(null, dto.getApplication().getDeviceUuid());
+        List<UserDeviceDto> deviceDto = keycloakService.getDevices(null, dto.getApplication().getDeviceUuid());
 
         if (deviceDto.isEmpty() || isNull(deviceDto.get(0))) {
             throw BadRequestException.deviceNotFound(dto.getApplication().getDeviceUuid());
         }
 
-        if (nonNull(deviceDto.get(0).getClientLogin())) {
-            throw BadRequestException.authoriationRequired(deviceDto.get(0).getClientLogin());
+        if (nonNull(deviceDto.get(0).getLogin())) {
+            throw BadRequestException.authoriationRequired(deviceDto.get(0).getLogin());
         }
 
         dto.getApplication().setClientLogin(dto.getPhoneNumber());
@@ -259,5 +263,33 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
         saveApplication(app, dto.getApplication());
 
         return app.getId();
+    }
+
+    @Override
+    @Transactional
+    public void replaceDeviceLink(String token, String login, String deviceUuid) {
+        if (isNull(login)) throw BadRequestException.createRequiredIsEmpty("login");
+        if (isNull(deviceUuid)) throw BadRequestException.createRequiredIsEmpty("deviceUuid");
+
+        List<UserDeviceDto> deviceDtos = keycloakService.getDevices(null, deviceUuid);
+        if (!deviceDtos.isEmpty()) {
+            if (isNull(deviceDtos.get(0).getLogin()) || deviceDtos.get(0).getLogin().toLowerCase().equals(login.toLowerCase())) {
+                List<Application> apps = applicationRepository.findAllByDeviceUuidEquals(deviceUuid);
+                if (!apps.isEmpty()) {
+                    apps.forEach(a -> a.setDeviceUuid(null));
+                    applicationRepository.saveAll(apps);
+                }
+
+                List<Favorites> favorites = favoritesRepository.findAllByClientLoginIsNullAndDeviceUuidEquals(deviceUuid);
+                if (!favorites.isEmpty()) {
+                    favorites.forEach(e -> {
+                        e.setClientLogin(login);
+                        e.setDeviceUuid(null);
+                    });
+                    favoritesRepository.saveAll(favorites);
+                }
+                keycloakService.replaceUMDeviceLink(token, deviceUuid);
+            }
+        }
     }
 }

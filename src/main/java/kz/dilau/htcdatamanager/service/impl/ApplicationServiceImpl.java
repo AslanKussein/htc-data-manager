@@ -9,14 +9,13 @@ import kz.dilau.htcdatamanager.exception.EntityRemovedException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.repository.*;
 import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
-import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.service.BuildingService;
-import kz.dilau.htcdatamanager.service.EntityService;
-import kz.dilau.htcdatamanager.service.KeycloakService;
+import kz.dilau.htcdatamanager.service.*;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
 import kz.dilau.htcdatamanager.util.EntityMappingTool;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
+import kz.dilau.htcdatamanager.web.dto.common.PageDto;
+import kz.dilau.htcdatamanager.web.dto.user.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -68,6 +67,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     private final RealPropertyMetadataRepository metadataRepository;
     private final RealPropertyFileRepository fileRepository;
     private final KafkaProducer kafkaProducer;
+
+    private final NotificationService notificationService;
 
     private String getAuthorName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -222,6 +223,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         if (nonNull(oldAgent)) {
             kafkaProducer.sendAllAgentAnalytics(oldAgent);
         }
+        notificationService.createApplicationAssignedNotification(application.getId());
+
         kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         return application.getId();
     }
@@ -579,5 +582,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         return ResultDto.builder()
                 .success(!applications.isEmpty())
                 .build();
+    }
+
+
+    @Override
+    public List<ApplicationDto> getApplicationListByPostcode (String postcode) {
+        Specification<Application> specification = ApplicationSpecifications.isRemovedEquals(false)
+                .and(ApplicationSpecifications.applicationsByPostCode(postcode));
+        List<Application> applications = applicationRepository.findAll(specification);
+        return applications.stream().map(ApplicationDto::new).collect(Collectors.toList());
     }
 }

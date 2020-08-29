@@ -21,7 +21,7 @@ public class ApplicationViewResource {
     @GetMapping("/{id}")
     public ResponseEntity<ApplicationViewDTO> getById(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
                                                       @PathVariable("id") Long id) {
-        ApplicationViewDTO result = applicationViewService.getById(token, id);
+         ApplicationViewDTO result = applicationViewService.getById(token, id);
         return ResponseEntity.ok(result);
     }
 

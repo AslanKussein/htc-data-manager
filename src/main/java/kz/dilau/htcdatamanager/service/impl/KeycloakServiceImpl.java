@@ -8,8 +8,9 @@ import kz.dilau.htcdatamanager.service.kafka.KafkaProducer;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.util.ObjectSerializer;
 import kz.dilau.htcdatamanager.web.dto.*;
-import kz.dilau.htcdatamanager.web.dto.client.ClientDeviceDto;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
+import kz.dilau.htcdatamanager.web.dto.user.UserDeviceDto;
+import kz.dilau.htcdatamanager.web.dto.user.UserInfoDto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +63,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     private static final String PROFILE_CONFIG_ENDPOINT = "/api/profile-config";
     private static final String PROFILE_CONFIG_OPEN_ENDPOINT = "/open-api/profile-config";
     private static final String PROFILE_CLIENT_OPEN_ENDPOINT = "/open-api/profile-client";
+    private static final String REPLACE_DEVICE_LINK = "/api/profile-config/replaceDeviceLink/{deviceUuid}";
 
     private final RestTemplate restTemplate;
     private final DataProperties dataProperties;
@@ -359,10 +361,11 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Override
     public void saveClient(ProfileClientDto p) {
         HttpHeaders headers = new HttpHeaders();
-        String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_OPEN_ENDPOINT;
+        headers.setBearerAuth(getUserManagerToken());
+        String url = dataProperties.getKeycloakUserManagerUrl() + PROFILE_CLIENT_REST_ENDPOINT;
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
         HttpEntity<Object> request = new HttpEntity<>(p, headers);
-        restTemplate.postForObject(uriBuilder.toUriString(), request, ResponseEntity.class);
+        restTemplate.postForObject(uriBuilder.toUriString(), request, ProfileClientDto.class);
     }
 
     @Override
@@ -378,7 +381,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     @Override
-    public List<ClientDeviceDto> getDevices(String token, String deviceUuid) {
+    public List<UserDeviceDto> getDevices(String token, String deviceUuid) {
         if (isNull(token) && isNull(deviceUuid)) {
             throw BadRequestException.createRequiredIsEmpty("deviceUuid");
         }
@@ -389,11 +392,11 @@ public class KeycloakServiceImpl implements KeycloakService {
         HttpEntity<Object> request = new HttpEntity<>(headers);
         String url = dataProperties.getKeycloakUserManagerUrl() + (isNull(token) ? PROFILE_CONFIG_OPEN_ENDPOINT : PROFILE_CONFIG_ENDPOINT) + "/getDevice" + (nonNull(deviceUuid) ? "/" +deviceUuid : "");
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(url);
-        ResponseEntity<List<ClientDeviceDto>> response = restTemplate.exchange(
+        ResponseEntity<List<UserDeviceDto>> response = restTemplate.exchange(
                 uriBuilder.toUriString(),
                 HttpMethod.GET,
                 request,
-                new ParameterizedTypeReference<List<ClientDeviceDto>>() {}
+                new ParameterizedTypeReference<List<UserDeviceDto>>() {}
         );
         return response.getBody();
     }
@@ -426,5 +429,31 @@ public class KeycloakServiceImpl implements KeycloakService {
         } catch (RestClientException rce) {
             throw new DetailedException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), rce.getMessage());
         }
+    }
+
+    @Override
+    public ResultDto replaceUMDeviceLink(String token, String deviceUuid) {
+        if (isNull(deviceUuid)) {
+            throw BadRequestException.createRequiredIsEmpty("deviceUuid");
+        }
+        if (isNull(token)) {
+            throw BadRequestException.createRequiredIsEmpty("token");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, token);
+
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        String url = dataProperties.getKeycloakUserManagerUrl() + REPLACE_DEVICE_LINK;
+        ResponseEntity<ResultDto> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                new ParameterizedTypeReference<ResultDto>() {
+                },
+                deviceUuid
+        );
+
+        return response.getBody();
     }
 }

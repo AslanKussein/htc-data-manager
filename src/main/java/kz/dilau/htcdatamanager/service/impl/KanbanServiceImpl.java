@@ -15,6 +15,7 @@ import kz.dilau.htcdatamanager.web.dto.common.BigDecimalPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.DictionaryMultilangItemDto;
 import kz.dilau.htcdatamanager.web.dto.common.IntegerPeriod;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
+import kz.dilau.htcdatamanager.web.dto.user.UserInfoDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,6 +39,8 @@ public class KanbanServiceImpl implements KanbanService {
     private final KeycloakService keycloakService;
     private final ContractService contractService;
     private final KafkaProducer kafkaProducer;
+    private final NotificationService notificationService;
+    private final EventService eventService;
 
     private static final String CHOOSE_GROUP_AGENT = "CHOOSE_GROUP_AGENT";
     private static final List<String> AGENT_GROUP = Arrays.asList("AGENT_GROUP");
@@ -115,12 +118,27 @@ public class KanbanServiceImpl implements KanbanService {
         application.setApplicationStatus(applicationStatus);
         applicationRepository.save(application);
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.SUCCESS)) {
+            createCompletedEventRelatedApplication(application);
+            notificationService.createCompletedLinkedTicketApplication(application);
             kafkaProducer.sendRealPropertyAnalytics(application);
             if (nonNull(application.getCurrentAgent())) {
                 kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
             }
         }
+
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.APPROVAL_FOR_SUCCESS)) {
+            notificationService.createApplicationDealClosingApproval(application.getId(), getAuthorName());
+        }
+
         return application.getId();
+    }
+
+    private void createCompletedEventRelatedApplication (Application application) {
+        List<Event> eventList = eventService.getBySourceApplicationId(application.getId());
+
+        for (Event event : eventList) {
+            notificationService.createCompletedEventRelatedApplication(event);
+        }
     }
 
     @Override
@@ -165,6 +183,11 @@ public class KanbanServiceImpl implements KanbanService {
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED) && nonNull(application.getCurrentAgent())) {
             kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
         }
+
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.APPROVAL_FOR_FAILED)) {
+            notificationService.createApplicationDealClosingApproval(application.getId(), getAuthorName());
+        }
+
         return application.getId();
     }
 
@@ -194,6 +217,10 @@ public class KanbanServiceImpl implements KanbanService {
         applicationRepository.save(application);
         if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED) && nonNull(application.getCurrentAgent())) {
             kafkaProducer.sendAllAgentAnalytics(application.getCurrentAgent());
+        }
+        if (nonNull(applicationStatus) && applicationStatus.getId().equals(ApplicationStatus.FAILED)) {
+            createCompletedEventRelatedApplication(application);
+            notificationService.createCompletedLinkedTicketApplication(application);
         }
         return application.getId();
     }
@@ -339,8 +366,7 @@ public class KanbanServiceImpl implements KanbanService {
             ApplicationPurchaseData purchaseData = application.getApplicationPurchaseData();
             MultiLangText text = DictionaryMappingTool.mapDictionaryToText(purchaseData.getCity());
             if (!purchaseData.getDistricts().isEmpty()) {
-                District district = purchaseData.getDistricts().stream().findFirst().orElse(null);
-                if (nonNull(district)) {
+                for (val district : purchaseData.getDistricts()) {
                     text = DictionaryMappingTool.concatMultiLangWithMultiLang(text, DictionaryMappingTool.mapDictionaryToText(district), ", ");
                 }
             }

@@ -4,10 +4,7 @@ import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.RealProperty;
 import kz.dilau.htcdatamanager.service.ApplicationFullViewService;
 import kz.dilau.htcdatamanager.service.ApplicationService;
-import kz.dilau.htcdatamanager.web.dto.ApplicationFullViewDto;
-import kz.dilau.htcdatamanager.web.dto.ApplicationSellDataDto;
-import kz.dilau.htcdatamanager.web.dto.ContractFormFullDto;
-import kz.dilau.htcdatamanager.web.dto.RealPropertyDto;
+import kz.dilau.htcdatamanager.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +31,7 @@ public class ApplicationFullViewServiceImpl implements ApplicationFullViewServic
         dto.setIsReserved(application.isReservedRealProperty());
         dto.setApplicationStatusId(application.getApplicationStatus().getId());
         dto.setContractDto(new ContractFormFullDto(application.getContract()));
+        dto.setApplicationDepositDto(new ApplicationDepositDto(application.getDeposit()));
         if (application.getApplicationSellData() != null) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
             if (realProperty != null) {

@@ -4,6 +4,7 @@ import kz.dilau.htcdatamanager.config.Constants;
 import kz.dilau.htcdatamanager.service.KeycloakService;
 import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.ListResponse;
+import kz.dilau.htcdatamanager.web.dto.user.UserInfoDto;
 import kz.dilau.htcdatamanager.web.rest.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
