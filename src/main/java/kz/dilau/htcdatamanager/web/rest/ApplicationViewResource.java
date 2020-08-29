@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RequiredArgsConstructor
@@ -22,4 +24,13 @@ public class ApplicationViewResource {
         ApplicationViewDTO result = applicationViewService.getById(token, id);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/compare")
+    public ResponseEntity<List<ApplicationViewDTO>> getApplicationsForCompare(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
+                                                                              @RequestParam(value = "ids[]",
+                                                                              required = false) List<Long> ids) {
+        List<ApplicationViewDTO> result = applicationViewService.getApplicationsForCompare(token, ids);
+        return ResponseEntity.ok(result);
+    }
+
 }
