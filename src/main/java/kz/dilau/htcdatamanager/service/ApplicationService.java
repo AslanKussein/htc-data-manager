@@ -44,4 +44,6 @@ public interface ApplicationService {
     ListResponse<String> getOperationsByAppId(String token, Long applicationId);
 
     ResultDto hasActualAppByClient(String agentLogin, String clientLogin);
+
+    ApplicationDto mapToApplicationDto(Application application, List<String> operations);
 }

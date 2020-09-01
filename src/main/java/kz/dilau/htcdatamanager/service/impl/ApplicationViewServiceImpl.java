@@ -1,7 +1,12 @@
 package kz.dilau.htcdatamanager.service.impl;
 
+import kz.dilau.htcdatamanager.domain.Application;
 import kz.dilau.htcdatamanager.domain.dictionary.ResidentialComplex;
+import kz.dilau.htcdatamanager.exception.BadRequestException;
+import kz.dilau.htcdatamanager.exception.NotFoundException;
+import kz.dilau.htcdatamanager.repository.ApplicationRepository;
 import kz.dilau.htcdatamanager.repository.dictionary.*;
+import kz.dilau.htcdatamanager.repository.filter.ApplicationSpecifications;
 import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ApplicationViewService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
@@ -9,6 +14,7 @@ import kz.dilau.htcdatamanager.web.dto.*;
 import kz.dilau.htcdatamanager.web.dto.common.MultiLangText;
 import kz.dilau.htcdatamanager.web.rest.KazPostResource;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -43,11 +49,29 @@ public class ApplicationViewServiceImpl implements ApplicationViewService {
     private final HeatingSystemRepository heatingSystemRepository;
     private final SewerageRepository sewerageRepository;
     private final KazPostResource kazPostResource;
+    private final ApplicationRepository applicationRepository;
 
     @Override
     public ApplicationViewDTO getById(String token, Long id) {
         ApplicationDto application = applicationService.getById(token, id);
         return mapToApplicationDto(application);
+    }
+
+    @Override
+    public List<ApplicationViewDTO> getApplicationsForCompare(String token, List<Long> ids) {
+        List<ApplicationViewDTO> applications = new ArrayList<>();
+        List<ApplicationDto> applicationDtos = new ArrayList<>();
+        Specification<Application> specification = ApplicationSpecifications.isRemovedEquals(false);
+        if (nonNull(ids)) {
+            specification = specification.and(ApplicationSpecifications.applicationIdsIn(ids));
+        }
+        List<Application> applicationList = applicationRepository.findAll(specification);
+        for (Application application : applicationList) {
+            List<String> operationList = applicationService.getOperationList(token, application);
+            applicationDtos.add(applicationService.mapToApplicationDto(application, operationList));
+        }
+        applicationDtos.forEach(result -> applications.add(mapToApplicationDto(result)));
+        return applications;
     }
 
     private Boolean isSell(ApplicationDto application) {

@@ -38,4 +38,8 @@ public class ApplicationSpecifications {
         return (root, cq, cb) -> cb.equal(root.get("applicationSellData").get("realProperty").get("building").get("postcode"),value);
     }
 
+    public static Specification<Application> applicationIdsIn(List<Long> ids) {
+        return ((root, cq, cb) -> root.get("id").in(ids));
+    }
+
 }
