@@ -27,8 +27,7 @@ public class ApplicationViewResource {
 
     @GetMapping("/compare")
     public ResponseEntity<List<ApplicationViewDTO>> getApplicationsForCompare(@ApiIgnore @RequestHeader(AUTHORIZATION) String token,
-                                                                              @RequestParam(value = "ids[]",
-                                                                              required = false) List<Long> ids) {
+                                                                              @RequestParam(value = "ids[]") List<Long> ids) {
         List<ApplicationViewDTO> result = applicationViewService.getApplicationsForCompare(token, ids);
         return ResponseEntity.ok(result);
     }
