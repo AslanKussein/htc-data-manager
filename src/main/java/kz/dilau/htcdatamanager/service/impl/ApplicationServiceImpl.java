@@ -414,6 +414,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public Application getApplicationByIdForClient(Long id) {
+        Application application = getApplicationById(id);
+        application.setViewCount(nonNull(application.getViewCount()) ? application.getViewCount() + 1 : 1);
+        return applicationRepository.save(application);
+    }
+
+    @Override
     public MetadataWithApplicationsDto getApartmentByNumberAndPostcode(String apartmentNumber, String postcode) {
         RealProperty realProperty = realPropertyRepository.findByApartmentNumberAndPostcode(apartmentNumber, postcode);
         if (nonNull(realProperty)) {

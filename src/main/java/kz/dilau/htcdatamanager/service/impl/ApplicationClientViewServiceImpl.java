@@ -30,7 +30,7 @@ public class ApplicationClientViewServiceImpl implements ApplicationClientViewSe
 
     @Override
     public ApplicationClientViewDto getById(Long id) {
-        Application application = applicationService.getApplicationById(id);
+        Application application = applicationService.getApplicationByIdForClient(id);
         return mapToApplicationDto(application);
     }
 

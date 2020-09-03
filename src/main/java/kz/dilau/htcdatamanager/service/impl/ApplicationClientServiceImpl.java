@@ -52,7 +52,7 @@ public class ApplicationClientServiceImpl implements ApplicationClientService {
 
     @Override
     public ApplicationClientDTO getById(final String token, Long id) {
-        Application application = applicationService.getApplicationById(id);
+        Application application = applicationService.getApplicationByIdForClient(id);
         return new ApplicationClientDTO(application);
     }
 

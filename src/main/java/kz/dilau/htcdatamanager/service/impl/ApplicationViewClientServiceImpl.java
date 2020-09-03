@@ -10,6 +10,7 @@ import kz.dilau.htcdatamanager.exception.BadRequestException;
 import kz.dilau.htcdatamanager.exception.NotFoundException;
 import kz.dilau.htcdatamanager.exception.SecurityException;
 import kz.dilau.htcdatamanager.repository.ApplicationRepository;
+import kz.dilau.htcdatamanager.service.ApplicationService;
 import kz.dilau.htcdatamanager.service.ApplicationViewClientService;
 import kz.dilau.htcdatamanager.service.EntityService;
 import kz.dilau.htcdatamanager.util.DictionaryMappingTool;
@@ -35,29 +36,23 @@ import static java.util.Objects.nonNull;
 @Service
 public class ApplicationViewClientServiceImpl implements ApplicationViewClientService {
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationService applicationService;
     private final EntityService entityService;
     private final KazPostResource kazPostResource;
 
     @Override
     public ApplicationViewClientDTO getByIdForClient(Long id) {
-        Application application = applicationRepository.getOne(id);
+        Application application = applicationService.getApplicationByIdForClient(id);
         return mapToApplicationDto(application);
     }
 
     @Override
     public ApplicationViewClientDTO getByIdForClientDevice(String deviceUuid, Long id) {
-        Application application = applicationRepository.findById(id).orElse(null);
-        ApplicationViewClientDTO result;
-        if (nonNull(application)) {
-            if (isNull(deviceUuid) || isNull(application.getDeviceUuid()) || !application.getDeviceUuid().equals(deviceUuid)) {
-                throw SecurityException.createPermissionNotFound();
-            }
-            result = mapToApplicationDto(application);
-        } else {
-            throw NotFoundException.createApplicationById(id);
+        Application application = applicationService.getApplicationByIdForClient(id);
+        if (isNull(deviceUuid) || isNull(application.getDeviceUuid()) || !application.getDeviceUuid().equals(deviceUuid)) {
+            throw SecurityException.createPermissionNotFound();
         }
-        return result;
+        return mapToApplicationDto(application);
     }
 
     private Boolean isSell(Application application) {

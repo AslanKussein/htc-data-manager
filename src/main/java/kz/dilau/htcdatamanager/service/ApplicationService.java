@@ -25,6 +25,8 @@ public interface ApplicationService {
 
     Application getApplicationById(Long id);
 
+    Application getApplicationByIdForClient(Long id);
+
     MetadataWithApplicationsDto getApartmentByNumberAndPostcode(String apartmentNumber, String postcode);
 
     Page<ApplicationDto> getNotApprovedMetadata(Pageable pageable);
