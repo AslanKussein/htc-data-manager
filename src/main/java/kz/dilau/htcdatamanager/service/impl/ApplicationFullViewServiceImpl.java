@@ -15,7 +15,7 @@ public class ApplicationFullViewServiceImpl implements ApplicationFullViewServic
 
     @Override
     public ApplicationFullViewDto getById(Long id) {
-        Application application = applicationService.getApplicationById(id);
+        Application application = applicationService.getApplicationByIdForClient(id);
         return mapToApplicationDto(application);
     }
 
