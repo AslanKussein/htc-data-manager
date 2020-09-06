@@ -34,6 +34,9 @@ public class RealProperty extends AuditableBaseEntity<String, Long> {
     @Column(name = "is_reserved")
     private Boolean isReserved = false;
 
+    @Column(name = "view_count")
+    private Integer viewCount = 0;
+
     @OneToMany(mappedBy = "realProperty", fetch = FetchType.LAZY)
     private List<RealPropertyMetadata> metadataList;
 

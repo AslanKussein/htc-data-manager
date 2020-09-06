@@ -42,13 +42,13 @@ public class ApplicationViewClientServiceImpl implements ApplicationViewClientSe
 
     @Override
     public ApplicationViewClientDTO getByIdForClient(Long id) {
-        Application application = applicationService.getApplicationByIdForClient(id);
+        Application application = applicationService.getApplicationById(id);
         return mapToApplicationDto(application);
     }
 
     @Override
     public ApplicationViewClientDTO getByIdForClientDevice(String deviceUuid, Long id) {
-        Application application = applicationService.getApplicationByIdForClient(id);
+        Application application = applicationService.getApplicationById(id);
         if (isNull(deviceUuid) || isNull(application.getDeviceUuid()) || !application.getDeviceUuid().equals(deviceUuid)) {
             throw SecurityException.createPermissionNotFound();
         }

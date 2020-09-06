@@ -416,8 +416,12 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application getApplicationByIdForClient(Long id) {
         Application application = getApplicationById(id);
-        application.setViewCount(nonNull(application.getViewCount()) ? application.getViewCount() + 1 : 1);
-        return applicationRepository.save(application);
+        if (application.getOperationType().isSell() && nonNull(application.getApplicationSellData()) && nonNull(application.getApplicationSellData().getRealProperty())) {
+            RealProperty realProperty = application.getApplicationSellData().getRealProperty();
+            realProperty.setViewCount(nonNull(realProperty.getViewCount()) ? realProperty.getViewCount() + 1 : 1);
+            application = applicationRepository.save(application);
+        }
+        return application;
     }
 
     @Override
