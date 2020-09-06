@@ -3,7 +3,7 @@ drop view if exists htc_dm_v_real_property_register;
 create or replace view htc_dm_v_real_property_register (id, created_date, application_id, sell_data_id,
                                                         object_price, total_area, number_of_rooms,
                                                         metadata_id, building_id, average_price, apartment_number,
-                                                        cadastral_number, is_reserved, files_map)
+                                                        cadastral_number, is_reserved, view_count, files_map)
 as
 select rp.id                                            as id,
        rp.created_date                                  as created_date,
@@ -18,6 +18,7 @@ select rp.id                                            as id,
        rp.apartment_number                              as apartment_number,
        rp.cadastral_number                              as cadastral_number,
        rp.is_reserved                                   as is_reserved,
+       rp.view_count                                    as view_count,
        rpf.files_map                                    as files_map
 from htc_dm_real_property rp
        join htc_dm_sell_data sd
