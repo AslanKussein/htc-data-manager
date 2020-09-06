@@ -44,13 +44,13 @@ public class ApplicationClientViewServiceImpl implements ApplicationClientViewSe
         dto.setIsReserved(application.isReservedRealProperty());
         dto.setApplicationStatusId(application.getApplicationStatus().getId());
         dto.setContractDto(new ContractFormDto(application.getContract()));
-        if (application.getApplicationSellData() != null) {
+        if (nonNull(application.getApplicationSellData()) && nonNull(application.getApplicationSellData().getRealProperty())) {
             RealProperty realProperty = application.getApplicationSellData().getRealProperty();
             RealPropertyClientViewDto realPropertyDto = new RealPropertyClientViewDto(realProperty);
             realPropertyDto.setNotesCount(notesService.getCountByRealPropertyId(realProperty.getId()));
             dto.setRealPropertyDto(realPropertyDto);
             dto.setSellDataDto(new ApplicationSellDataDto(application.getApplicationSellData()));
-            if (nonNull(realPropertyDto.getGeneralCharacteristicsDto())&&!realPropertyDto.getGeneralCharacteristicsDto().getParkingTypeIds().isEmpty()) {
+            if (nonNull(realPropertyDto.getGeneralCharacteristicsDto()) && !realPropertyDto.getGeneralCharacteristicsDto().getParkingTypeIds().isEmpty()) {
                 List<DictionaryDto> parkingTypeList = new ArrayList<>();
                 for (Long parkingId : realPropertyDto.getGeneralCharacteristicsDto().getParkingTypeIds()) {
                     BaseCustomDictionary aDictionaryItem = dictionaryCacheService.loadDictionaryByIdFromDatabase("ParkingType", parkingId);
@@ -62,7 +62,6 @@ public class ApplicationClientViewServiceImpl implements ApplicationClientViewSe
 
         return dto;
     }
-
 
     private DictionaryDto fillDictionaryDto(Long id, MultiLang multiLang) {
         return DictionaryDto.builder()

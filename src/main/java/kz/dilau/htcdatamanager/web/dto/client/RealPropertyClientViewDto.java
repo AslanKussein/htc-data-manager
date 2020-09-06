@@ -33,6 +33,8 @@ public class RealPropertyClientViewDto {
     private String cadastralNumber;
     @ApiModelProperty(value = "Номер квартиры(/буква)")
     private String apartmentNumber;
+    @ApiModelProperty(value = "Количество просмотров")
+    private Integer viewCount;
 
     @ApiModelProperty(value = "id метаданных")
     private Long metadataId;
@@ -88,6 +90,7 @@ public class RealPropertyClientViewDto {
         this.buildingDto = new BuildingDto(realProperty.getBuilding());
         this.cadastralNumber = realProperty.getCadastralNumber();
         this.apartmentNumber = realProperty.getApartmentNumber();
+        this.viewCount = realProperty.getViewCount();
         RealPropertyMetadata metadata = realProperty.getMetadataByStatus(MetadataStatus.APPROVED);
         if (nonNull(metadata)) {
             this.metadataId = metadata.getId();
